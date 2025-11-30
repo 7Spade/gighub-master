@@ -3,6 +3,9 @@
 // Utils
 export * from './utils/yuan';
 
+// Services
+export * from './services/account.service';
+
 // Module
 export * from './shared-imports';
 export * from './json-schema/index';

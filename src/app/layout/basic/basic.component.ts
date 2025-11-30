@@ -11,6 +11,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 import { HeaderClearStorageComponent } from './widgets/clear-storage.component';
+import { HeaderContextSwitcherComponent } from './widgets/context-switcher.component';
 import { HeaderFullScreenComponent } from './widgets/fullscreen.component';
 import { HeaderI18nComponent } from './widgets/i18n.component';
 import { HeaderIconComponent } from './widgets/icon.component';
@@ -85,6 +86,14 @@ import { HeaderUserComponent } from './widgets/user.component';
         </div>
         <nz-dropdown-menu #userMenu="nzDropdownMenu">
           <ul nz-menu>
+            <!-- 上下文切換器區域 -->
+            <li nz-menu-item [nzDisabled]="true" style="cursor: default; opacity: 1; background: transparent;">
+              <div style="font-weight: 600; color: rgba(0, 0, 0, 0.85); margin-bottom: 4px;"> 切換工作區 </div>
+            </li>
+            <li style="padding: 0;">
+              <header-context-switcher />
+            </li>
+            <li nz-menu-divider></li>
             <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | i18n }}</li>
             <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | i18n }}</li>
           </ul>
@@ -118,7 +127,8 @@ import { HeaderUserComponent } from './widgets/user.component';
     HeaderI18nComponent,
     HeaderClearStorageComponent,
     HeaderFullScreenComponent,
-    HeaderUserComponent
+    HeaderUserComponent,
+    HeaderContextSwitcherComponent
   ]
 })
 export class LayoutBasicComponent {
