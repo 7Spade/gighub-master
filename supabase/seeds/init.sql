@@ -440,6 +440,311 @@ COMMENT ON FUNCTION public.handle_new_organization IS 'Auto-add organization cre
 COMMENT ON FUNCTION public.handle_new_blueprint IS 'Auto-add blueprint creator to blueprint_members with role=maintainer';
 
 -- ============================================================================
+-- PRIVATE SCHEMA HELPER FUNCTIONS (SECURITY DEFINER)
+-- Purpose: Helper functions for RLS policies - avoid RLS recursion
+-- These functions run with elevated privileges to check permissions
+-- ============================================================================
+
+-- Create private schema if not exists
+CREATE SCHEMA IF NOT EXISTS private;
+
+-- Function: Get current user's account_id
+CREATE OR REPLACE FUNCTION private.get_user_account_id()
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+DECLARE
+  v_account_id UUID;
+BEGIN
+  SELECT id INTO v_account_id
+  FROM public.accounts
+  WHERE auth_user_id = auth.uid()
+    AND type = 'user'
+    AND status != 'deleted'
+  LIMIT 1;
+  
+  RETURN v_account_id;
+END;
+$$;
+
+-- Function: Check if user owns an account
+CREATE OR REPLACE FUNCTION private.is_account_owner(p_account_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.accounts
+    WHERE id = p_account_id
+    AND auth_user_id = auth.uid()
+  );
+END;
+$$;
+
+-- Function: Check if user is organization member
+CREATE OR REPLACE FUNCTION private.is_organization_member(p_org_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.organization_members om
+    JOIN public.accounts a ON a.id = om.account_id
+    WHERE om.organization_id = p_org_id
+    AND a.auth_user_id = auth.uid()
+  );
+END;
+$$;
+
+-- Function: Get user's role in organization
+CREATE OR REPLACE FUNCTION private.get_organization_role(p_org_id UUID)
+RETURNS public.organization_role
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+DECLARE
+  v_role public.organization_role;
+BEGIN
+  SELECT om.role INTO v_role
+  FROM public.organization_members om
+  JOIN public.accounts a ON a.id = om.account_id
+  WHERE om.organization_id = p_org_id
+  AND a.auth_user_id = auth.uid();
+  
+  RETURN v_role;
+END;
+$$;
+
+-- Function: Check if user is organization owner/admin
+CREATE OR REPLACE FUNCTION private.is_organization_admin(p_org_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.organization_members om
+    JOIN public.accounts a ON a.id = om.account_id
+    WHERE om.organization_id = p_org_id
+    AND a.auth_user_id = auth.uid()
+    AND om.role IN ('owner', 'admin')
+  );
+END;
+$$;
+
+-- Function: Check if user is team member
+CREATE OR REPLACE FUNCTION private.is_team_member(p_team_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.team_members tm
+    JOIN public.accounts a ON a.id = tm.account_id
+    WHERE tm.team_id = p_team_id
+    AND a.auth_user_id = auth.uid()
+  );
+END;
+$$;
+
+-- Function: Check if user is team leader
+CREATE OR REPLACE FUNCTION private.is_team_leader(p_team_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.team_members tm
+    JOIN public.accounts a ON a.id = tm.account_id
+    WHERE tm.team_id = p_team_id
+    AND a.auth_user_id = auth.uid()
+    AND tm.role = 'leader'
+  );
+END;
+$$;
+
+-- Function: Check if user is blueprint owner
+CREATE OR REPLACE FUNCTION private.is_blueprint_owner(p_blueprint_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  -- Check if user directly owns the blueprint
+  IF EXISTS (
+    SELECT 1 FROM public.blueprints b
+    JOIN public.accounts a ON a.id = b.owner_id
+    WHERE b.id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+    AND a.type = 'user'
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Check if user is owner of the organization that owns the blueprint
+  RETURN EXISTS (
+    SELECT 1 FROM public.blueprints b
+    JOIN public.organizations o ON o.account_id = b.owner_id
+    JOIN public.organization_members om ON om.organization_id = o.id
+    JOIN public.accounts a ON a.id = om.account_id
+    WHERE b.id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+    AND om.role = 'owner'
+  );
+END;
+$$;
+
+-- Function: Check if user has access to blueprint
+CREATE OR REPLACE FUNCTION private.has_blueprint_access(p_blueprint_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  -- Public blueprints are accessible to all
+  IF EXISTS (
+    SELECT 1 FROM public.blueprints
+    WHERE id = p_blueprint_id AND is_public = true
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Blueprint owners have access
+  IF (SELECT private.is_blueprint_owner(p_blueprint_id)) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Direct blueprint members have access
+  IF EXISTS (
+    SELECT 1 FROM public.blueprint_members bm
+    JOIN public.accounts a ON a.id = bm.account_id
+    WHERE bm.blueprint_id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Team members with blueprint access have access
+  IF EXISTS (
+    SELECT 1 FROM public.blueprint_team_roles btr
+    JOIN public.team_members tm ON tm.team_id = btr.team_id
+    JOIN public.accounts a ON a.id = tm.account_id
+    WHERE btr.blueprint_id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Organization members have access to org-owned blueprints
+  RETURN EXISTS (
+    SELECT 1 FROM public.blueprints b
+    JOIN public.organizations o ON o.account_id = b.owner_id
+    JOIN public.organization_members om ON om.organization_id = o.id
+    JOIN public.accounts a ON a.id = om.account_id
+    WHERE b.id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+  );
+END;
+$$;
+
+-- Function: Check if user can write to blueprint
+CREATE OR REPLACE FUNCTION private.can_write_blueprint(p_blueprint_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+BEGIN
+  -- Blueprint owners can write
+  IF (SELECT private.is_blueprint_owner(p_blueprint_id)) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Blueprint members with contributor/maintainer role can write
+  IF EXISTS (
+    SELECT 1 FROM public.blueprint_members bm
+    JOIN public.accounts a ON a.id = bm.account_id
+    WHERE bm.blueprint_id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+    AND bm.role IN ('contributor', 'maintainer')
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Team members with write/admin access can write
+  IF EXISTS (
+    SELECT 1 FROM public.blueprint_team_roles btr
+    JOIN public.team_members tm ON tm.team_id = btr.team_id
+    JOIN public.accounts a ON a.id = tm.account_id
+    WHERE btr.blueprint_id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+    AND btr.access_level IN ('write', 'admin')
+  ) THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Organization owners/admins can write to org-owned blueprints
+  RETURN EXISTS (
+    SELECT 1 FROM public.blueprints b
+    JOIN public.organizations o ON o.account_id = b.owner_id
+    JOIN public.organization_members om ON om.organization_id = o.id
+    JOIN public.accounts a ON a.id = om.account_id
+    WHERE b.id = p_blueprint_id
+    AND a.auth_user_id = auth.uid()
+    AND om.role IN ('owner', 'admin')
+  );
+END;
+$$;
+
+-- Grant execute permissions on private functions to authenticated users
+GRANT EXECUTE ON FUNCTION private.get_user_account_id() TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_account_owner(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_organization_member(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.get_organization_role(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_organization_admin(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_team_member(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_team_leader(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_blueprint_owner(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.has_blueprint_access(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.can_write_blueprint(UUID) TO authenticated;
+
+-- Add comments for documentation
+COMMENT ON FUNCTION private.get_user_account_id() IS 'Get current user account_id (SECURITY DEFINER to avoid RLS recursion)';
+COMMENT ON FUNCTION private.is_account_owner(UUID) IS 'Check if current user owns the specified account';
+COMMENT ON FUNCTION private.is_organization_member(UUID) IS 'Check if current user is a member of the organization';
+COMMENT ON FUNCTION private.get_organization_role(UUID) IS 'Get current user role in organization';
+COMMENT ON FUNCTION private.is_organization_admin(UUID) IS 'Check if current user is owner or admin of organization';
+COMMENT ON FUNCTION private.is_team_member(UUID) IS 'Check if current user is a member of the team';
+COMMENT ON FUNCTION private.is_team_leader(UUID) IS 'Check if current user is team leader';
+COMMENT ON FUNCTION private.is_blueprint_owner(UUID) IS 'Check if current user owns the blueprint (directly or via organization)';
+COMMENT ON FUNCTION private.has_blueprint_access(UUID) IS 'Check if current user has read access to blueprint';
+COMMENT ON FUNCTION private.can_write_blueprint(UUID) IS 'Check if current user has write access to blueprint';
+
+-- ============================================================================
 -- RLS POLICY FIXES - Permission Security Enhancements
 -- Purpose: Fix identified permission vulnerabilities in RLS policies
 -- Created: 2024-11-30

@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentProviders, Injectable, Provider, inject, provideAppInitializer } from '@angular/core';
 import { Router } from '@angular/router';
+import { ContextType } from '@core';
 import { ACLService } from '@delon/acl';
 import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
+import { MenuManagementService } from '@shared';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable, zip, catchError, map } from 'rxjs';
 
@@ -34,6 +36,7 @@ export class StartupService {
   private httpClient = inject(HttpClient);
   private router = inject(Router);
   private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private menuManagementService = inject(MenuManagementService);
 
   load(): Observable<void> {
     const defaultLang = this.i18n.defaultLang;
@@ -56,8 +59,27 @@ export class StartupService {
         this.settingService.setUser(appData.user);
         // ACL：设置权限为全量
         this.aclService.setFull(true);
-        // 初始化菜单
-        this.menuService.add(appData.menu);
+
+        // 載入菜單配置（MenuManagementService 會處理菜單更新）
+        // Load menu configuration (MenuManagementService handles menu updates)
+        this.menuManagementService
+          .loadConfig()
+          .then(() => {
+            // 初始化時載入預設菜單（USER 菜單）
+            // Load default menu (USER menu) on initialization
+            // Note: LayoutBasicComponent effect will listen to context changes and auto-update menu
+            this.menuManagementService.updateMenu(ContextType.USER);
+          })
+          .catch(error => {
+            console.error('[StartupService] Failed to load menu config:', error);
+          });
+
+        // 向後兼容：如果 menus 不存在，使用舊的 menu 配置
+        // Backward compatibility: if menus doesn't exist, use legacy menu config
+        if (appData.menu && !appData.menus) {
+          this.menuService.add(appData.menu);
+        }
+
         // 设置页面标题的后缀
         this.titleService.default = '';
         this.titleService.suffix = appData.app.name;

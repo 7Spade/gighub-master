@@ -24,7 +24,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { WorkspaceContextService } from '@shared';
+import { WorkspaceContextService, MenuManagementService } from '@shared';
 
 import { HeaderClearStorageComponent } from './widgets/clear-storage.component';
 import { HeaderContextSwitcherComponent } from './widgets/context-switcher.component';
@@ -168,6 +168,7 @@ export class LayoutBasicComponent {
   private readonly settings = inject(SettingsService);
   private readonly supabaseAuth = inject(SupabaseAuthService);
   private readonly workspaceContext = inject(WorkspaceContextService);
+  private readonly menuManagementService = inject(MenuManagementService);
   private readonly modal = inject(ModalHelper);
 
   options: LayoutDefaultOptions = {
@@ -252,14 +253,55 @@ export class LayoutBasicComponent {
   });
 
   constructor() {
-    // 監聽上下文變化並更新
+    // 監聽上下文變化並更新菜單
+    // Listen to context changes and update menu
     effect(() => {
       const contextType = this.workspaceContext.contextType();
       const contextId = this.workspaceContext.contextId();
 
       // 日誌記錄上下文變化
       console.log('[LayoutBasicComponent] Context changed:', { contextType, contextId });
+
+      // 根據上下文類型同步菜單
+      // Sync menu based on context type
+      this.syncMenu(contextType, contextId);
     });
+  }
+
+  /**
+   * 同步菜單（根據當前上下文）
+   * Sync menu based on current context
+   */
+  private syncMenu(contextType: ContextType, contextId: string | null): void {
+    if (!contextId) {
+      // No valid context ID, use USER menu as default
+      this.menuManagementService.updateMenu(ContextType.USER);
+      return;
+    }
+
+    // 根據不同上下文類型準備參數
+    // Prepare params based on context type
+    const params = this.buildMenuParams(contextType, contextId);
+    this.menuManagementService.updateMenu(contextType, params);
+  }
+
+  /**
+   * 構建菜單參數
+   * Build menu params based on context type
+   */
+  private buildMenuParams(type: ContextType, id: string) {
+    switch (type) {
+      case ContextType.USER:
+        return { userId: id };
+      case ContextType.ORGANIZATION:
+        return { organizationId: id };
+      case ContextType.TEAM:
+        return { teamId: id };
+      case ContextType.BOT:
+        return { botId: id };
+      default:
+        return {};
+    }
   }
 
   /**
