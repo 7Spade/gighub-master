@@ -40,6 +40,9 @@ import { HeaderUserComponent } from './widgets/user.component';
           <i nz-icon nzType="search"></i>
         </div>
       </layout-default-header-item>
+      <layout-default-header-item direction="left">
+        <header-context-switcher />
+      </layout-default-header-item>
       <layout-default-header-item direction="middle">
         <header-search class="alain-default__search" [(toggleChange)]="searchToggleStatus" />
       </layout-default-header-item>
