@@ -11,6 +11,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 import { HeaderClearStorageComponent } from './widgets/clear-storage.component';
+import { HeaderContextSwitcherComponent } from './widgets/context-switcher.component';
 import { HeaderFullScreenComponent } from './widgets/fullscreen.component';
 import { HeaderI18nComponent } from './widgets/i18n.component';
 import { HeaderIconComponent } from './widgets/icon.component';
@@ -38,6 +39,9 @@ import { HeaderUserComponent } from './widgets/user.component';
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
           <i nz-icon nzType="search"></i>
         </div>
+      </layout-default-header-item>
+      <layout-default-header-item direction="left">
+        <header-context-switcher />
       </layout-default-header-item>
       <layout-default-header-item direction="middle">
         <header-search class="alain-default__search" [(toggleChange)]="searchToggleStatus" />
@@ -118,7 +122,8 @@ import { HeaderUserComponent } from './widgets/user.component';
     HeaderI18nComponent,
     HeaderClearStorageComponent,
     HeaderFullScreenComponent,
-    HeaderUserComponent
+    HeaderUserComponent,
+    HeaderContextSwitcherComponent
   ]
 })
 export class LayoutBasicComponent {
