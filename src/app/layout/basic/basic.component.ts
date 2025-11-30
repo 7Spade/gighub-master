@@ -14,7 +14,7 @@ import { Component, inject, computed, effect } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { SupabaseAuthService, ContextType } from '@core';
-import { I18nPipe, SettingsService, User, ModalHelper } from '@delon/theme';
+import { SettingsService, User, ModalHelper } from '@delon/theme';
 import { LayoutDefaultModule, LayoutDefaultOptions } from '@delon/theme/layout-default';
 import { SettingDrawerModule } from '@delon/theme/setting-drawer';
 import { ThemeBtnComponent } from '@delon/theme/theme-btn';
@@ -37,7 +37,6 @@ import { HeaderSearchComponent } from './widgets/search.component';
 import { HeaderTaskComponent } from './widgets/task.component';
 import { HeaderUserComponent } from './widgets/user.component';
 import { CreateOrganizationComponent } from '../../routes/account/create-organization/create-organization.component';
-import { CreateTeamComponent } from '../../routes/account/create-team/create-team.component';
 
 @Component({
   selector: 'layout-basic',
@@ -57,9 +56,6 @@ import { CreateTeamComponent } from '../../routes/account/create-team/create-tea
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
           <i nz-icon nzType="search"></i>
         </div>
-      </layout-default-header-item>
-      <layout-default-header-item direction="left">
-        <header-context-switcher />
       </layout-default-header-item>
       <layout-default-header-item direction="middle">
         <header-search class="alain-default__search" [(toggleChange)]="searchToggleStatus" />
@@ -116,19 +112,10 @@ import { CreateTeamComponent } from '../../routes/account/create-team/create-tea
             </li>
             <li nz-menu-divider></li>
 
-            <!-- 創建組織和團隊 -->
             <li nz-menu-item (click)="openCreateOrganization()">
               <i nz-icon nzType="plus-circle" class="mr-sm"></i>
               <span>建立組織</span>
             </li>
-            <li nz-menu-item (click)="openCreateTeam()">
-              <i nz-icon nzType="team" class="mr-sm"></i>
-              <span>建立團隊</span>
-            </li>
-            <li nz-menu-divider></li>
-
-            <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | i18n }}</li>
-            <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | i18n }}</li>
           </ul>
         </nz-dropdown-menu>
       </ng-template>
@@ -144,7 +131,6 @@ import { CreateTeamComponent } from '../../routes/account/create-team/create-tea
   imports: [
     RouterOutlet,
     RouterLink,
-    I18nPipe,
     LayoutDefaultModule,
     NzIconModule,
     NzMenuModule,
@@ -312,19 +298,6 @@ export class LayoutBasicComponent {
       if (result) {
         console.log('組織創建成功:', result);
         // 組織創建成功後，重新載入工作區資料
-        this.workspaceContext.reload();
-      }
-    });
-  }
-
-  /**
-   * 打開建立團隊模態框
-   */
-  openCreateTeam(): void {
-    this.modal.create(CreateTeamComponent, {}, { size: 'md' }).subscribe(result => {
-      if (result) {
-        console.log('團隊創建成功:', result);
-        // 團隊創建成功後，重新載入工作區資料
         this.workspaceContext.reload();
       }
     });
