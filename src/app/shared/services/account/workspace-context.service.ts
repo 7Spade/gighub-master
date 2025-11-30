@@ -236,10 +236,21 @@ export class WorkspaceContextService {
    */
   private updateMenu(contextType: ContextType, contextId: string | null): void {
     const params: ContextParams = {
-      userId: this.currentUser()?.id,
-      organizationId: contextType === ContextType.ORGANIZATION ? contextId || undefined : undefined,
-      teamId: contextType === ContextType.TEAM ? contextId || undefined : undefined
+      userId: this.currentUser()?.id
     };
+
+    // 根據上下文類型設置對應的 ID
+    switch (contextType) {
+      case ContextType.ORGANIZATION:
+        params.organizationId = contextId ?? undefined;
+        break;
+      case ContextType.TEAM:
+        params.teamId = contextId ?? undefined;
+        break;
+      case ContextType.BOT:
+        params.botId = contextId ?? undefined;
+        break;
+    }
 
     this.menuManagementService.updateMenu(contextType, params);
   }
