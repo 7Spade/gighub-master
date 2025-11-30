@@ -16,6 +16,7 @@ import {
   OrganizationMemberRepository,
   Organization,
   OrganizationRole,
+  AccountType,
   SupabaseService
 } from '@core';
 
@@ -123,20 +124,54 @@ export class OrganizationService {
       throw new Error('Failed to create organization');
     }
 
-    const { account_id } = data[0];
+    const { account_id, organization_id } = data[0];
 
-    // Fetch the created organization account
-    const { data: accountData, error: fetchError } = await client
-      .from('accounts')
-      .select('*')
-      .eq('id', account_id)
-      .single();
-
-    if (fetchError || !accountData) {
-      throw new Error('Failed to fetch created organization account');
+    // Prefer fetching from organizations table if organization_id is returned
+    // Otherwise fallback to fetching the organization by account_id
+    if (organization_id) {
+      const org = await firstValueFrom(this.organizationRepo.findById(organization_id));
+      if (org) {
+        return org as OrganizationBusinessModel;
+      }
     }
 
-    return accountData as OrganizationBusinessModel;
+    // Fallback: fetch organization by account_id
+    const { data: orgData, error: fetchError } = await client
+      .from('organizations')
+      .select('*')
+      .eq('account_id', account_id)
+      .single();
+
+    if (fetchError || !orgData) {
+      // If organizations table doesn't exist or no record, return basic structure
+      // This handles cases where organization data is stored only in accounts table
+      const { data: accountData, error: accountError } = await client
+        .from('accounts')
+        .select('*')
+        .eq('id', account_id)
+        .single();
+
+      if (accountError || !accountData) {
+        throw new Error('Failed to fetch created organization');
+      }
+
+      // Map account data to OrganizationBusinessModel
+      return {
+        id: accountData.id,
+        account_id: accountData.id,
+        name: accountData.name,
+        slug: accountData.name.toLowerCase().replace(/\s+/g, '-'),
+        description: null,
+        logo_url: accountData.avatar_url,
+        metadata: accountData.metadata,
+        created_at: accountData.created_at,
+        updated_at: accountData.updated_at,
+        deleted_at: accountData.deleted_at,
+        type: AccountType.ORG
+      } as OrganizationBusinessModel;
+    }
+
+    return orgData as OrganizationBusinessModel;
   }
 
   /**
