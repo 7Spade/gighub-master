@@ -23,6 +23,7 @@ import { AccountService } from './account.service';
 import { OrganizationService } from './organization.service';
 import { TeamService } from './team.service';
 import { OrganizationBusinessModel } from '../../models/account';
+import { MenuManagementService, ContextParams } from '../menu/menu-management.service';
 
 const STORAGE_KEY = 'workspace_context';
 
@@ -34,6 +35,7 @@ export class WorkspaceContextService {
   private readonly accountService = inject(AccountService);
   private readonly organizationService = inject(OrganizationService);
   private readonly teamService = inject(TeamService);
+  private readonly menuManagementService = inject(MenuManagementService);
 
   // === 上下文狀態 Context State ===
   private readonly contextTypeState = signal<ContextType>(ContextType.USER);
@@ -223,8 +225,23 @@ export class WorkspaceContextService {
     this.contextTypeState.set(type);
     this.contextIdState.set(id);
     this.persistContext();
+    this.updateMenu(type, id);
     this.switchingState.set(false);
     console.log('[WorkspaceContextService] ✅ Context switched successfully');
+  }
+
+  /**
+   * 更新菜單
+   * Update menu based on context
+   */
+  private updateMenu(contextType: ContextType, contextId: string | null): void {
+    const params: ContextParams = {
+      userId: this.currentUser()?.id,
+      organizationId: contextType === ContextType.ORGANIZATION ? contextId || undefined : undefined,
+      teamId: contextType === ContextType.TEAM ? contextId || undefined : undefined
+    };
+
+    this.menuManagementService.updateMenu(contextType, params);
   }
 
   // === 持久化 Persistence ===
