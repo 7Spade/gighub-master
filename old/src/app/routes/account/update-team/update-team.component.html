@@ -1,0 +1,61 @@
+<div class="modal-header">
+  <div class="modal-title">更新團隊</div>
+</div>
+
+<div class="modal-body">
+  <form nz-form [formGroup]="form" nzLayout="vertical">
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">團隊名稱</nz-form-label>
+      <nz-form-control [nzErrorTip]="'請輸入團隊名稱（2-50個字符）'">
+        <input
+          nz-input
+          formControlName="name"
+          placeholder="請輸入團隊名稱"
+          [disabled]="loading()"
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label>團隊描述</nz-form-label>
+      <nz-form-control [nzErrorTip]="'描述不能超過500個字符'">
+        <textarea
+          nz-input
+          formControlName="description"
+          placeholder="請輸入團隊描述（可選）"
+          [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+          [disabled]="loading()"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label>頭像 URL</nz-form-label>
+      <nz-form-control>
+        <input
+          nz-input
+          formControlName="avatar"
+          placeholder="請輸入團隊頭像 URL（可選）"
+          [disabled]="loading()"
+        />
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    (click)="submit()"
+    [nzLoading]="loading()"
+    [disabled]="form.invalid"
+  >
+    更新團隊
+  </button>
+</div>
+

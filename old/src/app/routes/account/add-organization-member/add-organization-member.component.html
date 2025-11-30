@@ -1,0 +1,51 @@
+<div class="modal-header">
+  <div class="modal-title">添加組織成員</div>
+</div>
+
+<div class="modal-body">
+  <form nz-form [formGroup]="form" nzLayout="vertical">
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">帳戶 ID</nz-form-label>
+      <nz-form-control [nzErrorTip]="'請輸入帳戶 ID'">
+        <input
+          nz-input
+          formControlName="accountId"
+          placeholder="請輸入要添加的帳戶 ID"
+          [disabled]="loading()"
+        />
+        <p style="color: #999; margin-top: 4px; font-size: 12px;">
+          提示：輸入用戶的 account ID（從 accounts 表查詢）
+        </p>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzRequired]="true">角色</nz-form-label>
+      <nz-form-control>
+        <nz-radio-group formControlName="role">
+          <label nz-radio nzValue="admin">管理員</label>
+          <label nz-radio nzValue="member">成員</label>
+        </nz-radio-group>
+        <p style="color: #999; margin-top: 4px; font-size: 12px;">
+          注意：擁有者角色由系統自動分配，無法手動設置
+        </p>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    (click)="submit()"
+    [nzLoading]="loading()"
+    [disabled]="form.invalid"
+  >
+    添加成員
+  </button>
+</div>
