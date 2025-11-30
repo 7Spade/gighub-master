@@ -1,8 +1,8 @@
 /**
  * Menu Management Service
  *
- * 菜單管理服務 - 根據工作區上下文動態切換菜單
- * Menu management service - Dynamically switch menus based on workspace context
+ * 菜單管理服務 - 簡化版
+ * Menu management service - Simplified version
  *
  * 職責：
  * - 載入菜單配置
@@ -20,14 +20,13 @@ import { firstValueFrom } from 'rxjs';
 
 /**
  * 菜單配置
- * Menu configuration structure from app-data.json
  */
 interface MenuConfig {
-  app?: Menu[];
   user?: Menu[];
   organization?: Menu[];
   team?: Menu[];
   bot?: Menu[];
+  blueprint?: Menu[];
 }
 
 /**
@@ -44,15 +43,9 @@ export interface ContextParams {
 
 /**
  * 應用資料結構
- * Application data structure from app-data.json
  */
 interface AppData {
-  app?: {
-    name: string;
-    description: string;
-  };
   menus?: MenuConfig;
-  menu?: Menu[]; // Legacy single menu format
 }
 
 @Injectable({
@@ -70,7 +63,6 @@ export class MenuManagementService {
 
   /**
    * 載入菜單配置
-   * Load menu configuration from app-data.json
    */
   async loadConfig(): Promise<void> {
     if (this.configState()) return; // 已載入
@@ -79,7 +71,6 @@ export class MenuManagementService {
     try {
       const data = await firstValueFrom(this.http.get<AppData>('./assets/tmp/app-data.json'));
       this.configState.set(data.menus || {});
-      console.log('[MenuManagementService] Menu config loaded:', data.menus);
     } catch (error) {
       console.error('[MenuManagementService] Load failed:', error);
       this.configState.set({});
@@ -90,47 +81,40 @@ export class MenuManagementService {
 
   /**
    * 更新菜單
-   * Update menu based on context type
    */
   updateMenu(contextType: ContextType, params?: ContextParams): void {
     const config = this.configState();
-    if (!config) {
-      console.warn('[MenuManagementService] No config loaded, cannot update menu');
-      return;
-    }
+    if (!config) return;
 
     const baseMenu = this.getBaseMenu(contextType, config);
     const menu = this.processParams(baseMenu, params);
 
-    console.log('[MenuManagementService] Updating menu for context:', contextType, 'items:', menu.length);
     this.menuService.add(menu);
   }
 
   /**
    * 獲取基礎菜單
-   * Get base menu for context type
    */
   private getBaseMenu(contextType: ContextType, config: MenuConfig): Menu[] {
     switch (contextType) {
       case ContextType.USER:
-        return config.user || config.app || [];
+        return config.user || [];
       case ContextType.ORGANIZATION:
-        return config.organization || config.app || [];
+        return config.organization || [];
       case ContextType.TEAM:
-        return config.team || config.app || [];
+        return config.team || [];
       case ContextType.BOT:
-        return config.bot || config.app || [];
+        return config.bot || [];
       default:
-        return config.app || [];
+        return [];
     }
   }
 
   /**
    * 處理動態參數
-   * Process dynamic parameters in menu links
    */
   private processParams(menu: Menu[], params?: ContextParams): Menu[] {
-    if (!params) return this.deepClone(menu);
+    if (!params) return menu;
 
     return menu.map(item => ({
       ...item,
@@ -141,8 +125,7 @@ export class MenuManagementService {
 
   /**
    * 替換路由參數
-   * Replace route parameters with actual values
-   * 支持: {userId}, :userId, {orgId}, :organizationId 等
+   * 支持: {userId}, :userId, {orgId}, :organizationId, {blueprintId}, :blueprintId 等
    */
   private replaceParams(route: string, params: ContextParams): string {
     return route
@@ -151,13 +134,5 @@ export class MenuManagementService {
       .replace(/\{teamId\}|:teamId/g, params.teamId || '')
       .replace(/\{botId\}|:botId/g, params.botId || '')
       .replace(/\{blueprintId\}|:blueprintId/g, params.blueprintId || '');
-  }
-
-  /**
-   * 深拷貝菜單
-   * Deep clone menu to avoid mutation
-   */
-  private deepClone(menu: Menu[]): Menu[] {
-    return JSON.parse(JSON.stringify(menu));
   }
 }

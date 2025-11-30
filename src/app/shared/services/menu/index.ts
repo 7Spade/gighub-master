@@ -1,7 +1,7 @@
 /**
  * Menu Services Module
  *
- * Exports menu management services.
+ * Exports all menu-related services.
  *
  * @module shared/services/menu
  */
