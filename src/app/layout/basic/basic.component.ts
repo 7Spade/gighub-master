@@ -19,6 +19,7 @@ import { HeaderRTLComponent } from './widgets/rtl.component';
 import { HeaderSearchComponent } from './widgets/search.component';
 import { HeaderTaskComponent } from './widgets/task.component';
 import { HeaderUserComponent } from './widgets/user.component';
+import { HeaderWorkspaceSelectorComponent } from './widgets/workspace-selector.component';
 
 @Component({
   selector: 'layout-basic',
@@ -33,6 +34,9 @@ import { HeaderUserComponent } from './widgets/user.component';
         <a layout-default-header-item-trigger routerLink="/passport/lock">
           <i nz-icon nzType="lock"></i>
         </a>
+      </layout-default-header-item>
+      <layout-default-header-item direction="left" hidden="mobile">
+        <header-workspace-selector />
       </layout-default-header-item>
       <layout-default-header-item direction="left" hidden="pc">
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
@@ -118,7 +122,8 @@ import { HeaderUserComponent } from './widgets/user.component';
     HeaderI18nComponent,
     HeaderClearStorageComponent,
     HeaderFullScreenComponent,
-    HeaderUserComponent
+    HeaderUserComponent,
+    HeaderWorkspaceSelectorComponent
   ]
 })
 export class LayoutBasicComponent {
