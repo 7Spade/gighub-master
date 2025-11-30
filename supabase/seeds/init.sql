@@ -438,3 +438,105 @@ COMMENT ON FUNCTION public.create_team IS 'Create team with SECURITY DEFINER (re
 COMMENT ON FUNCTION public.create_blueprint IS 'Create blueprint with SECURITY DEFINER (bypasses RLS)';
 COMMENT ON FUNCTION public.handle_new_organization IS 'Auto-add organization creator to organization_members with role=owner';
 COMMENT ON FUNCTION public.handle_new_blueprint IS 'Auto-add blueprint creator to blueprint_members with role=maintainer';
+
+-- ============================================================================
+-- RLS POLICY FIXES - Permission Security Enhancements
+-- Purpose: Fix identified permission vulnerabilities in RLS policies
+-- Created: 2024-11-30
+-- ============================================================================
+
+-- ============================================================================
+-- FIX 1: Organizations INSERT Policy (HIGH PRIORITY)
+-- Problem: Current policy allows any authenticated user to insert organizations
+-- Solution: Restrict direct inserts - organizations should only be created via create_organization() function
+-- ============================================================================
+
+DROP POLICY IF EXISTS "organizations_insert" ON public.organizations;
+
+-- Note: We remove the permissive INSERT policy to force users to use create_organization() function
+-- The function has proper permission checks and ensures data integrity
+-- If direct inserts are absolutely necessary, uncomment the policy below with proper checks:
+/*
+CREATE POLICY "organizations_insert"
+ON public.organizations
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Ensure created_by is the current user's account_id
+  created_by = (SELECT private.get_user_account_id())
+  -- Additional checks can be added here if needed
+);
+*/
+
+-- ============================================================================
+-- FIX 2: Tasks INSERT Policy (MEDIUM PRIORITY)
+-- Problem: created_by field is not validated, allowing users to forge task creators
+-- Solution: Add validation to ensure created_by must be the current user
+-- ============================================================================
+
+DROP POLICY IF EXISTS "tasks_insert" ON public.tasks;
+
+CREATE POLICY "tasks_insert"
+ON public.tasks
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  (SELECT private.can_write_blueprint(tasks.blueprint_id))
+  AND created_by = (SELECT private.get_user_account_id())
+);
+
+-- ============================================================================
+-- FIX 3: Checklists INSERT Policy (MEDIUM PRIORITY)
+-- Problem: created_by field is not validated, allowing users to forge checklist creators
+-- Solution: Add validation to ensure created_by must be the current user
+-- ============================================================================
+
+DROP POLICY IF EXISTS "checklists_insert" ON public.checklists;
+
+CREATE POLICY "checklists_insert"
+ON public.checklists
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  (SELECT private.can_write_blueprint(checklists.blueprint_id))
+  AND created_by = (SELECT private.get_user_account_id())
+);
+
+-- ============================================================================
+-- FIX 4: Diaries INSERT Policy (MEDIUM PRIORITY)
+-- Problem: created_by field is not validated, allowing users to forge diary creators
+-- Solution: Add validation to ensure created_by must be the current user
+-- ============================================================================
+
+DROP POLICY IF EXISTS "diaries_insert" ON public.diaries;
+
+CREATE POLICY "diaries_insert"
+ON public.diaries
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  (SELECT private.can_write_blueprint(diaries.blueprint_id))
+  AND created_by = (SELECT private.get_user_account_id())
+);
+
+-- ============================================================================
+-- FIX 5: Issues INSERT Policy (MEDIUM PRIORITY)
+-- Problem: reported_by field is not validated, allowing users to forge issue reporters
+-- Solution: Add validation to ensure reported_by must be the current user
+-- ============================================================================
+
+DROP POLICY IF EXISTS "issues_insert" ON public.issues;
+
+CREATE POLICY "issues_insert"
+ON public.issues
+AS PERMISSIVE
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  (SELECT private.can_write_blueprint(issues.blueprint_id))
+  AND reported_by = (SELECT private.get_user_account_id())
+);
