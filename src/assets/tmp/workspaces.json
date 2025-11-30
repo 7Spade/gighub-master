@@ -222,7 +222,7 @@
             {
               "text": "小部件",
               "i18n": "menu.widgets",
-              "link": "/widgets",
+              "link": "/demo/widgets",
               "icon": "anticon-appstore",
               "badge": 2
             },
@@ -233,18 +233,18 @@
               "children": [
                 {
                   "text": "Typography",
-                  "link": "/style/typography",
+                  "link": "/demo/style/typography",
                   "i18n": "menu.style.typography",
                   "shortcut": true
                 },
                 {
                   "text": "Grid Masonry",
-                  "link": "/style/gridmasonry",
+                  "link": "/demo/style/gridmasonry",
                   "i18n": "menu.style.gridmasonry"
                 },
                 {
                   "text": "Colors",
-                  "link": "/style/colors",
+                  "link": "/demo/style/colors",
                   "i18n": "menu.style.colors"
                 }
               ]
@@ -256,59 +256,59 @@
               "children": [
                 {
                   "text": "Dynamic Form",
-                  "link": "/delon/form",
+                  "link": "/demo/delon/form",
                   "i18n": "menu.delon.form"
                 },
                 {
                   "text": "Simple Table",
-                  "link": "/delon/st",
+                  "link": "/demo/delon/st",
                   "i18n": "menu.delon.table"
                 },
                 {
                   "text": "Util",
-                  "link": "/delon/util",
+                  "link": "/demo/delon/util",
                   "i18n": "menu.delon.util",
                   "acl": "role-a"
                 },
                 {
                   "text": "Print",
-                  "link": "/delon/print",
+                  "link": "/demo/delon/print",
                   "i18n": "menu.delon.print",
                   "acl": "role-b"
                 },
                 {
                   "text": "QR",
-                  "link": "/delon/qr",
+                  "link": "/demo/delon/qr",
                   "i18n": "menu.delon.qr"
                 },
                 {
                   "text": "ACL",
-                  "link": "/delon/acl",
+                  "link": "/demo/delon/acl",
                   "i18n": "menu.delon.acl"
                 },
                 {
                   "text": "Route Guard",
-                  "link": "/delon/guard",
+                  "link": "/demo/delon/guard",
                   "i18n": "menu.delon.guard"
                 },
                 {
                   "text": "Cache",
-                  "link": "/delon/cache",
+                  "link": "/demo/delon/cache",
                   "i18n": "menu.delon.cache"
                 },
                 {
                   "text": "Down File",
-                  "link": "/delon/downfile",
+                  "link": "/demo/delon/downfile",
                   "i18n": "menu.delon.downfile"
                 },
                 {
                   "text": "Xlsx",
-                  "link": "/delon/xlsx",
+                  "link": "/demo/delon/xlsx",
                   "i18n": "menu.delon.xlsx"
                 },
                 {
                   "text": "Zip",
-                  "link": "/delon/zip",
+                  "link": "/demo/delon/zip",
                   "i18n": "menu.delon.zip"
                 }
               ]

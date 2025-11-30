@@ -17,18 +17,10 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () => import('./dashboard/routes').then(m => m.routes)
       },
-      // Demo routes - moved from main routes
       {
         path: 'demo',
         loadChildren: () => import('./demo/routes').then(m => m.routes)
       },
-      // Legacy paths for backward compatibility
-      {
-        path: 'widgets',
-        loadChildren: () => import('./demo/widgets/routes').then(m => m.routes)
-      },
-      { path: 'style', loadChildren: () => import('./demo/style/routes').then(m => m.routes) },
-      { path: 'delon', loadChildren: () => import('./demo/delon/routes').then(m => m.routes) },
       { path: 'extras', loadChildren: () => import('./extras/routes').then(m => m.routes) },
       { path: 'pro', loadChildren: () => import('./pro/routes').then(m => m.routes) }
     ]
