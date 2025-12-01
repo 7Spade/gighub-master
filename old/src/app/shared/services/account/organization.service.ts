@@ -151,7 +151,7 @@ export class OrganizationService {
       throw new Error('Failed to create organization');
     }
 
-    const { account_id, organization_id } = data[0];
+    const { account_id, org_id } = data[0];
 
     // Fetch the created organization account
     const { data: accountData, error: fetchError } = await client

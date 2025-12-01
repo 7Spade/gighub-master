@@ -921,7 +921,7 @@ CREATE OR REPLACE FUNCTION public.create_organization(
 )
 RETURNS TABLE (
   account_id UUID,
-  organization_id UUID
+  org_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER

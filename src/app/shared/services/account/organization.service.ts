@@ -123,12 +123,12 @@ export class OrganizationService {
       throw new Error('Failed to create organization');
     }
 
-    const { account_id, organization_id } = data[0];
+    const { account_id, org_id } = data[0];
 
-    // Prefer fetching from organizations table if organization_id is returned
+    // Prefer fetching from organizations table if org_id is returned
     // Otherwise fallback to fetching the organization by account_id
-    if (organization_id) {
-      const org = await firstValueFrom(this.organizationRepo.findById(organization_id));
+    if (org_id) {
+      const org = await firstValueFrom(this.organizationRepo.findById(org_id));
       if (org) {
         return org as OrganizationBusinessModel;
       }
