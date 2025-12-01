@@ -18,7 +18,7 @@ The database schema in `supabase/seeds/init.sql` includes:
 
 ---
 
-## 📋 Prompts (`.github/copilot-prompts/`)
+## 📋 Prompts (`.github/prompts/`)
 
 ### Development Planning
 | Prompt | Description | Use Case |
@@ -45,7 +45,7 @@ The database schema in `supabase/seeds/init.sql` includes:
 
 ---
 
-## 🤖 Agents (`.github/copilot-agents/`)
+## 🤖 Agents (`.github/agents/`)
 
 ### Planning & Architecture
 | Agent | Description | Tools |
