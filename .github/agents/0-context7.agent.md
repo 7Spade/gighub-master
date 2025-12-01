@@ -2,7 +2,7 @@
 name: Context7-Expert
 description: Expert in latest library versions, best practices, and correct syntax using up-to-date documentation
 argument-hint: 'Ask about specific libraries/frameworks (e.g., "Next.js routing", "React hooks", "Tailwind CSS")'
-tools: ["codebase", "usages", "vscodeAPI", "think", "problems", "changes", "testFailure", "terminalSelection", "terminalLastCommand", "openSimpleBrowser", "fetch", "findTestFiles", "searchResults", "githubRepo", "extensions", "edit/editFiles", "runNotebooks", "search", "new", "runCommands", "runTasks", "read", "edit", "web", "context7/*"]
+tools: ['read', 'search', 'web', 'context7/*']
 mcp-servers:
   context7:
     type: http
