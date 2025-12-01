@@ -25,6 +25,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 import { CreateTeamComponent } from '../create-team/create-team.component';
+import { TeamMembersComponent } from '../team-members/team-members.component';
 
 @Component({
   selector: 'app-account-teams',
@@ -188,7 +189,14 @@ export class AccountTeamsComponent implements OnInit {
   }
 
   manageMembers(team: Team): void {
-    this.msg.info(`團隊成員管理功能開發中：${team.name}`);
+    this.modalService.create({
+      nzContent: TeamMembersComponent,
+      nzData: { team },
+      nzFooter: null,
+      nzWidth: 600,
+      nzClosable: true,
+      nzMaskClosable: false
+    });
   }
 
   async deleteTeam(team: Team): Promise<void> {

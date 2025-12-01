@@ -33,7 +33,7 @@ export const routes: Routes = [
           },
           {
             path: 'overview',
-            loadComponent: () => import('./list/list.component').then(m => m.BlueprintListComponent),
+            loadComponent: () => import('./detail/detail.component').then(m => m.BlueprintDetailComponent),
             data: { title: '藍圖概覽' }
           },
           {

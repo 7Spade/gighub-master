@@ -174,15 +174,31 @@ export class CreateBlueprintComponent implements OnInit {
     // Get owner ID from workspace context
     // If context is organization, use contextAccountId; otherwise use currentUser's id
     const contextType = this.workspaceContext.contextType();
+    const contextId = this.workspaceContext.contextId();
     const currentUser = this.workspaceContext.currentUser();
+
+    console.log('[CreateBlueprint] 初始化上下文:', {
+      contextType,
+      contextId,
+      currentUserId: currentUser?.id
+    });
 
     if (contextType === ContextType.ORGANIZATION) {
       // 使用 contextAccountId 獲取組織的 account_id
       const accountId = this.workspaceContext.contextAccountId();
+      const org = this.workspaceContext.organizations().find(o => o.id === contextId);
+      console.log('[CreateBlueprint] 組織資料:', {
+        contextId,
+        org,
+        orgAccountId: org?.account_id,
+        contextAccountId: accountId
+      });
       this.ownerId.set(accountId);
     } else if (currentUser?.id) {
       this.ownerId.set(currentUser.id);
     }
+
+    console.log('[CreateBlueprint] 擁有者ID:', this.ownerId());
   }
 
   /**

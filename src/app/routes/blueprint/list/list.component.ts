@@ -175,10 +175,19 @@ export class BlueprintListComponent implements OnInit {
   async loadBlueprints(): Promise<void> {
     this.loading.set(true);
     try {
-      const currentUser = this.workspaceContext.currentUser();
-      if (currentUser?.id) {
-        const blueprints = await this.blueprintFacade.getUserAccessibleBlueprints(currentUser.id);
+      // 根據上下文載入對應藍圖
+      // Load blueprints based on current context (user or organization)
+      const contextAccountId = this.workspaceContext.contextAccountId();
+      if (contextAccountId) {
+        const blueprints = await this.blueprintFacade.findByOwner(contextAccountId);
         this.blueprints.set(blueprints);
+      } else {
+        // Fallback to current user if context account ID is not available
+        const currentUser = this.workspaceContext.currentUser();
+        if (currentUser?.id) {
+          const blueprints = await this.blueprintFacade.getUserAccessibleBlueprints(currentUser.id);
+          this.blueprints.set(blueprints);
+        }
       }
     } catch (error) {
       console.error('[BlueprintListComponent] Failed to load blueprints:', error);
