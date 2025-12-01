@@ -24,24 +24,10 @@ export const routes: Routes = [
         data: { title: '藍圖列表' }
       },
       {
+        // 藍圖詳情頁面 - 使用 features/blueprint 的 Shell
         path: ':id',
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            redirectTo: 'overview'
-          },
-          {
-            path: 'overview',
-            loadComponent: () => import('./list/list.component').then(m => m.BlueprintListComponent),
-            data: { title: '藍圖概覽' }
-          },
-          {
-            path: 'members',
-            loadComponent: () => import('./members/members.component').then(m => m.BlueprintMembersComponent),
-            data: { title: '成員管理' }
-          }
-        ]
+        loadChildren: () =>
+          import('../../features/blueprint/blueprint.routes').then(m => m.blueprintFeatureRoutes)
       }
     ]
   }
