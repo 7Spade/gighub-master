@@ -6,19 +6,19 @@
 -- 📋 目錄 TABLE OF CONTENTS
 -- ============================================================================
 -- PART 1:  ENUMS             列舉類型定義
---          - account_type        帳號類型 (user/org/bot)
---          - account_status      帳號狀態 (active/inactive/suspended/deleted)
---          - organization_role   組織角色 (owner/admin/member)
---          - team_role           團隊角色 (leader/member)
---          - blueprint_role      藍圖成員角色 (viewer/contributor/maintainer)
---          - blueprint_team_access 藍圖團隊存取等級 (read/write/admin)
---          - module_type         啟用模組類型 (tasks/diary/dashboard/...)
---          - task_status         任務狀態 (pending/in_progress/completed/...)
---          - task_priority       任務優先級 (lowest/low/medium/high/highest)
---          - issue_severity      問題嚴重度 (low/medium/high/critical)
---          - issue_status        問題狀態 (new/assigned/in_progress/...)
---          - acceptance_result   驗收結果 (pending/passed/failed/conditional)
---          - weather_type        天氣類型 (sunny/cloudy/rainy/...)
+--          - account_type        帳號類型 (user=個人用戶, org=組織, bot=自動化帳號)
+--          - account_status      帳號狀態 (active=啟用, inactive=未啟用, suspended=停權, deleted=刪除)
+--          - organization_role   組織角色 (owner=擁有者, admin=管理員, member=成員)
+--          - team_role           團隊角色 (leader=領導, member=成員)
+--          - blueprint_role      藍圖成員角色 (viewer=檢視, contributor=貢獻, maintainer=維護)
+--          - blueprint_team_access 藍圖團隊存取 (read=讀取, write=寫入, admin=管理)
+--          - module_type         啟用模組 (tasks=任務, diary=日誌, dashboard=儀表板, files=檔案, ...)
+--          - task_status         任務狀態 (pending=待處理, in_progress=進行中, completed=完成, ...)
+--          - task_priority       任務優先級 (lowest=最低, low=低, medium=中, high=高, highest=最高)
+--          - issue_severity      問題嚴重度 (low=輕微, medium=中等, high=嚴重, critical=緊急)
+--          - issue_status        問題狀態 (new=新建, assigned=已指派, resolved=已解決, closed=關閉, ...)
+--          - acceptance_result   驗收結果 (pending=待驗收, passed=通過, failed=不通過, conditional=條件通過)
+--          - weather_type        天氣類型 (sunny=晴, cloudy=多雲, rainy=雨, stormy=暴風雨, ...)
 -- PART 2:  PRIVATE SCHEMA    私有 Schema (RLS 輔助用)
 -- PART 3:  CORE TABLES       核心資料表 (帳號/組織/團隊)
 -- PART 4:  BLUEPRINT TABLES  藍圖/工作區資料表
@@ -37,43 +37,44 @@
 -- PART 1: ENUMS (列舉類型定義)
 -- ############################################################################
 
--- 帳號類型: user=個人用戶, org=組織, bot=自動化帳號
+-- 帳號類型: user=個人用戶, org=組織, bot=自動化帳號/系統機器人
 CREATE TYPE account_type AS ENUM ('user', 'org', 'bot');
 
--- 帳號狀態
+-- 帳號狀態: active=啟用中, inactive=未啟用, suspended=已停權, deleted=已刪除
 CREATE TYPE account_status AS ENUM ('active', 'inactive', 'suspended', 'deleted');
 
--- 組織角色: owner=最高權限, admin=管理功能, member=一般使用者
+-- 組織角色: owner=最高權限/擁有者, admin=管理員, member=一般成員
 CREATE TYPE organization_role AS ENUM ('owner', 'admin', 'member');
 
--- 團隊角色: leader=管理團隊, member=一般成員
+-- 團隊角色: leader=團隊領導/可管理成員, member=一般成員
 CREATE TYPE team_role AS ENUM ('leader', 'member');
 
--- 藍圖成員角色: viewer=檢視, contributor=貢獻者, maintainer=維護者
+-- 藍圖成員角色: viewer=僅檢視, contributor=可編輯內容, maintainer=可管理成員與設定
 CREATE TYPE blueprint_role AS ENUM ('viewer', 'contributor', 'maintainer');
 
--- 藍圖團隊存取等級
+-- 藍圖團隊存取等級: read=唯讀, write=可寫入, admin=完整管理權限
 CREATE TYPE blueprint_team_access AS ENUM ('read', 'write', 'admin');
 
--- 啟用模組類型
+-- 啟用模組類型: tasks=任務管理, diary=施工日誌, dashboard=儀表板, bot_workflow=自動化流程,
+--               files=檔案管理, todos=待辦事項, checklists=檢查清單, issues=問題追蹤
 CREATE TYPE module_type AS ENUM ('tasks', 'diary', 'dashboard', 'bot_workflow', 'files', 'todos', 'checklists', 'issues');
 
--- 任務狀態
+-- 任務狀態: pending=待處理, in_progress=進行中, in_review=審核中, completed=已完成, cancelled=已取消, blocked=已阻擋
 CREATE TYPE task_status AS ENUM ('pending', 'in_progress', 'in_review', 'completed', 'cancelled', 'blocked');
 
--- 任務優先級
+-- 任務優先級: lowest=最低, low=低, medium=中, high=高, highest=最高
 CREATE TYPE task_priority AS ENUM ('lowest', 'low', 'medium', 'high', 'highest');
 
--- 問題嚴重度
+-- 問題嚴重度: low=輕微, medium=中等, high=嚴重, critical=緊急
 CREATE TYPE issue_severity AS ENUM ('low', 'medium', 'high', 'critical');
 
--- 問題狀態
+-- 問題狀態: new=新建立, assigned=已指派, in_progress=處理中, pending_confirm=待確認, resolved=已解決, closed=已關閉, reopened=重新開啟
 CREATE TYPE issue_status AS ENUM ('new', 'assigned', 'in_progress', 'pending_confirm', 'resolved', 'closed', 'reopened');
 
--- 驗收結果
+-- 驗收結果: pending=待驗收, passed=通過, failed=不通過, conditional=有條件通過
 CREATE TYPE acceptance_result AS ENUM ('pending', 'passed', 'failed', 'conditional');
 
--- 天氣類型
+-- 天氣類型: sunny=晴天, cloudy=多雲, rainy=雨天, stormy=暴風雨, snowy=下雪, foggy=霧天
 CREATE TYPE weather_type AS ENUM ('sunny', 'cloudy', 'rainy', 'stormy', 'snowy', 'foggy');
 
 -- ############################################################################
