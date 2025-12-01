@@ -880,6 +880,8 @@ ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 -- ============================================================================
 -- 用戶只能讀取自己的帳號
 CREATE POLICY "accounts_select_own" ON accounts FOR SELECT TO authenticated USING (auth_user_id = (SELECT auth.uid()));
+-- 用戶只能新增自己的帳號 (type='user')
+CREATE POLICY "accounts_insert_own" ON accounts FOR INSERT TO authenticated WITH CHECK (auth_user_id = (SELECT auth.uid()) AND type = 'user');
 -- 用戶只能更新自己的帳號
 CREATE POLICY "accounts_update_own" ON accounts FOR UPDATE TO authenticated USING (auth_user_id = (SELECT auth.uid())) WITH CHECK (auth_user_id = (SELECT auth.uid()));
 
