@@ -11,125 +11,29 @@
  */
 
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TeamFacade, ContextType } from '@core';
-import { WorkspaceContextService, CreateTeamRequest } from '@shared';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
+import { SHARED_IMPORTS, WorkspaceContextService, validateForm, getTrimmedFormValue } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
+/**
+ * 創建團隊請求介面
+ * Create team request interface
+ */
+interface CreateTeamRequest {
+  organizationId: string;
+  name: string;
+  description?: string;
+  avatar?: string;
+}
+
 @Component({
   selector: 'app-create-team',
-  template: `
-    <div class="modal-header">
-      <div class="modal-title">建立團隊</div>
-    </div>
-
-    <div class="modal-body">
-      <form nz-form [formGroup]="form" nzLayout="vertical">
-        @if (showOrgSelector()) {
-          <nz-form-item>
-            <nz-form-label [nzRequired]="true">所屬組織</nz-form-label>
-            <nz-form-control [nzErrorTip]="'請選擇所屬組織'">
-              <nz-select
-                formControlName="organizationId"
-                nzPlaceHolder="請選擇所屬組織"
-                [nzDisabled]="loading()"
-              >
-                @for (option of organizationOptions(); track option.value) {
-                  <nz-option [nzValue]="option.value" [nzLabel]="option.label" />
-                }
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        } @else {
-          <nz-form-item>
-            <nz-form-label>所屬組織</nz-form-label>
-            <nz-form-control>
-              <input
-                nz-input
-                [value]="getCurrentOrgName()"
-                disabled
-              />
-            </nz-form-control>
-          </nz-form-item>
-        }
-
-        <nz-form-item>
-          <nz-form-label [nzRequired]="true">團隊名稱</nz-form-label>
-          <nz-form-control [nzErrorTip]="'請輸入團隊名稱（2-50個字符）'">
-            <input
-              nz-input
-              formControlName="name"
-              placeholder="請輸入團隊名稱"
-              [disabled]="loading()"
-            />
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item>
-          <nz-form-label>團隊描述</nz-form-label>
-          <nz-form-control>
-            <textarea
-              nz-input
-              formControlName="description"
-              placeholder="請輸入團隊描述（可選）"
-              [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-              [disabled]="loading()"
-            ></textarea>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    </div>
-
-    <div class="modal-footer">
-      <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
-        取消
-      </button>
-      <button
-        nz-button
-        type="button"
-        nzType="primary"
-        (click)="submit()"
-        [nzLoading]="loading()"
-        [disabled]="form.invalid"
-      >
-        建立團隊
-      </button>
-    </div>
-  `,
-  styles: [`
-    .modal-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid #f0f0f0;
-      text-align: right;
-    }
-    .modal-footer button + button {
-      margin-left: 8px;
-    }
-  `],
+  templateUrl: './create-team.component.html',
+  styleUrls: ['./create-team.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzSelectModule,
-    NzButtonModule
-  ]
+  imports: [SHARED_IMPORTS]
 })
 export class CreateTeamComponent {
   private readonly fb = inject(FormBuilder);
@@ -147,45 +51,39 @@ export class CreateTeamComponent {
     return contextType === ContextType.ORGANIZATION ? contextId : null;
   });
 
-  readonly showOrgSelector = computed(() => !this.currentOrgId());
+  readonly showOrgSelector = computed(() => !this.currentOrgId()); // 只有在非組織上下文才顯示選擇器
 
   form: FormGroup = this.fb.group({
     organizationId: [this.currentOrgId() || '', [Validators.required]],
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-    description: ['', [Validators.maxLength(500)]]
+    description: ['', [Validators.maxLength(500)]],
+    avatar: ['']
   });
 
   readonly organizations = this.workspaceContext.organizations;
+  readonly loadingOrganizations = this.workspaceContext.loading;
 
   readonly organizationOptions = computed(() => {
     const orgs = this.organizations();
-    return orgs.map(org => ({
-      value: org.id,
-      label: org.name || '未命名組織'
+    return orgs.map((org: Record<string, unknown>) => ({
+      value: org['id'] as string,
+      label: (org['name'] as string) || '未命名組織'
     }));
   });
 
   /**
    * 提交表單創建團隊
+   * Submit form to create team
    */
   async submit(): Promise<void> {
-    if (this.form.invalid) {
-      Object.keys(this.form.controls).forEach(key => {
-        const control = this.form.get(key);
-        control?.markAsDirty();
-        control?.updateValueAndValidity();
-      });
+    if (!validateForm(this.form)) {
       return;
     }
 
     this.loading.set(true);
     try {
-      const request: CreateTeamRequest = {
-        organizationId: this.form.value.organizationId,
-        name: this.form.value.name?.trim(),
-        description: this.form.value.description?.trim() || undefined
-      };
-      const team = await this.teamFacade.createTeam(request);
+      const request = getTrimmedFormValue<CreateTeamRequest>(this.form);
+      const team = await this.teamFacade.createTeam(request as CreateTeamRequest);
       this.msg.success('團隊創建成功！');
       this.modal.close(team);
     } catch (error) {
@@ -197,6 +95,7 @@ export class CreateTeamComponent {
 
   /**
    * 取消並關閉模態框
+   * Cancel and close modal
    */
   cancel(): void {
     this.modal.destroy();
@@ -204,11 +103,12 @@ export class CreateTeamComponent {
 
   /**
    * 獲取當前組織名稱
+   * Get current organization name
    */
   getCurrentOrgName(): string {
     const orgId = this.currentOrgId();
     if (!orgId) return '';
-    const org = this.organizations().find(o => o.id === orgId);
-    return org?.name || '未命名組織';
+    const org = this.organizations().find((o: Record<string, unknown>) => o['id'] === orgId);
+    return org ? (org['name'] as string) || '未命名組織' : '';
   }
 }

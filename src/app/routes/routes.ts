@@ -25,7 +25,9 @@ export const routes: Routes = [
       { path: 'style', loadChildren: () => import('./demo/style/routes').then(m => m.routes) },
       { path: 'delon', loadChildren: () => import('./demo/delon/routes').then(m => m.routes) },
       { path: 'extras', loadChildren: () => import('./demo/extras/routes').then(m => m.routes) },
-      { path: 'pro', loadChildren: () => import('./pro/routes').then(m => m.routes) }
+      { path: 'pro', loadChildren: () => import('./pro/routes').then(m => m.routes) },
+      // Account routes (context-aware)
+      { path: 'account', loadChildren: () => import('./account/routes').then(m => m.routes) }
     ]
   },
   // Blank Layout 空白布局
