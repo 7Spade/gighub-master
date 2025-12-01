@@ -23,6 +23,7 @@ import { LoadingModule } from '@delon/abc/loading';
 import { LodopModule } from '@delon/abc/lodop';
 import { MediaModule } from '@delon/abc/media';
 import { NoticeIconModule } from '@delon/abc/notice-icon';
+import { ObserversModule } from '@delon/abc/observers';
 import { OnboardingModule } from '@delon/abc/onboarding';
 import { PageHeaderModule } from '@delon/abc/page-header';
 import { PdfModule } from '@delon/abc/pdf';
@@ -37,6 +38,7 @@ import { XlsxModule } from '@delon/abc/xlsx';
 import { ACLDirective, ACLIfDirective } from '@delon/acl';
 import { G2BarModule } from '@delon/chart/bar';
 import { G2CardModule } from '@delon/chart/card';
+import { G2CustomModule } from '@delon/chart/custom';
 import { G2GaugeModule } from '@delon/chart/gauge';
 import { G2MiniAreaModule } from '@delon/chart/mini-area';
 import { G2MiniBarModule } from '@delon/chart/mini-bar';
@@ -44,6 +46,7 @@ import { G2MiniProgressModule } from '@delon/chart/mini-progress';
 import { NumberInfoModule } from '@delon/chart/number-info';
 import { G2PieModule } from '@delon/chart/pie';
 import { G2RadarModule } from '@delon/chart/radar';
+import { G2SingleBarModule } from '@delon/chart/single-bar';
 import { G2TagCloudModule } from '@delon/chart/tag-cloud';
 import { G2TimelineModule } from '@delon/chart/timeline';
 import { TrendModule } from '@delon/chart/trend';
@@ -62,6 +65,8 @@ import { SettingDrawerModule } from '@delon/theme/setting-drawer';
 // @delon/util - 工具函数/通用库（Utilities）
 // ============================================
 import { CurrencyPricePipe } from '@delon/util';
+import { FilterPipe } from '@delon/util/pipes/filter';
+import { FormatMaskPipe } from '@delon/util/pipes/format';
 
 // ============================================
 // 导出共享模块数组
@@ -84,6 +89,7 @@ export const SHARED_DELON_MODULES = [
   LodopModule,
   MediaModule,
   NoticeIconModule,
+  ObserversModule,
   OnboardingModule,
   PageHeaderModule,
   PdfModule,
@@ -103,9 +109,11 @@ export const SHARED_DELON_MODULES = [
   // @delon/chart - charts
   G2BarModule,
   G2CardModule,
+  G2CustomModule,
   G2MiniAreaModule,
   G2MiniBarModule,
   G2MiniProgressModule,
+  G2SingleBarModule,
   NumberInfoModule,
   G2PieModule,
   G2TimelineModule,
@@ -123,5 +131,7 @@ export const SHARED_DELON_MODULES = [
   DelonFormModule,
 
   // @delon/util - 工具
-  CurrencyPricePipe
+  CurrencyPricePipe,
+  FilterPipe,
+  FormatMaskPipe
 ];
