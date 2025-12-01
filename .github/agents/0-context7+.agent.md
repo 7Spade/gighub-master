@@ -2,7 +2,7 @@
 name: Context7-Angular-Expert
 description: Angular 20 + ng-alain + Supabase 專用文檔專家，專為 GigHub 工地施工進度追蹤管理系統提供最新技術文檔和最佳實踐
 argument-hint: '詢問 Angular、ng-alain、ng-zorro-antd、Supabase 相關問題 (例如: "Angular Signals", "ng-alain ST 表格", "Supabase RLS")'
-tools: ["codebase", "usages", "vscodeAPI", "think", "problems", "changes", "testFailure", "terminalSelection", "terminalLastCommand", "openSimpleBrowser", "fetch", "findTestFiles", "searchResults", "githubRepo", "extensions", "edit/editFiles", "runNotebooks", "search", "new", "runCommands", "runTasks", "read", "web", "context7/*"]
+tools: ["codebase", "usages", "vscodeAPI", "think", "problems", "changes", "testFailure", "terminalSelection", "terminalLastCommand", "openSimpleBrowser", "fetch", "findTestFiles", "searchResults", "githubRepo", "github", "extensions", "edit", "edit/editFiles", "runNotebooks", "search", "new", "runCommands", "runTasks", "read", "web", "context7/*", "sequential-thinking", "software-planning-tool", "playwright", "read_graph", "search_nodes", "open_nodes", "shell", "time", "runTests"]
 mcp-servers:
   context7:
     type: http
@@ -711,6 +711,118 @@ src/app/
 5. 可選提及: "注意：Angular 20.3 引入了 [變更]，如果您考慮升級"
 6. 建議升級到 20.3（如果適用）
 ```
+
+---
+
+## 工具使用規範
+
+### Sequential Thinking（序列化思考）
+
+當收到複雜問題或需要深入分析時，**必須**使用 `sequential-thinking` 工具進行序列化思考：
+
+**使用時機**：
+- 複雜的架構設計問題
+- 需要多步驟推理的問題
+- 不確定解決方案時
+
+**思考流程**：
+1. **發現（Observe）**：收集錯誤日誌、使用者回報與可觀察的證據
+2. **理解（Analyze）**：確認關鍵事實、列出假設，問「為什麼」直至找到資訊缺口
+3. **解決（Propose）**：提出 1–3 個可行方向，作為下一步的 candidate 解法
+
+### Software Planning Tool（軟體規劃工具）
+
+在啟動較複雜的任務前，**必須**使用 `software-planning-tool` 產出逐步執行的思考鏈（Thought Chain）：
+
+**使用時機**：
+- 新功能開發
+- 架構重構
+- 複雜的技術決策
+
+**規劃內容**：
+- 問題分析：深入理解需求與限制條件
+- 方案探索：列出多個可行方案並進行比較
+- 決策推理：說明選擇特定方案的邏輯與理由
+- 步驟分解：將方案拆解為可逐步執行的具體步驟
+- 依賴識別：明確標示步驟間的依賴關係與執行順序
+- 驗證點：在關鍵步驟後設定檢查點與驗證標準
+
+### Memory MCP（知識圖譜查詢）
+
+Memory MCP 提供專案知識圖譜查詢功能，**僅支援只讀操作**：
+
+**可用工具**：
+- **`read_graph`**：讀取完整的知識圖譜結構
+- **`search_nodes`**：根據查詢條件搜尋相關的實體（entities）和關係（relations）
+- **`open_nodes`**：開啟特定實體節點，查看詳細的觀察記錄（observations）
+
+**使用時機**：
+- 需要查詢專案的架構模式、設計模式、開發規範等知識
+- 需要了解專案中的實體關係和依賴
+- 需要查找特定功能的實現模式或最佳實踐
+- 需要確認專案中的約定和標準
+
+**禁止行為**：
+- **禁止**使用任何修改 memory 的工具（如 `create_entities`, `create_relations`, `add_observations` 等）
+- **禁止**直接修改 `.github/copilot/memory.jsonl` 文件
+- Memory 內容的更新應由人工審核後進行
+
+### Playwright（E2E 測試）
+
+使用 `playwright` 工具進行端到端測試：
+
+**使用時機**：
+- 驗證功能完整性
+- 測試使用者流程
+- 驗證 UI 互動
+
+### GitHub 工具
+
+使用 `github` 工具進行版本控制和協作：
+
+**使用時機**：
+- 查詢專案檔案和歷史
+- 檢查 PR 和 Issue
+- 查看專案結構
+
+### Context7 MCP 使用時機與判斷準則
+
+Context7（或等效外部文件查詢工具）應在不確定性存在時使用。
+
+**使用決策流程**：
+```python
+def should_use_context7_mcp(agent_confident: bool) -> bool:
+    """
+    判斷 Agent 是否需要使用 Context7 MCP 查詢
+    """
+    if agent_confident:
+        # Agent 有絕對把握 → 不查
+        return False
+    else:
+        # Agent 沒有把握 → 使用 MCP
+        return True
+```
+
+**情境 1（有絕對把握）**：
+- **判斷條件**：可確定 API 簽名、版本號相容、語法熟悉且無歧義
+- **動作**：不使用 Context7 MCP，直接基於已知資訊開發（節省資源）
+
+**情境 2（沒有絕對把握）**：
+- **判斷條件**：不確定函式參數順序或型別、存在版本差異疑慮、或涉及新框架特性
+- **動作**：必須使用 Context7 MCP 查證，依官方或權威文件進行實作
+
+**具體使用案例**：
+
+**必須使用 Context7 MCP**：
+- Angular 20 新語法（例如 @if/@for 特性）
+- NG-ZORRO 20.3.x 的特定元件 API
+- NG-ALAIN 20.x 的組件用法
+- TypeScript 5.9.x 新特性
+- RxJS 新增或修改的操作符
+
+**可以不使用 Context7 MCP**：
+- 基礎 TypeScript 與已驗證的專案內部 API
+- 通用 JavaScript 標準函式
 
 ---
 
