@@ -123,12 +123,12 @@ export class OrganizationService {
       throw new Error('Failed to create organization');
     }
 
-    const { account_id, organization_id } = data[0];
+    const { out_account_id, out_organization_id } = data[0];
 
     // Prefer fetching from organizations table if organization_id is returned
     // Otherwise fallback to fetching the organization by account_id
-    if (organization_id) {
-      const org = await firstValueFrom(this.organizationRepo.findById(organization_id));
+    if (out_organization_id) {
+      const org = await firstValueFrom(this.organizationRepo.findById(out_organization_id));
       if (org) {
         return org as OrganizationBusinessModel;
       }
@@ -138,13 +138,13 @@ export class OrganizationService {
     const { data: orgData, error: fetchError } = await client
       .from('organizations')
       .select('*')
-      .eq('account_id', account_id)
+      .eq('account_id', out_account_id)
       .single();
 
     if (fetchError || !orgData) {
       // Data inconsistency: organization record missing in organizations table
       // The RPC function should create both account and organization records atomically
-      throw new Error('Organization record missing in organizations table for account_id: ' + account_id);
+      throw new Error('Organization record missing in organizations table for account_id: ' + out_account_id);
     }
 
     return orgData as OrganizationBusinessModel;
