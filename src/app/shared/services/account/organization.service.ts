@@ -16,7 +16,6 @@ import {
   OrganizationMemberRepository,
   Organization,
   OrganizationRole,
-  AccountType,
   SupabaseService
 } from '@core';
 
@@ -143,32 +142,9 @@ export class OrganizationService {
       .single();
 
     if (fetchError || !orgData) {
-      // If organizations table doesn't exist or no record, return basic structure
-      // This handles cases where organization data is stored only in accounts table
-      const { data: accountData, error: accountError } = await client
-        .from('accounts')
-        .select('*')
-        .eq('id', account_id)
-        .single();
-
-      if (accountError || !accountData) {
-        throw new Error('Failed to fetch created organization');
-      }
-
-      // Map account data to OrganizationBusinessModel
-      return {
-        id: accountData.id,
-        account_id: accountData.id,
-        name: accountData.name,
-        slug: accountData.name.toLowerCase().replace(/\s+/g, '-'),
-        description: null,
-        logo_url: accountData.avatar_url,
-        metadata: accountData.metadata,
-        created_at: accountData.created_at,
-        updated_at: accountData.updated_at,
-        deleted_at: accountData.deleted_at,
-        type: AccountType.ORG
-      } as OrganizationBusinessModel;
+      // Data inconsistency: organization record missing in organizations table
+      // The RPC function should create both account and organization records atomically
+      throw new Error('Organization record missing in organizations table for account_id: ' + account_id);
     }
 
     return orgData as OrganizationBusinessModel;
