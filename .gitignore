@@ -59,3 +59,4 @@ yarn-error.log
 .pnp.*
 
 .eslintcache
+package-lock.json
