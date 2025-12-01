@@ -17,6 +17,11 @@ export const routes: Routes = [
     data: { title: '儀表板' }
   },
   {
+    path: 'todos',
+    loadComponent: () => import('./todos/todos.component').then(m => m.AccountTodosComponent),
+    data: { title: '待辦事項' }
+  },
+  {
     path: 'teams',
     loadComponent: () => import('./teams/teams.component').then(m => m.AccountTeamsComponent),
     data: { title: '團隊管理' }

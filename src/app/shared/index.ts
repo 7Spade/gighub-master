@@ -1,3 +1,6 @@
+// Base Components
+export * from './base/base-context-aware.component';
+
 // Components
 
 // Utils
