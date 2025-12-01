@@ -7,3 +7,4 @@
  */
 
 export * from './blueprint.service';
+export * from './blueprint-context.service';
