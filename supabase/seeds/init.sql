@@ -6,6 +6,19 @@
 -- 📋 目錄 TABLE OF CONTENTS
 -- ============================================================================
 -- PART 1:  ENUMS             列舉類型定義
+--          - account_type        帳號類型 (user/org/bot)
+--          - account_status      帳號狀態 (active/inactive/suspended/deleted)
+--          - organization_role   組織角色 (owner/admin/member)
+--          - team_role           團隊角色 (leader/member)
+--          - blueprint_role      藍圖成員角色 (viewer/contributor/maintainer)
+--          - blueprint_team_access 藍圖團隊存取等級 (read/write/admin)
+--          - module_type         啟用模組類型 (tasks/diary/dashboard/...)
+--          - task_status         任務狀態 (pending/in_progress/completed/...)
+--          - task_priority       任務優先級 (lowest/low/medium/high/highest)
+--          - issue_severity      問題嚴重度 (low/medium/high/critical)
+--          - issue_status        問題狀態 (new/assigned/in_progress/...)
+--          - acceptance_result   驗收結果 (pending/passed/failed/conditional)
+--          - weather_type        天氣類型 (sunny/cloudy/rainy/...)
 -- PART 2:  PRIVATE SCHEMA    私有 Schema (RLS 輔助用)
 -- PART 3:  CORE TABLES       核心資料表 (帳號/組織/團隊)
 -- PART 4:  BLUEPRINT TABLES  藍圖/工作區資料表
