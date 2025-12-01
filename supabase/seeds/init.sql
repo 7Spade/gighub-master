@@ -1116,8 +1116,8 @@ CREATE OR REPLACE FUNCTION public.create_organization(
   p_slug VARCHAR(100) DEFAULT NULL
 )
 RETURNS TABLE (
-  account_id UUID,
-  organization_id UUID
+  out_account_id UUID,
+  out_organization_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1203,7 +1203,7 @@ BEGIN
   ON CONFLICT (organization_id, account_id) DO NOTHING;
 
   -- 7. 回傳建立的 ID
-  RETURN QUERY SELECT v_org_account_id, v_organization_id;
+  RETURN QUERY SELECT v_org_account_id AS out_account_id, v_organization_id AS out_organization_id;
 END;
 $$;
 
@@ -1264,7 +1264,7 @@ CREATE OR REPLACE FUNCTION public.create_team(
   p_metadata JSONB DEFAULT '{}'::jsonb
 )
 RETURNS TABLE (
-  team_id UUID
+  out_team_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1330,7 +1330,7 @@ BEGIN
   RETURNING id INTO v_team_id;
 
   -- 6. 回傳團隊 ID
-  RETURN QUERY SELECT v_team_id;
+  RETURN QUERY SELECT v_team_id AS out_team_id;
 END;
 $$;
 
@@ -1358,7 +1358,7 @@ CREATE OR REPLACE FUNCTION public.create_blueprint(
   p_enabled_modules module_type[] DEFAULT ARRAY['tasks']::module_type[]
 )
 RETURNS TABLE (
-  blueprint_id UUID
+  out_blueprint_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1476,7 +1476,7 @@ BEGIN
   ON CONFLICT (blueprint_id, account_id) DO NOTHING;
 
   -- 8. 回傳藍圖 ID
-  RETURN QUERY SELECT v_blueprint_id;
+  RETURN QUERY SELECT v_blueprint_id AS out_blueprint_id;
 END;
 $$;
 
