@@ -1,0 +1,108 @@
+<!--
+  Task Table Component Template
+  
+  Displays tasks in table format with:
+  - Priority
+  - Task title
+  - Status badges
+  - Completion rate
+  - Assignee
+  - Actions
+  Aligned with database schema: 20251129000001_create_multi_tenant_saas_schema.sql
+-->
+
+<nz-table 
+  #taskTable 
+  [nzData]="tasks()"
+  [nzPageSize]="20"
+  [nzShowSizeChanger]="true"
+  [nzPageSizeOptions]="pageSizeOptions"
+  [nzScroll]="{ x: '900px' }"
+  nzBordered>
+  <thead>
+    <tr>
+      <th nzWidth="100px" nzAlign="center">優先級</th>
+      <th nzLeft>任務名稱</th>
+      <th nzWidth="100px" nzAlign="center">狀態</th>
+      <th nzWidth="130px">完成率</th>
+      <th nzWidth="120px">被指派者</th>
+      <th nzWidth="120px" nzRight nzAlign="center">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (task of taskTable.data; track task.id) {
+      <tr class="task-row" (click)="onRowClick(task)">
+        <!-- Priority -->
+        <td nzAlign="center">
+          <nz-tag [nzColor]="getPriorityColor(task.priority)">
+            {{ getPriorityText(task.priority) }}
+          </nz-tag>
+        </td>
+
+        <!-- Task Title -->
+        <td nzLeft>
+          <div class="task-name-cell">
+            @if (task.parentId) {
+              <i nz-icon nzType="file" nzTheme="outline" class="file-icon"></i>
+            } @else {
+              <i nz-icon nzType="folder" nzTheme="outline" class="folder-icon"></i>
+            }
+            <span class="task-name" [class.completed]="task.status === 'completed'">
+              {{ task.title }}
+            </span>
+            @if (task.description) {
+              <i nz-icon nzType="info-circle" nzTheme="outline" 
+                 class="info-icon"
+                 nz-tooltip 
+                 [nzTooltipTitle]="task.description">
+              </i>
+            }
+          </div>
+        </td>
+
+        <!-- Status -->
+        <td nzAlign="center">
+          <nz-badge 
+            [nzStatus]="getStatusColor(task.status)" 
+            [nzText]="getStatusText(task.status)">
+          </nz-badge>
+        </td>
+
+        <!-- Completion Rate -->
+        <td>
+          <nz-progress 
+            [nzPercent]="task.completionRate" 
+            [nzSize]="'small'"
+            [nzStatus]="getProgressStatus(task.completionRate)"
+            [nzShowInfo]="true">
+          </nz-progress>
+        </td>
+
+        <!-- Assignee -->
+        <td>
+          @if (task.assigneeId) {
+            <nz-avatar 
+              [nzText]="formatAssigneeInitials(task.assigneeId)"
+              nzSize="small"
+              nz-tooltip
+              [nzTooltipTitle]="task.assigneeId">
+            </nz-avatar>
+          } @else {
+            <span class="no-assignee">未指派</span>
+          }
+        </td>
+
+        <!-- Actions -->
+        <td nzRight nzAlign="center">
+          <button nz-button nzType="link" nzSize="small" (click)="onEdit($event, task)">
+            <i nz-icon nzType="edit"></i>
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button nzType="link" nzSize="small" nzDanger (click)="onDelete($event, task)">
+            <i nz-icon nzType="delete"></i>
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

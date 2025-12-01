@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <div class="modal-title">刪除組織</div>
+</div>
+
+<div class="modal-body">
+  <nz-alert
+    nzType="warning"
+    nzMessage="警告"
+    nzDescription="此操作將刪除組織「{{ organization?.['name'] }}」。刪除後，組織將無法使用，但相關數據將被保留。此操作不可撤銷。"
+    [nzShowIcon]="true"
+    class="mb-md"
+  ></nz-alert>
+
+  <div class="delete-confirm-info">
+    <p><strong>組織名稱：</strong>{{ organization?.['name'] }}</p>
+    @if (organization?.['email']) {
+      <p><strong>電子郵件：</strong>{{ organization['email'] }}</p>
+    }
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    nzDanger
+    (click)="confirmDelete()"
+    [nzLoading]="loading"
+  >
+    確認刪除
+  </button>
+</div>
+

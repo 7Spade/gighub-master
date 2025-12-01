@@ -1,20 +1,25 @@
-import { HttpContext } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+/**
+ * Supabase Email Authentication Register Component
+ *
+ * 使用 Supabase 電子郵件認證的註冊元件
+ * Register component using Supabase email authentication
+ *
+ * Email-only registration (no phone number required)
+ */
+
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ALLOW_ANONYMOUS } from '@delon/auth';
-import { I18nPipe, _HttpClient } from '@delon/theme';
+import { SupabaseAuthService } from '@core';
+import { I18nPipe } from '@delon/theme';
 import { MatchControl } from '@delon/util/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'passport-register',
@@ -30,33 +35,26 @@ import { finalize } from 'rxjs';
     NzInputModule,
     NzPopoverModule,
     NzProgressModule,
-    NzSelectModule,
-    NzGridModule,
     NzButtonModule
   ]
 })
-export class UserRegisterComponent implements OnDestroy {
+export class UserRegisterComponent {
   private readonly router = inject(Router);
-  private readonly http = inject(_HttpClient);
+  private readonly supabaseAuth = inject(SupabaseAuthService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  // #region fields
-
+  // Form with email and password only (no phone)
   form = inject(FormBuilder).nonNullable.group(
     {
-      mail: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6), UserRegisterComponent.checkPassword.bind(this)]],
-      confirm: ['', [Validators.required, Validators.minLength(6)]],
-      mobilePrefix: ['+86'],
-      mobile: ['', [Validators.required, Validators.pattern(/^1\d{10}$/)]],
-      captcha: ['', [Validators.required]]
+      confirm: ['', [Validators.required, Validators.minLength(6)]]
     },
     {
       validators: MatchControl('password', 'confirm')
     }
   );
   error = '';
-  type = 0;
   loading = false;
   visible = false;
   status = 'pool';
@@ -66,13 +64,6 @@ export class UserRegisterComponent implements OnDestroy {
     pass: 'normal',
     pool: 'exception'
   };
-
-  // #endregion
-
-  // #region get captcha
-
-  count = 0;
-  interval$: NzSafeAny;
 
   static checkPassword(control: FormControl): NzSafeAny {
     if (!control) {
@@ -94,58 +85,51 @@ export class UserRegisterComponent implements OnDestroy {
     }
   }
 
-  getCaptcha(): void {
-    const { mobile } = this.form.controls;
-    if (mobile.invalid) {
-      mobile.markAsDirty({ onlySelf: true });
-      mobile.updateValueAndValidity({ onlySelf: true });
-      return;
-    }
-    this.count = 59;
-    this.cdr.detectChanges();
-    this.interval$ = setInterval(() => {
-      this.count -= 1;
-      this.cdr.detectChanges();
-      if (this.count <= 0) {
-        clearInterval(this.interval$);
-      }
-    }, 1000);
-  }
-
-  // #endregion
-
   submit(): void {
     this.error = '';
-    Object.keys(this.form.controls).forEach(key => {
-      const control = (this.form.controls as NzSafeAny)[key] as AbstractControl;
-      control.markAsDirty();
-      control.updateValueAndValidity();
-    });
+
+    // Mark all controls as dirty and validate
+    const { email, password, confirm } = this.form.controls;
+    email.markAsDirty();
+    email.updateValueAndValidity();
+    password.markAsDirty();
+    password.updateValueAndValidity();
+    confirm.markAsDirty();
+    confirm.updateValueAndValidity();
+
     if (this.form.invalid) {
       return;
     }
 
-    const data = this.form.value;
     this.loading = true;
     this.cdr.detectChanges();
-    this.http
-      .post('/register', data, null, {
-        context: new HttpContext().set(ALLOW_ANONYMOUS, true)
+
+    const passwordValue = String(this.form.controls.password.value);
+
+    this.supabaseAuth
+      .signUp({
+        email: this.form.value.email!,
+        password: passwordValue
       })
-      .pipe(
-        finalize(() => {
+      .subscribe({
+        next: ({ data, error }) => {
+          this.loading = false;
+
+          if (error) {
+            this.error = error.message || '註冊失敗，請檢查您的 Supabase 設定。';
+            this.cdr.detectChanges();
+            return;
+          }
+
+          // Navigate to registration result page
+          this.router.navigate(['passport', 'register-result'], { queryParams: { email: this.form.value.email } });
+        },
+        error: err => {
+          this.error = '無法連接認證服務，請檢查設定。';
+          console.error('Registration error:', err);
           this.loading = false;
           this.cdr.detectChanges();
-        })
-      )
-      .subscribe(() => {
-        this.router.navigate(['passport', 'register-result'], { queryParams: { email: data.mail } });
+        }
       });
-  }
-
-  ngOnDestroy(): void {
-    if (this.interval$) {
-      clearInterval(this.interval$);
-    }
   }
 }

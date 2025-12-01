@@ -1,0 +1,93 @@
+<!-- 
+  Upload Component Template
+  
+  上傳元件模板
+  Template for the upload component
+  
+  Uses ng-zorro-antd upload component with Supabase Storage integration
+-->
+
+<div class="upload-container">
+  <!-- 預覽區域 / Preview Area -->
+  @if (showPreview() && previewUrl()) {
+    <div class="preview-area" [class.rounded]="config()?.roundedCrop">
+      <img [src]="previewUrl()" alt="Preview" class="preview-image" />
+      @if (config()?.showRemoveButton && !isUploading()) {
+        <button 
+          nz-button 
+          nzType="text" 
+          nzDanger 
+          nzSize="small"
+          class="remove-button"
+          (click)="onRemove()"
+        >
+          <nz-icon nzType="delete" />
+        </button>
+      }
+    </div>
+  }
+
+  <!-- 上傳區域 / Upload Area -->
+  <nz-upload
+    nzType="drag"
+    [nzAccept]="acceptedTypesString()"
+    [nzMultiple]="config()?.multiple ?? false"
+    [nzShowUploadList]="false"
+    [nzBeforeUpload]="beforeUpload"
+    [nzDisabled]="isUploading()"
+  >
+    <p class="ant-upload-drag-icon">
+      @if (isUploading()) {
+        <nz-icon nzType="loading" />
+      } @else {
+        <nz-icon nzType="inbox" />
+      }
+    </p>
+    <p class="ant-upload-text">
+      @if (isUploading()) {
+        上傳中...
+      } @else {
+        {{ config()?.uploadButtonText ?? '點擊或拖曳檔案至此區域上傳' }}
+      }
+    </p>
+    <p class="ant-upload-hint">
+      @if (!isUploading()) {
+        支援的格式：{{ acceptedTypesDisplay() }}
+        @if (maxFileSizeDisplay()) {
+          <br />最大檔案大小：{{ maxFileSizeDisplay() }}
+        }
+      }
+    </p>
+  </nz-upload>
+
+  <!-- 上傳進度 / Upload Progress -->
+  @if (isUploading()) {
+    <nz-progress
+      [nzPercent]="uploadProgress()"
+      nzSize="small"
+      [nzStatus]="uploadProgressStatus()"
+    />
+  }
+
+  <!-- 錯誤訊息 / Error Message -->
+  @if (errorMessage()) {
+    <nz-alert
+      nzType="error"
+      [nzMessage]="errorMessage()"
+      nzShowIcon
+      nzCloseable
+      (nzOnClose)="clearError()"
+    />
+  }
+
+  <!-- 成功訊息 / Success Message -->
+  @if (showSuccessMessage()) {
+    <nz-alert
+      nzType="success"
+      nzMessage="檔案上傳成功"
+      nzShowIcon
+      nzCloseable
+      (nzOnClose)="clearSuccessMessage()"
+    />
+  }
+</div>

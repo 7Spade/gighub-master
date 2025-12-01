@@ -1,0 +1,96 @@
+<div class="modal-header">
+  <div class="modal-title">建立團隊</div>
+</div>
+
+<div class="modal-body">
+  @if (loadingOrganizations()) {
+    <nz-spin [nzSpinning]="true" nzTip="載入組織列表中..."></nz-spin>
+  } @else if (organizations().length === 0) {
+    <nz-alert
+      nzType="warning"
+      nzMessage="提示"
+      nzDescription="您還沒有任何組織。請先建立組織後再創建團隊。"
+      [nzShowIcon]="true"
+    ></nz-alert>
+  } @else {
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      @if (showOrgSelector()) {
+        <nz-form-item>
+          <nz-form-label [nzRequired]="true">所屬組織</nz-form-label>
+          <nz-form-control [nzErrorTip]="'請選擇組織'">
+            <nz-select
+              formControlName="organizationId"
+              nzPlaceHolder="請選擇組織"
+              [nzDisabled]="loading()"
+            >
+              @for (option of organizationOptions(); track option.value) {
+                <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      } @else {
+        <nz-alert
+          nzType="info"
+          nzShowIcon
+          [nzMessage]="'當前組織：' + getCurrentOrgName()"
+          style="margin-bottom: 16px"
+        ></nz-alert>
+      }
+
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true">團隊名稱</nz-form-label>
+        <nz-form-control [nzErrorTip]="'請輸入團隊名稱（2-50個字符）'">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="請輸入團隊名稱"
+            [disabled]="loading()"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>團隊描述</nz-form-label>
+        <nz-form-control [nzErrorTip]="'描述不能超過500個字符'">
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="請輸入團隊描述（可選）"
+            [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+            [disabled]="loading()"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>頭像 URL</nz-form-label>
+        <nz-form-control>
+          <input
+            nz-input
+            formControlName="avatar"
+            placeholder="請輸入團隊頭像 URL（可選）"
+            [disabled]="loading()"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  }
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    (click)="submit()"
+    [nzLoading]="loading()"
+    [disabled]="form.invalid || organizations().length === 0"
+  >
+    建立團隊
+  </button>
+</div>
+

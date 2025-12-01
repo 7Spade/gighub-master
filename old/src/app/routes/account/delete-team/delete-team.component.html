@@ -1,0 +1,36 @@
+<div class="modal-header">
+  <div class="modal-title">刪除團隊</div>
+</div>
+
+<div class="modal-body">
+  <nz-alert
+    nzType="warning"
+    nzMessage="警告"
+    nzDescription="此操作將永久刪除團隊「{{ team['name'] }}」。刪除後，團隊及其相關數據將無法恢復。此操作不可撤銷。"
+    [nzShowIcon]="true"
+    class="mb-md"
+  ></nz-alert>
+
+  <div class="delete-confirm-info">
+    <p><strong>團隊名稱：</strong>{{ team['name'] }}</p>
+    @if (team['description']) {
+      <p><strong>團隊描述：</strong>{{ team['description'] }}</p>
+    }
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    nzDanger
+    (click)="confirmDelete()"
+    [nzLoading]="loading()"
+  >
+    確認刪除
+  </button>
+</div>

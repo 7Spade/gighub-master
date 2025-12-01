@@ -1,0 +1,64 @@
+<div class="modal-header">
+  <div class="modal-title">添加團隊成員</div>
+</div>
+
+<div class="modal-body">
+  @if (loadingOrgMembers()) {
+    <nz-spin [nzSpinning]="true" nzTip="載入組織成員中..."></nz-spin>
+  } @else if (orgMembers().length === 0) {
+    <nz-alert
+      nzType="warning"
+      nzMessage="提示"
+      nzDescription="該組織還沒有任何成員。"
+      [nzShowIcon]="true"
+    ></nz-alert>
+  } @else {
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true">選擇成員</nz-form-label>
+        <nz-form-control [nzErrorTip]="'請選擇成員'">
+          <nz-select
+            formControlName="accountId"
+            nzPlaceHolder="請選擇組織成員"
+            nzShowSearch
+            [nzDisabled]="loading()"
+          >
+            @for (member of orgMembers(); track member.id) {
+              <nz-option 
+                [nzValue]="member.account_id" 
+                [nzLabel]="member.account_id">
+              </nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true">角色</nz-form-label>
+        <nz-form-control>
+          <nz-radio-group formControlName="role">
+            <label nz-radio nzValue="leader">隊長</label>
+            <label nz-radio nzValue="member">成員</label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  }
+</div>
+
+<div class="modal-footer">
+  <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
+    取消
+  </button>
+  <button
+    nz-button
+    type="button"
+    nzType="primary"
+    (click)="submit()"
+    [nzLoading]="loading()"
+    [disabled]="form.invalid || orgMembers().length === 0"
+  >
+    添加成員
+  </button>
+</div>
+

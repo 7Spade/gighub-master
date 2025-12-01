@@ -1,0 +1,42 @@
+<!-- Blueprint Form Dialog Template -->
+<!-- Following Angular 20+ @if/@for syntax -->
+<!-- Using @delon/form for schema-driven forms -->
+
+<div class="blueprint-form-dialog">
+  <!-- Form using @delon/form sf component -->
+  <sf
+    #sf
+    [schema]="schema"
+    [ui]="uiSchema"
+    [formData]="formData()"
+    [loading]="loading()"
+    button="none"
+    (formSubmit)="onSubmit($any($event))">
+  </sf>
+
+  <!-- Form actions -->
+  <div class="form-actions" nz-row nzJustify="end" nzGutter="16">
+    <div nz-col>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="loading()"
+        (click)="onCancel()">
+        取消
+      </button>
+    </div>
+    <div nz-col>
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="loading()"
+        (click)="triggerSubmit()">
+        @if (isEditMode) {
+          更新
+        } @else {
+          建立
+        }
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+/**
+ * Task Table Component Styles
+ */
+
+:host {
+  display: block;
+}
+
+.task-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}
+
+.task-name-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .folder-icon {
+    color: #faad14;
+  }
+
+  .file-icon {
+    color: rgb(0 0 0 / 45%);
+  }
+
+  .task-name {
+    flex: 1;
+    font-weight: 500;
+
+    &.completed {
+      color: rgb(0 0 0 / 45%);
+      text-decoration: line-through;
+    }
+  }
+
+  .info-icon {
+    cursor: help;
+    color: rgb(0 0 0 / 25%);
+
+    &:hover {
+      color: #1890ff;
+    }
+  }
+
+  .child-hint {
+    font-size: 12px;
+    color: rgb(0 0 0 / 45%);
+  }
+}
+
+.count-text {
+  font-size: 12px;
+  color: rgb(0 0 0 / 65%);
+}
+
+.no-assignee,
+.no-area {
+  font-style: italic;
+  color: rgb(0 0 0 / 25%);
+}
+
+::ng-deep {
+  .ant-avatar-group {
+    .ant-avatar {
+      font-size: 10px !important;
+    }
+  }
+
+  .ant-progress-text {
+    font-size: 11px;
+  }
+}
