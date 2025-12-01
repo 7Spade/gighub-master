@@ -913,6 +913,9 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
 -- This function bypasses RLS policies to ensure atomic creation.
 -- ============================================================================
 
+-- Drop existing function first to allow changing return type
+DROP FUNCTION IF EXISTS public.create_organization(VARCHAR, VARCHAR, TEXT, VARCHAR);
+
 CREATE OR REPLACE FUNCTION public.create_organization(
   p_name VARCHAR(255),
   p_email VARCHAR(255) DEFAULT NULL,
