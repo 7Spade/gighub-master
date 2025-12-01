@@ -1356,5 +1356,10 @@ COMMENT ON FUNCTION private.is_team_leader(UUID) IS 'Check if current user is le
 COMMENT ON FUNCTION private.is_blueprint_owner(UUID) IS 'Check if current user owns the blueprint (directly or via org)';
 COMMENT ON FUNCTION private.has_blueprint_access(UUID) IS 'Check if current user has any access to blueprint';
 COMMENT ON FUNCTION private.can_write_blueprint(UUID) IS 'Check if current user can write to blueprint';
+COMMENT ON FUNCTION public.update_updated_at() IS 'Trigger function to auto-update updated_at timestamp';
+COMMENT ON FUNCTION public.handle_new_user() IS 'Auto-create user account when auth.users entry is created';
+COMMENT ON FUNCTION public.create_organization(VARCHAR, VARCHAR, TEXT, VARCHAR) IS 'Creates organization with org account (SECURITY DEFINER). Auto-adds creator as owner member.';
 COMMENT ON FUNCTION public.handle_new_organization() IS 'Auto-add organization creator to organization_members with role=owner';
+COMMENT ON FUNCTION public.create_team(UUID, VARCHAR, TEXT, JSONB) IS 'Creates team in organization (SECURITY DEFINER). Validates user is org admin/owner.';
+COMMENT ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, module_type[]) IS 'Creates blueprint/workspace (SECURITY DEFINER). Auto-adds creator as maintainer member.';
 COMMENT ON FUNCTION public.handle_new_blueprint() IS 'Auto-add blueprint creator to blueprint_members with role=maintainer';
