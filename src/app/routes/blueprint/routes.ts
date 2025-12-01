@@ -25,6 +25,7 @@ export const routes: Routes = [
         data: { title: '藍圖列表' }
       },
       {
+        // 藍圖詳情頁面 - 使用 features/blueprint 的 Shell
         path: ':id',
         children: [
           {
