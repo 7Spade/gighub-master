@@ -9,9 +9,11 @@
  * @module routes/blueprint/workspace/modules/tasks
  */
 
-import { ChangeDetectionStrategy, Component, inject, OnInit, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, OnDestroy, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { BlueprintContextService, TaskService, TaskBusinessModel, CreateTaskRequest } from '@shared';
 import { TaskStatus, TaskPriority } from '@core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -190,7 +192,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
                           編輯
                         </li>
                         <li nz-menu-divider></li>
-                        @if (task.status !== 'completed') {
+                        @if (task.status !== TaskStatus.COMPLETED) {
                           <li nz-menu-item (click)="markComplete(task)">
                             <span nz-icon nzType="check"></span>
                             標記完成
@@ -349,10 +351,17 @@ export class TaskListComponent implements OnInit {
   readonly taskService = inject(TaskService);
   private readonly msg = inject(NzMessageService);
   private readonly modal = inject(NzModalService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Computed
   readonly filteredTasks = this.taskService.filteredTasks;
   readonly statistics = this.taskService.statistics;
+
+  // Search debounce subject
+  private readonly searchSubject = new Subject<string>();
+
+  // Expose TaskStatus for template
+  readonly TaskStatus = TaskStatus;
 
   // Filter state
   searchText = '';
@@ -392,10 +401,20 @@ export class TaskListComponent implements OnInit {
     if (blueprintId) {
       this.taskService.loadTasks(blueprintId);
     }
+
+    // Setup debounced search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.taskService.updateFilters({ search: value });
+    });
   }
 
   onSearchChange(value: string): void {
-    this.taskService.updateFilters({ search: value });
+    // Use debounced subject for search to avoid excessive filtering
+    this.searchSubject.next(value);
   }
 
   onFilterChange(): void {

@@ -314,6 +314,7 @@ export class BlueprintContextService {
     }
 
     try {
+      // Use enabled_modules to match database schema (snake_case)
       const updated = await this.blueprintService.updateBlueprint(blueprint.id, {
         enabledModules: modules
       });

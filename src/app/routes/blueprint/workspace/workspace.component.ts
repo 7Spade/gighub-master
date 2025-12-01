@@ -352,7 +352,13 @@ export class BlueprintWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   hasChildRoute(): boolean {
-    return this.route.children.length > 0 && this.router.url.includes('/workspace/');
+    // Use ActivatedRoute children for more reliable route detection
+    const hasChildren = this.route.children.length > 0;
+    const urlSegments = this.router.url.split('/');
+    const workspaceIndex = urlSegments.findIndex(s => s === 'workspace');
+    // Check if there's a segment after 'workspace' that isn't empty
+    const hasModuleRoute = workspaceIndex >= 0 && workspaceIndex < urlSegments.length - 1 && urlSegments[workspaceIndex + 1] !== '';
+    return hasChildren && hasModuleRoute;
   }
 
   retry(): void {
