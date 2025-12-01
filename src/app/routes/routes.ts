@@ -13,6 +13,11 @@ export const routes: Routes = [
     data: {},
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      // Blueprint routes (藍圖路由)
+      {
+        path: 'blueprint',
+        loadChildren: () => import('./blueprint/routes').then(m => m.routes)
+      },
       // Demo routes (moved from root)
       {
         path: 'dashboard',
