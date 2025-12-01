@@ -11,17 +11,10 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
-import {
-  AccountStatus,
-  OrganizationMemberRole,
-  UserRepository,
-  SupabaseService,
-  OrganizationRepository,
-  OrganizationMemberRepository
-} from '@core';
+import { OrganizationMemberRepository, OrganizationMemberRole, OrganizationRepository, SupabaseService, UserRepository } from '@core';
 import { firstValueFrom } from 'rxjs';
 
-import { OrganizationBusinessModel, CreateOrganizationRequest, UpdateOrganizationRequest } from '../../models/account';
+import { CreateOrganizationRequest, OrganizationBusinessModel, UpdateOrganizationRequest } from '../../models/account';
 import { ErrorHandlerService } from '../error-handler.service';
 
 @Injectable({
@@ -151,14 +144,10 @@ export class OrganizationService {
       throw new Error('Failed to create organization');
     }
 
-    const { account_id, organization_id } = data[0];
+    const { out_account_id } = data[0];
 
     // Fetch the created organization account
-    const { data: accountData, error: fetchError } = await client
-      .from('accounts')
-      .select('*')
-      .eq('id', account_id)
-      .single();
+    const { data: accountData, error: fetchError } = await client.from('accounts').select('*').eq('id', out_account_id).single();
 
     if (fetchError || !accountData) {
       throw new Error('Failed to fetch created organization account');
