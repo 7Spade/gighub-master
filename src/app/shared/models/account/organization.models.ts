@@ -78,6 +78,7 @@ export interface UpdateOrganizationRequest {
  */
 export interface AddOrganizationMemberRequest {
   organizationId: string;
-  accountId: string;
+  accountId?: string;
+  email?: string;
   role: OrganizationRole;
 }

@@ -67,6 +67,30 @@ export class AccountRepository {
   }
 
   /**
+   * 根據 Email 查詢帳戶
+   * Find account by email
+   */
+  findByEmail(email: string): Observable<Account | null> {
+    return from(
+      this.supabase.client
+        .from('accounts')
+        .select('*')
+        .eq('email', email)
+        .eq('type', AccountType.USER)
+        .is('deleted_at', null)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[AccountRepository] findByEmail error:', error);
+          return null;
+        }
+        return data as Account;
+      })
+    );
+  }
+
+  /**
    * 查詢多個帳戶
    * Find accounts with options
    */

@@ -9,10 +9,10 @@
  * @module routes/blueprint
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { BlueprintFacade } from '@core';
+import { BlueprintFacade, ContextType } from '@core';
 import { BlueprintBusinessModel, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -32,7 +32,7 @@ import { CreateBlueprintComponent } from '../create-blueprint/create-blueprint.c
   template: `
     <div class="blueprint-list-container">
       <div class="header">
-        <h2>我的藍圖</h2>
+        <h2>{{ pageTitle() }}</h2>
         <button nz-button nzType="primary" (click)="openCreateModal()">
           <span nz-icon nzType="plus"></span>
           建立藍圖
@@ -168,18 +168,61 @@ export class BlueprintListComponent implements OnInit {
   blueprints = signal<BlueprintBusinessModel[]>([]);
   loading = signal(false);
 
+  // Get the account ID to use for fetching blueprints based on context
+  readonly contextAccountId = computed(() => {
+    const contextType = this.workspaceContext.contextType();
+    if (contextType === ContextType.ORGANIZATION) {
+      // For organization context, use the organization's account_id
+      return this.workspaceContext.contextAccountId();
+    }
+    // For user context, use the current user's account_id
+    return this.workspaceContext.currentUser()?.id || null;
+  });
+
+  // Page title changes based on context
+  readonly pageTitle = computed(() => {
+    const contextType = this.workspaceContext.contextType();
+    if (contextType === ContextType.ORGANIZATION) {
+      return '組織藍圖';
+    }
+    return '我的藍圖';
+  });
+
+  constructor() {
+    // React to context changes and reload blueprints
+    effect(() => {
+      const accountId = this.contextAccountId();
+      if (accountId) {
+        this.loadBlueprints();
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.loadBlueprints();
   }
 
   async loadBlueprints(): Promise<void> {
+    const accountId = this.contextAccountId();
+    if (!accountId) {
+      this.blueprints.set([]);
+      return;
+    }
+
     this.loading.set(true);
     try {
-      const currentUser = this.workspaceContext.currentUser();
-      if (currentUser?.id) {
-        const blueprints = await this.blueprintFacade.getUserAccessibleBlueprints(currentUser.id);
-        this.blueprints.set(blueprints);
+      const contextType = this.workspaceContext.contextType();
+      let blueprints: BlueprintBusinessModel[];
+
+      if (contextType === ContextType.ORGANIZATION) {
+        // For organization context, get blueprints owned by the organization
+        blueprints = await this.blueprintFacade.findByOwner(accountId);
+      } else {
+        // For user context, get all accessible blueprints (owned + member)
+        blueprints = await this.blueprintFacade.getUserAccessibleBlueprints(accountId);
       }
+
+      this.blueprints.set(blueprints);
     } catch (error) {
       console.error('[BlueprintListComponent] Failed to load blueprints:', error);
       this.msg.error('載入藍圖失敗');
