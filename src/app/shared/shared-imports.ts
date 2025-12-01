@@ -16,6 +16,11 @@ import { SHARED_DELON_MODULES } from './shared-delon.module';
 import { SHARED_ZORRO_MODULES } from './shared-zorro.module';
 
 // ============================================
+// 權限指令（Permission Directives）
+// ============================================
+import { HasPermissionDirective, HasRoleDirective, IsOwnerDirective } from './directives/permission.directive';
+
+// ============================================
 // 导出所有共享导入（Export All Shared Imports）
 // ============================================
 export const SHARED_IMPORTS = [
@@ -31,6 +36,11 @@ export const SHARED_IMPORTS = [
   // Delon 主题
   DatePipe,
   I18nPipe,
+
+  // 權限指令
+  HasPermissionDirective,
+  HasRoleDirective,
+  IsOwnerDirective,
 
   // Delon 业务组件
   ...SHARED_DELON_MODULES,

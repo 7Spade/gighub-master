@@ -8,3 +8,4 @@
 
 export * from './account/index';
 export * from './blueprint/index';
+export * from './permission/index';

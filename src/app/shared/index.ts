@@ -3,6 +3,9 @@ export * from './base/base-context-aware.component';
 
 // Components
 
+// Directives
+export * from './directives/index';
+
 // Utils
 export * from './utils/yuan';
 

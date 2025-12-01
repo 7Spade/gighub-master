@@ -110,6 +110,34 @@ export interface BlueprintMember {
   is_external: boolean;
   invited_by?: string | null;
   invited_at?: string | null;
+  /** 業務角色 | Business role for permission checking */
+  business_role?: string | null;
+  /** 自訂角色 ID | Reference to custom role definition */
+  custom_role_id?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * BlueprintRoleDefinition entity interface
+ * 藍圖角色定義實體介面
+ *
+ * Corresponds to database blueprint_roles table
+ */
+export interface BlueprintRoleDefinition {
+  id: string;
+  blueprint_id: string;
+  name: string;
+  display_name: string;
+  description?: string | null;
+  /** 業務角色 | Maps to permission set */
+  business_role: string;
+  /** 自訂權限 JSON | Custom permissions override */
+  permissions?: string[];
+  /** 是否為預設角色 | Cannot be deleted */
+  is_default: boolean;
+  sort_order: number;
+  created_by?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -170,3 +198,4 @@ export interface BlueprintMemberQueryOptions {
 export type BlueprintModel = Blueprint;
 export type BlueprintMemberModel = BlueprintMember;
 export type BlueprintTeamRoleModel = BlueprintTeamRole;
+export type BlueprintRoleDefinitionModel = BlueprintRoleDefinition;
