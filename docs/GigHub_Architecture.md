@@ -573,12 +573,16 @@ graph TB
 
 ### Proposed BlueprintContextService 建議的藍圖上下文服務
 
+> **Note**: This is a proposed design for future implementation. The service does not exist yet.
+
 ```typescript
 /**
  * BlueprintContextService
  * 藍圖層級的共享上下文服務
+ *
+ * @proposed This service is a proposed design for future implementation
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class BlueprintContextService {
   // Core State
   readonly blueprintId = signal<string | null>(null);
@@ -599,8 +603,10 @@ export class BlueprintContextService {
 
 ### Proposed Route Structure 建議的路由結構
 
+> **Note**: This is the proposed target route structure. `BlueprintWorkspaceComponent` and related modules do not exist yet and need to be implemented.
+
 ```typescript
-// routes/blueprint/routes.ts
+// routes/blueprint/routes.ts (PROPOSED - not yet implemented)
 export const routes: Routes = [
   {
     path: '',
