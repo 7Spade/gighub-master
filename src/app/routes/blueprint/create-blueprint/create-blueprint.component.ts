@@ -172,13 +172,14 @@ export class CreateBlueprintComponent implements OnInit {
 
   ngOnInit(): void {
     // Get owner ID from workspace context
-    // If context is organization, use contextId; otherwise use currentUser's id
+    // If context is organization, use contextAccountId; otherwise use currentUser's id
     const contextType = this.workspaceContext.contextType();
-    const contextId = this.workspaceContext.contextId();
     const currentUser = this.workspaceContext.currentUser();
 
-    if (contextType === ContextType.ORGANIZATION && contextId) {
-      this.ownerId.set(contextId);
+    if (contextType === ContextType.ORGANIZATION) {
+      // 使用 contextAccountId 獲取組織的 account_id
+      const accountId = this.workspaceContext.contextAccountId();
+      this.ownerId.set(accountId);
     } else if (currentUser?.id) {
       this.ownerId.set(currentUser.id);
     }

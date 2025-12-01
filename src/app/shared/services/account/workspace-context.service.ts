@@ -92,6 +92,42 @@ export class WorkspaceContextService {
     return iconMap[this.contextType()] || 'user';
   });
 
+  /**
+   * 取得當前上下文的 account_id
+   * Get the account_id of the current context
+   * Used for creating blueprints and other operations that require account_id
+   */
+  readonly contextAccountId = computed(() => {
+    const type = this.contextType();
+    const id = this.contextId();
+
+    switch (type) {
+      case ContextType.USER:
+        return this.currentUser()?.id || null;
+      case ContextType.ORGANIZATION:
+        // 組織需要使用 account_id 而非 id
+        return this.organizations().find(o => o.id === id)?.account_id || null;
+      case ContextType.TEAM:
+        // 團隊本身沒有 account，返回 null
+        return null;
+      default:
+        return this.currentUser()?.id || null;
+    }
+  });
+
+  /**
+   * 取得當前選中的組織
+   * Get the currently selected organization
+   */
+  readonly currentOrganization = computed(() => {
+    const type = this.contextType();
+    const id = this.contextId();
+    if (type === ContextType.ORGANIZATION && id) {
+      return this.organizations().find(o => o.id === id) || null;
+    }
+    return null;
+  });
+
   readonly teamsByOrganization = computed(() => {
     const teams = this.teams();
     const orgs = this.organizations();

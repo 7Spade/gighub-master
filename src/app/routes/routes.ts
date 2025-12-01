@@ -18,6 +18,11 @@ export const routes: Routes = [
         path: 'blueprint',
         loadChildren: () => import('./blueprint/routes').then(m => m.routes)
       },
+      // Account routes (帳戶路由)
+      {
+        path: 'account',
+        loadChildren: () => import('./account/routes').then(m => m.routes)
+      },
       // Demo routes (moved from root)
       {
         path: 'dashboard',
