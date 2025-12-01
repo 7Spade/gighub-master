@@ -102,10 +102,10 @@ export class TeamService {
       throw new Error('Failed to create team');
     }
 
-    const { team_id } = data[0];
+    const { out_team_id } = data[0];
 
     // Fetch the created team
-    const team = await this.findById(team_id);
+    const team = await this.findById(out_team_id);
     if (!team) {
       throw new Error('Failed to fetch created team');
     }

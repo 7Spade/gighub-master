@@ -1116,8 +1116,8 @@ CREATE OR REPLACE FUNCTION public.create_organization(
   p_slug VARCHAR(100) DEFAULT NULL
 )
 RETURNS TABLE (
-  account_id UUID,
-  organization_id UUID
+  out_account_id UUID,
+  out_organization_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1264,7 +1264,7 @@ CREATE OR REPLACE FUNCTION public.create_team(
   p_metadata JSONB DEFAULT '{}'::jsonb
 )
 RETURNS TABLE (
-  team_id UUID
+  out_team_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1358,7 +1358,7 @@ CREATE OR REPLACE FUNCTION public.create_blueprint(
   p_enabled_modules module_type[] DEFAULT ARRAY['tasks']::module_type[]
 )
 RETURNS TABLE (
-  blueprint_id UUID
+  out_blueprint_id UUID
 )
 LANGUAGE plpgsql
 SECURITY DEFINER

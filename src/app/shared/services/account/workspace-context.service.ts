@@ -11,13 +11,14 @@
  */
 
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ContextType,
   ContextState,
   Account,
-  Team
+  Team,
+  SupabaseAuthService
 } from '@core';
-import { DA_SERVICE_TOKEN } from '@delon/auth';
 
 import { AccountService } from './account.service';
 import { OrganizationService } from './organization.service';
@@ -31,11 +32,14 @@ const STORAGE_KEY = 'workspace_context';
   providedIn: 'root'
 })
 export class WorkspaceContextService {
-  private readonly tokenService = inject(DA_SERVICE_TOKEN);
+  private readonly supabaseAuth = inject(SupabaseAuthService);
   private readonly accountService = inject(AccountService);
   private readonly organizationService = inject(OrganizationService);
   private readonly teamService = inject(TeamService);
   private readonly menuManagementService = inject(MenuManagementService);
+
+  // Convert Supabase auth user observable to a reactive signal
+  private readonly supabaseUser = toSignal(this.supabaseAuth.currentUser$, { initialValue: null });
 
   // === 上下文狀態 Context State ===
   private readonly contextTypeState = signal<ContextType>(ContextType.USER);
@@ -106,19 +110,19 @@ export class WorkspaceContextService {
 
   /** 是否已認證 */
   readonly isAuthenticated = computed(() => {
-    const token = this.tokenService.get();
-    return !!token?.['user']?.['id'];
+    return !!this.supabaseUser()?.id;
   });
 
   private hasRestored = false;
 
   constructor() {
-    // 監聽認證狀態並自動載入資料
+    // 監聽認證狀態並自動載入資料 (使用 supabaseUser 信號實現響應式)
+    // Listen to auth state and load data automatically (reactive via supabaseUser signal)
     effect(() => {
-      const token = this.tokenService.get();
-      const authUserId = token?.['user']?.['id'];
+      const user = this.supabaseUser();
+      const authUserId = user?.id;
 
-      console.log('[WorkspaceContextService] 🔐 Token check:', { hasToken: !!token, authUserId });
+      console.log('[WorkspaceContextService] 🔐 Auth state check:', { hasUser: !!user, authUserId });
 
       if (authUserId) {
         this.loadWorkspaceData(authUserId);
@@ -322,8 +326,7 @@ export class WorkspaceContextService {
    * Reload workspace data
    */
   async reload(): Promise<void> {
-    const token = this.tokenService.get();
-    const authUserId = token?.['user']?.['id'];
+    const authUserId = this.supabaseUser()?.id;
     if (authUserId) {
       this.hasRestored = false;
       await this.loadWorkspaceData(authUserId);
