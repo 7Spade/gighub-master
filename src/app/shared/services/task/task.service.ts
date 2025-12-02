@@ -14,8 +14,8 @@
  */
 
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { SupabaseService } from '@core';
 import {
+  SupabaseService,
   Task,
   TaskNode,
   FlatTaskNode,

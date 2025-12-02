@@ -15,12 +15,14 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Task, TaskNode, FlatTaskNode, TaskStatus, TaskPriority, TaskViewType, TASK_STATUS_CONFIG, TASK_PRIORITY_CONFIG } from '@core';
 import { SHARED_IMPORTS, TaskService } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
+
+import { TaskEditDrawerComponent } from './task-edit-drawer.component';
 
 @Component({
   selector: 'app-blueprint-tasks',
@@ -206,6 +208,16 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
       </nz-spin>
     </div>
 
+    <!-- Task Edit Drawer -->
+    <app-task-edit-drawer
+      [visible]="drawerVisible()"
+      [task]="editingTask()"
+      [blueprintId]="id()"
+      [parentTaskId]="parentTaskId()"
+      (closed)="onDrawerClose()"
+      (saved)="onTaskSaved($event)"
+    ></app-task-edit-drawer>
+
     <!-- Node Template for Tree View -->
     <ng-template #nodeTemplate let-node>
       <div class="tree-node-content" [class.completed]="node.origin.status === TaskStatus.COMPLETED">
@@ -357,7 +369,7 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, TaskEditDrawerComponent]
 })
 export class BlueprintTasksComponent implements OnInit {
   private readonly router = inject(Router);
@@ -373,6 +385,11 @@ export class BlueprintTasksComponent implements OnInit {
   readonly TaskStatus = TaskStatus;
   readonly TASK_STATUS_CONFIG = TASK_STATUS_CONFIG;
   readonly TASK_PRIORITY_CONFIG = TASK_PRIORITY_CONFIG;
+
+  // Drawer state
+  drawerVisible = signal(false);
+  editingTask = signal<Task | null>(null);
+  parentTaskId = signal<string | null>(null);
 
   viewOptions = [
     { label: '樹狀圖', value: TaskViewType.TREE, icon: 'apartment' },
@@ -493,15 +510,31 @@ export class BlueprintTasksComponent implements OnInit {
 
   // Actions
   createTask(): void {
-    this.msg.info('任務建立功能即將推出');
+    this.editingTask.set(null);
+    this.parentTaskId.set(null);
+    this.drawerVisible.set(true);
   }
 
   editTask(task: Task): void {
-    this.msg.info(`編輯任務: ${task.title}`);
+    this.editingTask.set(task);
+    this.parentTaskId.set(null);
+    this.drawerVisible.set(true);
   }
 
   addSubTask(parentTask: Task): void {
-    this.msg.info(`新增子任務於: ${parentTask.title}`);
+    this.editingTask.set(null);
+    this.parentTaskId.set(parentTask.id);
+    this.drawerVisible.set(true);
+  }
+
+  onDrawerClose(): void {
+    this.drawerVisible.set(false);
+    this.editingTask.set(null);
+    this.parentTaskId.set(null);
+  }
+
+  onTaskSaved(task: Task): void {
+    this.updateDataSource();
   }
 
   async changeStatus(task: Task, newStatus: TaskStatus): Promise<void> {
