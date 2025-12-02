@@ -77,6 +77,19 @@ CREATE TYPE acceptance_result AS ENUM ('pending', 'passed', 'failed', 'condition
 -- 天氣類型: sunny=晴天, cloudy=多雲, rainy=雨天, stormy=暴風雨, snowy=下雪, foggy=霧天
 CREATE TYPE weather_type AS ENUM ('sunny', 'cloudy', 'rainy', 'stormy', 'snowy', 'foggy');
 
+-- 藍圖業務角色: project_manager=專案經理, site_director=工地主任, site_supervisor=現場監督,
+--               worker=施工人員, qa_staff=品管人員, safety_health=公共安全衛生, finance=財務, observer=觀察者
+CREATE TYPE blueprint_business_role AS ENUM (
+  'project_manager',
+  'site_director',
+  'site_supervisor',
+  'worker',
+  'qa_staff',
+  'safety_health',
+  'finance',
+  'observer'
+);
+
 -- ############################################################################
 -- PART 2: PRIVATE SCHEMA (私有 Schema)
 -- ############################################################################
@@ -236,6 +249,8 @@ CREATE TABLE blueprint_members (
   blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
   account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   role blueprint_role NOT NULL DEFAULT 'viewer',
+  business_role blueprint_business_role,           -- 業務角色 (RBAC)
+  custom_role_id UUID,                             -- 自訂角色參考 (延遲外鍵)
   is_external BOOLEAN NOT NULL DEFAULT false,     -- 外部協作者標記
   invited_by UUID REFERENCES accounts(id),
   invited_at TIMESTAMPTZ,
@@ -248,6 +263,7 @@ CREATE TABLE blueprint_members (
 CREATE INDEX idx_blueprint_members_blueprint ON blueprint_members(blueprint_id);
 CREATE INDEX idx_blueprint_members_account ON blueprint_members(account_id);
 CREATE INDEX idx_blueprint_members_role ON blueprint_members(role);
+CREATE INDEX idx_blueprint_members_business_role ON blueprint_members(business_role);
 
 -- ----------------------------------------------------------------------------
 -- Table: blueprint_team_roles (藍圖團隊授權)
@@ -266,6 +282,38 @@ CREATE TABLE blueprint_team_roles (
 
 CREATE INDEX idx_blueprint_team_roles_blueprint ON blueprint_team_roles(blueprint_id);
 CREATE INDEX idx_blueprint_team_roles_team ON blueprint_team_roles(team_id);
+
+-- ----------------------------------------------------------------------------
+-- Table: blueprint_roles (藍圖角色定義)
+-- Custom role definitions per blueprint, allowing future flexibility
+-- ----------------------------------------------------------------------------
+CREATE TABLE blueprint_roles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
+  name VARCHAR(100) NOT NULL,
+  display_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  business_role blueprint_business_role NOT NULL DEFAULT 'observer',
+  permissions JSONB DEFAULT '[]'::jsonb,
+  is_default BOOLEAN NOT NULL DEFAULT false,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_by UUID REFERENCES accounts(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  
+  -- Each blueprint can only have one role with a given name
+  CONSTRAINT blueprint_roles_name_unique UNIQUE (blueprint_id, name)
+);
+
+CREATE INDEX idx_blueprint_roles_blueprint ON blueprint_roles(blueprint_id);
+CREATE INDEX idx_blueprint_roles_business_role ON blueprint_roles(business_role);
+
+-- Add foreign key from blueprint_members to blueprint_roles (after blueprint_roles is created)
+ALTER TABLE blueprint_members 
+  ADD CONSTRAINT blueprint_members_custom_role_fk 
+  FOREIGN KEY (custom_role_id) REFERENCES blueprint_roles(id) ON DELETE SET NULL;
+
+CREATE INDEX idx_blueprint_members_custom_role ON blueprint_members(custom_role_id);
 
 -- ############################################################################
 -- PART 5: MODULE TABLES (業務模組資料表)
@@ -801,6 +849,38 @@ BEGIN
 END;
 $$;
 
+-- ----------------------------------------------------------------------------
+-- private.get_blueprint_business_role()
+-- 取得用戶在藍圖中的業務角色
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION private.get_blueprint_business_role(p_blueprint_id UUID)
+RETURNS blueprint_business_role
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+STABLE
+AS $$
+DECLARE
+  v_business_role blueprint_business_role;
+  v_is_owner BOOLEAN;
+BEGIN
+  -- Check if user is owner (owners are always project_manager)
+  v_is_owner := (SELECT private.is_blueprint_owner(p_blueprint_id));
+  IF v_is_owner THEN
+    RETURN 'project_manager';
+  END IF;
+
+  -- Get business_role from blueprint_members
+  SELECT bm.business_role INTO v_business_role
+  FROM public.blueprint_members bm
+  JOIN public.accounts a ON a.id = bm.account_id
+  WHERE bm.blueprint_id = p_blueprint_id
+  AND a.auth_user_id = auth.uid();
+  
+  RETURN COALESCE(v_business_role, 'observer');
+END;
+$$;
+
 -- Grant: RLS 輔助函數執行權限
 GRANT EXECUTE ON FUNCTION private.get_user_account_id() TO authenticated;
 GRANT EXECUTE ON FUNCTION private.is_account_owner(UUID) TO authenticated;
@@ -812,6 +892,7 @@ GRANT EXECUTE ON FUNCTION private.is_team_leader(UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION private.is_blueprint_owner(UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION private.has_blueprint_access(UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION private.can_write_blueprint(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION private.get_blueprint_business_role(UUID) TO authenticated;
 
 
 -- ############################################################################
@@ -841,6 +922,7 @@ CREATE TRIGGER update_team_members_updated_at BEFORE UPDATE ON team_members FOR 
 CREATE TRIGGER update_blueprints_updated_at BEFORE UPDATE ON blueprints FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 CREATE TRIGGER update_blueprint_members_updated_at BEFORE UPDATE ON blueprint_members FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 CREATE TRIGGER update_blueprint_team_roles_updated_at BEFORE UPDATE ON blueprint_team_roles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+CREATE TRIGGER update_blueprint_roles_updated_at BEFORE UPDATE ON blueprint_roles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON tasks FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 CREATE TRIGGER update_diaries_updated_at BEFORE UPDATE ON diaries FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 CREATE TRIGGER update_checklists_updated_at BEFORE UPDATE ON checklists FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
@@ -863,6 +945,7 @@ ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blueprints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blueprint_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blueprint_team_roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blueprint_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_attachments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE diaries ENABLE ROW LEVEL SECURITY;
@@ -968,6 +1051,43 @@ CREATE POLICY "blueprint_team_roles_select" ON blueprint_team_roles FOR SELECT T
 CREATE POLICY "blueprint_team_roles_insert" ON blueprint_team_roles FOR INSERT TO authenticated WITH CHECK ((SELECT private.is_blueprint_owner(blueprint_id)));
 CREATE POLICY "blueprint_team_roles_update" ON blueprint_team_roles FOR UPDATE TO authenticated USING ((SELECT private.is_blueprint_owner(blueprint_id)));
 CREATE POLICY "blueprint_team_roles_delete" ON blueprint_team_roles FOR DELETE TO authenticated USING ((SELECT private.is_blueprint_owner(blueprint_id)));
+
+-- ============================================================================
+-- RLS Policies: blueprint_roles
+-- ============================================================================
+-- 有藍圖存取權的用戶可以讀取角色定義
+CREATE POLICY "blueprint_roles_select" ON blueprint_roles FOR SELECT TO authenticated USING ((SELECT private.has_blueprint_access(blueprint_id)));
+-- 藍圖擁有者或 maintainer 可以管理角色定義
+CREATE POLICY "blueprint_roles_insert" ON blueprint_roles FOR INSERT TO authenticated WITH CHECK (
+  (SELECT private.is_blueprint_owner(blueprint_id)) OR 
+  EXISTS (
+    SELECT 1 FROM blueprint_members bm
+    JOIN accounts a ON a.id = bm.account_id
+    WHERE bm.blueprint_id = blueprint_roles.blueprint_id
+    AND a.auth_user_id = (SELECT auth.uid())
+    AND bm.role = 'maintainer'
+  )
+);
+CREATE POLICY "blueprint_roles_update" ON blueprint_roles FOR UPDATE TO authenticated USING (
+  (SELECT private.is_blueprint_owner(blueprint_id)) OR 
+  EXISTS (
+    SELECT 1 FROM blueprint_members bm
+    JOIN accounts a ON a.id = bm.account_id
+    WHERE bm.blueprint_id = blueprint_roles.blueprint_id
+    AND a.auth_user_id = (SELECT auth.uid())
+    AND bm.role = 'maintainer'
+  )
+);
+CREATE POLICY "blueprint_roles_delete" ON blueprint_roles FOR DELETE TO authenticated USING (
+  (SELECT private.is_blueprint_owner(blueprint_id)) OR 
+  EXISTS (
+    SELECT 1 FROM blueprint_members bm
+    JOIN accounts a ON a.id = bm.account_id
+    WHERE bm.blueprint_id = blueprint_roles.blueprint_id
+    AND a.auth_user_id = (SELECT auth.uid())
+    AND bm.role = 'maintainer'
+  )
+);
 
 -- ============================================================================
 -- RLS Policies: tasks
@@ -1552,6 +1672,7 @@ COMMENT ON FUNCTION private.is_team_leader(UUID) IS '檢查用戶是否為團隊
 COMMENT ON FUNCTION private.is_blueprint_owner(UUID) IS '檢查用戶是否為藍圖擁有者 (直接或透過組織)';
 COMMENT ON FUNCTION private.has_blueprint_access(UUID) IS '檢查用戶是否有藍圖存取權';
 COMMENT ON FUNCTION private.can_write_blueprint(UUID) IS '檢查用戶是否有藍圖寫入權';
+COMMENT ON FUNCTION private.get_blueprint_business_role(UUID) IS '取得用戶在藍圖中的業務角色';
 
 -- 公開函數註解
 COMMENT ON FUNCTION public.update_updated_at() IS '觸發器函數 - 自動更新 updated_at';
@@ -1561,4 +1682,152 @@ COMMENT ON FUNCTION public.handle_new_organization() IS '組織觸發器 - 確�
 COMMENT ON FUNCTION public.create_team(UUID, VARCHAR, TEXT, JSONB) IS '建立團隊 (SECURITY DEFINER) - 需要組織 owner/admin 權限';
 COMMENT ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, module_type[]) IS '建立藍圖 (SECURITY DEFINER) - 自動加入建立者為 maintainer';
 COMMENT ON FUNCTION public.handle_new_blueprint() IS '藍圖觸發器 - 確保建立者被加入為 maintainer';
+
+-- RBAC 相關資料表與函數註解
+COMMENT ON TABLE blueprint_roles IS '藍圖角色定義 - Custom role definitions per blueprint for RBAC';
+COMMENT ON COLUMN blueprint_roles.name IS '角色名稱（唯一鍵）- Role name (unique per blueprint)';
+COMMENT ON COLUMN blueprint_roles.display_name IS '顯示名稱 - Display name for UI';
+COMMENT ON COLUMN blueprint_roles.business_role IS '業務角色 - Maps to permission set';
+COMMENT ON COLUMN blueprint_roles.permissions IS '自訂權限 JSON - Custom permissions override';
+COMMENT ON COLUMN blueprint_roles.is_default IS '是否為預設角色 - Cannot be deleted';
+COMMENT ON COLUMN blueprint_members.business_role IS '業務角色 - Business role for permission checking';
+COMMENT ON COLUMN blueprint_members.custom_role_id IS '自訂角色 ID - Reference to custom role definition';
+COMMENT ON FUNCTION public.create_default_blueprint_roles(UUID) IS '建立預設藍圖角色 - Create default roles for blueprint';
+
+-- ############################################################################
+-- PART 14: RBAC DEFAULT ROLES API (RBAC 預設角色 API)
+-- ############################################################################
+
+-- ----------------------------------------------------------------------------
+-- create_default_blueprint_roles()
+-- 建立藍圖預設角色 (包含8種角色)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.create_default_blueprint_roles(p_blueprint_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  -- Project Manager (專案經理)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'project_manager', 
+    '專案經理', 
+    '最高藍圖級權限，可管理所有設定和成員',
+    'project_manager',
+    true,
+    1
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Site Director (工地主任)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'site_director', 
+    '工地主任', 
+    '現場管理權限，可管理任務和日誌',
+    'site_director',
+    true,
+    2
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Site Supervisor (現場監督)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'site_supervisor', 
+    '現場監督', 
+    '現場監督權限，可監督任務執行和審核日誌',
+    'site_supervisor',
+    true,
+    3
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Worker (施工人員)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'worker', 
+    '施工人員', 
+    '任務執行權限，可創建和更新任務',
+    'worker',
+    true,
+    4
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- QA Staff (品管人員)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'qa_staff', 
+    '品管人員', 
+    '品質驗收權限，可執行品質檢查和驗收',
+    'qa_staff',
+    true,
+    5
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Safety & Health (公共安全衛生)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'safety_health', 
+    '公共安全衛生', 
+    '安全衛生管理權限，可管理安全相關事項和檢查',
+    'safety_health',
+    true,
+    6
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Finance (財務)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'finance', 
+    '財務', 
+    '財務管理權限，可查看和管理財務相關資料',
+    'finance',
+    true,
+    7
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+
+  -- Observer (觀察者)
+  INSERT INTO public.blueprint_roles (blueprint_id, name, display_name, description, business_role, is_default, sort_order)
+  VALUES (
+    p_blueprint_id, 
+    'observer', 
+    '觀察者', 
+    '僅檢視權限，只能查看內容',
+    'observer',
+    true,
+    8
+  ) ON CONFLICT (blueprint_id, name) DO NOTHING;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.create_default_blueprint_roles(UUID) TO authenticated;
+
+-- ----------------------------------------------------------------------------
+-- handle_new_blueprint_roles()
+-- 藍圖建立時自動建立預設角色
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.handle_new_blueprint_roles()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  PERFORM public.create_default_blueprint_roles(NEW.id);
+  RETURN NEW;
+END;
+$$;
+
+-- Trigger to auto-create default roles when a blueprint is created
+CREATE TRIGGER on_blueprint_created_roles
+  AFTER INSERT ON blueprints
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_blueprint_roles();
 

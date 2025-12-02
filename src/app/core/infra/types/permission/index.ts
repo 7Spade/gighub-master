@@ -23,10 +23,16 @@ export enum BlueprintBusinessRole {
   PROJECT_MANAGER = 'project_manager',
   /** 工地主任 - 現場管理權限 | Site Director - on-site management */
   SITE_DIRECTOR = 'site_director',
+  /** 現場監督 - 現場監督權限 | Site Supervisor - on-site supervision */
+  SITE_SUPERVISOR = 'site_supervisor',
   /** 施工人員 - 任務執行權限 | Worker - task execution */
   WORKER = 'worker',
   /** 品管人員 - 品質驗收權限 | QA Staff - quality assurance */
   QA_STAFF = 'qa_staff',
+  /** 公共安全衛生 - 安全衛生管理 | Safety & Health - safety and health management */
+  SAFETY_HEALTH = 'safety_health',
+  /** 財務 - 財務管理權限 | Finance - financial management */
+  FINANCE = 'finance',
   /** 觀察者 - 僅檢視權限 | Observer - view only */
   OBSERVER = 'observer'
 }
@@ -236,6 +242,89 @@ export const ROLE_PERMISSIONS: Record<BlueprintBusinessRole, Permission[]> = {
     Permission.ACCEPTANCE_PERFORM,
     Permission.ACCEPTANCE_APPROVE,
     // Files - read and upload
+    Permission.FILE_READ,
+    Permission.FILE_UPLOAD,
+    // Todos
+    Permission.TODO_READ,
+    Permission.TODO_MANAGE,
+    // Notifications
+    Permission.NOTIFICATION_READ
+  ],
+
+  [BlueprintBusinessRole.SITE_SUPERVISOR]: [
+    // Blueprint - read only
+    Permission.BLUEPRINT_READ,
+    // Tasks - supervision access
+    Permission.TASK_READ,
+    Permission.TASK_UPDATE,
+    Permission.TASK_REVIEW,
+    // Diary - full access
+    Permission.DIARY_READ,
+    Permission.DIARY_CREATE,
+    Permission.DIARY_UPDATE,
+    Permission.DIARY_APPROVE,
+    // Issues - full access
+    Permission.ISSUE_READ,
+    Permission.ISSUE_CREATE,
+    Permission.ISSUE_UPDATE,
+    Permission.ISSUE_ASSIGN,
+    Permission.ISSUE_RESOLVE,
+    // Checklists & Acceptance - read and perform
+    Permission.CHECKLIST_READ,
+    Permission.ACCEPTANCE_PERFORM,
+    // Files - read and upload
+    Permission.FILE_READ,
+    Permission.FILE_UPLOAD,
+    // Todos
+    Permission.TODO_READ,
+    Permission.TODO_MANAGE,
+    // Notifications
+    Permission.NOTIFICATION_READ,
+    Permission.NOTIFICATION_MANAGE
+  ],
+
+  [BlueprintBusinessRole.SAFETY_HEALTH]: [
+    // Blueprint - read only
+    Permission.BLUEPRINT_READ,
+    // Tasks - read and review safety-related
+    Permission.TASK_READ,
+    Permission.TASK_REVIEW,
+    // Diary - read access
+    Permission.DIARY_READ,
+    // Issues - full access for safety issues
+    Permission.ISSUE_READ,
+    Permission.ISSUE_CREATE,
+    Permission.ISSUE_UPDATE,
+    Permission.ISSUE_ASSIGN,
+    Permission.ISSUE_RESOLVE,
+    // Checklists & Acceptance - full access for safety
+    Permission.CHECKLIST_READ,
+    Permission.CHECKLIST_MANAGE,
+    Permission.ACCEPTANCE_PERFORM,
+    Permission.ACCEPTANCE_APPROVE,
+    // Files - read and upload
+    Permission.FILE_READ,
+    Permission.FILE_UPLOAD,
+    // Todos
+    Permission.TODO_READ,
+    Permission.TODO_MANAGE,
+    // Notifications
+    Permission.NOTIFICATION_READ,
+    Permission.NOTIFICATION_MANAGE
+  ],
+
+  [BlueprintBusinessRole.FINANCE]: [
+    // Blueprint - read only
+    Permission.BLUEPRINT_READ,
+    // Tasks - read only
+    Permission.TASK_READ,
+    // Diary - read only
+    Permission.DIARY_READ,
+    // Issues - read only
+    Permission.ISSUE_READ,
+    // Checklists - read only
+    Permission.CHECKLIST_READ,
+    // Files - read and upload (for financial documents)
     Permission.FILE_READ,
     Permission.FILE_UPLOAD,
     // Todos

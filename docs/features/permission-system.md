@@ -50,8 +50,8 @@ src/app/
             ├── index.ts
             └── permission.service.ts      # 權限服務
 
-supabase/migrations/
-└── 20241201_add_blueprint_roles.sql      # 資料庫遷移
+supabase/seeds/
+└── init.sql                              # 資料庫架構（包含 RBAC）
 ```
 
 ## 🎭 業務角色 / Business Roles
@@ -60,8 +60,11 @@ supabase/migrations/
 |------|------|------|-------------|
 | 專案經理 | project_manager | 最高藍圖級權限，可管理所有設定和成員 | Full blueprint-level authority |
 | 工地主任 | site_director | 現場管理權限，可管理任務和日誌 | On-site management |
+| 現場監督 | site_supervisor | 現場監督權限，可監督任務執行和審核日誌 | On-site supervision |
 | 施工人員 | worker | 任務執行權限，可創建和更新任務 | Task execution |
 | 品管人員 | qa_staff | 品質驗收權限，可執行品質檢查和驗收 | Quality assurance |
+| 公共安全衛生 | safety_health | 安全衛生管理權限，可管理安全相關事項 | Safety and health management |
+| 財務 | finance | 財務管理權限，可查看財務相關資料 | Financial management |
 | 觀察者 | observer | 僅檢視權限，只能查看內容 | View only |
 
 ## 🔐 權限定義 / Permission Definitions
@@ -242,13 +245,16 @@ ALTER TABLE blueprint_members
 
 ## 🔄 自動角色創建 / Automatic Role Creation
 
-當創建新藍圖時，系統會自動創建五個預設角色：
+當創建新藍圖時，系統會自動創建八個預設角色：
 
 1. 專案經理 (project_manager)
 2. 工地主任 (site_director)
-3. 施工人員 (worker)
-4. 品管人員 (qa_staff)
-5. 觀察者 (observer)
+3. 現場監督 (site_supervisor)
+4. 施工人員 (worker)
+5. 品管人員 (qa_staff)
+6. 公共安全衛生 (safety_health)
+7. 財務 (finance)
+8. 觀察者 (observer)
 
 ## 📝 注意事項 / Notes
 
