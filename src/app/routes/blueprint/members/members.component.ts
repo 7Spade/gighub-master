@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { BlueprintFacade, BlueprintRole } from '@core';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
@@ -79,6 +80,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
                   </button>
                 </td>
               </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">
+                  <nz-empty nzNotFoundContent="尚無成員，藍圖創建者將自動成為成員"></nz-empty>
+                </td>
+              </tr>
             }
           </tbody>
         </nz-table>
@@ -113,6 +120,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     CommonModule,
     FormsModule,
     NzButtonModule,
+    NzEmptyModule,
     NzTableModule,
     NzTagModule,
     NzIconModule,
@@ -126,7 +134,9 @@ export class BlueprintMembersComponent implements OnInit {
   private readonly blueprintFacade = inject(BlueprintFacade);
   private readonly msg = inject(NzMessageService);
 
-  blueprintId = input.required<string>();
+  // Input from route param (using withComponentInputBinding)
+  // Route param is :id, so input must be named 'id'
+  id = input.required<string>();
   members = signal<any[]>([]);
   loading = signal(false);
 
@@ -137,7 +147,7 @@ export class BlueprintMembersComponent implements OnInit {
   async loadMembers(): Promise<void> {
     this.loading.set(true);
     try {
-      const members = await this.blueprintFacade.getBlueprintMembers(this.blueprintId());
+      const members = await this.blueprintFacade.getBlueprintMembers(this.id());
       this.members.set(members);
     } catch (error) {
       console.error('[BlueprintMembersComponent] Failed to load members:', error);
@@ -160,7 +170,7 @@ export class BlueprintMembersComponent implements OnInit {
 
   async removeMember(member: any): Promise<void> {
     try {
-      await this.blueprintFacade.removeBlueprintMember(this.blueprintId(), member.account_id);
+      await this.blueprintFacade.removeBlueprintMember(this.id(), member.account_id);
       this.msg.success('成員已移除');
       this.loadMembers();
     } catch (error) {

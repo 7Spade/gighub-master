@@ -10,7 +10,7 @@
  */
 
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Team, TeamMember, TeamRole, Account } from '@core';
 import { TeamService, OrganizationMemberService, OrganizationMemberWithAccount } from '@shared';
@@ -20,12 +20,20 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+
+/**
+ * Modal data interface for team members component
+ */
+interface TeamMembersModalData {
+  team: Team;
+  organizationId: string;
+}
 
 /**
  * Team member with account details
@@ -157,13 +165,15 @@ interface TeamMemberWithAccount extends TeamMember {
   ]
 })
 export class TeamMembersComponent implements OnInit {
-  @Input() team!: Team;
-  @Input() organizationId!: string;
-
+  private readonly nzModalData = inject<TeamMembersModalData>(NZ_MODAL_DATA);
   private readonly teamService = inject(TeamService);
   private readonly organizationMemberService = inject(OrganizationMemberService);
   private readonly modal = inject(NzModalRef);
   private readonly msg = inject(NzMessageService);
+
+  // Get data from modal injection
+  readonly team = this.nzModalData.team;
+  readonly organizationId = this.nzModalData.organizationId;
 
   loading = signal(false);
   loadingOrgMembers = signal(false);
@@ -178,8 +188,10 @@ export class TeamMembersComponent implements OnInit {
   readonly availableOrgMembers = signal<OrganizationMemberWithAccount[]>([]);
 
   ngOnInit(): void {
-    this.loadMembers();
-    this.loadOrgMembers();
+    // Load org members first, then team members (for account enrichment)
+    this.loadOrgMembers().then(() => {
+      this.loadMembers();
+    });
   }
 
   async loadMembers(): Promise<void> {
@@ -188,8 +200,9 @@ export class TeamMembersComponent implements OnInit {
     this.loading.set(true);
     try {
       const teamMembers = await this.teamService.findMembers(this.team.id);
-      // Note: In a real implementation, we'd fetch account details for each member
-      this.members.set(teamMembers as TeamMemberWithAccount[]);
+      // Fetch account details for each member
+      const membersWithAccounts = await this.enrichMembersWithAccounts(teamMembers);
+      this.members.set(membersWithAccounts);
       this.updateAvailableOrgMembers();
     } catch (error) {
       console.error('[TeamMembersComponent] Failed to load members:', error);
@@ -197,6 +210,20 @@ export class TeamMembersComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  /**
+   * Enrich team members with account details from organization members
+   */
+  private async enrichMembersWithAccounts(teamMembers: TeamMember[]): Promise<TeamMemberWithAccount[]> {
+    // Get organization members to look up account details
+    const orgMembers = this.orgMembers();
+    const accountMap = new Map(orgMembers.map(m => [m.account_id, m.account]));
+
+    return teamMembers.map(member => ({
+      ...member,
+      account: accountMap.get(member.account_id)
+    }));
   }
 
   async loadOrgMembers(): Promise<void> {
