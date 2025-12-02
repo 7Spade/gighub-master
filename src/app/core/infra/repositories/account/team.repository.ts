@@ -26,14 +26,7 @@ export class TeamRepository {
    * Find team by ID
    */
   findById(id: string): Observable<Team | null> {
-    return from(
-      this.supabase.client
-        .from('teams')
-        .select('*')
-        .eq('id', id)
-        .is('deleted_at', null)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('teams').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] findById error:', error);
@@ -50,12 +43,7 @@ export class TeamRepository {
    */
   findByOrganization(organizationId: string): Observable<Team[]> {
     return from(
-      this.supabase.client
-        .from('teams')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .is('deleted_at', null)
-        .order('name')
+      this.supabase.client.from('teams').select('*').eq('organization_id', organizationId).is('deleted_at', null).order('name')
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -76,13 +64,7 @@ export class TeamRepository {
       return from(Promise.resolve([]));
     }
 
-    return from(
-      this.supabase.client
-        .from('teams')
-        .select('*')
-        .in('id', ids)
-        .is('deleted_at', null)
-    ).pipe(
+    return from(this.supabase.client.from('teams').select('*').in('id', ids).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] findByIds error:', error);
@@ -98,13 +80,7 @@ export class TeamRepository {
    * Create team
    */
   create(team: Partial<Team>): Observable<Team | null> {
-    return from(
-      this.supabase.client
-        .from('teams')
-        .insert(team)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('teams').insert(team).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] create error:', error);
@@ -173,12 +149,7 @@ export class TeamRepository {
    * Find members by team ID
    */
   findMembers(teamId: string): Observable<TeamMember[]> {
-    return from(
-      this.supabase.client
-        .from('team_members')
-        .select('*')
-        .eq('team_id', teamId)
-    ).pipe(
+    return from(this.supabase.client.from('team_members').select('*').eq('team_id', teamId)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] findMembers error:', error);
@@ -194,20 +165,13 @@ export class TeamRepository {
    * Find teams by account ID (through team_members)
    */
   findByAccountId(accountId: string): Observable<Team[]> {
-    return from(
-      this.supabase.client
-        .from('team_members')
-        .select('team_id, teams(*)')
-        .eq('account_id', accountId)
-    ).pipe(
+    return from(this.supabase.client.from('team_members').select('team_id, teams(*)').eq('account_id', accountId)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] findByAccountId error:', error);
           return [];
         }
-        return (data || [])
-          .map((item: any) => item.teams)
-          .filter((team: Team | null) => team && !team.deleted_at) as Team[];
+        return (data || []).map((item: any) => item.teams).filter((team: Team | null) => team && !team.deleted_at) as Team[];
       })
     );
   }
@@ -217,13 +181,7 @@ export class TeamRepository {
    * Add team member
    */
   addMember(member: Partial<TeamMember>): Observable<TeamMember | null> {
-    return from(
-      this.supabase.client
-        .from('team_members')
-        .insert(member)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('team_members').insert(member).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TeamRepository] addMember error:', error);
@@ -240,12 +198,7 @@ export class TeamRepository {
    */
   updateMemberRole(id: string, role: TeamRole): Observable<TeamMember | null> {
     return from(
-      this.supabase.client
-        .from('team_members')
-        .update({ role, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single()
+      this.supabase.client.from('team_members').update({ role, updated_at: new Date().toISOString() }).eq('id', id).select().single()
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -262,12 +215,7 @@ export class TeamRepository {
    * Remove team member
    */
   removeMember(id: string): Observable<boolean> {
-    return from(
-      this.supabase.client
-        .from('team_members')
-        .delete()
-        .eq('id', id)
-    ).pipe(
+    return from(this.supabase.client.from('team_members').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
           console.error('[TeamRepository] removeMember error:', error);

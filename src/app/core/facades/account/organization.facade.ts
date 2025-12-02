@@ -10,12 +10,7 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import {
-  OrganizationService,
-  OrganizationBusinessModel,
-  CreateOrganizationRequest,
-  UpdateOrganizationRequest
-} from '@shared';
+import { OrganizationService, OrganizationBusinessModel, CreateOrganizationRequest, UpdateOrganizationRequest } from '@shared';
 
 import { BaseAccountCrudFacade } from './base-account-crud.facade';
 

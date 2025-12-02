@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { environment } from '@env/environment';
+import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -13,10 +13,7 @@ export class SupabaseService {
 
   constructor() {
     const supabaseConfig = environment['supabase'] as { url: string; anonKey: string };
-    this.supabase = createClient(
-      supabaseConfig.url,
-      supabaseConfig.anonKey
-    );
+    this.supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
     // Listen to auth state changes
     this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
@@ -29,7 +26,9 @@ export class SupabaseService {
   }
 
   private async loadSession(): Promise<void> {
-    const { data: { session } } = await this.supabase.auth.getSession();
+    const {
+      data: { session }
+    } = await this.supabase.auth.getSession();
     this._session.next(session);
     this._currentUser.next(session?.user ?? null);
   }

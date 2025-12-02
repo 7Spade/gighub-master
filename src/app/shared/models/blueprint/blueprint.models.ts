@@ -7,13 +7,7 @@
  * @module shared/models/blueprint
  */
 
-import {
-  AccountStatus,
-  Blueprint,
-  BlueprintMember,
-  BlueprintRole,
-  ModuleType
-} from '@core';
+import { AccountStatus, Blueprint, BlueprintMember, BlueprintRole, ModuleType } from '@core';
 
 /**
  * Blueprint entity type

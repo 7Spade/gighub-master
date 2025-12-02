@@ -11,9 +11,9 @@
 
 import { Injectable, inject } from '@angular/core';
 import { TeamService, CreateTeamRequest, UpdateTeamRequest } from '@shared';
-import { Team } from '../../infra/types/account';
 
 import { BaseAccountCrudFacade } from './base-account-crud.facade';
+import { Team } from '../../infra/types/account';
 
 @Injectable({
   providedIn: 'root'

@@ -8,5 +8,6 @@
 
 export * from './account.service';
 export * from './organization.service';
+export * from './organization-member.service';
 export * from './team.service';
 export * from './workspace-context.service';

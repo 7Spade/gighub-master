@@ -9,20 +9,20 @@
  * @module routes/account
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ContextType, OrganizationFacade } from '@core';
-import { WorkspaceContextService, OrganizationBusinessModel, UpdateOrganizationRequest } from '@shared';
+import { WorkspaceContextService, UpdateOrganizationRequest } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-account-settings',
@@ -43,11 +43,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
               <nz-form-item>
                 <nz-form-label [nzRequired]="true">組織名稱</nz-form-label>
                 <nz-form-control [nzErrorTip]="'請輸入組織名稱（2-50個字符）'">
-                  <input
-                    nz-input
-                    formControlName="name"
-                    placeholder="請輸入組織名稱"
-                  />
+                  <input nz-input formControlName="name" placeholder="請輸入組織名稱" />
                 </nz-form-control>
               </nz-form-item>
 
@@ -66,22 +62,12 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
               <nz-form-item>
                 <nz-form-label>Logo URL</nz-form-label>
                 <nz-form-control>
-                  <input
-                    nz-input
-                    formControlName="logoUrl"
-                    placeholder="請輸入組織 Logo URL（可選）"
-                  />
+                  <input nz-input formControlName="logoUrl" placeholder="請輸入組織 Logo URL（可選）" />
                 </nz-form-control>
               </nz-form-item>
 
               <nz-form-item>
-                <button
-                  nz-button
-                  nzType="primary"
-                  (click)="saveSettings()"
-                  [nzLoading]="saving()"
-                  [disabled]="form.invalid || !form.dirty"
-                >
+                <button nz-button nzType="primary" (click)="saveSettings()" [nzLoading]="saving()" [disabled]="form.invalid || !form.dirty">
                   儲存變更
                 </button>
               </nz-form-item>
@@ -109,24 +95,26 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
       }
     </div>
   `,
-  styles: [`
-    .settings-container {
-      padding: 24px;
-    }
-    .page-header {
-      margin-bottom: 24px;
-    }
-    .page-header h2 {
-      margin: 0;
-    }
-    .danger-zone {
-      border: 1px solid #ff4d4f;
-    }
-    .warning-text {
-      color: #ff4d4f;
-      margin-bottom: 16px;
-    }
-  `],
+  styles: [
+    `
+      .settings-container {
+        padding: 24px;
+      }
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-header h2 {
+        margin: 0;
+      }
+      .danger-zone {
+        border: 1px solid #ff4d4f;
+      }
+      .warning-text {
+        color: #ff4d4f;
+        margin-bottom: 16px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

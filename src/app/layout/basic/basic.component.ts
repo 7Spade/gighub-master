@@ -19,12 +19,12 @@ import { LayoutDefaultModule, LayoutDefaultOptions } from '@delon/theme/layout-d
 import { SettingDrawerModule } from '@delon/theme/setting-drawer';
 import { ThemeBtnComponent } from '@delon/theme/theme-btn';
 import { environment } from '@env/environment';
+import { WorkspaceContextService, MenuManagementService } from '@shared';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { WorkspaceContextService, MenuManagementService } from '@shared';
 
 import { HeaderClearStorageComponent } from './widgets/clear-storage.component';
 import { HeaderContextSwitcherComponent } from './widgets/context-switcher.component';
@@ -177,7 +177,7 @@ export class LayoutBasicComponent {
 
     // 根據工作區上下文返回對應的用戶信息
     switch (contextType) {
-      case ContextType.USER:
+      case ContextType.USER: {
         // 個人帳戶：使用當前帳戶或 Supabase 用戶信息
         if (currentAccount) {
           return {
@@ -196,8 +196,9 @@ export class LayoutBasicComponent {
           email: email,
           avatar: metadata['avatar_url'] || metadata['avatar'] || './assets/tmp/img/avatar.jpg'
         };
+      }
 
-      case ContextType.ORGANIZATION:
+      case ContextType.ORGANIZATION: {
         // 組織上下文：顯示組織信息
         const org = this.workspaceContext.organizations().find(o => o.id === contextId);
         return {
@@ -205,8 +206,9 @@ export class LayoutBasicComponent {
           email: '',
           avatar: org?.logo_url || './assets/tmp/img/avatar.jpg'
         };
+      }
 
-      case ContextType.TEAM:
+      case ContextType.TEAM: {
         // 團隊上下文：顯示團隊信息
         const team = this.workspaceContext.teams().find(t => t.id === contextId);
         return {
@@ -214,6 +216,7 @@ export class LayoutBasicComponent {
           email: '',
           avatar: './assets/tmp/img/avatar.jpg'
         };
+      }
 
       case ContextType.BOT:
         // 機器人上下文
@@ -223,7 +226,7 @@ export class LayoutBasicComponent {
           avatar: './assets/tmp/img/avatar.jpg'
         };
 
-      default:
+      default: {
         // 預設使用 Supabase 用戶信息
         if (!supabaseUser) {
           return this.settings.user;
@@ -235,6 +238,7 @@ export class LayoutBasicComponent {
           email: defaultEmail,
           avatar: defaultMetadata['avatar_url'] || defaultMetadata['avatar'] || './assets/tmp/img/avatar.jpg'
         };
+      }
     }
   });
 

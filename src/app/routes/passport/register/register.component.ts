@@ -112,7 +112,7 @@ export class UserRegisterComponent {
         password: passwordValue
       })
       .subscribe({
-        next: ({ data, error }) => {
+        next: ({ error }) => {
           this.loading = false;
 
           if (error) {

@@ -4,6 +4,9 @@ export * from './infra/index';
 // Facades
 export * from './facades/index';
 
+// Guards
+export * from './guards/index';
+
 // Services
 export * from './i18n/i18n.service';
 export * from './net/index';

@@ -10,16 +10,13 @@
  */
 
 import { inject } from '@angular/core';
+
 import { SupabaseAuthService } from '../../supabase/supabase-auth.service';
 
 /**
  * 基礎 CRUD 門面
  */
-export abstract class BaseAccountCrudFacade<
-  TModel,
-  TCreateRequest,
-  TUpdateRequest
-> {
+export abstract class BaseAccountCrudFacade<TModel, TCreateRequest, TUpdateRequest> {
   protected readonly authService = inject(SupabaseAuthService);
 
   protected abstract readonly entityTypeName: string;

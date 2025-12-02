@@ -49,6 +49,7 @@ export class AccountService {
     try {
       // TODO: 實現實際的資料載入邏輯
       // 目前返回空陣列，實際應該從 API 或資料庫載入
+      console.debug(`[AccountService] Loading accounts for user: ${authUserId}`);
       this.userAccountsState.set([]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load user accounts';

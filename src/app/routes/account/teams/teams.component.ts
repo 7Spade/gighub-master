@@ -9,22 +9,23 @@
  * @module routes/account
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { TeamFacade, ContextType, Team } from '@core';
 import { WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 import { CreateTeamComponent } from '../create-team/create-team.component';
+import { TeamMembersComponent } from '../team-members/team-members.component';
 
 @Component({
   selector: 'app-account-teams',
@@ -46,12 +47,7 @@ import { CreateTeamComponent } from '../create-team/create-team.component';
             </button>
           </div>
 
-          <nz-table
-            #teamTable
-            [nzData]="teams()"
-            [nzLoading]="loading()"
-            [nzShowPagination]="teams().length > 10"
-          >
+          <nz-table #teamTable [nzData]="teams()" [nzLoading]="loading()" [nzShowPagination]="teams().length > 10">
             <thead>
               <tr>
                 <th>團隊名稱</th>
@@ -65,7 +61,7 @@ import { CreateTeamComponent } from '../create-team/create-team.component';
                 <tr>
                   <td>{{ team.name }}</td>
                   <td>{{ team.description || '-' }}</td>
-                  <td>{{ team.created_at | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ team.created_at | date: 'yyyy-MM-dd' }}</td>
                   <td>
                     <a (click)="manageMembers(team)">成員管理</a>
                     <nz-divider nzType="vertical"></nz-divider>
@@ -75,11 +71,11 @@ import { CreateTeamComponent } from '../create-team/create-team.component';
                       (nzOnConfirm)="deleteTeam(team)"
                       nzOkText="確定"
                       nzCancelText="取消"
-                    >刪除</a>
+                      >刪除</a
+                    >
                   </td>
                 </tr>
-              }
-              @empty {
+              } @empty {
                 <tr>
                   <td colspan="4">
                     <nz-empty nzNotFoundContent="尚無團隊"></nz-empty>
@@ -92,20 +88,22 @@ import { CreateTeamComponent } from '../create-team/create-team.component';
       }
     </div>
   `,
-  styles: [`
-    .teams-container {
-      padding: 24px;
-    }
-    .page-header {
-      margin-bottom: 24px;
-    }
-    .page-header h2 {
-      margin: 0;
-    }
-    .table-actions {
-      margin-bottom: 16px;
-    }
-  `],
+  styles: [
+    `
+      .teams-container {
+        padding: 24px;
+      }
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-header h2 {
+        margin: 0;
+      }
+      .table-actions {
+        margin-bottom: 16px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -188,7 +186,23 @@ export class AccountTeamsComponent implements OnInit {
   }
 
   manageMembers(team: Team): void {
-    this.msg.info(`團隊成員管理功能開發中：${team.name}`);
+    const orgId = this.workspaceContext.contextId();
+    if (!orgId) {
+      this.msg.error('無法確定組織 ID');
+      return;
+    }
+
+    this.modalService.create({
+      nzContent: TeamMembersComponent,
+      nzFooter: null,
+      nzWidth: 640,
+      nzClosable: true,
+      nzMaskClosable: false,
+      nzData: {
+        team,
+        organizationId: orgId
+      }
+    });
   }
 
   async deleteTeam(team: Team): Promise<void> {

@@ -17,9 +17,9 @@ import { WorkspaceContextService, CreateTeamRequest } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-create-team',
@@ -34,11 +34,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
           <nz-form-item>
             <nz-form-label [nzRequired]="true">所屬組織</nz-form-label>
             <nz-form-control [nzErrorTip]="'請選擇所屬組織'">
-              <nz-select
-                formControlName="organizationId"
-                nzPlaceHolder="請選擇所屬組織"
-                [nzDisabled]="loading()"
-              >
+              <nz-select formControlName="organizationId" nzPlaceHolder="請選擇所屬組織" [nzDisabled]="loading()">
                 @for (option of organizationOptions(); track option.value) {
                   <nz-option [nzValue]="option.value" [nzLabel]="option.label" />
                 }
@@ -49,11 +45,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
           <nz-form-item>
             <nz-form-label>所屬組織</nz-form-label>
             <nz-form-control>
-              <input
-                nz-input
-                [value]="getCurrentOrgName()"
-                disabled
-              />
+              <input nz-input [value]="getCurrentOrgName()" disabled />
             </nz-form-control>
           </nz-form-item>
         }
@@ -61,12 +53,7 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
         <nz-form-item>
           <nz-form-label [nzRequired]="true">團隊名稱</nz-form-label>
           <nz-form-control [nzErrorTip]="'請輸入團隊名稱（2-50個字符）'">
-            <input
-              nz-input
-              formControlName="name"
-              placeholder="請輸入團隊名稱"
-              [disabled]="loading()"
-            />
+            <input nz-input formControlName="name" placeholder="請輸入團隊名稱" [disabled]="loading()" />
           </nz-form-control>
         </nz-form-item>
 
@@ -86,50 +73,37 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
     </div>
 
     <div class="modal-footer">
-      <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
-        取消
-      </button>
-      <button
-        nz-button
-        type="button"
-        nzType="primary"
-        (click)="submit()"
-        [nzLoading]="loading()"
-        [disabled]="form.invalid"
-      >
+      <button nz-button type="button" (click)="cancel()" [disabled]="loading()"> 取消 </button>
+      <button nz-button type="button" nzType="primary" (click)="submit()" [nzLoading]="loading()" [disabled]="form.invalid">
         建立團隊
       </button>
     </div>
   `,
-  styles: [`
-    .modal-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid #f0f0f0;
-      text-align: right;
-    }
-    .modal-footer button + button {
-      margin-left: 8px;
-    }
-  `],
+  styles: [
+    `
+      .modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: right;
+      }
+      .modal-footer button + button {
+        margin-left: 8px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzSelectModule,
-    NzButtonModule
-  ]
+  imports: [ReactiveFormsModule, NzFormModule, NzInputModule, NzSelectModule, NzButtonModule]
 })
 export class CreateTeamComponent {
   private readonly fb = inject(FormBuilder);

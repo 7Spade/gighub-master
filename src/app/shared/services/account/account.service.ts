@@ -10,13 +10,8 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
+import { Account, AccountRepository, TeamRepository, Team } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  Account,
-  AccountRepository,
-  TeamRepository,
-  Team
-} from '@core';
 
 @Injectable({
   providedIn: 'root'

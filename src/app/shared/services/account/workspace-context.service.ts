@@ -12,13 +12,7 @@
 
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  ContextType,
-  ContextState,
-  Account,
-  Team,
-  SupabaseAuthService
-} from '@core';
+import { ContextType, ContextState, Account, Team, SupabaseAuthService } from '@core';
 
 import { AccountService } from './account.service';
 import { OrganizationService } from './organization.service';
@@ -198,9 +192,7 @@ export class WorkspaceContextService {
         this.accountService
           .findByAuthUserId(authUserId)
           .then(user => (user ? this.organizationService.getUserJoinedOrganizations(user.id) : [])),
-        this.accountService
-          .findByAuthUserId(authUserId)
-          .then(user => (user ? this.accountService.getUserTeams(user.id) : []))
+        this.accountService.findByAuthUserId(authUserId).then(user => (user ? this.accountService.getUserTeams(user.id) : []))
       ]);
 
       // 處理用戶帳戶

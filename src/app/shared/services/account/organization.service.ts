@@ -10,20 +10,10 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
+import { OrganizationRepository, OrganizationMemberRepository, OrganizationRole, SupabaseService } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  OrganizationRepository,
-  OrganizationMemberRepository,
-  Organization,
-  OrganizationRole,
-  SupabaseService
-} from '@core';
 
-import {
-  OrganizationBusinessModel,
-  CreateOrganizationRequest,
-  UpdateOrganizationRequest
-} from '../../models/account';
+import { OrganizationBusinessModel, CreateOrganizationRequest, UpdateOrganizationRequest } from '../../models/account';
 
 @Injectable({
   providedIn: 'root'
@@ -64,9 +54,7 @@ export class OrganizationService {
       })
     );
 
-    const organizationIds = ownerMemberships
-      .map(m => (m as any).organization_id)
-      .filter((id: string | undefined) => id);
+    const organizationIds = ownerMemberships.map(m => (m as any).organization_id).filter((id: string | undefined) => id);
 
     if (organizationIds.length === 0) {
       return [];
@@ -81,13 +69,9 @@ export class OrganizationService {
    * Find organizations user has joined
    */
   async getUserJoinedOrganizations(accountId: string): Promise<OrganizationBusinessModel[]> {
-    const memberships = await firstValueFrom(
-      this.organizationMemberRepo.findByAccount(accountId)
-    );
+    const memberships = await firstValueFrom(this.organizationMemberRepo.findByAccount(accountId));
 
-    const orgIds = memberships
-      .map(m => (m as any).organization_id)
-      .filter((id: string | undefined) => id);
+    const orgIds = memberships.map(m => (m as any).organization_id).filter((id: string | undefined) => id);
 
     if (orgIds.length === 0) {
       return [];
@@ -135,16 +119,12 @@ export class OrganizationService {
     }
 
     // Fallback: fetch organization by account_id
-    const { data: orgData, error: fetchError } = await client
-      .from('organizations')
-      .select('*')
-      .eq('account_id', out_account_id)
-      .single();
+    const { data: orgData, error: fetchError } = await client.from('organizations').select('*').eq('account_id', out_account_id).single();
 
     if (fetchError || !orgData) {
       // Data inconsistency: organization record missing in organizations table
       // The RPC function should create both account and organization records atomically
-      throw new Error('Organization record missing in organizations table for account_id: ' + out_account_id);
+      throw new Error(`Organization record missing in organizations table for account_id: ${out_account_id}`);
     }
 
     return orgData as OrganizationBusinessModel;

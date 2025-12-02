@@ -10,14 +10,8 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
+import { TeamRepository, Team, TeamMember, TeamRole, SupabaseService } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  TeamRepository,
-  Team,
-  TeamMember,
-  TeamRole,
-  SupabaseService
-} from '@core';
 
 /**
  * Create team request
@@ -150,11 +144,13 @@ export class TeamService {
    * Add team member
    */
   async addMember(teamId: string, accountId: string, role: TeamRole = TeamRole.MEMBER): Promise<TeamMember | null> {
-    return firstValueFrom(this.teamRepo.addMember({
-      team_id: teamId,
-      account_id: accountId,
-      role
-    }));
+    return firstValueFrom(
+      this.teamRepo.addMember({
+        team_id: teamId,
+        account_id: accountId,
+        role
+      })
+    );
   }
 
   /**

@@ -7,13 +7,7 @@
  * @module shared/models/account
  */
 
-import {
-  AccountType,
-  AccountStatus,
-  Organization,
-  OrganizationMember,
-  OrganizationRole
-} from '@core';
+import { AccountType, AccountStatus, Organization, OrganizationMember, OrganizationRole } from '@core';
 
 /**
  * Organization entity type (camelCase)
@@ -78,6 +72,7 @@ export interface UpdateOrganizationRequest {
  */
 export interface AddOrganizationMemberRequest {
   organizationId: string;
-  accountId: string;
+  accountId?: string;
+  email?: string;
   role: OrganizationRole;
 }

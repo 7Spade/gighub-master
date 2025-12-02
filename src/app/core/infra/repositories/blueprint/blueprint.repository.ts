@@ -26,14 +26,7 @@ export class BlueprintRepository {
    * Find blueprint by ID
    */
   findById(id: string): Observable<Blueprint | null> {
-    return from(
-      this.supabase.client
-        .from('blueprints')
-        .select('*')
-        .eq('id', id)
-        .is('deleted_at', null)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('blueprints').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintRepository] findById error:', error);
@@ -50,13 +43,7 @@ export class BlueprintRepository {
    */
   findBySlug(ownerId: string, slug: string): Observable<Blueprint | null> {
     return from(
-      this.supabase.client
-        .from('blueprints')
-        .select('*')
-        .eq('owner_id', ownerId)
-        .eq('slug', slug)
-        .is('deleted_at', null)
-        .single()
+      this.supabase.client.from('blueprints').select('*').eq('owner_id', ownerId).eq('slug', slug).is('deleted_at', null).single()
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -73,14 +60,7 @@ export class BlueprintRepository {
    * Find blueprints by owner
    */
   findByOwner(ownerId: string): Observable<Blueprint[]> {
-    return from(
-      this.supabase.client
-        .from('blueprints')
-        .select('*')
-        .eq('owner_id', ownerId)
-        .is('deleted_at', null)
-        .order('name')
-    ).pipe(
+    return from(this.supabase.client.from('blueprints').select('*').eq('owner_id', ownerId).is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintRepository] findByOwner error:', error);
@@ -100,13 +80,7 @@ export class BlueprintRepository {
       return from(Promise.resolve([]));
     }
 
-    return from(
-      this.supabase.client
-        .from('blueprints')
-        .select('*')
-        .in('id', ids)
-        .is('deleted_at', null)
-    ).pipe(
+    return from(this.supabase.client.from('blueprints').select('*').in('id', ids).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintRepository] findByIds error:', error);
@@ -158,14 +132,7 @@ export class BlueprintRepository {
    * Find public blueprints
    */
   findPublic(): Observable<Blueprint[]> {
-    return from(
-      this.supabase.client
-        .from('blueprints')
-        .select('*')
-        .eq('is_public', true)
-        .is('deleted_at', null)
-        .order('name')
-    ).pipe(
+    return from(this.supabase.client.from('blueprints').select('*').eq('is_public', true).is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintRepository] findPublic error:', error);
@@ -181,13 +148,7 @@ export class BlueprintRepository {
    * Create blueprint
    */
   create(blueprint: Partial<Blueprint>): Observable<Blueprint | null> {
-    return from(
-      this.supabase.client
-        .from('blueprints')
-        .insert(blueprint)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('blueprints').insert(blueprint).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintRepository] create error:', error);
