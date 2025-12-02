@@ -525,47 +525,25 @@ flowchart TB
 
 #### 1. 任務管理資料庫設計建議
 
+> **注意**: 現有資料庫已有完整的 `tasks` 表定義，請參考 `supabase/seeds/init.sql`
+
 ```sql
--- 建議的任務表結構
-CREATE TABLE tasks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
-    parent_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    status task_status NOT NULL DEFAULT 'pending',
-    priority task_priority NOT NULL DEFAULT 'medium',
-    assignee_id UUID REFERENCES accounts(id),
-    start_date DATE,
-    due_date DATE,
-    completed_at TIMESTAMPTZ,
-    estimated_hours DECIMAL(10,2),
-    actual_hours DECIMAL(10,2),
-    sort_order INTEGER DEFAULT 0,
-    metadata JSONB DEFAULT '{}',
-    created_by UUID REFERENCES accounts(id),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    deleted_at TIMESTAMPTZ
-);
+-- 現有任務表結構 (init.sql 中已定義)
+-- tasks 表欄位:
+--   id, blueprint_id, parent_id, title, description,
+--   status, priority, assignee_id, reviewer_id,
+--   due_date, start_date, completion_rate, sort_order,
+--   metadata, created_by, created_at, updated_at, deleted_at
 
--- 任務狀態枚舉
-CREATE TYPE task_status AS ENUM (
-    'pending',    -- 待處理
-    'in_progress', -- 進行中
-    'review',     -- 待審核
-    'completed',  -- 已完成
-    'blocked',    -- 已阻塞
-    'cancelled'   -- 已取消
-);
+-- 現有枚舉類型:
+-- task_status: pending, in_progress, in_review, completed, cancelled, blocked
+-- task_priority: lowest, low, medium, high, highest
 
--- 任務優先級枚舉
-CREATE TYPE task_priority AS ENUM (
-    'urgent',  -- 緊急
-    'high',    -- 高
-    'medium',  -- 中
-    'low'      -- 低
-);
+-- 建議的擴展欄位 (如需要):
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS estimated_hours DECIMAL(10,2);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS actual_hours DECIMAL(10,2);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
 ```
 
 #### 2. 前端架構建議

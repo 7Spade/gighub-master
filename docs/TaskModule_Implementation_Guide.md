@@ -19,23 +19,11 @@
 -- 1. 枚舉類型定義
 -- ============================================================================
 
--- 任務狀態
-CREATE TYPE task_status AS ENUM (
-    'pending',      -- 待處理
-    'in_progress',  -- 進行中
-    'review',       -- 待審核
-    'completed',    -- 已完成
-    'blocked',      -- 已阻塞
-    'cancelled'     -- 已取消
-);
+-- 任務狀態 (注意：資料庫已有定義，此處為參考)
+-- 已存在於 init.sql: task_status ENUM ('pending', 'in_progress', 'in_review', 'completed', 'cancelled', 'blocked')
 
--- 任務優先級
-CREATE TYPE task_priority AS ENUM (
-    'urgent',   -- 緊急
-    'high',     -- 高
-    'medium',   -- 中
-    'low'       -- 低
-);
+-- 任務優先級 (注意：資料庫已有定義，此處為參考)
+-- 已存在於 init.sql: task_priority ENUM ('lowest', 'low', 'medium', 'high', 'highest')
 
 -- 任務依賴類型
 CREATE TYPE dependency_type AS ENUM (
@@ -45,59 +33,21 @@ CREATE TYPE dependency_type AS ENUM (
     'start_to_finish'    -- 開始後完成 (SF)
 );
 
+-- 注意：啟用 ltree 擴展 (如果需要使用階層路徑功能)
+-- CREATE EXTENSION IF NOT EXISTS ltree;
+
 -- ============================================================================
--- 2. 任務主表
+-- 2. 任務表擴展欄位 (基於現有 tasks 表)
+-- 現有表結構請參考 supabase/seeds/init.sql
+-- 以下是建議的擴展欄位
 -- ============================================================================
 
-CREATE TABLE tasks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
-    parent_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
-    
-    -- 基本資訊
-    title VARCHAR(500) NOT NULL,
-    description TEXT,
-    
-    -- 狀態與優先級
-    status task_status NOT NULL DEFAULT 'pending',
-    priority task_priority NOT NULL DEFAULT 'medium',
-    
-    -- 時程
-    start_date DATE,
-    due_date DATE,
-    completed_at TIMESTAMPTZ,
-    
-    -- 工時估計
-    estimated_hours DECIMAL(10,2),
-    actual_hours DECIMAL(10,2),
-    progress_percent INTEGER DEFAULT 0 CHECK (progress_percent >= 0 AND progress_percent <= 100),
-    
-    -- 排序與層級
-    sort_order INTEGER DEFAULT 0,
-    level INTEGER DEFAULT 0,
-    path LTREE,  -- 需要啟用 ltree 擴展
-    
-    -- 額外資料
-    tags TEXT[] DEFAULT '{}',
-    metadata JSONB DEFAULT '{}',
-    
-    -- 審計欄位
-    created_by UUID REFERENCES accounts(id),
-    assigned_to UUID REFERENCES accounts(id),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    deleted_at TIMESTAMPTZ,
-    
-    -- 約束
-    CONSTRAINT valid_dates CHECK (start_date IS NULL OR due_date IS NULL OR start_date <= due_date)
-);
-
--- 索引
-CREATE INDEX idx_tasks_blueprint ON tasks(blueprint_id) WHERE deleted_at IS NULL;
-CREATE INDEX idx_tasks_parent ON tasks(parent_id) WHERE deleted_at IS NULL;
-CREATE INDEX idx_tasks_status ON tasks(status) WHERE deleted_at IS NULL;
-CREATE INDEX idx_tasks_assigned ON tasks(assigned_to) WHERE deleted_at IS NULL;
-CREATE INDEX idx_tasks_due_date ON tasks(due_date) WHERE deleted_at IS NULL AND status != 'completed';
+-- 如需添加額外欄位，使用 ALTER TABLE:
+-- ALTER TABLE tasks ADD COLUMN completed_at TIMESTAMPTZ;
+-- ALTER TABLE tasks ADD COLUMN estimated_hours DECIMAL(10,2);
+-- ALTER TABLE tasks ADD COLUMN actual_hours DECIMAL(10,2);
+-- ALTER TABLE tasks ADD COLUMN tags TEXT[] DEFAULT '{}';
+-- ALTER TABLE tasks ADD COLUMN level INTEGER DEFAULT 0;
 
 -- ============================================================================
 -- 3. 任務指派表 (多人指派支援)
@@ -219,19 +169,19 @@ CREATE TRIGGER update_tasks_updated_at
 CREATE OR REPLACE FUNCTION update_parent_progress()
 RETURNS TRIGGER AS $$
 DECLARE
-    parent_id UUID;
+    v_parent_id UUID;
     avg_progress INTEGER;
 BEGIN
-    parent_id := COALESCE(NEW.parent_id, OLD.parent_id);
+    v_parent_id := COALESCE(NEW.parent_id, OLD.parent_id);
     
-    IF parent_id IS NOT NULL THEN
-        SELECT COALESCE(AVG(progress_percent), 0)::INTEGER
+    IF v_parent_id IS NOT NULL THEN
+        SELECT COALESCE(AVG(completion_rate), 0)::INTEGER
         INTO avg_progress
         FROM tasks
-        WHERE parent_id = parent_id AND deleted_at IS NULL;
+        WHERE tasks.parent_id = v_parent_id AND tasks.deleted_at IS NULL;
         
-        UPDATE tasks SET progress_percent = avg_progress
-        WHERE id = parent_id;
+        UPDATE tasks SET completion_rate = avg_progress
+        WHERE tasks.id = v_parent_id;
     END IF;
     
     RETURN NEW;
@@ -239,7 +189,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_parent_task_progress
-    AFTER INSERT OR UPDATE OF progress_percent OR DELETE ON tasks
+    AFTER INSERT OR UPDATE OF completion_rate OR DELETE ON tasks
     FOR EACH ROW
     EXECUTE FUNCTION update_parent_progress();
 ```
@@ -257,23 +207,32 @@ CREATE TRIGGER update_parent_task_progress
  */
 
 // ============================================================================
-// Enums
+// Enums (與 supabase/seeds/init.sql 保持一致)
 // ============================================================================
 
+/**
+ * 任務狀態枚舉
+ * 對應資料庫: task_status
+ */
 export enum TaskStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
-  REVIEW = 'review',
+  IN_REVIEW = 'in_review',
   COMPLETED = 'completed',
-  BLOCKED = 'blocked',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
+  BLOCKED = 'blocked'
 }
 
+/**
+ * 任務優先級枚舉
+ * 對應資料庫: task_priority
+ */
 export enum TaskPriority {
-  URGENT = 'urgent',
-  HIGH = 'high',
+  LOWEST = 'lowest',
+  LOW = 'low',
   MEDIUM = 'medium',
-  LOW = 'low'
+  HIGH = 'high',
+  HIGHEST = 'highest'
 }
 
 export enum DependencyType {
@@ -290,9 +249,13 @@ export enum AssignmentRole {
 }
 
 // ============================================================================
-// Entity Interfaces
+// Entity Interfaces (與 supabase/seeds/init.sql 保持一致)
 // ============================================================================
 
+/**
+ * 任務實體介面
+ * 對應資料庫: tasks 表
+ */
 export interface Task {
   id: string;
   blueprint_id: string;
@@ -301,18 +264,14 @@ export interface Task {
   description?: string | null;
   status: TaskStatus;
   priority: TaskPriority;
+  assignee_id?: string | null;  // 負責人
+  reviewer_id?: string | null;  // 審核人
   start_date?: string | null;
   due_date?: string | null;
-  completed_at?: string | null;
-  estimated_hours?: number | null;
-  actual_hours?: number | null;
-  progress_percent: number;
+  completion_rate: number;      // 完成度 0-100
   sort_order: number;
-  level: number;
-  tags?: string[];
   metadata?: Record<string, unknown>;
   created_by?: string | null;
-  assigned_to?: string | null;
   created_at?: string;
   updated_at?: string;
   deleted_at?: string | null;
@@ -358,7 +317,7 @@ export interface TaskQueryOptions {
   parentId?: string | null;
   status?: TaskStatus | TaskStatus[];
   priority?: TaskPriority | TaskPriority[];
-  assignedTo?: string;
+  assigneeId?: string;  // 對應 assignee_id 欄位
   dueBefore?: string;
   dueAfter?: string;
   includeDeleted?: boolean;
@@ -383,9 +342,8 @@ export interface CreateTaskRequest {
   priority?: TaskPriority;
   startDate?: string;
   dueDate?: string;
-  estimatedHours?: number;
-  assignedTo?: string;
-  tags?: string[];
+  assigneeId?: string;
+  reviewerId?: string;
 }
 
 export interface UpdateTaskRequest {
@@ -395,11 +353,9 @@ export interface UpdateTaskRequest {
   priority?: TaskPriority;
   startDate?: string | null;
   dueDate?: string | null;
-  estimatedHours?: number | null;
-  actualHours?: number | null;
-  progressPercent?: number;
-  assignedTo?: string | null;
-  tags?: string[];
+  completionRate?: number;
+  assigneeId?: string | null;
+  reviewerId?: string | null;
 }
 
 export interface BatchUpdateTaskRequest {
@@ -491,8 +447,8 @@ export class TaskRepository {
       query = query.in('priority', priorities);
     }
 
-    if (options?.assignedTo) {
-      query = query.eq('assigned_to', options.assignedTo);
+    if (options?.assigneeId) {
+      query = query.eq('assignee_id', options.assigneeId);
     }
 
     if (options?.dueBefore) {
@@ -720,6 +676,7 @@ export class TaskService {
     const total = tasks.length;
     const completed = tasks.filter(t => t.status === TaskStatus.COMPLETED).length;
     const inProgress = tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length;
+    const inReview = tasks.filter(t => t.status === TaskStatus.IN_REVIEW).length;
     const overdue = tasks.filter(t => 
       t.due_date && 
       new Date(t.due_date) < new Date() && 
@@ -730,6 +687,7 @@ export class TaskService {
       total,
       completed,
       inProgress,
+      inReview,
       overdue,
       completionRate: total > 0 ? Math.round((completed / total) * 100) : 0
     };
@@ -769,10 +727,8 @@ export class TaskService {
       priority: request.priority || TaskPriority.MEDIUM,
       start_date: request.startDate,
       due_date: request.dueDate,
-      estimated_hours: request.estimatedHours,
-      assigned_to: request.assignedTo,
-      tags: request.tags || [],
-      progress_percent: 0
+      assignee_id: request.assigneeId,
+      completion_rate: 0
     };
 
     const task = await firstValueFrom(this.taskRepo.create(taskData));
@@ -797,16 +753,9 @@ export class TaskService {
     if (request.priority !== undefined) updates.priority = request.priority;
     if (request.startDate !== undefined) updates.start_date = request.startDate;
     if (request.dueDate !== undefined) updates.due_date = request.dueDate;
-    if (request.estimatedHours !== undefined) updates.estimated_hours = request.estimatedHours;
-    if (request.actualHours !== undefined) updates.actual_hours = request.actualHours;
-    if (request.progressPercent !== undefined) updates.progress_percent = request.progressPercent;
-    if (request.assignedTo !== undefined) updates.assigned_to = request.assignedTo;
-    if (request.tags !== undefined) updates.tags = request.tags;
-
-    // 狀態完成時自動設定完成時間
-    if (request.status === TaskStatus.COMPLETED && !updates.completed_at) {
-      updates.completed_at = new Date().toISOString();
-    }
+    if (request.completionRate !== undefined) updates.completion_rate = request.completionRate;
+    if (request.assigneeId !== undefined) updates.assignee_id = request.assigneeId;
+    if (request.reviewerId !== undefined) updates.reviewer_id = request.reviewerId;
 
     const task = await firstValueFrom(this.taskRepo.update(id, updates));
     if (!task) {
@@ -1000,9 +949,9 @@ import { NzTableModule } from 'ng-zorro-antd/table';
             </td>
             <td><nz-tag [nzColor]="getStatusColor(task.status)">{{ getStatusLabel(task.status) }}</nz-tag></td>
             <td><nz-tag [nzColor]="getPriorityColor(task.priority)">{{ getPriorityLabel(task.priority) }}</nz-tag></td>
-            <td>{{ task.assigned_to || '-' }}</td>
+            <td>{{ task.assignee_id || '-' }}</td>
             <td>{{ task.due_date | date:'yyyy-MM-dd' }}</td>
-            <td><nz-progress [nzPercent]="task.progress_percent" nzSize="small"></nz-progress></td>
+            <td><nz-progress [nzPercent]="task.completion_rate" nzSize="small"></nz-progress></td>
             <td>
               <button nz-button nzType="link" (click)="editTask(task)">編輯</button>
               <button nz-button nzType="link" nzDanger 
