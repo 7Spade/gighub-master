@@ -9,8 +9,8 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: 'https://uppudvdqgkflvdolguit.supabase.co',
+    url: 'https://dqdskmsnndsoppftplnt.supabase.co',
     anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwcHVkdmRxZ2tmbHZkb2xndWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0ODIxMzIsImV4cCI6MjA4MDA1ODEzMn0.xEOHATBBZmfFRuMZUNuDBa-G3eQIFufUMBr-myj9Eaw'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxZHNrbXNubmRzb3BwZnRwbG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2OTU3MTEsImV4cCI6MjA4MDI3MTcxMX0.3ozoSl4xTmXqlRJdj4nu8g0VlLJ7FBgrqkWRSpeo8gE'
   }
 } as Environment;
