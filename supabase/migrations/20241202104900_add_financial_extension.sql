@@ -26,11 +26,12 @@ ALTER TYPE entity_type ADD VALUE IF NOT EXISTS 'payment';
 
 -- ----------------------------------------------------------------------------
 -- Table: contracts (合約)
--- 合約與預算管理的起點，可擴展 vendor 模組
+-- 合約與預算管理的起點，可擴展 vendor 模組，支援生命週期狀態管理
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS contracts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
+  title VARCHAR(500) NOT NULL,                          -- 合約名稱 (必填)
   vendor_name TEXT,                                     -- 可擴展 vendor 模組
   contract_number VARCHAR(100),                         -- 合約編號
   contract_amount NUMERIC(18,2) NOT NULL,               -- 合約金額
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS contracts (
   start_date DATE,                                      -- 開始日期
   end_date DATE,                                        -- 結束日期
   description TEXT,                                     -- 合約描述
+  lifecycle blueprint_lifecycle NOT NULL DEFAULT 'draft',  -- 生命週期狀態
   metadata JSONB DEFAULT '{}'::jsonb,                   -- 擴展欄位
   created_by UUID REFERENCES accounts(id),              -- 建立者
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -50,6 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_contracts_blueprint ON contracts(blueprint_id);
 CREATE INDEX IF NOT EXISTS idx_contracts_vendor_name ON contracts(vendor_name);
 CREATE INDEX IF NOT EXISTS idx_contracts_start_date ON contracts(start_date);
 CREATE INDEX IF NOT EXISTS idx_contracts_end_date ON contracts(end_date);
+CREATE INDEX IF NOT EXISTS idx_contracts_lifecycle ON contracts(lifecycle);
 CREATE INDEX IF NOT EXISTS idx_contracts_deleted_at ON contracts(deleted_at) WHERE deleted_at IS NULL;
 
 -- 更新時間觸發器
@@ -79,12 +82,14 @@ CREATE POLICY "contracts_delete" ON contracts
   USING ((SELECT private.can_write_blueprint(blueprint_id)));
 
 -- 註解
-COMMENT ON TABLE contracts IS '合約 - 合約與預算管理的起點，與 Blueprint 關聯';
+COMMENT ON TABLE contracts IS '合約 - 合約與預算管理的起點，支援生命週期狀態管理';
 COMMENT ON COLUMN contracts.blueprint_id IS '所屬藍圖 ID';
+COMMENT ON COLUMN contracts.title IS '合約名稱 (必填)';
 COMMENT ON COLUMN contracts.vendor_name IS '供應商名稱 (可擴展 vendor 模組)';
 COMMENT ON COLUMN contracts.contract_number IS '合約編號';
 COMMENT ON COLUMN contracts.contract_amount IS '合約金額';
 COMMENT ON COLUMN contracts.currency IS '幣別 (預設 TWD)';
+COMMENT ON COLUMN contracts.lifecycle IS '生命週期狀態：draft, active, on_hold, archived, deleted';
 
 -- ============================================================================
 -- PART 3: EXPENSES TABLE (成本支出紀錄)
@@ -296,10 +301,60 @@ COMMENT ON COLUMN payments.paid_at IS '付款日期';
 COMMENT ON COLUMN payments.payment_method IS '付款方式';
 
 -- ============================================================================
--- PART 6: LIFECYCLE TRIGGER FOR PAYMENT_REQUESTS (請款單生命週期觸發器)
+-- PART 6: LIFECYCLE TRIGGERS (生命週期觸發器)
 -- ============================================================================
 
--- 請款單生命週期變更觸發器函數
+-- ----------------------------------------------------------------------------
+-- 6.1: 合約生命週期變更觸發器函數
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION contract_lifecycle_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- 只在 lifecycle 欄位實際變更時記錄
+  IF NEW.lifecycle IS DISTINCT FROM OLD.lifecycle THEN
+    INSERT INTO lifecycle_transitions (
+      blueprint_id,
+      entity_type,
+      entity_id,
+      from_status,
+      to_status,
+      reason,
+      metadata,
+      transitioned_by,
+      created_at
+    ) VALUES (
+      NEW.blueprint_id,
+      'contract'::entity_type,
+      NEW.id,
+      OLD.lifecycle::text,
+      NEW.lifecycle::text,
+      NULL,  -- 可透過應用層傳入
+      jsonb_build_object(
+        'contract_number', NEW.contract_number,
+        'title', NEW.title,
+        'contract_amount', NEW.contract_amount
+      ),
+      auth.uid(),
+      NOW()
+    );
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 為 contracts 表建立觸發器
+DROP TRIGGER IF EXISTS contract_lifecycle_change ON contracts;
+CREATE TRIGGER contract_lifecycle_change
+  AFTER UPDATE ON contracts
+  FOR EACH ROW
+  WHEN (OLD.lifecycle IS DISTINCT FROM NEW.lifecycle)
+  EXECUTE FUNCTION contract_lifecycle_trigger();
+
+COMMENT ON FUNCTION contract_lifecycle_trigger() IS '合約生命週期變更時自動記錄到 lifecycle_transitions';
+
+-- ----------------------------------------------------------------------------
+-- 6.2: 請款單生命週期變更觸發器函數
+-- ----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION payment_request_lifecycle_trigger()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -348,8 +403,40 @@ COMMENT ON FUNCTION payment_request_lifecycle_trigger() IS '請款單生命週�
 -- ============================================================================
 
 -- 為需要即時更新的財務資料表啟用 Realtime
-ALTER PUBLICATION supabase_realtime ADD TABLE payment_requests;
-ALTER PUBLICATION supabase_realtime ADD TABLE payments;
+DO $$
+BEGIN
+  -- contracts
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'contracts'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE contracts;
+  END IF;
+  
+  -- expenses
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'expenses'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE expenses;
+  END IF;
+  
+  -- payment_requests
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'payment_requests'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE payment_requests;
+  END IF;
+  
+  -- payments
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'payments'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE payments;
+  END IF;
+END $$;
 
 -- ============================================================================
 -- PART 8: HELPER FUNCTIONS (輔助函數)
