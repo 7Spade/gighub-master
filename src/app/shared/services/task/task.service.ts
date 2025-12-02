@@ -25,7 +25,7 @@ import {
   UpdateTaskRequest,
   KanbanColumn,
   TASK_STATUS_CONFIG
-} from '@core/infra/types/task';
+} from '@core';
 
 @Injectable({
   providedIn: 'root'
@@ -322,7 +322,7 @@ export class TaskService {
       });
 
       if (node.children) {
-        node.children.forEach(child => flatten(child, level + 1));
+        node.children.forEach((child: TaskNode) => flatten(child, level + 1));
       }
     };
 
@@ -382,14 +382,14 @@ export class TaskService {
       }
 
       // Parent node: calculate from children
-      const childProgresses = node.children.map(calculateNodeProgress).filter(p => p >= 0);
+      const childProgresses = node.children.map(calculateNodeProgress).filter((p: number) => p >= 0);
       if (childProgresses.length === 0) return 0;
-      return Math.round(childProgresses.reduce((a, b) => a + b, 0) / childProgresses.length);
+      return Math.round(childProgresses.reduce((a: number, b: number) => a + b, 0) / childProgresses.length);
     };
 
-    const progresses = nodes.map(calculateNodeProgress).filter(p => p >= 0);
+    const progresses = nodes.map(calculateNodeProgress).filter((p: number) => p >= 0);
     if (progresses.length === 0) return 0;
-    return Math.round(progresses.reduce((a, b) => a + b, 0) / progresses.length);
+    return Math.round(progresses.reduce((a: number, b: number) => a + b, 0) / progresses.length);
   }
 
   // ============================================================================

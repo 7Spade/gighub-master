@@ -17,9 +17,8 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Task, TaskNode, FlatTaskNode, TaskStatus, TaskViewType, TASK_STATUS_CONFIG, TASK_PRIORITY_CONFIG } from '@core/infra/types/task';
-import { SHARED_IMPORTS } from '@shared';
-import { TaskService } from '@shared/services/task';
+import { Task, TaskNode, FlatTaskNode, TaskStatus, TaskPriority, TaskViewType, TASK_STATUS_CONFIG, TASK_PRIORITY_CONFIG } from '@core';
+import { SHARED_IMPORTS, TaskService } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
 
@@ -212,11 +211,11 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
       <div class="tree-node-content" [class.completed]="node.origin.status === TaskStatus.COMPLETED">
         <span class="node-title">{{ node.title }}</span>
         <div class="node-tags">
-          <nz-tag [nzColor]="TASK_STATUS_CONFIG[node.origin.status].color" nzBorderless>
-            {{ TASK_STATUS_CONFIG[node.origin.status].label }}
+          <nz-tag [nzColor]="getStatusConfig(node.origin.status).color" nzBorderless>
+            {{ getStatusConfig(node.origin.status).label }}
           </nz-tag>
-          <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[node.origin.priority].color" nzBorderless>
-            {{ TASK_PRIORITY_CONFIG[node.origin.priority].label }}
+          <nz-tag [nzColor]="getPriorityConfig(node.origin.priority).color" nzBorderless>
+            {{ getPriorityConfig(node.origin.priority).label }}
           </nz-tag>
         </div>
         <div class="node-progress">
@@ -401,15 +400,15 @@ export class BlueprintTasksComponent implements OnInit {
   });
 
   treeControl = new FlatTreeControl<FlatTaskNode>(
-    node => node.level,
-    node => node.expandable
+    (node: FlatTaskNode) => node.level,
+    (node: FlatTaskNode) => node.expandable
   );
 
   treeFlattener = new NzTreeFlattener(
     this.transformer,
-    node => node.level,
-    node => node.expandable,
-    node => node.children
+    (node: FlatTaskNode) => node.level,
+    (node: FlatTaskNode) => node.expandable,
+    (node: TaskNode) => node.children
   );
 
   dataSource = new NzTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -434,6 +433,15 @@ export class BlueprintTasksComponent implements OnInit {
 
   // Tree node check
   hasChild = (_: number, node: FlatTaskNode): boolean => node.expandable;
+
+  // Helper methods for template type safety
+  getStatusConfig(status: TaskStatus): { label: string; color: string; icon: string } {
+    return TASK_STATUS_CONFIG[status];
+  }
+
+  getPriorityConfig(priority: TaskPriority): { label: string; color: string; icon: string } {
+    return TASK_PRIORITY_CONFIG[priority];
+  }
 
   ngOnInit(): void {
     this.loadTasks();
@@ -468,14 +476,14 @@ export class BlueprintTasksComponent implements OnInit {
   // Task level for table view indentation
   getTaskLevel(taskId: string): number {
     const flatNodes = this.taskService.flattenTaskTree(this.taskService.taskTree());
-    const node = flatNodes.find(n => n.id === taskId);
+    const node = flatNodes.find((n: FlatTaskNode) => n.id === taskId);
     return node?.level || 0;
   }
 
   // Check if task has children
   hasChildren(taskId: string): boolean {
     const tasks = this.taskService.tasks();
-    return tasks.some(t => t.parent_id === taskId);
+    return tasks.some((t: Task) => t.parent_id === taskId);
   }
 
   // Status transitions
