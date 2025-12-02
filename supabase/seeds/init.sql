@@ -3029,10 +3029,10 @@ SET search_path = ''
 AS $$
 DECLARE
   v_notification_id UUID;
-  v_channels notification_channel[];
+  v_channels public.notification_channel[];
 BEGIN
   -- 取得通知偏好
-  SELECT COALESCE(np.channels, ARRAY['in_app']::notification_channel[])
+  SELECT COALESCE(np.channels, ARRAY['in_app']::public.notification_channel[])
   INTO v_channels
   FROM public.notification_preferences np
   WHERE np.account_id = p_account_id
@@ -3043,7 +3043,7 @@ BEGIN
   
   -- 如果沒有偏好設定，使用預設
   IF v_channels IS NULL THEN
-    v_channels := ARRAY['in_app']::notification_channel[];
+    v_channels := ARRAY['in_app']::public.notification_channel[];
   END IF;
   
   INSERT INTO public.notifications (
