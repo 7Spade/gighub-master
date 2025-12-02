@@ -107,12 +107,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
             <div nz-row [nzGutter]="16" class="financial-stats-row">
               <div nz-col [nzSpan]="6">
                 <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="總預算"
-                    [nzValue]="financialSummary()!.total_budget"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: '#1890ff' }"
-                  >
+                  <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
                   </nz-statistic>
                 </nz-card>
               </div>
@@ -120,7 +115,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                 <nz-card [nzBordered]="false" class="financial-card">
                   <nz-statistic
                     nzTitle="已支出"
-                    [nzValue]="financialSummary()!.total_expenses"
+                    [nzValue]="financialSummary()!.total_expenses ?? 0"
                     [nzPrefix]="'$'"
                     [nzValueStyle]="{ color: '#faad14' }"
                   >
@@ -135,7 +130,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                 <nz-card [nzBordered]="false" class="financial-card">
                   <nz-statistic
                     nzTitle="已付款"
-                    [nzValue]="financialSummary()!.total_paid"
+                    [nzValue]="financialSummary()!.total_paid ?? 0"
                     [nzPrefix]="'$'"
                     [nzValueStyle]="{ color: '#52c41a' }"
                   >
@@ -149,9 +144,9 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                 <nz-card [nzBordered]="false" class="financial-card">
                   <nz-statistic
                     nzTitle="剩餘預算"
-                    [nzValue]="financialSummary()!.remaining_budget"
+                    [nzValue]="remainingBudget()"
                     [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: financialSummary()!.remaining_budget >= 0 ? '#52c41a' : '#ff4d4f' }"
+                    [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
                   >
                   </nz-statistic>
                 </nz-card>
@@ -189,26 +184,23 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                   <!-- Financial Overview -->
                   <nz-card nzTitle="財務概覽" [nzBordered]="false" class="financial-overview-card">
                     <nz-descriptions nzBordered [nzColumn]="3">
-                      <nz-descriptions-item nzTitle="合約數量">{{ financialSummary()!.total_contracts }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="待審核請款">{{ financialSummary()!.pending_payment_count ?? 0 }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="總預算">{{
-                        financialSummary()!.total_budget | currency: 'TWD' : 'symbol' : '1.0-0'
+                        totalBudget() | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="剩餘預算">
-                        <span [style.color]="financialSummary()!.remaining_budget >= 0 ? '#52c41a' : '#ff4d4f'">
-                          {{ financialSummary()!.remaining_budget | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                        <span [style.color]="remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f'">
+                          {{ remainingBudget() | currency: 'TWD' : 'symbol' : '1.0-0' }}
                         </span>
                       </nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已支出">{{
-                        financialSummary()!.total_expenses | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_expenses ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已請款">{{
-                        financialSummary()!.total_requested | currency: 'TWD' : 'symbol' : '1.0-0'
-                      }}</nz-descriptions-item>
-                      <nz-descriptions-item nzTitle="已核准">{{
-                        financialSummary()!.total_approved | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_requested ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已付款">{{
-                        financialSummary()!.total_paid | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_paid ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="支出率">
                         <nz-progress
@@ -250,14 +242,14 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                             <tr>
                               <td>
                                 <span nz-tooltip [nzTooltipTitle]="contract.description || ''">
-                                  {{ contract.name }}
+                                  {{ contract.title }}
                                 </span>
                               </td>
-                              <td>{{ contract.contractor_name || '-' }}</td>
-                              <td nzAlign="right">{{ contract.total_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}</td>
+                              <td>{{ contract.vendor_name || '-' }}</td>
+                              <td nzAlign="right">{{ contract.contract_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}</td>
                               <td nzAlign="center">
-                                <nz-tag [nzColor]="getContractStatusColor(contract.status)">
-                                  {{ getContractStatusLabel(contract.status) }}
+                                <nz-tag [nzColor]="getContractStatusColor(contract.lifecycle)">
+                                  {{ getContractStatusLabel(contract.lifecycle) }}
                                 </nz-tag>
                               </td>
                               <td nzAlign="center">{{ contract.start_date | date: 'yyyy-MM-dd' }}</td>
@@ -429,16 +421,29 @@ export class BlueprintOverviewComponent implements OnInit {
   });
 
   // Financial computed values
+  readonly totalBudget = computed(() => {
+    const summary = this.financialSummary();
+    return summary?.total_contract_amount ?? 0;
+  });
+
+  readonly remainingBudget = computed(() => {
+    const summary = this.financialSummary();
+    if (!summary) return 0;
+    return (summary.total_contract_amount ?? 0) - (summary.total_expenses ?? 0);
+  });
+
   readonly expenseRate = computed(() => {
     const summary = this.financialSummary();
-    if (!summary || summary.total_budget === 0) return 0;
-    return Math.round((summary.total_expenses / summary.total_budget) * 100);
+    const budget = summary?.total_contract_amount ?? 0;
+    if (!summary || budget === 0) return 0;
+    return Math.round(((summary.total_expenses ?? 0) / budget) * 100);
   });
 
   readonly paymentRate = computed(() => {
     const summary = this.financialSummary();
-    if (!summary || summary.total_approved === 0) return 0;
-    return Math.round((summary.total_paid / summary.total_approved) * 100);
+    const requested = summary?.total_requested ?? 0;
+    if (!summary || requested === 0) return 0;
+    return Math.round(((summary.total_paid ?? 0) / requested) * 100);
   });
 
   ngOnInit(): void {
@@ -534,8 +539,9 @@ export class BlueprintOverviewComponent implements OnInit {
     const colorMap: Record<string, string> = {
       draft: 'default',
       active: 'green',
-      completed: 'blue',
-      cancelled: 'red'
+      on_hold: 'orange',
+      archived: 'blue',
+      deleted: 'red'
     };
     return colorMap[status] || 'default';
   }
@@ -544,8 +550,9 @@ export class BlueprintOverviewComponent implements OnInit {
     const labelMap: Record<string, string> = {
       draft: '草稿',
       active: '進行中',
-      completed: '已完成',
-      cancelled: '已取消'
+      on_hold: '暫停',
+      archived: '已封存',
+      deleted: '已刪除'
     };
     return labelMap[status] || status;
   }

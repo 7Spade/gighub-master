@@ -63,21 +63,23 @@ export class FinancialService {
   /** 是否有財務資料 | Has financial data */
   readonly hasFinancialData = computed(() => {
     const summary = this.currentSummary();
-    return summary !== null && summary.total_contracts > 0;
+    return summary !== null && (summary.total_contract_amount ?? 0) > 0;
   });
 
   /** 預算使用百分比 | Budget usage percentage */
   readonly budgetUsagePercent = computed(() => {
     const summary = this.currentSummary();
-    if (!summary || summary.total_budget === 0) return 0;
-    return Math.round((summary.total_expenses / summary.total_budget) * 100);
+    const budget = summary?.total_contract_amount ?? 0;
+    if (!summary || budget === 0) return 0;
+    return Math.round(((summary.total_expenses ?? 0) / budget) * 100);
   });
 
   /** 付款完成百分比 | Payment completion percentage */
   readonly paymentCompletionPercent = computed(() => {
     const summary = this.currentSummary();
-    if (!summary || summary.total_approved === 0) return 0;
-    return Math.round((summary.total_paid / summary.total_approved) * 100);
+    const requested = summary?.total_requested ?? 0;
+    if (!summary || requested === 0) return 0;
+    return Math.round(((summary.total_paid ?? 0) / requested) * 100);
   });
 
   // ============================================================================

@@ -31,6 +31,9 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
       <!-- Header -->
       <div class="header">
         <div class="header-left">
+          <button nz-button nzType="text" (click)="goBack()" class="back-button">
+            <span nz-icon nzType="arrow-left"></span>
+          </button>
           <h3>任務管理 (Tasks)</h3>
           <span class="subtitle">施工進度追蹤與工項管理</span>
         </div>
@@ -302,10 +305,22 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         align-items: flex-start;
         margin-bottom: 24px;
       }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
       .header-left h3 {
         margin: 0 0 4px 0;
         font-size: 20px;
         font-weight: 600;
+      }
+      .back-button {
+        padding: 4px 8px;
+        color: #666;
+      }
+      .back-button:hover {
+        color: #1890ff;
       }
       .subtitle {
         color: #666;

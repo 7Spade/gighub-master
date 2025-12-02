@@ -99,18 +99,26 @@ export enum PaymentMethod {
 export interface Contract {
   id: string;
   blueprint_id: string;
-  name: string;
+  /** 合約名稱 (database: title) */
+  title: string;
   description?: string | null;
-  contractor_name?: string | null;
-  total_amount: number;
-  status: ContractStatus;
+  /** 廠商名稱 (database: vendor_name) */
+  vendor_name?: string | null;
+  /** 合約編號 */
+  contract_number?: string | null;
+  /** 合約金額 (database: contract_amount) */
+  contract_amount: number;
+  /** 幣別 */
+  currency?: string;
+  /** 生命週期狀態 (database: lifecycle) */
+  lifecycle: string;
   start_date?: string | null;
   end_date?: string | null;
-  signed_at?: string | null;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }
 
 /**
@@ -208,17 +216,34 @@ export interface ContractSummary {
  * 藍圖財務摘要介面
  *
  * Corresponds to get_blueprint_financial_summary function return
+ * Note: The database function returns specific column names that we map to these fields
  */
 export interface BlueprintFinancialSummary {
   blueprint_id: string;
-  total_contracts: number;
-  total_budget: number;
+  /** Total contract amount (from database: total_contract_amount) */
+  total_contract_amount: number;
+  /** Total expenses amount */
   total_expenses: number;
+  /** Total requested payment amount */
   total_requested: number;
-  total_approved: number;
+  /** Total paid amount */
   total_paid: number;
+  /** Count of pending payment requests */
+  pending_payment_count: number;
+}
+
+/**
+ * Extended financial summary with computed values
+ * 擴展財務摘要（包含計算值）
+ *
+ * Used in components to display additional computed values
+ */
+export interface ExtendedFinancialSummary extends BlueprintFinancialSummary {
+  /** Computed: remaining budget (total_contract_amount - total_expenses) */
   remaining_budget: number;
+  /** Computed: expense rate percentage */
   expense_rate: number;
+  /** Computed: payment rate percentage */
   payment_rate: number;
 }
 
