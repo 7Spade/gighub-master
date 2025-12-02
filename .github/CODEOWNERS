@@ -1,0 +1,73 @@
+# CODEOWNERS - 程式碼擁有者
+# 
+# 此檔案定義各目錄/檔案的負責人
+# 當 PR 涉及這些路徑時，會自動請求對應人員審查
+#
+# 格式: <路徑模式> <@使用者或團隊>
+# 文件: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ============================================
+# 全域預設 - 所有未明確指定的檔案
+# ============================================
+*                                   @7Spade
+
+# ============================================
+# 核心架構
+# ============================================
+/src/app/core/                      @7Spade
+/src/app/shared/                    @7Spade
+
+# ============================================
+# 功能模組
+# ============================================
+/src/app/features/blueprint/        @7Spade
+/src/app/features/                  @7Spade
+
+# ============================================
+# Supabase / 資料庫
+# ============================================
+/supabase/                          @7Spade
+*.sql                               @7Spade
+
+# ============================================
+# 測試
+# ============================================
+/e2e/                               @7Spade
+*.spec.ts                           @7Spade
+
+# ============================================
+# 文件
+# ============================================
+/docs/                              @7Spade
+*.md                                @7Spade
+
+# ============================================
+# CI/CD 與 DevOps
+# ============================================
+/.github/workflows/                 @7Spade
+/scripts/                           @7Spade
+Dockerfile*                         @7Spade
+docker-compose*.yml                 @7Spade
+
+# ============================================
+# AI / Copilot 配置
+# ============================================
+/.github/copilot/                   @7Spade
+/.github/agents/                    @7Spade
+/.github/prompts/                   @7Spade
+/.github/instructions/              @7Spade
+
+# ============================================
+# 專案配置
+# ============================================
+package.json                        @7Spade
+tsconfig*.json                      @7Spade
+angular.json                        @7Spade
+eslint.config.mjs                   @7Spade
+
+# ============================================
+# 安全相關 (需要額外審查)
+# ============================================
+/.github/SECURITY.md                @7Spade
+/.github/CODEOWNERS                 @7Spade
+/.github/dependabot.yml             @7Spade

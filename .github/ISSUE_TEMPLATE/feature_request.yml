@@ -1,0 +1,118 @@
+name: ✨ 功能請求
+description: 提出新功能或改善建議
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝您提出功能建議！請詳細描述您的想法，以便我們評估可行性。
+
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: 重複確認
+      description: 請確認您已搜尋過現有的 Issue
+      options:
+        - label: 我已搜尋過現有的 Issue，確認這是新建議
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 功能區域
+      description: 這個功能屬於哪個模組？
+      options:
+        - 🏗️ 藍圖系統 (Blueprint)
+        - 📋 任務管理 (Tasks)
+        - 📝 施工日誌 (Diary)
+        - ✅ 待辦事項 (Todo)
+        - 🔐 認證授權 (Auth)
+        - 📁 檔案管理 (Files)
+        - 📊 報表分析 (Reports)
+        - 🔔 通知系統 (Notifications)
+        - 🎨 UI/UX
+        - 🤖 AI/自動化
+        - 🔧 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 功能類型
+      description: 這是什麼類型的功能？
+      options:
+        - 🆕 新功能
+        - 🔄 功能改善
+        - ⚡ 效能優化
+        - 🎨 UI/UX 改善
+        - 🔧 開發者體驗
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 問題描述
+      description: 您遇到什麼問題或不便？
+      placeholder: |
+        作為 [角色]，
+        我希望 [功能]，
+        以便 [目的/價值]
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 建議解決方案
+      description: 您建議如何解決這個問題？
+      placeholder: 我建議...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案
+      description: 您有考慮過其他替代方案嗎？
+      placeholder: 其他可能的方案...
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收標準
+      description: 如何確認這個功能已完成？
+      placeholder: |
+        - [ ] 條件 1
+        - [ ] 條件 2
+        - [ ] 條件 3
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先級建議
+      description: 您認為這個功能的優先級是？
+      options:
+        - 🔴 緊急 - 阻擋工作
+        - 🟠 高 - 重要功能
+        - 🟡 中 - 一般需求
+        - 🟢 低 - 錦上添花
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 設計稿/草圖
+      description: 如果有的話，請附上設計稿或草圖
+      placeholder: 拖曳圖片到這裡...
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 其他資訊
+      description: 任何其他可能有幫助的資訊

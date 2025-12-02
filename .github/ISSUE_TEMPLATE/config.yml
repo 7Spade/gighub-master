@@ -1,8 +1,11 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Create new issue
-    url: https://ng-alain.com/issue-helper/index.html#en
-    about: The issue which is not created via issue-helper will be closed immediately.
-  - name: 报告问题
-    url: https://ng-alain.com/issue-helper/index.html#zh
-    about: 注意：不是用 issue-helper 创建的 issue 会被立即关闭。使用问题请加QQ Group：428749721
+  - name: 📖 文件
+    url: https://ng-alain.com
+    about: 查閱 ng-alain 官方文件
+  - name: 💬 Discussions
+    url: https://github.com/7Spade/gighub-master/discussions
+    about: 在 Discussions 中提問或討論
+  - name: 🔍 Stack Overflow
+    url: https://stackoverflow.com/questions/tagged/ng-alain
+    about: 搜尋或提問技術問題

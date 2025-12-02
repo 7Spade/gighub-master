@@ -1,0 +1,133 @@
+name: 🐛 Bug 報告
+description: 回報問題或錯誤行為
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝您花時間填寫此 Bug 報告！請盡可能提供詳細資訊以幫助我們快速定位問題。
+
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: 重複確認
+      description: 請確認您已搜尋過現有的 Issue
+      options:
+        - label: 我已搜尋過現有的 Issue，確認這是新問題
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 問題區域
+      description: 這個 Bug 發生在哪個模組？
+      options:
+        - 🏗️ 藍圖系統 (Blueprint)
+        - 📋 任務管理 (Tasks)
+        - 📝 施工日誌 (Diary)
+        - ✅ 待辦事項 (Todo)
+        - 🔐 認證授權 (Auth)
+        - 📁 檔案管理 (Files)
+        - 🗄️ 資料庫 (Supabase)
+        - 🎨 UI/UX
+        - ⚙️ 建置/CI/CD
+        - 📖 文件
+        - 🔧 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug 描述
+      description: 請清楚描述問題是什麼
+      placeholder: 詳細描述您遇到的問題...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重現步驟
+      description: 請提供重現此問題的步驟
+      placeholder: |
+        1. 前往 '...'
+        2. 點擊 '...'
+        3. 捲動至 '...'
+        4. 看到錯誤
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期行為
+      description: 請描述您預期應該發生什麼
+      placeholder: 我預期...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 實際行為
+      description: 請描述實際發生了什麼
+      placeholder: 實際上...
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截圖或錄影
+      description: 如果可以的話，請附上截圖或錄影幫助說明問題
+      placeholder: 拖曳圖片到這裡或貼上截圖...
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: 瀏覽器
+      description: 您使用什麼瀏覽器？
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: 使用的應用程式版本
+      placeholder: "例如: 20.1.0"
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境資訊
+      description: 請提供相關環境資訊
+      placeholder: |
+        - OS: [例如 Windows 11, macOS 14]
+        - Node.js: [例如 20.x]
+        - npm/yarn: [例如 yarn 4.x]
+      render: markdown
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 錯誤日誌
+      description: 如果有的話，請貼上相關的錯誤日誌
+      placeholder: 貼上 console 錯誤或伺服器日誌...
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 其他資訊
+      description: 任何其他可能有幫助的資訊
