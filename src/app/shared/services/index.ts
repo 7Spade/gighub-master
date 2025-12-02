@@ -9,5 +9,6 @@
 export * from './account/index';
 export * from './menu/index';
 export * from './blueprint/index';
+export * from './financial/index';
 export * from './permission/index';
 export * from './task/index';
