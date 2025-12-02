@@ -70,7 +70,7 @@
     "@angular-eslint/builder": "^20.3.0",
     "@angular/build": "^20.3.1",
     "@angular/cli": "^20.3.1",
-    "@angular/compiler-cli": "^20.3.0",
+    "@angular/compiler-cli": "^21.0.2",
     "@delon/testing": "^20.1.0",
     "@eslint/js": "^9.35.0",
     "@ng-util/monaco-editor": "^20.1.0",
