@@ -575,4 +575,77 @@ export class TaskService {
     this.tasksState.set(tasks);
     this.taskTreeState.set(this.buildTaskTree(tasks));
   }
+
+  /**
+   * 建立模擬任務（用於開發測試）
+   * Create mock task for development testing
+   */
+  createMockTask(request: CreateTaskRequest): Task {
+    const now = new Date().toISOString();
+    const existingTasks = this.tasksState();
+
+    // Generate unique ID
+    const newId = `task-mock-${Date.now()}`;
+
+    // Get max sort_order for positioning
+    const siblings = existingTasks.filter(
+      t => t.blueprint_id === request.blueprint_id && t.parent_id === (request.parent_id || null)
+    );
+    const maxOrder = siblings.length > 0 ? Math.max(...siblings.map(t => t.sort_order)) : 0;
+
+    const newTask: Task = {
+      id: newId,
+      blueprint_id: request.blueprint_id,
+      parent_id: request.parent_id || null,
+      title: request.title,
+      description: request.description || null,
+      status: request.status || TaskStatus.PENDING,
+      priority: request.priority || TaskPriority.MEDIUM,
+      assignee_id: request.assignee_id || null,
+      reviewer_id: request.reviewer_id || null,
+      due_date: request.due_date || null,
+      start_date: request.start_date || null,
+      completion_rate: 0,
+      sort_order: maxOrder + 1,
+      created_at: now,
+      updated_at: now
+    };
+
+    // Update local state
+    this.tasksState.update(tasks => [...tasks, newTask]);
+    this.taskTreeState.set(this.buildTaskTree(this.tasksState()));
+
+    return newTask;
+  }
+
+  /**
+   * 更新模擬任務（用於開發測試）
+   * Update mock task for development testing
+   */
+  updateMockTask(id: string, request: UpdateTaskRequest): Task {
+    const now = new Date().toISOString();
+
+    let updatedTask: Task | null = null;
+
+    this.tasksState.update(tasks =>
+      tasks.map(task => {
+        if (task.id === id) {
+          updatedTask = {
+            ...task,
+            ...request,
+            updated_at: now
+          };
+          return updatedTask;
+        }
+        return task;
+      })
+    );
+
+    if (!updatedTask) {
+      throw new Error('任務不存在');
+    }
+
+    this.taskTreeState.set(this.buildTaskTree(this.tasksState()));
+    return updatedTask;
+  }
 }
