@@ -12,6 +12,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BlueprintFacade, BlueprintRole } from '@core';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -29,7 +30,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
   template: `
     <div class="members-container">
       <div class="header">
-        <h3>成員管理</h3>
+        <div class="header-left">
+          <button nz-button nzType="text" (click)="goBack()" class="back-button">
+            <span nz-icon nzType="arrow-left"></span>
+          </button>
+          <h3>成員管理</h3>
+        </div>
       </div>
 
       <nz-spin [nzSpinning]="loading()">
@@ -100,8 +106,20 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
       .header {
         margin-bottom: 16px;
       }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
       .header h3 {
         margin: 0;
+      }
+      .back-button {
+        padding: 4px 8px;
+        color: #666;
+      }
+      .back-button:hover {
+        color: #1890ff;
       }
       .member-info {
         display: flex;
@@ -132,6 +150,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 })
 export class BlueprintMembersComponent implements OnInit {
   private readonly blueprintFacade = inject(BlueprintFacade);
+  private readonly router = inject(Router);
   private readonly msg = inject(NzMessageService);
 
   // Input from route param (using withComponentInputBinding)
@@ -177,5 +196,9 @@ export class BlueprintMembersComponent implements OnInit {
       console.error('[BlueprintMembersComponent] Failed to remove member:', error);
       this.msg.error('移除成員失敗');
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/blueprint', this.id(), 'overview']);
   }
 }

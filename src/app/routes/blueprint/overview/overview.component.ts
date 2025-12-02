@@ -9,11 +9,11 @@
  * @module routes/blueprint
  */
 
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade } from '@core';
-import { BlueprintBusinessModel, WorkspaceContextService } from '@shared';
+import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade } from '@core';
+import { BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -23,11 +23,14 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-blueprint-overview',
@@ -99,6 +102,58 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
             </div>
           </div>
 
+          <!-- Financial Summary Cards -->
+          @if (financialSummary()) {
+            <div nz-row [nzGutter]="16" class="financial-stats-row">
+              <div nz-col [nzSpan]="6">
+                <nz-card [nzBordered]="false" class="financial-card">
+                  <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
+                  </nz-statistic>
+                </nz-card>
+              </div>
+              <div nz-col [nzSpan]="6">
+                <nz-card [nzBordered]="false" class="financial-card">
+                  <nz-statistic
+                    nzTitle="已支出"
+                    [nzValue]="financialSummary()!.total_expenses ?? 0"
+                    [nzPrefix]="'$'"
+                    [nzValueStyle]="{ color: '#faad14' }"
+                  >
+                  </nz-statistic>
+                  <div class="progress-bar">
+                    <nz-progress [nzPercent]="expenseRate()" nzSize="small" [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'">
+                    </nz-progress>
+                  </div>
+                </nz-card>
+              </div>
+              <div nz-col [nzSpan]="6">
+                <nz-card [nzBordered]="false" class="financial-card">
+                  <nz-statistic
+                    nzTitle="已付款"
+                    [nzValue]="financialSummary()!.total_paid ?? 0"
+                    [nzPrefix]="'$'"
+                    [nzValueStyle]="{ color: '#52c41a' }"
+                  >
+                  </nz-statistic>
+                  <div class="progress-bar">
+                    <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success"> </nz-progress>
+                  </div>
+                </nz-card>
+              </div>
+              <div nz-col [nzSpan]="6">
+                <nz-card [nzBordered]="false" class="financial-card">
+                  <nz-statistic
+                    nzTitle="剩餘預算"
+                    [nzValue]="remainingBudget()"
+                    [nzPrefix]="'$'"
+                    [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
+                  >
+                  </nz-statistic>
+                </nz-card>
+              </div>
+            </div>
+          }
+
           <!-- Tabs for different sections -->
           <nz-tabset class="content-tabs">
             <nz-tab nzTitle="概覽">
@@ -121,6 +176,100 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
                 </nz-descriptions>
               </nz-card>
             </nz-tab>
+
+            <!-- Financial Tab -->
+            <nz-tab nzTitle="財務">
+              <nz-spin [nzSpinning]="financialLoading()">
+                @if (financialSummary()) {
+                  <!-- Financial Overview -->
+                  <nz-card nzTitle="財務概覽" [nzBordered]="false" class="financial-overview-card">
+                    <nz-descriptions nzBordered [nzColumn]="3">
+                      <nz-descriptions-item nzTitle="待審核請款">{{ financialSummary()!.pending_payment_count ?? 0 }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="總預算">{{
+                        totalBudget() | currency: 'TWD' : 'symbol' : '1.0-0'
+                      }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="剩餘預算">
+                        <span [style.color]="remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f'">
+                          {{ remainingBudget() | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                        </span>
+                      </nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="已支出">{{
+                        financialSummary()!.total_expenses ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                      }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="已請款">{{
+                        financialSummary()!.total_requested ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                      }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="已付款">{{
+                        financialSummary()!.total_paid ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                      }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="支出率">
+                        <nz-progress
+                          [nzPercent]="expenseRate()"
+                          nzSize="small"
+                          [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'"
+                          [nzShowInfo]="true"
+                        >
+                        </nz-progress>
+                      </nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="付款率">
+                        <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success" [nzShowInfo]="true"> </nz-progress>
+                      </nz-descriptions-item>
+                    </nz-descriptions>
+                  </nz-card>
+
+                  <!-- Contracts Table -->
+                  @if (contracts().length > 0) {
+                    <nz-card nzTitle="合約列表" [nzBordered]="false" class="contracts-card">
+                      <nz-table
+                        #contractsTable
+                        [nzData]="contracts()"
+                        [nzPageSize]="5"
+                        nzSize="small"
+                        [nzShowPagination]="contracts().length > 5"
+                      >
+                        <thead>
+                          <tr>
+                            <th>合約名稱</th>
+                            <th>承包商</th>
+                            <th nzAlign="right">合約金額</th>
+                            <th nzAlign="center">狀態</th>
+                            <th nzAlign="center">起始日期</th>
+                            <th nzAlign="center">結束日期</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (contract of contractsTable.data; track contract.id) {
+                            <tr>
+                              <td>
+                                <span nz-tooltip [nzTooltipTitle]="contract.description || ''">
+                                  {{ contract.title }}
+                                </span>
+                              </td>
+                              <td>{{ contract.vendor_name || '-' }}</td>
+                              <td nzAlign="right">{{ contract.contract_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}</td>
+                              <td nzAlign="center">
+                                <nz-tag [nzColor]="getContractStatusColor(contract.lifecycle)">
+                                  {{ getContractStatusLabel(contract.lifecycle) }}
+                                </nz-tag>
+                              </td>
+                              <td nzAlign="center">{{ contract.start_date | date: 'yyyy-MM-dd' }}</td>
+                              <td nzAlign="center">{{ contract.end_date | date: 'yyyy-MM-dd' }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </nz-table>
+                    </nz-card>
+                  }
+                } @else {
+                  <nz-empty nzNotFoundContent="尚無財務資料" nzNotFoundImage="simple">
+                    <ng-template #nzNotFoundFooter>
+                      <p class="text-muted">建立合約後可在此查看財務資訊</p>
+                    </ng-template>
+                  </nz-empty>
+                }
+              </nz-spin>
+            </nz-tab>
+
             <nz-tab nzTitle="活動">
               <nz-empty nzNotFoundContent="暫無活動記錄"></nz-empty>
             </nz-tab>
@@ -181,7 +330,16 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
         line-height: 1.6;
       }
       .stats-row {
+        margin-bottom: 16px;
+      }
+      .financial-stats-row {
         margin-bottom: 24px;
+      }
+      .financial-card {
+        text-align: center;
+      }
+      .financial-card .progress-bar {
+        margin-top: 8px;
       }
       .content-tabs {
         background: #fff;
@@ -191,11 +349,18 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
       .text-muted {
         color: #999;
       }
+      .financial-overview-card {
+        margin-bottom: 16px;
+      }
+      .contracts-card {
+        margin-top: 16px;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    CurrencyPipe,
     DatePipe,
     NzAvatarModule,
     NzButtonModule,
@@ -205,24 +370,33 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzEmptyModule,
     NzGridModule,
     NzIconModule,
+    NzProgressModule,
     NzResultModule,
     NzSpinModule,
     NzStatisticModule,
+    NzTableModule,
     NzTagModule,
-    NzTabsModule
+    NzTabsModule,
+    NzTooltipModule
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly blueprintFacade = inject(BlueprintFacade);
+  private readonly financialFacade = inject(FinancialFacade);
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
 
   blueprint = signal<BlueprintBusinessModel | null>(null);
-  members = signal<any[]>([]);
+  members = signal<BlueprintMemberDetail[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+
+  // Financial state
+  financialSummary = signal<BlueprintFinancialSummary | null>(null);
+  contracts = signal<Contract[]>([]);
+  financialLoading = signal(false);
 
   readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
 
@@ -246,6 +420,32 @@ export class BlueprintOverviewComponent implements OnInit {
     return new Date(date).toLocaleDateString('zh-TW');
   });
 
+  // Financial computed values
+  readonly totalBudget = computed(() => {
+    const summary = this.financialSummary();
+    return summary?.total_contract_amount ?? 0;
+  });
+
+  readonly remainingBudget = computed(() => {
+    const summary = this.financialSummary();
+    if (!summary) return 0;
+    return (summary.total_contract_amount ?? 0) - (summary.total_expenses ?? 0);
+  });
+
+  readonly expenseRate = computed(() => {
+    const summary = this.financialSummary();
+    const budget = summary?.total_contract_amount ?? 0;
+    if (!summary || budget === 0) return 0;
+    return Math.round(((summary.total_expenses ?? 0) / budget) * 100);
+  });
+
+  readonly paymentRate = computed(() => {
+    const summary = this.financialSummary();
+    const requested = summary?.total_requested ?? 0;
+    if (!summary || requested === 0) return 0;
+    return Math.round(((summary.total_paid ?? 0) / requested) * 100);
+  });
+
   ngOnInit(): void {
     this.loadBlueprint();
   }
@@ -267,6 +467,9 @@ export class BlueprintOverviewComponent implements OnInit {
         // Load members
         const members = await this.blueprintFacade.getBlueprintMembers(id);
         this.members.set(members);
+
+        // Load financial data
+        this.loadFinancialData(id);
       } else {
         this.error.set('找不到藍圖');
       }
@@ -275,6 +478,26 @@ export class BlueprintOverviewComponent implements OnInit {
       this.error.set(err instanceof Error ? err.message : '載入藍圖失敗');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async loadFinancialData(blueprintId: string): Promise<void> {
+    this.financialLoading.set(true);
+
+    try {
+      // Load financial summary and contracts in parallel
+      const [summary, contractsList] = await Promise.all([
+        this.financialFacade.getBlueprintFinancialSummary(blueprintId),
+        this.financialFacade.loadContractsForBlueprint(blueprintId)
+      ]);
+
+      this.financialSummary.set(summary);
+      this.contracts.set(contractsList);
+    } catch (err) {
+      console.error('[BlueprintOverviewComponent] Failed to load financial data:', err);
+      // Don't set error for financial data - just log it
+    } finally {
+      this.financialLoading.set(false);
     }
   }
 
@@ -310,6 +533,28 @@ export class BlueprintOverviewComponent implements OnInit {
       issues: '問題追蹤'
     };
     return labelMap[module] || module;
+  }
+
+  getContractStatusColor(status: string): string {
+    const colorMap: Record<string, string> = {
+      draft: 'default',
+      active: 'green',
+      on_hold: 'orange',
+      archived: 'blue',
+      deleted: 'red'
+    };
+    return colorMap[status] || 'default';
+  }
+
+  getContractStatusLabel(status: string): string {
+    const labelMap: Record<string, string> = {
+      draft: '草稿',
+      active: '進行中',
+      on_hold: '暫停',
+      archived: '已封存',
+      deleted: '已刪除'
+    };
+    return labelMap[status] || status;
   }
 
   goBack(): void {
