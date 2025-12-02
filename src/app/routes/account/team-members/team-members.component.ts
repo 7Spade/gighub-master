@@ -225,15 +225,16 @@ interface SelectableOrgMember extends OrganizationMemberWithAccount {
   ]
 })
 export class TeamMembersComponent implements OnInit {
-  private readonly nzModalData = inject<TeamMembersModalData>(NZ_MODAL_DATA, { optional: true });
+  // Inject modal data - this is required when using nzData in NzModalService.create()
+  readonly nzModalData: TeamMembersModalData = inject(NZ_MODAL_DATA);
   private readonly teamService = inject(TeamService);
   private readonly organizationMemberService = inject(OrganizationMemberService);
   private readonly modal = inject(NzModalRef);
   private readonly msg = inject(NzMessageService);
 
-  // Get data from modal injection with null safety
+  // Direct access to modal data properties
   get team(): Team {
-    return this.nzModalData?.team || ({} as Team);
+    return this.nzModalData?.team;
   }
 
   get organizationId(): string {
