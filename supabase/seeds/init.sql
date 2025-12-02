@@ -19,9 +19,10 @@
 --          - issue_status        問題狀態 (new=新建, assigned=已指派, resolved=已解決, closed=關閉, ...)
 --          - acceptance_result   驗收結果 (pending=待驗收, passed=通過, failed=不通過, conditional=條件通過)
 --          - weather_type        天氣類型 (sunny=晴, cloudy=多雲, rainy=雨, stormy=暴風雨, ...)
+--          - blueprint_business_role 業務角色 (project_manager=專案經理, site_director=工地主任, ...)
 -- PART 2:  PRIVATE SCHEMA    私有 Schema (RLS 輔助用)
 -- PART 3:  CORE TABLES       核心資料表 (帳號/組織/團隊)
--- PART 4:  BLUEPRINT TABLES  藍圖/工作區資料表
+-- PART 4:  BLUEPRINT TABLES  藍圖/工作區資料表 (含 blueprint_roles)
 -- PART 5:  MODULE TABLES     業務模組資料表 (任務/日誌/驗收等)
 -- PART 6:  RLS HELPERS       RLS 輔助函數 (SECURITY DEFINER)
 -- PART 7:  UTILITY TRIGGERS  通用觸發器 (updated_at)
@@ -31,6 +32,7 @@
 -- PART 11: TEAM API          團隊 API (建立團隊)
 -- PART 12: BLUEPRINT API     藍圖 API (建立藍圖 + 自動加入成員)
 -- PART 13: DOCUMENTATION     資料表與函數文件註解
+-- PART 14: RBAC API          RBAC 預設角色 API (建立預設角色)
 -- ============================================================================
 
 -- ############################################################################
@@ -854,20 +856,20 @@ $$;
 -- 取得用戶在藍圖中的業務角色
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION private.get_blueprint_business_role(p_blueprint_id UUID)
-RETURNS blueprint_business_role
+RETURNS public.blueprint_business_role
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 STABLE
 AS $$
 DECLARE
-  v_business_role blueprint_business_role;
+  v_business_role public.blueprint_business_role;
   v_is_owner BOOLEAN;
 BEGIN
   -- Check if user is owner (owners are always project_manager)
   v_is_owner := (SELECT private.is_blueprint_owner(p_blueprint_id));
   IF v_is_owner THEN
-    RETURN 'project_manager';
+    RETURN 'project_manager'::public.blueprint_business_role;
   END IF;
 
   -- Get business_role from blueprint_members
@@ -877,7 +879,7 @@ BEGIN
   WHERE bm.blueprint_id = p_blueprint_id
   AND a.auth_user_id = auth.uid();
   
-  RETURN COALESCE(v_business_role, 'observer');
+  RETURN COALESCE(v_business_role, 'observer'::public.blueprint_business_role);
 END;
 $$;
 
@@ -1475,7 +1477,7 @@ CREATE OR REPLACE FUNCTION public.create_blueprint(
   p_description TEXT DEFAULT NULL,
   p_cover_url TEXT DEFAULT NULL,
   p_is_public BOOLEAN DEFAULT false,
-  p_enabled_modules module_type[] DEFAULT ARRAY['tasks']::module_type[]
+  p_enabled_modules public.module_type[] DEFAULT ARRAY['tasks']::public.module_type[]
 )
 RETURNS TABLE (
   out_blueprint_id UUID
@@ -1600,7 +1602,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, module_type[]) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, public.module_type[]) TO authenticated;
 
 -- ----------------------------------------------------------------------------
 -- handle_new_blueprint() - 觸發器
@@ -1680,7 +1682,7 @@ COMMENT ON FUNCTION public.handle_new_user() IS 'Auth 觸發器 - 自動建立�
 COMMENT ON FUNCTION public.create_organization(VARCHAR, VARCHAR, TEXT, VARCHAR) IS '建立組織 (SECURITY DEFINER) - 自動加入建立者為 owner';
 COMMENT ON FUNCTION public.handle_new_organization() IS '組織觸發器 - 確保建立者被加入為 owner';
 COMMENT ON FUNCTION public.create_team(UUID, VARCHAR, TEXT, JSONB) IS '建立團隊 (SECURITY DEFINER) - 需要組織 owner/admin 權限';
-COMMENT ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, module_type[]) IS '建立藍圖 (SECURITY DEFINER) - 自動加入建立者為 maintainer';
+COMMENT ON FUNCTION public.create_blueprint(UUID, VARCHAR, VARCHAR, TEXT, TEXT, BOOLEAN, public.module_type[]) IS '建立藍圖 (SECURITY DEFINER) - 自動加入建立者為 maintainer';
 COMMENT ON FUNCTION public.handle_new_blueprint() IS '藍圖觸發器 - 確保建立者被加入為 maintainer';
 
 -- RBAC 相關資料表與函數註解
