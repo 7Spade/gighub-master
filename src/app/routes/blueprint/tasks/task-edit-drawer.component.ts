@@ -23,7 +23,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   selector: 'app-task-edit-drawer',
   standalone: true,
   template: `
-    <nz-drawer [nzVisible]="visible()" [nzWidth]="480" [nzTitle]="drawerTitle()" nzPlacement="right" (nzOnClose)="close()">
+    <nz-drawer
+      [nzVisible]="visible()"
+      [nzWidth]="480"
+      [nzTitle]="drawerTitle()"
+      nzPlacement="right"
+      (nzOnClose)="close()"
+      [nzFooter]="footerTpl"
+    >
       <ng-container *nzDrawerContent>
         <form nz-form [formGroup]="form" nzLayout="vertical">
           <!-- 任務標題 -->
@@ -119,33 +126,25 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
           }
         </form>
-
-        <!-- Footer Actions -->
-        <div class="drawer-footer">
-          <button nz-button nzType="default" (click)="close()">取消</button>
-          <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="form.invalid" (click)="save()">
-            {{ task() ? '更新' : '建立' }}
-          </button>
-        </div>
       </ng-container>
     </nz-drawer>
+
+    <!-- Footer Template -->
+    <ng-template #footerTpl>
+      <div class="drawer-footer">
+        <button nz-button nzType="default" (click)="close()">取消</button>
+        <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="form.invalid" (click)="save()">
+          {{ task() ? '更新' : '建立' }}
+        </button>
+      </div>
+    </ng-template>
   `,
   styles: [
     `
       .drawer-footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 16px 24px;
-        border-top: 1px solid #f0f0f0;
-        background: #fff;
         display: flex;
         justify-content: flex-end;
         gap: 8px;
-      }
-      :host ::ng-deep .ant-drawer-body {
-        padding-bottom: 80px;
       }
     `
   ],
