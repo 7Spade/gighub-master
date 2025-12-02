@@ -56,6 +56,7 @@ CREATE INDEX IF NOT EXISTS idx_contracts_lifecycle ON contracts(lifecycle);
 CREATE INDEX IF NOT EXISTS idx_contracts_deleted_at ON contracts(deleted_at) WHERE deleted_at IS NULL;
 
 -- 更新時間觸發器
+DROP TRIGGER IF EXISTS update_contracts_updated_at ON contracts;
 CREATE TRIGGER update_contracts_updated_at 
   BEFORE UPDATE ON contracts 
   FOR EACH ROW 
@@ -125,6 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_expenses_category ON expenses(category);
 CREATE INDEX IF NOT EXISTS idx_expenses_deleted_at ON expenses(deleted_at) WHERE deleted_at IS NULL;
 
 -- 更新時間觸發器
+DROP TRIGGER IF EXISTS update_expenses_updated_at ON expenses;
 CREATE TRIGGER update_expenses_updated_at 
   BEFORE UPDATE ON expenses 
   FOR EACH ROW 
@@ -199,6 +201,7 @@ CREATE INDEX IF NOT EXISTS idx_payment_requests_approver ON payment_requests(app
 CREATE INDEX IF NOT EXISTS idx_payment_requests_deleted_at ON payment_requests(deleted_at) WHERE deleted_at IS NULL;
 
 -- 更新時間觸發器
+DROP TRIGGER IF EXISTS update_payment_requests_updated_at ON payment_requests;
 CREATE TRIGGER update_payment_requests_updated_at 
   BEFORE UPDATE ON payment_requests 
   FOR EACH ROW 
@@ -266,6 +269,7 @@ CREATE INDEX IF NOT EXISTS idx_payments_paid_at ON payments(paid_at);
 CREATE INDEX IF NOT EXISTS idx_payments_payment_method ON payments(payment_method);
 
 -- 更新時間觸發器
+DROP TRIGGER IF EXISTS update_payments_updated_at ON payments;
 CREATE TRIGGER update_payments_updated_at 
   BEFORE UPDATE ON payments 
   FOR EACH ROW 
@@ -390,6 +394,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 為 payment_requests 表建立觸發器
+DROP TRIGGER IF EXISTS payment_request_lifecycle_change ON payment_requests;
 CREATE TRIGGER payment_request_lifecycle_change
   AFTER UPDATE ON payment_requests
   FOR EACH ROW
