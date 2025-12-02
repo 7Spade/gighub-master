@@ -32,7 +32,7 @@ jobs:
           project: ./dist/ng-alain/browser
 
       - name: Replace base href for gh-pages
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: '<base href="/">'
           replace: '<base href="/ng-alain/">'
