@@ -62,6 +62,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
               </div>
             </div>
             <div class="header-actions">
+              <button nz-button nzType="default" (click)="goToTasks()"> <span nz-icon nzType="ordered-list"></span>任務管理 </button>
               <button nz-button nzType="default" (click)="goToMembers()"> <span nz-icon nzType="team"></span>成員管理 </button>
               <button nz-button nzType="primary" (click)="editBlueprint()"> <span nz-icon nzType="edit"></span>編輯 </button>
             </div>
@@ -313,6 +314,13 @@ export class BlueprintOverviewComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/blueprint/list']);
+  }
+
+  goToTasks(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'tasks']);
+    }
   }
 
   goToMembers(): void {
