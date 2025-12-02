@@ -1,0 +1,138 @@
+name: 📋 開發任務
+description: 建立開發任務或技術工作項目
+title: "[Task]: "
+labels: ["task"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        使用此模板建立開發任務。請提供足夠的技術細節以便執行。
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: 架構層級
+      description: 這個任務屬於哪個架構層級？
+      options:
+        - 🏛️ 基礎層 (Foundation) - 帳戶/認證/組織
+        - 📦 容器層 (Container) - 藍圖/權限/事件
+        - 🏢 業務層 (Business) - 任務/日誌/驗收
+        - 🔧 基礎設施 - CI/CD/DevOps
+        - 📖 文件 - 文件/規格
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 任務類型
+      description: 這是什麼類型的任務？
+      options:
+        - ✨ 新功能開發
+        - 🐛 Bug 修復
+        - ♻️ 重構
+        - ⚡ 效能優化
+        - 🧪 測試
+        - 📖 文件
+        - 🔧 維護
+        - 🔒 安全性
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 任務描述
+      description: 請描述需要完成的工作
+      placeholder: 詳細描述任務內容...
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-details
+    attributes:
+      label: 技術細節
+      description: 相關的技術細節和實作方向
+      placeholder: |
+        **涉及的檔案/模組:**
+        - `src/app/features/...`
+        - `supabase/migrations/...`
+
+        **技術方案:**
+        1. ...
+        2. ...
+
+        **資料模型變更:**
+        - 新增欄位: ...
+        - 修改表格: ...
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 驗收標準
+      description: 完成任務的標準
+      placeholder: |
+        - [ ] 功能正常運作
+        - [ ] 單元測試通過
+        - [ ] E2E 測試通過
+        - [ ] RLS 政策驗證
+        - [ ] 文件更新
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 依賴項目
+      description: 這個任務依賴哪些其他 Issue 或 PR？
+      placeholder: |
+        - 依賴 #123
+        - 被 #456 依賴
+
+  - type: input
+    id: estimate
+    attributes:
+      label: 預估時間
+      description: 預估完成時間
+      placeholder: "例如: 2 小時, 1 天, 3 天"
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先級
+      options:
+        - 🔴 P0 - 緊急
+        - 🟠 P1 - 高
+        - 🟡 P2 - 中
+        - 🟢 P3 - 低
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: 參考資源
+      description: 相關的文件、設計稿、API 規格等
+      placeholder: |
+        - PRD: docs/prd/...
+        - 設計: Figma/...
+        - API: docs/api/...
+
+  - type: textarea
+    id: copilot-hints
+    attributes:
+      label: Copilot 提示
+      description: 給 AI 輔助開發的提示
+      placeholder: |
+        **推薦使用的 Agent:**
+        - @arch.agent
+        - @postgresql-dba.agent
+
+        **推薦使用的 Prompt:**
+        - generate-feature.prompt
+        - create-store.prompt
+
+        **推薦使用的 Blueprint:**
+        - angular-feature.blueprint
