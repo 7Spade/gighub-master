@@ -588,9 +588,7 @@ export class TaskService {
     const newId = `task-mock-${Date.now()}`;
 
     // Get max sort_order for positioning
-    const siblings = existingTasks.filter(
-      t => t.blueprint_id === request.blueprint_id && t.parent_id === (request.parent_id || null)
-    );
+    const siblings = existingTasks.filter(t => t.blueprint_id === request.blueprint_id && t.parent_id === (request.parent_id || null));
     const maxOrder = siblings.length > 0 ? Math.max(...siblings.map(t => t.sort_order)) : 0;
 
     const newTask: Task = {

@@ -34,6 +34,6 @@ export const routes: Routes = [
   {
     path: 'settings',
     loadComponent: () => import('./settings/settings.component').then(m => m.AccountSettingsComponent),
-    data: { title: '組織設定' }
+    data: { title: '設定' }
   }
 ];
