@@ -64,13 +64,13 @@
     "rxjs": "~7.8.0",
     "screenfull": "^6.0.2",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
     "@angular-eslint/builder": "^20.3.0",
     "@angular/build": "^20.3.1",
-    "@angular/cli": "^20.3.1",
-    "@angular/compiler-cli": "^21.0.2",
+    "@angular/cli": "^21.0.1",
+    "@angular/compiler-cli": "^20.3.0",
     "@delon/testing": "^20.1.0",
     "@eslint/js": "^9.35.0",
     "@ng-util/monaco-editor": "^20.1.0",

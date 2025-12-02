@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
 
@@ -32,7 +32,7 @@ jobs:
           project: ./dist/ng-alain/browser
 
       - name: Replace base href for gh-pages
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: '<base href="/">'
           replace: '<base href="/ng-alain/">'
