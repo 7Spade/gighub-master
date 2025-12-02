@@ -15,13 +15,14 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Task, TaskNode, FlatTaskNode, TaskStatus, TaskViewType, TASK_STATUS_CONFIG, TASK_PRIORITY_CONFIG } from '@core/infra/types/task';
-import { SHARED_IMPORTS } from '@shared';
-import { TaskService } from '@shared/services/task';
+import { Task, TaskNode, FlatTaskNode, TaskStatus, TaskPriority, TaskViewType, TASK_STATUS_CONFIG, TASK_PRIORITY_CONFIG } from '@core';
+import { SHARED_IMPORTS, TaskService } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
+
+import { TaskEditDrawerComponent } from './task-edit-drawer.component';
 
 @Component({
   selector: 'app-blueprint-tasks',
@@ -71,6 +72,39 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
           </div>
         </div>
       </nz-card>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <nz-input-group [nzPrefix]="searchIcon" class="search-input">
+          <input nz-input placeholder="搜尋任務..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" />
+        </nz-input-group>
+        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+        <nz-select [(ngModel)]="filterStatus" nzPlaceHolder="狀態篩選" nzAllowClear (ngModelChange)="onFilterChange()" style="width: 140px">
+          @for (opt of statusFilterOptions; track opt.value) {
+            <nz-option [nzValue]="opt.value" [nzLabel]="opt.label"></nz-option>
+          }
+        </nz-select>
+
+        <nz-select
+          [(ngModel)]="filterPriority"
+          nzPlaceHolder="優先級篩選"
+          nzAllowClear
+          (ngModelChange)="onFilterChange()"
+          style="width: 140px"
+        >
+          @for (opt of priorityFilterOptions; track opt.value) {
+            <nz-option [nzValue]="opt.value" [nzLabel]="opt.label"></nz-option>
+          }
+        </nz-select>
+
+        @if (hasActiveFilters()) {
+          <button nz-button nzType="link" (click)="clearFilters()">
+            <span nz-icon nzType="close"></span>
+            清除篩選
+          </button>
+        }
+      </div>
 
       <nz-spin [nzSpinning]="taskService.loading()">
         <!-- Tree View -->
@@ -207,16 +241,26 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
       </nz-spin>
     </div>
 
+    <!-- Task Edit Drawer -->
+    <app-task-edit-drawer
+      [visible]="drawerVisible()"
+      [task]="editingTask()"
+      [blueprintId]="id()"
+      [parentTaskId]="parentTaskId()"
+      (closed)="onDrawerClose()"
+      (saved)="onTaskSaved($event)"
+    ></app-task-edit-drawer>
+
     <!-- Node Template for Tree View -->
     <ng-template #nodeTemplate let-node>
       <div class="tree-node-content" [class.completed]="node.origin.status === TaskStatus.COMPLETED">
         <span class="node-title">{{ node.title }}</span>
         <div class="node-tags">
-          <nz-tag [nzColor]="TASK_STATUS_CONFIG[node.origin.status].color" nzBorderless>
-            {{ TASK_STATUS_CONFIG[node.origin.status].label }}
+          <nz-tag [nzColor]="getStatusConfig(node.origin.status).color" nzBorderless>
+            {{ getStatusConfig(node.origin.status).label }}
           </nz-tag>
-          <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[node.origin.priority].color" nzBorderless>
-            {{ TASK_PRIORITY_CONFIG[node.origin.priority].label }}
+          <nz-tag [nzColor]="getPriorityConfig(node.origin.priority).color" nzBorderless>
+            {{ getPriorityConfig(node.origin.priority).label }}
           </nz-tag>
         </div>
         <div class="node-progress">
@@ -274,6 +318,18 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
       }
       .progress-card {
         margin-bottom: 16px;
+      }
+      .filter-bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 12px 16px;
+        background: #fafafa;
+        border-radius: 8px;
+      }
+      .search-input {
+        width: 240px;
       }
       .view-card {
         min-height: 400px;
@@ -358,7 +414,7 @@ import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, TaskEditDrawerComponent]
 })
 export class BlueprintTasksComponent implements OnInit {
   private readonly router = inject(Router);
@@ -375,11 +431,31 @@ export class BlueprintTasksComponent implements OnInit {
   readonly TASK_STATUS_CONFIG = TASK_STATUS_CONFIG;
   readonly TASK_PRIORITY_CONFIG = TASK_PRIORITY_CONFIG;
 
+  // Drawer state
+  drawerVisible = signal(false);
+  editingTask = signal<Task | null>(null);
+  parentTaskId = signal<string | null>(null);
+
   viewOptions = [
     { label: '樹狀圖', value: TaskViewType.TREE, icon: 'apartment' },
     { label: '表格', value: TaskViewType.TABLE, icon: 'table' },
     { label: '看板', value: TaskViewType.KANBAN, icon: 'project' }
   ];
+
+  // Filter state
+  searchTerm = '';
+  filterStatus: TaskStatus | null = null;
+  filterPriority: TaskPriority | null = null;
+
+  statusFilterOptions = Object.entries(TASK_STATUS_CONFIG).map(([value, config]) => ({
+    value: value as TaskStatus,
+    label: config.label
+  }));
+
+  priorityFilterOptions = Object.entries(TASK_PRIORITY_CONFIG).map(([value, config]) => ({
+    value: value as TaskPriority,
+    label: config.label
+  }));
 
   // Tree Control
   private transformer = (node: TaskNode, level: number): FlatTaskNode => ({
@@ -401,15 +477,15 @@ export class BlueprintTasksComponent implements OnInit {
   });
 
   treeControl = new FlatTreeControl<FlatTaskNode>(
-    node => node.level,
-    node => node.expandable
+    (node: FlatTaskNode) => node.level,
+    (node: FlatTaskNode) => node.expandable
   );
 
   treeFlattener = new NzTreeFlattener(
     this.transformer,
-    node => node.level,
-    node => node.expandable,
-    node => node.children
+    (node: FlatTaskNode) => node.level,
+    (node: FlatTaskNode) => node.expandable,
+    (node: TaskNode) => node.children
   );
 
   dataSource = new NzTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -434,6 +510,68 @@ export class BlueprintTasksComponent implements OnInit {
 
   // Tree node check
   hasChild = (_: number, node: FlatTaskNode): boolean => node.expandable;
+
+  // Helper methods for template type safety
+  getStatusConfig(status: TaskStatus): { label: string; color: string; icon: string } {
+    return TASK_STATUS_CONFIG[status];
+  }
+
+  getPriorityConfig(priority: TaskPriority): { label: string; color: string; icon: string } {
+    return TASK_PRIORITY_CONFIG[priority];
+  }
+
+  // Filter methods
+  hasActiveFilters(): boolean {
+    return !!this.searchTerm || this.filterStatus !== null || this.filterPriority !== null;
+  }
+
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.applyFilters();
+  }
+
+  onFilterChange(): void {
+    this.applyFilters();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.filterStatus = null;
+    this.filterPriority = null;
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    // Get all tasks and filter
+    const allTasks = this.taskService.tasks();
+
+    const filteredTasks = allTasks.filter(task => {
+      // Search term filter
+      if (this.searchTerm) {
+        const term = this.searchTerm.toLowerCase();
+        const matchesTitle = task.title.toLowerCase().includes(term);
+        const matchesDescription = task.description?.toLowerCase().includes(term);
+        if (!matchesTitle && !matchesDescription) return false;
+      }
+
+      // Status filter
+      if (this.filterStatus !== null && task.status !== this.filterStatus) {
+        return false;
+      }
+
+      // Priority filter
+      if (this.filterPriority !== null && task.priority !== this.filterPriority) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Rebuild tree with filtered tasks
+    const tree = this.taskService.buildTaskTree(filteredTasks);
+    this.dataSource.setData(tree);
+    this.treeControl.expandAll();
+  }
 
   ngOnInit(): void {
     this.loadTasks();
@@ -468,14 +606,14 @@ export class BlueprintTasksComponent implements OnInit {
   // Task level for table view indentation
   getTaskLevel(taskId: string): number {
     const flatNodes = this.taskService.flattenTaskTree(this.taskService.taskTree());
-    const node = flatNodes.find(n => n.id === taskId);
+    const node = flatNodes.find((n: FlatTaskNode) => n.id === taskId);
     return node?.level || 0;
   }
 
   // Check if task has children
   hasChildren(taskId: string): boolean {
     const tasks = this.taskService.tasks();
-    return tasks.some(t => t.parent_id === taskId);
+    return tasks.some((t: Task) => t.parent_id === taskId);
   }
 
   // Status transitions
@@ -485,15 +623,31 @@ export class BlueprintTasksComponent implements OnInit {
 
   // Actions
   createTask(): void {
-    this.msg.info('任務建立功能即將推出');
+    this.editingTask.set(null);
+    this.parentTaskId.set(null);
+    this.drawerVisible.set(true);
   }
 
   editTask(task: Task): void {
-    this.msg.info(`編輯任務: ${task.title}`);
+    this.editingTask.set(task);
+    this.parentTaskId.set(null);
+    this.drawerVisible.set(true);
   }
 
   addSubTask(parentTask: Task): void {
-    this.msg.info(`新增子任務於: ${parentTask.title}`);
+    this.editingTask.set(null);
+    this.parentTaskId.set(parentTask.id);
+    this.drawerVisible.set(true);
+  }
+
+  onDrawerClose(): void {
+    this.drawerVisible.set(false);
+    this.editingTask.set(null);
+    this.parentTaskId.set(null);
+  }
+
+  onTaskSaved(_task: Task): void {
+    this.updateDataSource();
   }
 
   async changeStatus(task: Task, newStatus: TaskStatus): Promise<void> {
