@@ -73,6 +73,39 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         </div>
       </nz-card>
 
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <nz-input-group [nzPrefix]="searchIcon" class="search-input">
+          <input nz-input placeholder="搜尋任務..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" />
+        </nz-input-group>
+        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+        <nz-select [(ngModel)]="filterStatus" nzPlaceHolder="狀態篩選" nzAllowClear (ngModelChange)="onFilterChange()" style="width: 140px">
+          @for (opt of statusFilterOptions; track opt.value) {
+            <nz-option [nzValue]="opt.value" [nzLabel]="opt.label"></nz-option>
+          }
+        </nz-select>
+
+        <nz-select
+          [(ngModel)]="filterPriority"
+          nzPlaceHolder="優先級篩選"
+          nzAllowClear
+          (ngModelChange)="onFilterChange()"
+          style="width: 140px"
+        >
+          @for (opt of priorityFilterOptions; track opt.value) {
+            <nz-option [nzValue]="opt.value" [nzLabel]="opt.label"></nz-option>
+          }
+        </nz-select>
+
+        @if (hasActiveFilters()) {
+          <button nz-button nzType="link" (click)="clearFilters()">
+            <span nz-icon nzType="close"></span>
+            清除篩選
+          </button>
+        }
+      </div>
+
       <nz-spin [nzSpinning]="taskService.loading()">
         <!-- Tree View -->
         @if (currentView === TaskViewType.TREE) {
@@ -286,6 +319,18 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
       .progress-card {
         margin-bottom: 16px;
       }
+      .filter-bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 12px 16px;
+        background: #fafafa;
+        border-radius: 8px;
+      }
+      .search-input {
+        width: 240px;
+      }
       .view-card {
         min-height: 400px;
       }
@@ -397,6 +442,21 @@ export class BlueprintTasksComponent implements OnInit {
     { label: '看板', value: TaskViewType.KANBAN, icon: 'project' }
   ];
 
+  // Filter state
+  searchTerm = '';
+  filterStatus: TaskStatus | null = null;
+  filterPriority: TaskPriority | null = null;
+
+  statusFilterOptions = Object.entries(TASK_STATUS_CONFIG).map(([value, config]) => ({
+    value: value as TaskStatus,
+    label: config.label
+  }));
+
+  priorityFilterOptions = Object.entries(TASK_PRIORITY_CONFIG).map(([value, config]) => ({
+    value: value as TaskPriority,
+    label: config.label
+  }));
+
   // Tree Control
   private transformer = (node: TaskNode, level: number): FlatTaskNode => ({
     id: node.id,
@@ -458,6 +518,59 @@ export class BlueprintTasksComponent implements OnInit {
 
   getPriorityConfig(priority: TaskPriority): { label: string; color: string; icon: string } {
     return TASK_PRIORITY_CONFIG[priority];
+  }
+
+  // Filter methods
+  hasActiveFilters(): boolean {
+    return !!this.searchTerm || this.filterStatus !== null || this.filterPriority !== null;
+  }
+
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.applyFilters();
+  }
+
+  onFilterChange(): void {
+    this.applyFilters();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.filterStatus = null;
+    this.filterPriority = null;
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    // Get all tasks and filter
+    const allTasks = this.taskService.tasks();
+
+    const filteredTasks = allTasks.filter(task => {
+      // Search term filter
+      if (this.searchTerm) {
+        const term = this.searchTerm.toLowerCase();
+        const matchesTitle = task.title.toLowerCase().includes(term);
+        const matchesDescription = task.description?.toLowerCase().includes(term);
+        if (!matchesTitle && !matchesDescription) return false;
+      }
+
+      // Status filter
+      if (this.filterStatus !== null && task.status !== this.filterStatus) {
+        return false;
+      }
+
+      // Priority filter
+      if (this.filterPriority !== null && task.priority !== this.filterPriority) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Rebuild tree with filtered tasks
+    const tree = this.taskService.buildTaskTree(filteredTasks);
+    this.dataSource.setData(tree);
+    this.treeControl.expandAll();
   }
 
   ngOnInit(): void {
@@ -533,7 +646,7 @@ export class BlueprintTasksComponent implements OnInit {
     this.parentTaskId.set(null);
   }
 
-  onTaskSaved(task: Task): void {
+  onTaskSaved(_task: Task): void {
     this.updateDataSource();
   }
 
