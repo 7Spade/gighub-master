@@ -13,35 +13,21 @@
  * @module layout/basic/widgets
  */
 
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ContextType, Team } from '@core';
+import { WorkspaceContextService, AccountService } from '@shared';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import {
-  ContextType,
-  Team
-} from '@core';
-import {
-  WorkspaceContextService,
-  AccountService
-} from '@shared';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 @Component({
   selector: 'header-context-switcher',
   standalone: true,
-  imports: [
-    CommonModule,
-    NzMenuModule,
-    NzIconModule
-  ],
+  imports: [CommonModule, NzMenuModule, NzIconModule],
   template: `
     <!-- Personal account (flat) -->
     @if (currentUser()) {
-      <li
-        nz-menu-item
-        (click)="switchToUser()"
-        [class.ant-menu-item-selected]="isUserContext()"
-      >
+      <li nz-menu-item (click)="switchToUser()" [class.ant-menu-item-selected]="isUserContext()">
         <i nz-icon nzType="user" class="mr-sm"></i>
         <span>{{ currentUser()?.name || '個人帳戶' }}</span>
       </li>
@@ -54,22 +40,14 @@ import {
         <li nz-submenu [nzTitle]="org.name" nzIcon="team">
           <ul nz-menu>
             <!-- Organization itself -->
-            <li
-              nz-menu-item
-              (click)="switchToOrganization(org.id)"
-              [class.ant-menu-item-selected]="isOrganizationContext(org.id)"
-            >
+            <li nz-menu-item (click)="switchToOrganization(org.id)" [class.ant-menu-item-selected]="isOrganizationContext(org.id)">
               <i nz-icon nzType="team" class="mr-sm"></i>
               <span>{{ org.name }}</span>
             </li>
             <li nz-menu-divider></li>
             <!-- Teams under this organization -->
             @for (team of getTeamsForOrg(org.id); track team.id) {
-              <li
-                nz-menu-item
-                (click)="switchToTeam(team.id)"
-                [class.ant-menu-item-selected]="isTeamContext(team.id)"
-              >
+              <li nz-menu-item (click)="switchToTeam(team.id)" [class.ant-menu-item-selected]="isTeamContext(team.id)">
                 <i nz-icon nzType="usergroup-add" class="mr-sm"></i>
                 <span>{{ team.name }}</span>
               </li>
@@ -78,11 +56,7 @@ import {
         </li>
       } @else {
         <!-- Organization without teams (flat item) -->
-        <li
-          nz-menu-item
-          (click)="switchToOrganization(org.id)"
-          [class.ant-menu-item-selected]="isOrganizationContext(org.id)"
-        >
+        <li nz-menu-item (click)="switchToOrganization(org.id)" [class.ant-menu-item-selected]="isOrganizationContext(org.id)">
           <i nz-icon nzType="team" class="mr-sm"></i>
           <span>{{ org.name }}</span>
         </li>
@@ -149,16 +123,14 @@ export class HeaderContextSwitcherComponent {
    * Check if current context is the specified organization
    */
   isOrganizationContext(orgId: string): boolean {
-    return this.currentContextType() === ContextType.ORGANIZATION &&
-           this.currentContextId() === orgId;
+    return this.currentContextType() === ContextType.ORGANIZATION && this.currentContextId() === orgId;
   }
 
   /**
    * Check if current context is the specified team
    */
   isTeamContext(teamId: string): boolean {
-    return this.currentContextType() === ContextType.TEAM &&
-           this.currentContextId() === teamId;
+    return this.currentContextType() === ContextType.TEAM && this.currentContextId() === teamId;
   }
 
   /**

@@ -15,12 +15,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { BlueprintFacade, ModuleType, ContextType } from '@core';
 import { CreateBlueprintRequest, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 @Component({
   selector: 'app-create-blueprint',
@@ -34,12 +34,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
         <nz-form-item>
           <nz-form-label [nzRequired]="true">藍圖名稱</nz-form-label>
           <nz-form-control [nzErrorTip]="'請輸入藍圖名稱（2-100個字符）'">
-            <input
-              nz-input
-              formControlName="name"
-              placeholder="請輸入藍圖名稱"
-              [disabled]="loading()"
-            />
+            <input nz-input formControlName="name" placeholder="請輸入藍圖名稱" [disabled]="loading()" />
           </nz-form-control>
         </nz-form-item>
 
@@ -59,24 +54,14 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
         <nz-form-item>
           <nz-form-label>封面 URL</nz-form-label>
           <nz-form-control>
-            <input
-              nz-input
-              formControlName="coverUrl"
-              placeholder="請輸入藍圖封面 URL（可選）"
-              [disabled]="loading()"
-            />
+            <input nz-input formControlName="coverUrl" placeholder="請輸入藍圖封面 URL（可選）" [disabled]="loading()" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label>啟用模組</nz-form-label>
           <nz-form-control>
-            <nz-select
-              formControlName="enabledModules"
-              nzMode="multiple"
-              nzPlaceHolder="選擇要啟用的模組"
-              [nzDisabled]="loading()"
-            >
+            <nz-select formControlName="enabledModules" nzMode="multiple" nzPlaceHolder="選擇要啟用的模組" [nzDisabled]="loading()">
               @for (module of moduleOptions; track module.value) {
                 <nz-option [nzValue]="module.value" [nzLabel]="module.label"></nz-option>
               }
@@ -86,60 +71,44 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
         <nz-form-item>
           <nz-form-control>
-            <label nz-checkbox formControlName="isPublic" [nzDisabled]="loading()">
-              設為公開藍圖
-            </label>
+            <label nz-checkbox formControlName="isPublic" [nzDisabled]="loading()"> 設為公開藍圖 </label>
           </nz-form-control>
         </nz-form-item>
       </form>
     </div>
 
     <div class="modal-footer">
-      <button nz-button type="button" (click)="cancel()" [disabled]="loading()">
-        取消
-      </button>
-      <button
-        nz-button
-        type="button"
-        nzType="primary"
-        (click)="submit()"
-        [nzLoading]="loading()"
-        [disabled]="form.invalid"
-      >
+      <button nz-button type="button" (click)="cancel()" [disabled]="loading()"> 取消 </button>
+      <button nz-button type="button" nzType="primary" (click)="submit()" [nzLoading]="loading()" [disabled]="form.invalid">
         建立藍圖
       </button>
     </div>
   `,
-  styles: [`
-    .modal-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid #f0f0f0;
-      text-align: right;
-    }
-    .modal-footer button + button {
-      margin-left: 8px;
-    }
-  `],
+  styles: [
+    `
+      .modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: right;
+      }
+      .modal-footer button + button {
+        margin-left: 8px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzButtonModule,
-    NzSelectModule,
-    NzCheckboxModule
-  ]
+  imports: [ReactiveFormsModule, NzFormModule, NzInputModule, NzButtonModule, NzSelectModule, NzCheckboxModule]
 })
 export class CreateBlueprintComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

@@ -9,16 +9,15 @@
  * @module routes/account
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ContextType } from '@core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, OnInit } from '@angular/core';
 import { WorkspaceContextService } from '@shared';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 
 interface DashboardStats {
   blueprintCount: number;
@@ -132,33 +131,27 @@ interface DashboardStats {
       </nz-spin>
     </div>
   `,
-  styles: [`
-    .dashboard-container {
-      padding: 24px;
-    }
-    .page-header {
-      margin-bottom: 24px;
-    }
-    .page-header h2 {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    nz-card {
-      height: 100%;
-    }
-  `],
+  styles: [
+    `
+      .dashboard-container {
+        padding: 24px;
+      }
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      nz-card {
+        height: 100%;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    NzCardModule,
-    NzGridModule,
-    NzStatisticModule,
-    NzSpinModule,
-    NzEmptyModule,
-    NzIconModule
-  ]
+  imports: [CommonModule, NzCardModule, NzGridModule, NzStatisticModule, NzSpinModule, NzEmptyModule, NzIconModule]
 })
 export class AccountDashboardComponent implements OnInit {
   private readonly workspaceContext = inject(WorkspaceContextService);

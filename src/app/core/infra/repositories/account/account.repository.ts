@@ -26,13 +26,7 @@ export class AccountRepository {
    * Find account by ID
    */
   findById(id: string): Observable<Account | null> {
-    return from(
-      this.supabase.client
-        .from('accounts')
-        .select('*')
-        .eq('id', id)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('accounts').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AccountRepository] findById error:', error);
@@ -49,12 +43,7 @@ export class AccountRepository {
    */
   findByAuthUserId(authUserId: string): Observable<Account | null> {
     return from(
-      this.supabase.client
-        .from('accounts')
-        .select('*')
-        .eq('auth_user_id', authUserId)
-        .eq('type', AccountType.USER)
-        .single()
+      this.supabase.client.from('accounts').select('*').eq('auth_user_id', authUserId).eq('type', AccountType.USER).single()
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -72,13 +61,7 @@ export class AccountRepository {
    */
   findByEmail(email: string): Observable<Account | null> {
     return from(
-      this.supabase.client
-        .from('accounts')
-        .select('*')
-        .eq('email', email)
-        .eq('type', AccountType.USER)
-        .is('deleted_at', null)
-        .single()
+      this.supabase.client.from('accounts').select('*').eq('email', email).eq('type', AccountType.USER).is('deleted_at', null).single()
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -127,12 +110,7 @@ export class AccountRepository {
       return from(Promise.resolve([]));
     }
 
-    return from(
-      this.supabase.client
-        .from('accounts')
-        .select('*')
-        .in('id', ids)
-    ).pipe(
+    return from(this.supabase.client.from('accounts').select('*').in('id', ids)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AccountRepository] findByIds error:', error);
@@ -148,13 +126,7 @@ export class AccountRepository {
    * Create account
    */
   create(account: Partial<Account>): Observable<Account | null> {
-    return from(
-      this.supabase.client
-        .from('accounts')
-        .insert(account)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('accounts').insert(account).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AccountRepository] create error:', error);

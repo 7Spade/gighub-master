@@ -26,12 +26,7 @@ export class OrganizationMemberRepository {
    * Find members by organization ID
    */
   findByOrganization(organizationId: string): Observable<OrganizationMember[]> {
-    return from(
-      this.supabase.client
-        .from('organization_members')
-        .select('*')
-        .eq('organization_id', organizationId)
-    ).pipe(
+    return from(this.supabase.client.from('organization_members').select('*').eq('organization_id', organizationId)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationMemberRepository] findByOrganization error:', error);
@@ -47,12 +42,7 @@ export class OrganizationMemberRepository {
    * Find memberships by account ID
    */
   findByAccount(accountId: string): Observable<OrganizationMember[]> {
-    return from(
-      this.supabase.client
-        .from('organization_members')
-        .select('*')
-        .eq('account_id', accountId)
-    ).pipe(
+    return from(this.supabase.client.from('organization_members').select('*').eq('account_id', accountId)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationMemberRepository] findByAccount error:', error);
@@ -69,9 +59,7 @@ export class OrganizationMemberRepository {
    */
   findWithOptions(options: OrganizationMemberQueryOptions): Observable<OrganizationMember[]> {
     // Need to join with accounts table to filter by auth_user_id
-    let query = this.supabase.client
-      .from('organization_members')
-      .select('*, accounts!inner(auth_user_id)');
+    let query = this.supabase.client.from('organization_members').select('*, accounts!inner(auth_user_id)');
 
     if (options.authUserId) {
       query = query.eq('accounts.auth_user_id', options.authUserId);
@@ -136,13 +124,7 @@ export class OrganizationMemberRepository {
    * Add organization member
    */
   create(member: Partial<OrganizationMember>): Observable<OrganizationMember | null> {
-    return from(
-      this.supabase.client
-        .from('organization_members')
-        .insert(member)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('organization_members').insert(member).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationMemberRepository] create error:', error);
@@ -181,12 +163,7 @@ export class OrganizationMemberRepository {
    * Remove organization member
    */
   remove(id: string): Observable<boolean> {
-    return from(
-      this.supabase.client
-        .from('organization_members')
-        .delete()
-        .eq('id', id)
-    ).pipe(
+    return from(this.supabase.client.from('organization_members').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
           console.error('[OrganizationMemberRepository] remove error:', error);
@@ -203,11 +180,7 @@ export class OrganizationMemberRepository {
    */
   removeByOrgAndAccount(organizationId: string, accountId: string): Observable<boolean> {
     return from(
-      this.supabase.client
-        .from('organization_members')
-        .delete()
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
+      this.supabase.client.from('organization_members').delete().eq('organization_id', organizationId).eq('account_id', accountId)
     ).pipe(
       map(({ error }) => {
         if (error) {

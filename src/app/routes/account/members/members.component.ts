@@ -9,25 +9,25 @@
  * @module routes/account
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ContextType, OrganizationRole, OrganizationMember } from '@core';
+import { ContextType, OrganizationRole } from '@core';
 import { WorkspaceContextService, OrganizationMemberService, OrganizationMemberWithAccount } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzFormModule } from 'ng-zorro-antd/form';
 
 @Component({
   selector: 'app-account-members',
@@ -44,17 +44,10 @@ import { NzFormModule } from 'ng-zorro-antd/form';
       } @else {
         <nz-card [nzBordered]="false">
           <div class="table-actions">
-            <button nz-button nzType="primary" (click)="openInviteModal()">
-              <span nz-icon nzType="user-add"></span>邀請成員
-            </button>
+            <button nz-button nzType="primary" (click)="openInviteModal()"> <span nz-icon nzType="user-add"></span>邀請成員 </button>
           </div>
 
-          <nz-table
-            #memberTable
-            [nzData]="members()"
-            [nzLoading]="loading()"
-            [nzShowPagination]="members().length > 10"
-          >
+          <nz-table #memberTable [nzData]="members()" [nzLoading]="loading()" [nzShowPagination]="members().length > 10">
             <thead>
               <tr>
                 <th>成員</th>
@@ -72,7 +65,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
                   <td>
                     <nz-tag [nzColor]="getRoleColor(member.role)">{{ getRoleLabel(member.role) }}</nz-tag>
                   </td>
-                  <td>{{ member.created_at | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ member.created_at | date: 'yyyy-MM-dd' }}</td>
                   <td>
                     @if (member.role !== 'owner') {
                       <a (click)="changeRole(member)">變更角色</a>
@@ -83,14 +76,14 @@ import { NzFormModule } from 'ng-zorro-antd/form';
                         (nzOnConfirm)="removeMember(member)"
                         nzOkText="確定"
                         nzCancelText="取消"
-                      >移除</a>
+                        >移除</a
+                      >
                     } @else {
                       <span class="text-muted">-</span>
                     }
                   </td>
                 </tr>
-              }
-              @empty {
+              } @empty {
                 <tr>
                   <td colspan="5">
                     <nz-empty nzNotFoundContent="尚無成員"></nz-empty>
@@ -152,23 +145,25 @@ import { NzFormModule } from 'ng-zorro-antd/form';
       </ng-container>
     </nz-modal>
   `,
-  styles: [`
-    .members-container {
-      padding: 24px;
-    }
-    .page-header {
-      margin-bottom: 24px;
-    }
-    .page-header h2 {
-      margin: 0;
-    }
-    .table-actions {
-      margin-bottom: 16px;
-    }
-    .text-muted {
-      color: #999;
-    }
-  `],
+  styles: [
+    `
+      .members-container {
+        padding: 24px;
+      }
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-header h2 {
+        margin: 0;
+      }
+      .table-actions {
+        margin-bottom: 16px;
+      }
+      .text-muted {
+        color: #999;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

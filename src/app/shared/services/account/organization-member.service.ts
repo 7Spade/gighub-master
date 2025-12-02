@@ -10,14 +10,8 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
+import { OrganizationMemberRepository, AccountRepository, OrganizationMember, OrganizationRole, Account } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  OrganizationMemberRepository,
-  AccountRepository,
-  OrganizationMember,
-  OrganizationRole,
-  Account
-} from '@core';
 
 import { AddOrganizationMemberRequest } from '../../models/account';
 
@@ -50,9 +44,7 @@ export class OrganizationMemberService {
    * Find organization members with account details
    */
   async findByOrganization(organizationId: string): Promise<OrganizationMemberWithAccount[]> {
-    const members = await firstValueFrom(
-      this.organizationMemberRepo.findByOrganization(organizationId)
-    );
+    const members = await firstValueFrom(this.organizationMemberRepo.findByOrganization(organizationId));
 
     // Fetch account details for each member
     const membersWithAccounts: OrganizationMemberWithAccount[] = [];
@@ -80,9 +72,7 @@ export class OrganizationMemberService {
    * Check if account is organization member
    */
   async isMember(organizationId: string, accountId: string): Promise<boolean> {
-    return firstValueFrom(
-      this.organizationMemberRepo.isMember(organizationId, accountId)
-    );
+    return firstValueFrom(this.organizationMemberRepo.isMember(organizationId, accountId));
   }
 
   /**
@@ -90,9 +80,7 @@ export class OrganizationMemberService {
    * Get user role in organization
    */
   async getRole(organizationId: string, accountId: string): Promise<OrganizationRole | null> {
-    return firstValueFrom(
-      this.organizationMemberRepo.getRole(organizationId, accountId)
-    );
+    return firstValueFrom(this.organizationMemberRepo.getRole(organizationId, accountId));
   }
 
   /**
@@ -155,8 +143,6 @@ export class OrganizationMemberService {
    * Remove member by organization and account
    */
   async removeMemberByOrgAndAccount(organizationId: string, accountId: string): Promise<boolean> {
-    return firstValueFrom(
-      this.organizationMemberRepo.removeByOrgAndAccount(organizationId, accountId)
-    );
+    return firstValueFrom(this.organizationMemberRepo.removeByOrgAndAccount(organizationId, accountId));
   }
 }

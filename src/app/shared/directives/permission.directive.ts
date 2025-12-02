@@ -21,18 +21,10 @@
  * <ng-template #noAccess>No access</ng-template>
  */
 
-import {
-  Directive,
-  Input,
-  TemplateRef,
-  ViewContainerRef,
-  inject,
-  effect,
-  DestroyRef
-} from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, inject, effect, DestroyRef } from '@angular/core';
 
-import { PermissionService } from '../services/permission';
 import { Permission, BlueprintBusinessRole } from '../../core/infra/types/permission';
+import { PermissionService } from '../services/permission';
 
 @Directive({
   selector: '[hasPermission]',

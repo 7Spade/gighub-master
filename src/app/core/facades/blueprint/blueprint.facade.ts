@@ -10,24 +10,15 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import {
-  BlueprintService,
-  BlueprintBusinessModel,
-  CreateBlueprintRequest,
-  UpdateBlueprintRequest
-} from '@shared';
+import { BlueprintService, BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest } from '@shared';
 
-import { BaseAccountCrudFacade } from '../account/base-account-crud.facade';
 import { BlueprintRole } from '../../infra/types/blueprint';
+import { BaseAccountCrudFacade } from '../account/base-account-crud.facade';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BlueprintFacade extends BaseAccountCrudFacade<
-  BlueprintBusinessModel,
-  CreateBlueprintRequest,
-  UpdateBlueprintRequest
-> {
+export class BlueprintFacade extends BaseAccountCrudFacade<BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest> {
   private readonly blueprintService = inject(BlueprintService);
 
   protected readonly entityTypeName = '藍圖';
@@ -122,7 +113,7 @@ export class BlueprintFacade extends BaseAccountCrudFacade<
     blueprintId: string,
     accountId: string,
     role: BlueprintRole = BlueprintRole.VIEWER,
-    isExternal: boolean = false
+    isExternal = false
   ): Promise<any> {
     return this.blueprintService.addBlueprintMember(blueprintId, accountId, role, isExternal);
   }

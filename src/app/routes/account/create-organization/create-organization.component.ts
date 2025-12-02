@@ -32,86 +32,58 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
         <nz-form-item>
           <nz-form-label [nzRequired]="true">組織名稱</nz-form-label>
           <nz-form-control [nzErrorTip]="'請輸入組織名稱（2-50個字符）'">
-            <input
-              nz-input
-              formControlName="name"
-              placeholder="請輸入組織名稱"
-              [disabled]="loading"
-            />
+            <input nz-input formControlName="name" placeholder="請輸入組織名稱" [disabled]="loading" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label>電子郵件</nz-form-label>
           <nz-form-control [nzErrorTip]="'請輸入有效的電子郵件地址'">
-            <input
-              nz-input
-              type="email"
-              formControlName="email"
-              placeholder="請輸入組織電子郵件（可選）"
-              [disabled]="loading"
-            />
+            <input nz-input type="email" formControlName="email" placeholder="請輸入組織電子郵件（可選）" [disabled]="loading" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label>頭像 URL</nz-form-label>
           <nz-form-control>
-            <input
-              nz-input
-              formControlName="avatar"
-              placeholder="請輸入組織頭像 URL（可選）"
-              [disabled]="loading"
-            />
+            <input nz-input formControlName="avatar" placeholder="請輸入組織頭像 URL（可選）" [disabled]="loading" />
           </nz-form-control>
         </nz-form-item>
       </form>
     </div>
 
     <div class="modal-footer">
-      <button nz-button type="button" (click)="cancel()" [disabled]="loading">
-        取消
-      </button>
-      <button
-        nz-button
-        type="button"
-        nzType="primary"
-        (click)="submit()"
-        [nzLoading]="loading"
-        [disabled]="form.invalid"
-      >
+      <button nz-button type="button" (click)="cancel()" [disabled]="loading"> 取消 </button>
+      <button nz-button type="button" nzType="primary" (click)="submit()" [nzLoading]="loading" [disabled]="form.invalid">
         建立組織
       </button>
     </div>
   `,
-  styles: [`
-    .modal-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid #f0f0f0;
-      text-align: right;
-    }
-    .modal-footer button + button {
-      margin-left: 8px;
-    }
-  `],
+  styles: [
+    `
+      .modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: right;
+      }
+      .modal-footer button + button {
+        margin-left: 8px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzButtonModule
-  ]
+  imports: [ReactiveFormsModule, NzFormModule, NzInputModule, NzButtonModule]
 })
 export class CreateOrganizationComponent {
   private readonly fb = inject(FormBuilder);

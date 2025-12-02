@@ -16,9 +16,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { Session, User, AuthError } from '@supabase/supabase-js';
 import { Observable, from, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Session, User, AuthError } from '@supabase/supabase-js';
 
 import { SupabaseService } from './supabase.service';
 
@@ -186,9 +186,7 @@ export class SupabaseAuthService {
    * Sign in with email and password
    */
   signIn(credentials: SignInCredentials): Observable<AuthResponse<Session>> {
-    return from(
-      this.supabaseService.signInWithPassword(credentials.email, credentials.password)
-    ).pipe(
+    return from(this.supabaseService.signInWithPassword(credentials.email, credentials.password)).pipe(
       map(({ data, error }) => ({
         data: data.session,
         error
@@ -201,9 +199,7 @@ export class SupabaseAuthService {
    * Sign up new user (email only, no phone required)
    */
   signUp(credentials: SignUpCredentials): Observable<AuthResponse<User>> {
-    return from(
-      this.supabaseService.signUp(credentials.email, credentials.password)
-    ).pipe(
+    return from(this.supabaseService.signUp(credentials.email, credentials.password)).pipe(
       map(({ data, error }) => ({
         data: data.user,
         error
@@ -224,11 +220,7 @@ export class SupabaseAuthService {
    * Reset password
    */
   resetPassword(email: string): Observable<{ error: AuthError | null }> {
-    return from(
-      this.supabaseService.resetPassword(email)
-    ).pipe(
-      map(({ error }) => ({ error }))
-    );
+    return from(this.supabaseService.resetPassword(email)).pipe(map(({ error }) => ({ error })));
   }
 
   /**
@@ -236,9 +228,7 @@ export class SupabaseAuthService {
    * Update password
    */
   updatePassword(newPassword: string): Observable<AuthResponse<User>> {
-    return from(
-      this.supabaseService.updatePassword(newPassword)
-    ).pipe(
+    return from(this.supabaseService.updatePassword(newPassword)).pipe(
       map(({ data, error }) => ({
         data: data.user,
         error

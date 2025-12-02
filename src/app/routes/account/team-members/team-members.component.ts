@@ -9,10 +9,10 @@
  * @module routes/account
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Team, TeamMember, TeamRole, OrganizationRole, OrganizationMember, Account } from '@core';
+import { Team, TeamMember, TeamRole, Account } from '@core';
 import { TeamService, OrganizationMemberService, OrganizationMemberWithAccount } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -46,12 +46,7 @@ interface TeamMemberWithAccount extends TeamMember {
         <div class="add-member-section">
           <h4>添加成員</h4>
           <div class="add-member-form">
-            <nz-select
-              [(ngModel)]="selectedMemberId"
-              nzPlaceHolder="選擇組織成員"
-              [nzLoading]="loadingOrgMembers()"
-              style="width: 200px;"
-            >
+            <nz-select [(ngModel)]="selectedMemberId" nzPlaceHolder="選擇組織成員" [nzLoading]="loadingOrgMembers()" style="width: 200px;">
               @for (member of availableOrgMembers(); track member.account_id) {
                 <nz-option [nzValue]="member.account_id" [nzLabel]="member.account?.name || member.account_id"></nz-option>
               }
@@ -60,13 +55,7 @@ interface TeamMemberWithAccount extends TeamMember {
               <nz-option nzValue="leader" nzLabel="領導"></nz-option>
               <nz-option nzValue="member" nzLabel="成員"></nz-option>
             </nz-select>
-            <button
-              nz-button
-              nzType="primary"
-              (click)="addMember()"
-              [disabled]="!selectedMemberId"
-              [nzLoading]="adding()"
-            >
+            <button nz-button nzType="primary" (click)="addMember()" [disabled]="!selectedMemberId" [nzLoading]="adding()">
               <span nz-icon nzType="plus"></span>添加
             </button>
           </div>
@@ -75,12 +64,7 @@ interface TeamMemberWithAccount extends TeamMember {
         <nz-divider></nz-divider>
 
         <h4>現有成員</h4>
-        <nz-table
-          #memberTable
-          [nzData]="members()"
-          [nzShowPagination]="false"
-          nzSize="small"
-        >
+        <nz-table #memberTable [nzData]="members()" [nzShowPagination]="false" nzSize="small">
           <thead>
             <tr>
               <th>成員</th>
@@ -96,7 +80,7 @@ interface TeamMemberWithAccount extends TeamMember {
                 <td>
                   <nz-tag [nzColor]="getRoleColor(member.role)">{{ getRoleLabel(member.role) }}</nz-tag>
                 </td>
-                <td>{{ member.created_at | date:'yyyy-MM-dd' }}</td>
+                <td>{{ member.created_at | date: 'yyyy-MM-dd' }}</td>
                 <td>
                   <a
                     nz-popconfirm
@@ -104,11 +88,11 @@ interface TeamMemberWithAccount extends TeamMember {
                     (nzOnConfirm)="removeMember(member)"
                     nzOkText="確定"
                     nzCancelText="取消"
-                  >移除</a>
+                    >移除</a
+                  >
                 </td>
               </tr>
-            }
-            @empty {
+            } @empty {
               <tr>
                 <td colspan="4">
                   <nz-empty nzNotFoundContent="尚無成員"></nz-empty>
@@ -124,35 +108,37 @@ interface TeamMemberWithAccount extends TeamMember {
       <button nz-button type="button" (click)="close()">關閉</button>
     </div>
   `,
-  styles: [`
-    .modal-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid #f0f0f0;
-      text-align: right;
-    }
-    .add-member-section {
-      margin-bottom: 16px;
-    }
-    .add-member-section h4 {
-      margin-bottom: 12px;
-    }
-    .add-member-form {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-  `],
+  styles: [
+    `
+      .modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: right;
+      }
+      .add-member-section {
+        margin-bottom: 16px;
+      }
+      .add-member-section h4 {
+        margin-bottom: 12px;
+      }
+      .add-member-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -185,7 +171,7 @@ export class TeamMembersComponent implements OnInit {
   members = signal<TeamMemberWithAccount[]>([]);
   orgMembers = signal<OrganizationMemberWithAccount[]>([]);
 
-  selectedMemberId: string = '';
+  selectedMemberId = '';
   selectedRole: TeamRole = TeamRole.MEMBER;
 
   // Available org members (excluding current team members)

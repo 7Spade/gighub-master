@@ -9,19 +9,19 @@
  * @module routes/blueprint
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BlueprintFacade, BlueprintRole } from '@core';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-blueprint-members',
@@ -32,12 +32,7 @@ import { FormsModule } from '@angular/forms';
       </div>
 
       <nz-spin [nzSpinning]="loading()">
-        <nz-table
-          #memberTable
-          [nzData]="members()"
-          [nzShowPagination]="members().length > 10"
-          [nzPageSize]="10"
-        >
+        <nz-table #memberTable [nzData]="members()" [nzShowPagination]="members().length > 10" [nzPageSize]="10">
           <thead>
             <tr>
               <th>成員</th>
@@ -57,11 +52,7 @@ import { FormsModule } from '@angular/forms';
                   </div>
                 </td>
                 <td>
-                  <nz-select
-                    [(ngModel)]="member.role"
-                    (ngModelChange)="updateMemberRole(member)"
-                    style="width: 120px;"
-                  >
+                  <nz-select [(ngModel)]="member.role" (ngModelChange)="updateMemberRole(member)" style="width: 120px;">
                     <nz-option nzValue="viewer" nzLabel="檢視者"></nz-option>
                     <nz-option nzValue="contributor" nzLabel="貢獻者"></nz-option>
                     <nz-option nzValue="maintainer" nzLabel="維護者"></nz-option>
@@ -74,7 +65,7 @@ import { FormsModule } from '@angular/forms';
                     <nz-tag nzColor="blue">內部</nz-tag>
                   }
                 </td>
-                <td>{{ member.created_at | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ member.created_at | date: 'yyyy-MM-dd HH:mm' }}</td>
                 <td>
                   <button
                     nz-button
@@ -94,27 +85,29 @@ import { FormsModule } from '@angular/forms';
       </nz-spin>
     </div>
   `,
-  styles: [`
-    .members-container {
-      padding: 24px;
-    }
-    .header {
-      margin-bottom: 16px;
-    }
-    .header h3 {
-      margin: 0;
-    }
-    .member-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .account-id {
-      font-family: monospace;
-      font-size: 12px;
-      color: #666;
-    }
-  `],
+  styles: [
+    `
+      .members-container {
+        padding: 24px;
+      }
+      .header {
+        margin-bottom: 16px;
+      }
+      .header h3 {
+        margin: 0;
+      }
+      .member-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .account-id {
+        font-family: monospace;
+        font-size: 12px;
+        color: #666;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

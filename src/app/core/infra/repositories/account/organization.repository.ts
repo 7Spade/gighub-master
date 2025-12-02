@@ -26,14 +26,7 @@ export class OrganizationRepository {
    * Find organization by ID
    */
   findById(id: string): Observable<Organization | null> {
-    return from(
-      this.supabase.client
-        .from('organizations')
-        .select('*')
-        .eq('id', id)
-        .is('deleted_at', null)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('organizations').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationRepository] findById error:', error);
@@ -49,14 +42,7 @@ export class OrganizationRepository {
    * Find organization by slug
    */
   findBySlug(slug: string): Observable<Organization | null> {
-    return from(
-      this.supabase.client
-        .from('organizations')
-        .select('*')
-        .eq('slug', slug)
-        .is('deleted_at', null)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('organizations').select('*').eq('slug', slug).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationRepository] findBySlug error:', error);
@@ -76,13 +62,7 @@ export class OrganizationRepository {
       return from(Promise.resolve([]));
     }
 
-    return from(
-      this.supabase.client
-        .from('organizations')
-        .select('*')
-        .in('id', ids)
-        .is('deleted_at', null)
-    ).pipe(
+    return from(this.supabase.client.from('organizations').select('*').in('id', ids).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationRepository] findByIds error:', error);
@@ -98,13 +78,7 @@ export class OrganizationRepository {
    * Find all organizations
    */
   findAll(): Observable<Organization[]> {
-    return from(
-      this.supabase.client
-        .from('organizations')
-        .select('*')
-        .is('deleted_at', null)
-        .order('name')
-    ).pipe(
+    return from(this.supabase.client.from('organizations').select('*').is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationRepository] findAll error:', error);
@@ -120,13 +94,7 @@ export class OrganizationRepository {
    * Create organization
    */
   create(organization: Partial<Organization>): Observable<Organization | null> {
-    return from(
-      this.supabase.client
-        .from('organizations')
-        .insert(organization)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('organizations').insert(organization).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[OrganizationRepository] create error:', error);

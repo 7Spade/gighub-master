@@ -26,13 +26,7 @@ export class BlueprintMemberRepository {
    * Find blueprint member by ID
    */
   findById(id: string): Observable<BlueprintMember | null> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .select('*')
-        .eq('id', id)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] findById error:', error);
@@ -48,13 +42,7 @@ export class BlueprintMemberRepository {
    * Find members by blueprint ID
    */
   findByBlueprint(blueprintId: string): Observable<BlueprintMember[]> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .select('*')
-        .eq('blueprint_id', blueprintId)
-        .order('created_at')
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').select('*').eq('blueprint_id', blueprintId).order('created_at')).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] findByBlueprint error:', error);
@@ -70,13 +58,7 @@ export class BlueprintMemberRepository {
    * Find blueprints by account ID
    */
   findByAccount(accountId: string): Observable<BlueprintMember[]> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .select('*')
-        .eq('account_id', accountId)
-        .order('created_at')
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').select('*').eq('account_id', accountId).order('created_at')).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] findByAccount error:', error);
@@ -129,12 +111,7 @@ export class BlueprintMemberRepository {
    */
   findByBlueprintAndAccount(blueprintId: string, accountId: string): Observable<BlueprintMember | null> {
     return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .select('*')
-        .eq('blueprint_id', blueprintId)
-        .eq('account_id', accountId)
-        .single()
+      this.supabase.client.from('blueprint_members').select('*').eq('blueprint_id', blueprintId).eq('account_id', accountId).single()
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -151,13 +128,7 @@ export class BlueprintMemberRepository {
    * Create blueprint member
    */
   create(member: Partial<BlueprintMember>): Observable<BlueprintMember | null> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .insert(member)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').insert(member).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] create error:', error);
@@ -196,12 +167,7 @@ export class BlueprintMemberRepository {
    * Delete blueprint member
    */
   delete(id: string): Observable<boolean> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .delete()
-        .eq('id', id)
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] delete error:', error);
@@ -217,13 +183,7 @@ export class BlueprintMemberRepository {
    * Delete member by blueprint and account
    */
   deleteByBlueprintAndAccount(blueprintId: string, accountId: string): Observable<boolean> {
-    return from(
-      this.supabase.client
-        .from('blueprint_members')
-        .delete()
-        .eq('blueprint_id', blueprintId)
-        .eq('account_id', accountId)
-    ).pipe(
+    return from(this.supabase.client.from('blueprint_members').delete().eq('blueprint_id', blueprintId).eq('account_id', accountId)).pipe(
       map(({ error }) => {
         if (error) {
           console.error('[BlueprintMemberRepository] deleteByBlueprintAndAccount error:', error);

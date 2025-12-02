@@ -11,20 +11,10 @@
  */
 
 import { Injectable, inject, signal, computed } from '@angular/core';
+import { SupabaseService, BlueprintMemberRepository, BlueprintRole } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  SupabaseService,
-  BlueprintMemberRepository,
-  BlueprintRole
-} from '@core';
 
-import {
-  Permission,
-  BlueprintBusinessRole,
-  PermissionContext,
-  getPermissionsForRole,
-  getCombinedPermissions
-} from '../../../core/infra/types/permission';
+import { Permission, BlueprintBusinessRole, PermissionContext, getCombinedPermissions } from '../../../core/infra/types/permission';
 
 /**
  * 藍圖角色到業務角色的映射
@@ -77,9 +67,7 @@ export class PermissionService {
       this.errorState.set(null);
 
       // Get blueprint membership
-      const members = await firstValueFrom(
-        this.blueprintMemberRepo.findByBlueprintAndAccount(blueprintId, accountId)
-      );
+      const members = await firstValueFrom(this.blueprintMemberRepo.findByBlueprintAndAccount(blueprintId, accountId));
 
       // Check if user is blueprint owner
       const isOwner = await this.checkIsOwner(blueprintId, accountId);
@@ -230,11 +218,7 @@ export class PermissionService {
    */
   private async checkIsOwner(blueprintId: string, accountId: string): Promise<boolean> {
     try {
-      const { data, error } = await this.supabaseService.client
-        .from('blueprints')
-        .select('owner_id')
-        .eq('id', blueprintId)
-        .single();
+      const { data, error } = await this.supabaseService.client.from('blueprints').select('owner_id').eq('id', blueprintId).single();
 
       if (error || !data) return false;
 

@@ -11,13 +11,9 @@
  */
 
 import { Injectable, inject, computed } from '@angular/core';
-
 import { PermissionService } from '@shared';
-import {
-  Permission,
-  BlueprintBusinessRole,
-  PermissionContext
-} from '../../infra/types/permission';
+
+import { Permission, BlueprintBusinessRole, PermissionContext } from '../../infra/types/permission';
 
 @Injectable({
   providedIn: 'root'
@@ -36,61 +32,34 @@ export class PermissionFacade {
   readonly hasContext = this.permissionService.hasContext;
 
   // Computed signals for common role checks
-  readonly isProjectManager = computed(() => 
-    this.permissionService.hasRole(BlueprintBusinessRole.PROJECT_MANAGER)
+  readonly isProjectManager = computed(() => this.permissionService.hasRole(BlueprintBusinessRole.PROJECT_MANAGER));
+
+  readonly isSiteDirector = computed(() => this.permissionService.hasRole(BlueprintBusinessRole.SITE_DIRECTOR));
+
+  readonly isManagement = computed(() =>
+    this.permissionService.hasAnyRole([BlueprintBusinessRole.PROJECT_MANAGER, BlueprintBusinessRole.SITE_DIRECTOR])
   );
 
-  readonly isSiteDirector = computed(() => 
-    this.permissionService.hasRole(BlueprintBusinessRole.SITE_DIRECTOR)
-  );
+  readonly isQAStaff = computed(() => this.permissionService.hasRole(BlueprintBusinessRole.QA_STAFF));
 
-  readonly isManagement = computed(() => 
-    this.permissionService.hasAnyRole([
-      BlueprintBusinessRole.PROJECT_MANAGER,
-      BlueprintBusinessRole.SITE_DIRECTOR
-    ])
-  );
+  readonly isWorker = computed(() => this.permissionService.hasRole(BlueprintBusinessRole.WORKER));
 
-  readonly isQAStaff = computed(() => 
-    this.permissionService.hasRole(BlueprintBusinessRole.QA_STAFF)
-  );
-
-  readonly isWorker = computed(() => 
-    this.permissionService.hasRole(BlueprintBusinessRole.WORKER)
-  );
-
-  readonly isObserver = computed(() => 
-    this.permissionService.hasRole(BlueprintBusinessRole.OBSERVER)
-  );
+  readonly isObserver = computed(() => this.permissionService.hasRole(BlueprintBusinessRole.OBSERVER));
 
   // Common permission checks
-  readonly canManageBlueprint = computed(() =>
-    this.permissionService.hasPermission(Permission.BLUEPRINT_MANAGE_SETTINGS)
-  );
+  readonly canManageBlueprint = computed(() => this.permissionService.hasPermission(Permission.BLUEPRINT_MANAGE_SETTINGS));
 
-  readonly canManageMembers = computed(() =>
-    this.permissionService.hasPermission(Permission.BLUEPRINT_MANAGE_MEMBERS)
-  );
+  readonly canManageMembers = computed(() => this.permissionService.hasPermission(Permission.BLUEPRINT_MANAGE_MEMBERS));
 
-  readonly canCreateTask = computed(() =>
-    this.permissionService.hasPermission(Permission.TASK_CREATE)
-  );
+  readonly canCreateTask = computed(() => this.permissionService.hasPermission(Permission.TASK_CREATE));
 
-  readonly canDeleteTask = computed(() =>
-    this.permissionService.hasPermission(Permission.TASK_DELETE)
-  );
+  readonly canDeleteTask = computed(() => this.permissionService.hasPermission(Permission.TASK_DELETE));
 
-  readonly canApproveDiary = computed(() =>
-    this.permissionService.hasPermission(Permission.DIARY_APPROVE)
-  );
+  readonly canApproveDiary = computed(() => this.permissionService.hasPermission(Permission.DIARY_APPROVE));
 
-  readonly canPerformAcceptance = computed(() =>
-    this.permissionService.hasPermission(Permission.ACCEPTANCE_PERFORM)
-  );
+  readonly canPerformAcceptance = computed(() => this.permissionService.hasPermission(Permission.ACCEPTANCE_PERFORM));
 
-  readonly canApproveAcceptance = computed(() =>
-    this.permissionService.hasPermission(Permission.ACCEPTANCE_APPROVE)
-  );
+  readonly canApproveAcceptance = computed(() => this.permissionService.hasPermission(Permission.ACCEPTANCE_APPROVE));
 
   /**
    * 載入權限上下文

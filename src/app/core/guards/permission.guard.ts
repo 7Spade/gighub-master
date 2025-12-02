@@ -12,8 +12,8 @@
 
 import { inject } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivateFn, CanMatchFn, Route, UrlSegment } from '@angular/router';
-
 import { PermissionService } from '@shared';
+
 import { Permission, BlueprintBusinessRole } from '../infra/types/permission';
 
 /**
@@ -49,7 +49,8 @@ export interface PermissionGuardConfig {
  * @returns CanActivateFn
  */
 export function permissionGuard(config: PermissionGuardConfig): CanActivateFn {
-  return (route: ActivatedRouteSnapshot) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return (_route: ActivatedRouteSnapshot) => {
     const permissionService = inject(PermissionService);
     const router = inject(Router);
 
@@ -104,7 +105,8 @@ export function permissionGuard(config: PermissionGuardConfig): CanActivateFn {
  * @returns CanMatchFn
  */
 export function permissionMatchGuard(config: PermissionGuardConfig): CanMatchFn {
-  return (route: Route, segments: UrlSegment[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return (_route: Route, _segments: UrlSegment[]) => {
     const permissionService = inject(PermissionService);
     const router = inject(Router);
 

@@ -10,21 +10,10 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
+import { BlueprintRepository, BlueprintMemberRepository, Blueprint, BlueprintRole, ModuleType, SupabaseService } from '@core';
 import { firstValueFrom } from 'rxjs';
-import {
-  BlueprintRepository,
-  BlueprintMemberRepository,
-  Blueprint,
-  BlueprintRole,
-  ModuleType,
-  SupabaseService
-} from '@core';
 
-import {
-  BlueprintBusinessModel,
-  CreateBlueprintRequest,
-  UpdateBlueprintRequest
-} from '../../models/blueprint';
+import { BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest } from '../../models/blueprint';
 
 @Injectable({
   providedIn: 'root'
@@ -72,9 +61,7 @@ export class BlueprintService {
 
     // Get blueprints where user is a member
     const memberships = await firstValueFrom(this.blueprintMemberRepo.findByAccount(accountId));
-    const memberBlueprintIds = memberships
-      .map(m => m.blueprint_id)
-      .filter(id => id && !ownedBlueprints.some(b => b.id === id));
+    const memberBlueprintIds = memberships.map(m => m.blueprint_id).filter(id => id && !ownedBlueprints.some(b => b.id === id));
 
     let memberBlueprints: Blueprint[] = [];
     if (memberBlueprintIds.length > 0) {
@@ -196,7 +183,7 @@ export class BlueprintService {
     blueprintId: string,
     accountId: string,
     role: BlueprintRole = BlueprintRole.VIEWER,
-    isExternal: boolean = false
+    isExternal = false
   ): Promise<any> {
     const member = await firstValueFrom(
       this.blueprintMemberRepo.create({
@@ -229,8 +216,6 @@ export class BlueprintService {
    * Remove blueprint member
    */
   async removeBlueprintMember(blueprintId: string, accountId: string): Promise<boolean> {
-    return await firstValueFrom(
-      this.blueprintMemberRepo.deleteByBlueprintAndAccount(blueprintId, accountId)
-    );
+    return await firstValueFrom(this.blueprintMemberRepo.deleteByBlueprintAndAccount(blueprintId, accountId));
   }
 }
