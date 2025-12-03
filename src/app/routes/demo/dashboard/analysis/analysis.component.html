@@ -1,28 +1,28 @@
 <div nz-row [nzGutter]="24" class="pt-lg">
   <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.total-sales' | i18n" total="¥ 126,560" contentHeight="44px" [action]="action1"
+    <g2-card [title]="'app.analysis.total-sales' | i18n" total="78%" contentHeight="44px" [action]="action1"
       [footer]="footer1">
       <ng-template #action1>
         <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
       </ng-template>
       <trend flag="up" style="display: block; margin-top: 2px">
         {{ 'app.analysis.week' | i18n }}
-        <span class="pl-sm">12%</span>
+        <span class="pl-sm">5%</span>
       </trend>
       <trend flag="down">
         {{ 'app.analysis.day' | i18n }}
-        <span class="pl-sm">11%</span>
+        <span class="pl-sm">2%</span>
       </trend>
       <ng-template #footer1>
         <p class="text-truncate mb0">
           {{ 'app.analysis.day-sales' | i18n }}
-          <span class="ml-sm">￥12,423</span>
+          <span class="ml-sm">3.2%</span>
         </p>
       </ng-template>
     </g2-card>
   </div>
   <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.visits' | i18n" total="8,848" contentHeight="46px" [action]="action2"
+    <g2-card [title]="'app.analysis.visits' | i18n" total="156" contentHeight="46px" [action]="action2"
       [footer]="footer2">
       <ng-template #action2>
         <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
@@ -33,13 +33,13 @@
       <ng-template #footer2>
         <p class="text-truncate mb0">
           {{ 'app.analysis.day-visits' | i18n }}
-          <span class="ml-sm">1,234</span>
+          <span class="ml-sm">156人</span>
         </p>
       </ng-template>
     </g2-card>
   </div>
   <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.payments' | i18n" total="6,560" contentHeight="46px" [action]="action3"
+    <g2-card [title]="'app.analysis.payments' | i18n" total="23" contentHeight="46px" [action]="action3"
       [footer]="footer3">
       <ng-template #action3>
         <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
@@ -50,27 +50,27 @@
       <ng-template #footer3>
         <p class="text-truncate mb0">
           {{ 'app.analysis.conversion-rate' | i18n }}
-          <span class="ml-sm">60%</span>
+          <span class="ml-sm">85%</span>
         </p>
       </ng-template>
     </g2-card>
   </div>
   <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.operational-effect' | i18n" total="78%" contentHeight="46px" [action]="action4"
+    <g2-card [title]="'app.analysis.operational-effect' | i18n" total="92%" contentHeight="46px" [action]="action4"
       [footer]="footer4">
       <ng-template #action4>
         <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
       </ng-template>
-      <g2-mini-progress height="46" percent="78" strokeWidth="8" target="80" color="#13C2C2" />
+      <g2-mini-progress height="46" percent="92" strokeWidth="8" target="95" color="#13C2C2" />
       <ng-template #footer4>
         <div class="d-flex justify-content-between text-truncate">
           <trend flag="up">
             {{ 'app.analysis.week' | i18n }}
-            <span class="pl-sm">12%</span>
+            <span class="pl-sm">8%</span>
           </trend>
           <trend flag="down">
             {{ 'app.analysis.day' | i18n }}
-            <span class="pl-sm">11%</span>
+            <span class="pl-sm">3%</span>
           </trend>
         </div>
       </ng-template>

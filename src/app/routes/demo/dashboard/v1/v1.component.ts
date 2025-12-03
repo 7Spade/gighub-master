@@ -27,38 +27,38 @@ export class DashboardV1Component implements OnInit {
     {
       completed: true,
       avatar: '1',
-      name: '苏先生',
-      content: `请告诉我，我应该说点什么好？`
+      name: '王工长',
+      content: `A区主体结构验收已完成`
     },
     {
       completed: false,
       avatar: '2',
-      name: 'はなさき',
-      content: `ハルカソラトキヘダツヒカリ`
+      name: '李主管',
+      content: `B区水电安装进度需加快`
     },
     {
       completed: false,
       avatar: '3',
-      name: 'cipchk',
-      content: `this world was never meant for one as beautiful as you.`
+      name: '张安全员',
+      content: `C区安全检查发现3处隐患`
     },
     {
       completed: false,
       avatar: '4',
-      name: 'Kent',
-      content: `my heart is beating with hers`
+      name: '陈监理',
+      content: `D区装修材料待验收`
     },
     {
       completed: false,
       avatar: '5',
-      name: 'Are you',
-      content: `They always said that I love beautiful girl than my friends`
+      name: '刘技术员',
+      content: `E区绿化设计方案需确认`
     },
     {
       completed: false,
       avatar: '6',
-      name: 'Forever',
-      content: `Walking through green fields ，sunshine in my eyes.`
+      name: '赵项目经理',
+      content: `本周工程例会安排在周五下午`
     }
   ];
 

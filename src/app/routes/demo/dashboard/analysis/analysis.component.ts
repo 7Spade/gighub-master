@@ -51,8 +51,8 @@ export class DashboardAnalysisComponent implements OnInit {
     .fill({})
     .map((_, i) => {
       return {
-        title: this.i18n.fanyi('app.analysis.test', { no: i }),
-        total: 323234
+        title: this.i18n.fanyi('app.analysis.test', { no: i + 1 }),
+        total: Math.floor(Math.random() * 30) + 60 // 進度百分比
       };
     });
   titleMap = {
@@ -62,13 +62,13 @@ export class DashboardAnalysisComponent implements OnInit {
   searchColumn: STColumn[] = [
     { title: { text: '排名', i18n: 'app.analysis.table.rank' }, index: 'index' },
     {
-      title: { text: '搜索关键词', i18n: 'app.analysis.table.search-keyword' },
+      title: { text: '施工项目', i18n: 'app.analysis.table.search-keyword' },
       index: 'keyword',
       click: item => this.msg.success(item.keyword)
     },
     {
       type: 'number',
-      title: { text: '用户数', i18n: 'app.analysis.table.users' },
+      title: { text: '作业人数', i18n: 'app.analysis.table.users' },
       index: 'count',
       sort: {
         compare: (a, b) => a.count - b.count
@@ -76,7 +76,7 @@ export class DashboardAnalysisComponent implements OnInit {
     },
     {
       type: 'number',
-      title: { text: '周涨幅', i18n: 'app.analysis.table.weekly-range' },
+      title: { text: '周进度', i18n: 'app.analysis.table.weekly-range' },
       index: 'range',
       render: 'range',
       sort: {

@@ -1,25 +1,25 @@
 <div class="alain-default__content-title">
   <h1>
-    Dashboard
-    <small>Welcome !</small>
+    工地施工进度
+    <small>项目管理总览</small>
   </h1>
 </div>
 <quick-menu>
   <nz-list [nzBordered]="false" [nzSplit]="false">
     <nz-list-item>
-      <a routerLink="/">Home</a>
+      <a routerLink="/">首页</a>
     </nz-list-item>
     <nz-list-item>
-      <a routerLink="/widgets">Widgets</a>
+      <a routerLink="/widgets">小部件</a>
     </nz-list-item>
     <nz-list-item>
-      <a routerLink="/style/typography">typography</a>
+      <a routerLink="/style/typography">排版</a>
     </nz-list-item>
     <nz-list-item>
-      <a routerLink="/style/gridmasonry">gridmasonry</a>
+      <a routerLink="/style/gridmasonry">瀑布流</a>
     </nz-list-item>
     <nz-list-item>
-      <a routerLink="/pro/result/success">success result</a>
+      <a routerLink="/pro/result/success">成功页</a>
     </nz-list-item>
   </nz-list>
 </quick-menu>
@@ -27,8 +27,8 @@
   <div nz-col nzXs="24" nzSm="12" nzMd="6" class="mb-md">
     <div nz-row nzType="flex" nzAlign="middle" class="bg-primary rounded-md">
       <div nz-col nzSpan="12" class="p-md text-white">
-        <div class="h2 mt0">123,456</div>
-        <p class="text-nowrap mb0">Website Traffics</p>
+        <div class="h2 mt0">156</div>
+        <p class="text-nowrap mb0">今日作业人数</p>
       </div>
       <div nz-col nzSpan="12">
         @if (webSite) {
@@ -48,8 +48,8 @@
   <div nz-col nzXs="24" nzSm="12" nzMd="6" class="mb-md">
     <div nz-row nzType="flex" nzAlign="middle" class="bg-success rounded-md">
       <div nz-col nzSpan="12" class="p-md text-white">
-        <div class="h2 mt0">234,567K</div>
-        <p class="text-nowrap mb0">Website Impressions</p>
+        <div class="h2 mt0">78%</div>
+        <p class="text-nowrap mb0">整体完成进度</p>
       </div>
       <div nz-col nzSpan="12">
         @if (webSite) {
@@ -69,8 +69,8 @@
   <div nz-col nzXs="24" nzSm="12" nzMd="6" class="mb-md">
     <div nz-row nzType="flex" nzAlign="middle" class="bg-orange rounded-md">
       <div nz-col nzSpan="12" class="p-md text-white">
-        <div class="h2 mt0">$458,778</div>
-        <p class="text-nowrap mb0">Total Sales</p>
+        <div class="h2 mt0">23</div>
+        <p class="text-nowrap mb0">进行中任务</p>
       </div>
       <div nz-col nzSpan="12">
         @if (webSite) {
@@ -90,8 +90,8 @@
   <div nz-col nzXs="24" nzSm="12" nzMd="6" class="mb-md">
     <div nz-row nzType="flex" nzAlign="middle" class="bg-magenta rounded-md">
       <div nz-col nzSpan="12" class="p-md text-white">
-        <div class="h2 mt0">456</div>
-        <p class="text-nowrap mb0">Support Tickets</p>
+        <div class="h2 mt0">5</div>
+        <p class="text-nowrap mb0">待处理问题</p>
       </div>
       <div nz-col nzSpan="12">
         @if (webSite) {
@@ -113,8 +113,8 @@
   <div nz-col nzXs="24" nzMd="12">
     <nz-card [nzBordered]="false" [nzTitle]="salesTitle">
       <ng-template #salesTitle>
-        Sales Statistics
-        <small class="text-sm font-weight-normal">Business Expectations & Retail Sales Statistics</small>
+        施工进度统计
+        <small class="text-sm font-weight-normal">各月份施工完成度分析</small>
       </ng-template>
       @if (salesData) {
         <g2-bar height="275" [data]="salesData" />
@@ -124,11 +124,11 @@
   <div nz-col nzXs="24" nzMd="12">
     <nz-card [nzTitle]="growthTitle" [nzBordered]="false">
       <ng-template #growthTitle>
-        Growth Rate
-        <small class="text-sm font-weight-normal">Business Expectations & Retail Sales Statistics</small>
+        施工趋势
+        <small class="text-sm font-weight-normal">作业人数与任务完成对比</small>
       </ng-template>
       @if (offlineChartData) {
-        <g2-timeline [data]="offlineChartData" [height]="289" [titleMap]="{ y1: '客流量', y2: '支付笔数' }" />
+        <g2-timeline [data]="offlineChartData" [height]="289" [titleMap]="{ y1: '作业人数', y2: '完成任务' }" />
       }
     </nz-card>
   </div>
@@ -137,25 +137,25 @@
   <div nz-col nzXs="24" nzMd="12">
     <nz-card [nzBordered]="false" [nzCover]="coverTpl">
       <ng-template #coverTpl>
-        <img class="img" src="//os.alipayobjects.com/rmsportal/GhjqstwSgxBXrZS.png" />
+        <img class="img" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
       </ng-template>
-      <h3>ANT DESIGN</h3>
-      <p class="text-grey">A UI Design Language</p>
+      <h3>GigHub 工地管理系统</h3>
+      <p class="text-grey">智能化施工进度追踪</p>
       <ol class="list-styled text-lg pt-md">
-        <li>Designed by experienced team, and showcase dozens of inspiring projects.</li>
-        <li>Provide solutions for usual problems that may be encountered while developing enterprise-like complex UIs.</li>
-        <li>Dozens of flexible and practical reusable components that increase your productivity.</li>
+        <li>实时监控工地施工进度和作业人员状态</li>
+        <li>智能分析施工效率，优化资源配置</li>
+        <li>多维度数据展示，助力项目决策</li>
       </ol>
       <p class="pt-md mb0">
-        <a class="text-grey" href="//ng.ant.design" target="_blank">View Site...</a>
+        <a class="text-grey" href="javascript:void(0)">查看更多...</a>
       </p>
     </nz-card>
   </div>
   <div nz-col nzXs="24" nzMd="12">
     <nz-card [nzTitle]="recentTitle" [nzBordered]="false" class="ant-card__body-nopadding">
       <ng-template #recentTitle>
-        Recent Posts
-        <small class="text-sm font-weight-normal">Venenatis portauam Inceptos ameteiam</small>
+        施工日志
+        <small class="text-sm font-weight-normal">今日施工记录汇总</small>
       </ng-template>
       @for (item of todoData; track $index) {
         <div nz-row [nzJustify]="'center'" [nzAlign]="'middle'" class="py-sm pr-md bg-grey-lighter-h point">
@@ -171,7 +171,7 @@
     </nz-card>
   </div>
   <div nz-col nzXs="24" nzMd="12">
-    <nz-card nzTitle="Todo lists" [nzBordered]="false" class="ant-card__body-nopadding">
+    <nz-card nzTitle="待办事项" [nzBordered]="false" class="ant-card__body-nopadding">
       @for (item of todoData; track $index) {
         <div nz-row [nzJustify]="'center'" [nzAlign]="'middle'" class="py-sm pr-md bg-grey-lighter-h point">
           <div nz-col [nzSpan]="4" class="text-center">
@@ -186,11 +186,11 @@
             <nz-dropdown-menu #todoMenus="nzDropdownMenu">
               <ul nz-menu>
                 @if (item.completed) {
-                  <li nz-menu-item (click)="item.completed = false">Active</li>
+                  <li nz-menu-item (click)="item.completed = false">标记进行中</li>
                 } @else {
-                  <li nz-menu-item (click)="item.completed = true">Completed</li>
+                  <li nz-menu-item (click)="item.completed = true">标记完成</li>
                 }
-                <li nz-menu-item (click)="todoData.splice(todoData.indexOf(item), 1)">Delted</li>
+                <li nz-menu-item (click)="todoData.splice(todoData.indexOf(item), 1)">删除</li>
               </ul>
             </nz-dropdown-menu>
           </div>
