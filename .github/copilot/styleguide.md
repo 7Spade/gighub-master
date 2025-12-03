@@ -2,6 +2,8 @@
 
 > 本專案的程式碼風格規範，確保團隊開發一致性
 
+📖 **詳細編碼標準請參考**: [docs/reference/coding-standards.md](../../docs/reference/coding-standards.md)
+
 ---
 
 ## 📁 檔案結構
@@ -436,6 +438,13 @@ import { Task } from '../domain/models/task.model';
 
 ## 📚 參考資源
 
+### 內部文件
+- [編碼標準](../../docs/reference/coding-standards.md)
+- [測試策略](../../docs/reference/testing-strategy.md)
+- [程式碼審查指南](../../docs/contributing/code-review-guidelines.md)
+- [開發環境設定](../../docs/contributing/development-setup.md)
+
+### 外部資源
 - [Angular 官方風格指南](https://angular.dev/style-guide)
 - [ng-alain 開發指南](https://ng-alain.com/docs/getting-started)
 - [ng-zorro-antd 元件庫](https://ng.ant.design/components/overview)
@@ -443,4 +452,4 @@ import { Task } from '../domain/models/task.model';
 
 ---
 
-**最後更新**: 2025-11-27
+**最後更新**: 2025-12-03
