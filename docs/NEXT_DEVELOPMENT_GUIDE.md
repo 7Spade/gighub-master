@@ -1385,6 +1385,140 @@ touch src/app/shared/services/diary/index.ts
 
 ---
 
+## 🔮 未來規劃功能
+
+> 以下功能為中長期規劃，待現階段核心功能完成後再進行開發。
+
+### 📋 規劃功能總覽
+
+| 功能模組 | 優先級 | 說明 | 建議實現方式 |
+|---------|--------|------|-------------|
+| 🔄 工作流程引擎 | ⭐⭐⭐⭐⭐ | 任務完成→提交→日誌可呈報→品管檢查→驗收 | 輕量級 WorkflowService + 狀態機模式，整合 EventBusService |
+| 💬 評論系統 | ⭐⭐⭐⭐⭐ | 多模組共用的評論功能 | 通用 CommentService + `task_comments` 資料表 |
+| 🏷️ 標籤系統 | ⭐⭐⭐⭐ | 多模組共用的標籤分類 | 通用 TagService + `task_tags` 資料表 |
+| 🎯 里程碑管理 | ⭐⭐⭐⭐ | 關鍵節點追蹤 | 新增 `milestones` 資料表，整合甘特圖 |
+| 📅 看板/甘特圖 | ⭐⭐⭐⭐ | 視覺化進度管理 | 看板：擴展現有視圖；甘特圖：引入 ngx-gantt 或 dhtmlx-gantt |
+| ⚠️ 風險管理 | ⭐⭐⭐ | 風險登記與追蹤 | 資料表 + 基本 CRUD 實作 MVP，未來擴展風險評估矩陣 |
+| 📊 儀表板引擎 | ⭐⭐⭐ | 可視化數據面板 | 先用 ng-zorro Chart/Statistic 組裝，未來考慮 Dashboard Builder |
+| 📈 報表中心 | ⭐⭐⭐ | BI 分析與報表匯出 | 預定義報表 + PDF/Excel 匯出，未來擴展報表設計器 |
+
+### 🔄 工作流程引擎（Workflow / Lifecycle）
+
+**需求背景**：支援施工管理的標準流程
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  任務完成   │ ─→ │    提交     │ ─→ │ 日誌可呈報  │ ─→ │  品管檢查   │ ─→ │    驗收     │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+**建議實現方式**：
+- 建立輕量級 `WorkflowService`，採用狀態機模式
+- 整合已完成的 `EventBusService` 作為流程觸發器
+- 支援多階段審批流程
+- 可配置的狀態轉換規則
+
+**預計結構**：
+```
+src/app/shared/services/workflow/
+├── workflow.service.ts       # 工作流程服務
+├── workflow.types.ts         # 狀態機類型定義
+├── workflow-engine.ts        # 流程引擎核心
+└── index.ts
+```
+
+### 💬 評論系統
+
+**需求背景**：任務、日誌、問題等多模組都需要評論功能
+
+**建議實現方式**：
+- 建立通用 `CommentService` 供多模組使用
+- 複用已存在的 `task_comments` 資料表結構
+- 支援 @提及、附件、表情回應
+
+**預計結構**：
+```
+src/app/shared/services/comment/
+├── comment.service.ts        # 評論服務
+├── comment.types.ts          # 評論類型定義
+└── index.ts
+
+src/app/shared/components/comment/
+├── comment-list.component.ts # 評論列表元件
+├── comment-form.component.ts # 評論表單元件
+└── index.ts
+```
+
+### 🏷️ 標籤系統
+
+**需求背景**：任務、問題等需要靈活的分類標籤
+
+**建議實現方式**：
+- 建立通用 `TagService`
+- 複用已存在的 `task_tags` 資料表結構
+- 支援多色標籤、標籤群組
+
+### 🎯 里程碑管理系統
+
+**需求背景**：追蹤專案關鍵節點
+
+**建議實現方式**：
+- 新增 `milestones` 資料表
+- 與甘特圖整合顯示
+- 支援里程碑完成度計算
+
+### 📅 看板/甘特圖視圖
+
+**需求背景**：視覺化進度管理
+
+**建議實現方式**：
+- **看板**：擴展現有 `TasksComponent` 的看板視圖
+- **甘特圖**：引入第三方元件
+  - 選項 1: [ngx-gantt](https://github.com/nickvdyck/ngx-gantt)
+  - 選項 2: [dhtmlx-gantt](https://dhtmlx.com/docs/products/dhtmlxGantt/)
+
+### ⚠️ 風險管理（Risk Register）
+
+**需求背景**：專案風險識別與追蹤
+
+**建議實現方式**（MVP 階段）：
+- 新增 `project_risks` 資料表
+- 基本 CRUD 操作
+- 風險等級分類（高/中/低）
+
+**未來擴展**：
+- 風險評估矩陣（影響 × 機率）
+- 風險提醒通知
+- 風險報表
+
+### 📊 儀表板引擎
+
+**需求背景**：專案概覽與數據可視化
+
+**建議實現方式**（初期）：
+- 使用 ng-zorro 的 Chart/Statistic 元件組裝
+- 預設儀表板佈局
+
+**未來擴展**：
+- Dashboard Builder 讓用戶自訂
+- Widget 拖拉排版
+- 儀表板分享
+
+### 📈 報表中心（BI / Reports）
+
+**需求背景**：專案進度與財務分析
+
+**建議實現方式**（初期）：
+- 預定義報表模板
+- PDF/Excel 匯出功能
+
+**未來擴展**：
+- 報表設計器
+- 自訂報表參數
+- 排程報表
+
+---
+
 ### 🔗 相關資源
 
 - [OpenProject 專案管理文檔](https://www.openproject.org/docs/)
