@@ -15,21 +15,19 @@
 
 import { Injectable, inject, computed, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, catchError, of, tap, Subject, switchMap, forkJoin } from 'rxjs';
+import { SettingsService } from '@delon/theme';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO } from 'date-fns';
-import { zhTW } from 'date-fns/locale';
+import { Observable, catchError, of, tap, Subject, switchMap } from 'rxjs';
 
+import { DiaryRepository } from '../../../core/infra/repositories/diary';
 import {
   Diary,
   DiaryWithDetails,
   DiaryAttachment,
-  DiaryEntry,
   CreateDiaryRequest,
   UpdateDiaryRequest,
   AddDiaryAttachmentRequest,
-  AddDiaryEntryRequest,
   DiaryQueryOptions,
-  DiaryPageResult,
   DiaryStats,
   MonthlyDiarySummary,
   DiaryStatus,
@@ -37,10 +35,8 @@ import {
   DIARY_STATUS_CONFIG,
   WEATHER_TYPE_CONFIG
 } from '../../../core/infra/types/diary';
-import { DiaryRepository } from '../../../core/infra/repositories/diary';
-import { TimelineService } from '../timeline';
 import { AuditLogService } from '../audit-log';
-import { SettingsService } from '@delon/theme';
+import { TimelineService } from '../timeline';
 
 /**
  * 日誌日曆項目
@@ -57,7 +53,7 @@ export interface DiaryCalendarItem {
  * 日誌狀態
  */
 interface DiaryState {
-  diaries: (Diary | DiaryWithDetails)[];
+  diaries: Array<Diary | DiaryWithDetails>;
   selectedDiary: DiaryWithDetails | null;
   loading: boolean;
   saving: boolean;
@@ -216,10 +212,17 @@ export class DiaryService {
 
           // Audit log
           this.auditLogService
-            .logChanges('diary', diary.id, 'update', oldDiary as unknown as Record<string, unknown>, diary as unknown as Record<string, unknown>, {
-              entityName: `日誌 - ${diary.work_date}`,
-              blueprintId: diary.blueprint_id
-            })
+            .logChanges(
+              'diary',
+              diary.id,
+              'update',
+              oldDiary as unknown as Record<string, unknown>,
+              diary as unknown as Record<string, unknown>,
+              {
+                entityName: `日誌 - ${diary.work_date}`,
+                blueprintId: diary.blueprint_id
+              }
+            )
             .subscribe();
         } else {
           this.updateState({ saving: false });
@@ -428,7 +431,8 @@ export class DiaryService {
           this._diaryUpdated.next(diary);
           this.updateState({
             diaries: this._state().diaries.map(d => (d.id === id ? diary : d)),
-            selectedDiary: this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
+            selectedDiary:
+              this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
             saving: false
           });
 
@@ -475,7 +479,8 @@ export class DiaryService {
           this._diaryApproved.next(diary);
           this.updateState({
             diaries: this._state().diaries.map(d => (d.id === id ? diary : d)),
-            selectedDiary: this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
+            selectedDiary:
+              this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
             saving: false
           });
 
@@ -521,7 +526,8 @@ export class DiaryService {
           this._diaryUpdated.next(diary);
           this.updateState({
             diaries: this._state().diaries.map(d => (d.id === id ? diary : d)),
-            selectedDiary: this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
+            selectedDiary:
+              this._state().selectedDiary?.id === id ? { ...this._state().selectedDiary, ...diary } : this._state().selectedDiary,
             saving: false
           });
 

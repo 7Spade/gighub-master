@@ -55,9 +55,7 @@ export class TimelineRepository {
       new_value: request.new_value ?? null
     };
 
-    return from(
-      this.supabase.client.from('activities').insert(entry).select().single()
-    ).pipe(
+    return from(this.supabase.client.from('activities').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TimelineRepository] logActivity error:', error);
@@ -171,7 +169,7 @@ export class TimelineRepository {
         }
         const total = count ?? 0;
         return {
-          data: (data || []) as unknown as (Activity | ActivityWithActor)[],
+          data: (data || []) as unknown as Array<Activity | ActivityWithActor>,
           total,
           hasMore: offset + limit < total
         };
@@ -214,7 +212,7 @@ export class TimelineRepository {
       entityType?: TimelineEntityType | TimelineEntityType[];
       includeActor?: boolean;
     } = {}
-  ): Observable<(Activity | ActivityWithActor)[]> {
+  ): Observable<Array<Activity | ActivityWithActor>> {
     const { limit = 50, offset = 0, entityType, includeActor = false } = options;
 
     let query = this.supabase.client
@@ -239,7 +237,7 @@ export class TimelineRepository {
           console.error('[TimelineRepository] findByBlueprint error:', error);
           return [];
         }
-        return (data || []) as unknown as (Activity | ActivityWithActor)[];
+        return (data || []) as unknown as Array<Activity | ActivityWithActor>;
       })
     );
   }
@@ -252,7 +250,7 @@ export class TimelineRepository {
     entityType: TimelineEntityType,
     entityId: string,
     options: { limit?: number; includeActor?: boolean } = {}
-  ): Observable<(Activity | ActivityWithActor)[]> {
+  ): Observable<Array<Activity | ActivityWithActor>> {
     const { limit = 50, includeActor = false } = options;
 
     return from(
@@ -269,7 +267,7 @@ export class TimelineRepository {
           console.error('[TimelineRepository] getEntityHistory error:', error);
           return [];
         }
-        return (data || []) as unknown as (Activity | ActivityWithActor)[];
+        return (data || []) as unknown as Array<Activity | ActivityWithActor>;
       })
     );
   }
@@ -278,10 +276,7 @@ export class TimelineRepository {
    * 取得操作者的活動記錄
    * Get actor activity records
    */
-  getActorHistory(
-    actorId: string,
-    options: { limit?: number; blueprintId?: string } = {}
-  ): Observable<Activity[]> {
+  getActorHistory(actorId: string, options: { limit?: number; blueprintId?: string } = {}): Observable<Activity[]> {
     const { limit = 50, blueprintId } = options;
 
     let query = this.supabase.client
@@ -357,10 +352,7 @@ export class TimelineRepository {
     byEntityType: Record<TimelineEntityType, number>;
     byDate: Array<{ date: string; count: number }>;
   }> {
-    let query = this.supabase.client
-      .from('activities')
-      .select('*')
-      .eq('blueprint_id', blueprintId);
+    let query = this.supabase.client.from('activities').select('*').eq('blueprint_id', blueprintId);
 
     if (options.startDate) {
       query = query.gte('created_at', options.startDate);
@@ -384,7 +376,7 @@ export class TimelineRepository {
         const activities = (data || []) as Activity[];
         const byType: Record<ActivityType, number> = {} as Record<ActivityType, number>;
         const byEntityType: Record<TimelineEntityType, number> = {} as Record<TimelineEntityType, number>;
-        const byDate: Map<string, number> = new Map();
+        const byDate = new Map<string, number>();
 
         for (const activity of activities) {
           byType[activity.activity_type] = (byType[activity.activity_type] || 0) + 1;

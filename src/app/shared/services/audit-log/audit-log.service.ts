@@ -14,14 +14,15 @@
  */
 
 import { Injectable, inject, computed, signal, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SettingsService } from '@delon/theme';
 import { Observable, catchError, of, tap, Subject } from 'rxjs';
 
+import { AuditLogRepository } from '../../../core/infra/repositories/audit-log';
 import {
   AuditLog,
   CreateAuditLogRequest,
   AuditLogQueryOptions,
-  AuditLogPageResult,
   AuditLogStats,
   AuditEntityType,
   AuditAction,
@@ -31,8 +32,6 @@ import {
   AuditChange,
   AUDIT_ACTION_CONFIG
 } from '../../../core/infra/types/audit-log';
-import { AuditLogRepository } from '../../../core/infra/repositories/audit-log';
-import { SettingsService } from '@delon/theme';
 
 /**
  * 審計日誌狀態

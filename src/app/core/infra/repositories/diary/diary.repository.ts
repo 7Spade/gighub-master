@@ -63,9 +63,7 @@ export class DiaryRepository {
       created_by: this.supabase.currentUser?.id ?? null
     };
 
-    return from(
-      this.supabase.client.from('diaries').insert(entry).select().single()
-    ).pipe(
+    return from(this.supabase.client.from('diaries').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[DiaryRepository] create error:', error);
@@ -94,9 +92,7 @@ export class DiaryRepository {
     if (request.notes !== undefined) updates['notes'] = request.notes;
     if (request.status !== undefined) updates['status'] = request.status;
 
-    return from(
-      this.supabase.client.from('diaries').update(updates).eq('id', id).select().single()
-    ).pipe(
+    return from(this.supabase.client.from('diaries').update(updates).eq('id', id).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[DiaryRepository] update error:', error);
@@ -112,12 +108,7 @@ export class DiaryRepository {
    * Soft delete a diary
    */
   delete(id: string): Observable<boolean> {
-    return from(
-      this.supabase.client
-        .from('diaries')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id)
-    ).pipe(
+    return from(this.supabase.client.from('diaries').update({ deleted_at: new Date().toISOString() }).eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
           console.error('[DiaryRepository] delete error:', error);
@@ -141,9 +132,7 @@ export class DiaryRepository {
       return this.findByIdWithDetails(id);
     }
 
-    return from(
-      this.supabase.client.from('diaries').select('*').eq('id', id).is('deleted_at', null).single()
-    ).pipe(
+    return from(this.supabase.client.from('diaries').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
@@ -288,7 +277,7 @@ export class DiaryRepository {
         }
         const total = count ?? 0;
         return {
-          data: (data || []) as unknown as (Diary | DiaryWithDetails)[],
+          data: (data || []) as unknown as Array<Diary | DiaryWithDetails>,
           total,
           page,
           pageSize,
@@ -432,9 +421,7 @@ export class DiaryRepository {
       uploaded_by: this.supabase.currentUser?.id ?? null
     };
 
-    return from(
-      this.supabase.client.from('diary_attachments').insert(entry).select().single()
-    ).pipe(
+    return from(this.supabase.client.from('diary_attachments').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[DiaryRepository] addAttachment error:', error);
@@ -451,11 +438,7 @@ export class DiaryRepository {
    */
   getAttachments(diaryId: string): Observable<DiaryAttachment[]> {
     return from(
-      this.supabase.client
-        .from('diary_attachments')
-        .select('*')
-        .eq('diary_id', diaryId)
-        .order('created_at', { ascending: false })
+      this.supabase.client.from('diary_attachments').select('*').eq('diary_id', diaryId).order('created_at', { ascending: false })
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -492,9 +475,7 @@ export class DiaryRepository {
    * Get diary statistics
    */
   getStats(blueprintId: string): Observable<DiaryStats> {
-    return from(
-      this.supabase.client.from('diaries').select('*').eq('blueprint_id', blueprintId).is('deleted_at', null)
-    ).pipe(
+    return from(this.supabase.client.from('diaries').select('*').eq('blueprint_id', blueprintId).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[DiaryRepository] getStats error:', error);

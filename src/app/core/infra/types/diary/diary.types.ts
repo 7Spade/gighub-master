@@ -40,15 +40,7 @@ export type DiaryStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'arc
 /**
  * 工項類型
  */
-export type WorkItemType =
-  | 'construction'
-  | 'inspection'
-  | 'material'
-  | 'equipment'
-  | 'safety'
-  | 'quality'
-  | 'meeting'
-  | 'other';
+export type WorkItemType = 'construction' | 'inspection' | 'material' | 'equipment' | 'safety' | 'quality' | 'meeting' | 'other';
 
 // ============================================================================
 // Core Interfaces (aligned with database diaries table)

@@ -15,34 +15,32 @@
 
 import { Injectable, inject, computed, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, catchError, of, tap, Subject, map } from 'rxjs';
+import { SettingsService } from '@delon/theme';
 import { formatDistanceToNow, format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
+import { Observable, catchError, of, tap, Subject, map } from 'rxjs';
 
+import { TimelineRepository } from '../../../core/infra/repositories/timeline';
 import {
   Activity,
   ActivityWithActor,
   LogActivityRequest,
   ActivityQueryOptions,
-  ActivityPageResult,
   ActivityType,
   TimelineEntityType,
   TimelineItem,
-  TimelineGroup,
   ActivityMetadata,
   ACTIVITY_TYPE_CONFIG,
   TIMELINE_ENTITY_TYPE_CONFIG,
   activityToTimelineItem,
   groupTimelineByDate
 } from '../../../core/infra/types/timeline';
-import { TimelineRepository } from '../../../core/infra/repositories/timeline';
-import { SettingsService } from '@delon/theme';
 
 /**
  * 時間軸狀態
  */
 interface TimelineState {
-  activities: (Activity | ActivityWithActor)[];
+  activities: Array<Activity | ActivityWithActor>;
   selectedActivity: Activity | ActivityWithActor | null;
   loading: boolean;
   error: string | null;
@@ -290,14 +288,10 @@ export class TimelineService {
    * 取得實體的活動歷史
    * Get entity activity history
    */
-  getEntityHistory(
-    entityType: TimelineEntityType,
-    entityId: string,
-    options: { limit?: number } = {}
-  ): Observable<TimelineItem[]> {
-    return this.repository.getEntityHistory(entityType, entityId, options).pipe(
-      map(activities => activities.map(a => this.toTimelineItem(a)))
-    );
+  getEntityHistory(entityType: TimelineEntityType, entityId: string, options: { limit?: number } = {}): Observable<TimelineItem[]> {
+    return this.repository
+      .getEntityHistory(entityType, entityId, options)
+      .pipe(map(activities => activities.map(a => this.toTimelineItem(a))));
   }
 
   /**

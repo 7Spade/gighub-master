@@ -62,13 +62,7 @@ export class AuditLogRepository {
       request_id: request.request_id ?? null
     };
 
-    return from(
-      this.supabase.client
-        .from('audit_logs')
-        .insert(entry)
-        .select()
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('audit_logs').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AuditLogRepository] create error:', error);
@@ -107,9 +101,7 @@ export class AuditLogRepository {
       request_id: req.request_id ?? null
     }));
 
-    return from(
-      this.supabase.client.from('audit_logs').insert(entries).select()
-    ).pipe(
+    return from(this.supabase.client.from('audit_logs').insert(entries).select()).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AuditLogRepository] createBatch error:', error);
@@ -134,9 +126,7 @@ export class AuditLogRepository {
     const offset = options.offset ?? (page - 1) * pageSize;
     const limit = options.limit ?? pageSize;
 
-    let query = this.supabase.client
-      .from('audit_logs')
-      .select('*', { count: 'exact' });
+    let query = this.supabase.client.from('audit_logs').select('*', { count: 'exact' });
 
     // Apply filters
     if (options.blueprintId) {
@@ -179,9 +169,7 @@ export class AuditLogRepository {
       query = query.lte('created_at', options.endDate);
     }
     if (options.search) {
-      query = query.or(
-        `entity_name.ilike.%${options.search}%,actor_name.ilike.%${options.search}%`
-      );
+      query = query.or(`entity_name.ilike.%${options.search}%,actor_name.ilike.%${options.search}%`);
     }
 
     // Apply sorting
@@ -221,13 +209,7 @@ export class AuditLogRepository {
    * Find audit log by ID
    */
   findById(id: string): Observable<AuditLog | null> {
-    return from(
-      this.supabase.client
-        .from('audit_logs')
-        .select('*')
-        .eq('id', id)
-        .single()
-    ).pipe(
+    return from(this.supabase.client.from('audit_logs').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
@@ -243,11 +225,7 @@ export class AuditLogRepository {
    * 取得實體的審計歷史
    * Get entity audit history
    */
-  getEntityHistory(
-    entityType: AuditEntityType,
-    entityId: string,
-    limit = 50
-  ): Observable<AuditLog[]> {
+  getEntityHistory(entityType: AuditEntityType, entityId: string, limit = 50): Observable<AuditLog[]> {
     return from(
       this.supabase.client
         .from('audit_logs')
@@ -273,12 +251,7 @@ export class AuditLogRepository {
    */
   getActorHistory(actorId: string, limit = 50): Observable<AuditLog[]> {
     return from(
-      this.supabase.client
-        .from('audit_logs')
-        .select('*')
-        .eq('actor_id', actorId)
-        .order('created_at', { ascending: false })
-        .limit(limit)
+      this.supabase.client.from('audit_logs').select('*').eq('actor_id', actorId).order('created_at', { ascending: false }).limit(limit)
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -321,12 +294,7 @@ export class AuditLogRepository {
    * 取得審計日誌統計
    * Get audit log statistics
    */
-  getStats(options: {
-    blueprintId?: string;
-    organizationId?: string;
-    startDate?: string;
-    endDate?: string;
-  }): Observable<AuditLogStats> {
+  getStats(options: { blueprintId?: string; organizationId?: string; startDate?: string; endDate?: string }): Observable<AuditLogStats> {
     // Note: This would ideally use a stored procedure or RPC for complex aggregations
     // For now, we'll fetch and aggregate in-memory for simplicity
     let query = this.supabase.client.from('audit_logs').select('*');
@@ -361,8 +329,8 @@ export class AuditLogRepository {
     const byAction: Record<AuditAction, number> = {} as Record<AuditAction, number>;
     const byEntityType: Record<AuditEntityType, number> = {} as Record<AuditEntityType, number>;
     const bySeverity: Record<AuditSeverity, number> = {} as Record<AuditSeverity, number>;
-    const byDate: Map<string, number> = new Map();
-    const actorCounts: Map<string, { name: string; count: number }> = new Map();
+    const byDate = new Map<string, number>();
+    const actorCounts = new Map<string, { name: string; count: number }>();
 
     for (const log of logs) {
       // By action

@@ -322,10 +322,7 @@ export function generateActivityDescription(
  * 將活動轉換為時間軸項目
  * Convert activity to timeline item
  */
-export function activityToTimelineItem(
-  activity: Activity | ActivityWithActor,
-  formatTime?: (timestamp: string) => string
-): TimelineItem {
+export function activityToTimelineItem(activity: Activity | ActivityWithActor, formatTime?: (timestamp: string) => string): TimelineItem {
   const config = ACTIVITY_TYPE_CONFIG[activity.activity_type];
   const entityConfig = TIMELINE_ENTITY_TYPE_CONFIG[activity.entity_type];
   const actorData = 'actor' in activity ? activity.actor : null;
@@ -372,11 +369,8 @@ export function activityToTimelineItem(
  * 按日期分組時間軸項目
  * Group timeline items by date
  */
-export function groupTimelineByDate(
-  items: TimelineItem[],
-  formatDate?: (date: string) => string
-): TimelineGroup[] {
-  const groups: Map<string, TimelineItem[]> = new Map();
+export function groupTimelineByDate(items: TimelineItem[], formatDate?: (date: string) => string): TimelineGroup[] {
+  const groups = new Map<string, TimelineItem[]>();
 
   for (const item of items) {
     const date = item.timestamp.split('T')[0];
