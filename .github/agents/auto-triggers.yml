@@ -1,0 +1,13 @@
+---
+# Auto Triggers Configuration
+# 基於 mcp-servers.yml 的自動觸發規則
+
+version: '1.0'
+
+triggers:
+  on-file-change:
+    patterns:
+      - '**/*.ts'
+      - '**/*.html'
+    agents:
+      - default

@@ -1,0 +1,11 @@
+---
+# Agent Configuration
+# 基於 mcp-servers.yml 的基礎代理配置
+
+version: '1.0'
+
+agents:
+  default:
+    mcp-servers:
+      - context7
+    enabled: true

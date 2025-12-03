@@ -1,0 +1,16 @@
+---
+# Security Rules Configuration
+# 基於 mcp-servers.yml 的安全規則
+
+version: '1.0'
+
+security:
+  secrets:
+    required:
+      - COPILOT_MCP_CONTEXT7
+  permissions:
+    mcp-servers:
+      context7:
+        allowed-tools:
+          - get-library-docs
+          - resolve-library-id
