@@ -287,16 +287,9 @@ export class TaskEditDrawerComponent implements OnChanges {
           completion_rate: formValue.completion_rate
         };
 
-        try {
-          const updatedTask = await this.taskService.updateTask(task.id, updateData);
-          this.msg.success('任務更新成功');
-          this.saved.emit(updatedTask);
-        } catch {
-          // Fallback to mock update for development
-          const updatedTask = this.taskService.updateMockTask(task.id, updateData);
-          this.msg.success('任務更新成功 (本地模式)');
-          this.saved.emit(updatedTask);
-        }
+        const updatedTask = await this.taskService.updateTask(task.id, updateData);
+        this.msg.success('任務更新成功');
+        this.saved.emit(updatedTask);
       } else {
         // Create new task
         const createData: CreateTaskRequest = {
