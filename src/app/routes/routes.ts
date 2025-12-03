@@ -35,7 +35,7 @@ export const routes: Routes = [
       { path: 'style', loadChildren: () => import('./demo/style/routes').then(m => m.routes) },
       { path: 'delon', loadChildren: () => import('./demo/delon/routes').then(m => m.routes) },
       { path: 'extras', loadChildren: () => import('./demo/extras/routes').then(m => m.routes) },
-      { path: 'pro', loadChildren: () => import('./pro/routes').then(m => m.routes) }
+      { path: 'pro', loadChildren: () => import('./demo/pro/routes').then(m => m.routes) }
     ]
   },
   // Blank Layout 空白布局
@@ -46,6 +46,6 @@ export const routes: Routes = [
   },
   // passport
   { path: '', loadChildren: () => import('./passport/routes').then(m => m.routes) },
-  { path: 'exception', loadChildren: () => import('./exception/routes').then(m => m.routes) },
+  { path: 'exception', loadChildren: () => import('./demo/exception/routes').then(m => m.routes) },
   { path: '**', redirectTo: 'exception/404' }
 ];
