@@ -48,10 +48,10 @@
 │   │   ├─ 資料庫觸發器                        ░░░░░░░░░░░░ 0%   │
 │   │   └─ 審計日誌查詢介面                    ░░░░░░░░░░░░ 0%   │
 │   🔴 時間軸服務 (Timeline Service)            ░░░░░░░░░░░░ 0%   │
-│   🔴 搜尋引擎 (Search Engine)                 ░░░░░░░░░░░░ 0%   │
-│   │   ├─ 全文檢索                            ░░░░░░░░░░░░ 0%   │
-│   │   ├─ 權限感知過濾                        ░░░░░░░░░░░░ 0%   │
-│   │   └─ 即時索引更新                        ░░░░░░░░░░░░ 0%   │
+│   ✅ 搜尋引擎 (Search Engine)                 ████████████ 完成 │
+│   │   ├─ 全文檢索                            ████████████ 完成 │
+│   │   ├─ 權限感知過濾                        ████████████ 完成 │
+│   │   └─ 即時索引更新                        ████████░░░░ 70%  │
 │   🔴 配置中心 (Configuration Center)          ░░░░░░░░░░░░ 0%   │
 │   🔶 關聯管理系統 (Relation Manager)          ███░░░░░░░░░ 30%  │
 │   🔶 生命週期管理 (Lifecycle Management)      ████░░░░░░░░ 40%  │
@@ -100,6 +100,7 @@
 | **財務管理** | FinancialRepository + FinancialService 完整實作 | ✅ 70% |
 | **藍圖成員** | BlueprintMemberRepository 完整實作 | ✅ 完成 |
 | **權限控制** | PermissionService 基礎實作 | 🔶 70% |
+| **搜尋引擎** | SearchRepository + SearchService + HeaderSearchComponent 完整實作 | ✅ 完成 |
 
 ### 技術架構現況
 
@@ -108,13 +109,16 @@
 | **Repository 層** | TaskRepository | ✅ 完成 | 完整 CRUD + 查詢選項 |
 | **Repository 層** | BlueprintRepository | ✅ 完成 | 完整 CRUD + 成員管理 |
 | **Repository 層** | FinancialRepository | ✅ 完成 | 合約、費用、請款、付款管理 |
+| **Repository 層** | SearchRepository | ✅ 完成 | 多實體全文搜尋 + 歷史記錄 |
 | **Repository 層** | DiaryRepository | 🔴 待建立 | 日誌資料存取層 |
 | **Repository 層** | FileRepository | 🔴 待建立 | 檔案資料存取層 |
 | **Service 層** | TaskService | ✅ 完成 | 使用 Signals + linkedSignal |
 | **Service 層** | BlueprintService | ✅ 完成 | 完整業務邏輯 |
 | **Service 層** | FinancialService | ✅ 完成 | 財務業務邏輯 |
+| **Service 層** | SearchService | ✅ 完成 | Signals 響應式狀態管理 |
 | **UI 元件** | TasksComponent | ✅ 完成 | 樹狀/表格/看板視圖 |
 | **UI 元件** | TaskEditDrawerComponent | ✅ 完成 | 任務編輯抽屜 |
+| **UI 元件** | HeaderSearchComponent | ✅ 完成 | 企業級全域搜尋元件 |
 
 ---
 
