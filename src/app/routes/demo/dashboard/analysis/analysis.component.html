@@ -1,80 +1,87 @@
-<div nz-row [nzGutter]="24" class="pt-lg">
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.total-sales' | i18n" total="78%" contentHeight="44px" [action]="action1"
-      [footer]="footer1">
-      <ng-template #action1>
-        <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
-      </ng-template>
-      <trend flag="up" style="display: block; margin-top: 2px">
-        {{ 'app.analysis.week' | i18n }}
-        <span class="pl-sm">5%</span>
-      </trend>
-      <trend flag="down">
-        {{ 'app.analysis.day' | i18n }}
-        <span class="pl-sm">2%</span>
-      </trend>
-      <ng-template #footer1>
-        <p class="text-truncate mb0">
-          {{ 'app.analysis.day-sales' | i18n }}
-          <span class="ml-sm">3.2%</span>
-        </p>
-      </ng-template>
-    </g2-card>
+<!-- 財務儀表板頂部統計卡片 -->
+<div class="finance-header mb-lg">
+  <div class="finance-title">
+    <h2 class="mb0">
+      <i nz-icon nzType="fund" nzTheme="outline" class="mr-sm"></i>
+      財務分析總覽
+    </h2>
+    <span class="finance-subtitle">實時追蹤財務數據與預算執行情況</span>
   </div>
+</div>
+
+<div nz-row [nzGutter]="[24, 24]" class="stat-cards">
   <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.visits' | i18n" total="156" contentHeight="46px" [action]="action2"
-      [footer]="footer2">
-      <ng-template #action2>
-        <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
-      </ng-template>
-      @if (data.visitData) {
-      <g2-mini-area color="#975FE4" height="46" [data]="data.visitData" />
-      }
-      <ng-template #footer2>
-        <p class="text-truncate mb0">
-          {{ 'app.analysis.day-visits' | i18n }}
-          <span class="ml-sm">156人</span>
-        </p>
-      </ng-template>
-    </g2-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.payments' | i18n" total="23" contentHeight="46px" [action]="action3"
-      [footer]="footer3">
-      <ng-template #action3>
-        <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
-      </ng-template>
-      @if (data.visitData) {
-      <g2-mini-bar height="46" [data]="data.visitData" />
-      }
-      <ng-template #footer3>
-        <p class="text-truncate mb0">
-          {{ 'app.analysis.conversion-rate' | i18n }}
-          <span class="ml-sm">85%</span>
-        </p>
-      </ng-template>
-    </g2-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <g2-card [title]="'app.analysis.operational-effect' | i18n" total="92%" contentHeight="46px" [action]="action4"
-      [footer]="footer4">
-      <ng-template #action4>
-        <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"></i>
-      </ng-template>
-      <g2-mini-progress height="46" percent="92" strokeWidth="8" target="95" color="#13C2C2" />
-      <ng-template #footer4>
-        <div class="d-flex justify-content-between text-truncate">
-          <trend flag="up">
-            {{ 'app.analysis.week' | i18n }}
-            <span class="pl-sm">8%</span>
-          </trend>
-          <trend flag="down">
-            {{ 'app.analysis.day' | i18n }}
-            <span class="pl-sm">3%</span>
-          </trend>
+    <nz-card [nzBordered]="false" class="stat-card stat-card-primary">
+      <div class="stat-card-inner">
+        <div class="stat-icon">
+          <i nz-icon nzType="dollar" nzTheme="outline"></i>
         </div>
-      </ng-template>
-    </g2-card>
+        <div class="stat-content">
+          <span class="stat-title">預算執行率</span>
+          <div class="stat-value">78%</div>
+          <div class="stat-footer">
+            <trend flag="up" class="trend-up">
+              較上週 <span class="ml-xs">+5%</span>
+            </trend>
+          </div>
+        </div>
+      </div>
+      <div class="stat-progress">
+        <g2-mini-progress height="8" percent="78" strokeWidth="8" target="100" color="#1890ff" />
+      </div>
+    </nz-card>
+  </div>
+  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
+    <nz-card [nzBordered]="false" class="stat-card stat-card-success">
+      <div class="stat-card-inner">
+        <div class="stat-icon">
+          <i nz-icon nzType="rise" nzTheme="outline"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-title">收入總額</span>
+          <div class="stat-value">¥1,256,000</div>
+          <div class="stat-footer">
+            @if (data.visitData) {
+              <g2-mini-area color="#52c41a" height="32" [data]="data.visitData" />
+            }
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
+    <nz-card [nzBordered]="false" class="stat-card stat-card-warning">
+      <div class="stat-card-inner">
+        <div class="stat-icon">
+          <i nz-icon nzType="fall" nzTheme="outline"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-title">支出總額</span>
+          <div class="stat-value">¥823,000</div>
+          <div class="stat-footer">
+            @if (data.visitData) {
+              <g2-mini-bar height="32" color="#faad14" [data]="data.visitData" />
+            }
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
+    <nz-card [nzBordered]="false" class="stat-card stat-card-info">
+      <div class="stat-card-inner">
+        <div class="stat-icon">
+          <i nz-icon nzType="audit" nzTheme="outline"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-title">待審批</span>
+          <div class="stat-value">23 筆</div>
+          <div class="stat-footer">
+            <span class="text-grey">本月新增 <strong>8</strong> 筆</span>
+          </div>
+        </div>
+      </div>
+    </nz-card>
   </div>
 </div>
 <nz-card [nzLoading]="loading" [nzBordered]="false" class="ant-card__body-nopadding sales-card">
