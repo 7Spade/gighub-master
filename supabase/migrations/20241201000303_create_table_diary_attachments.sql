@@ -25,6 +25,17 @@ CREATE INDEX IF NOT EXISTS idx_diary_attachments_diary ON diary_attachments(diar
 -- Enable RLS
 ALTER TABLE diary_attachments ENABLE ROW LEVEL SECURITY;
 
+-- Comments
+COMMENT ON TABLE diary_attachments IS '日誌附件表 - 存放日誌相關圖片和文件';
+COMMENT ON COLUMN diary_attachments.id IS '唯一識別碼';
+COMMENT ON COLUMN diary_attachments.diary_id IS '所屬日誌';
+COMMENT ON COLUMN diary_attachments.file_name IS '檔案名稱';
+COMMENT ON COLUMN diary_attachments.file_path IS '檔案路徑';
+COMMENT ON COLUMN diary_attachments.file_size IS '檔案大小';
+COMMENT ON COLUMN diary_attachments.mime_type IS '檔案類型';
+COMMENT ON COLUMN diary_attachments.caption IS '說明文字';
+COMMENT ON COLUMN diary_attachments.uploaded_by IS '上傳者';
+
 -- ============================================================================
 -- DOWN (Rollback)
 -- ============================================================================

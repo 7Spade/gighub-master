@@ -92,9 +92,37 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
 
--- 天氣類型
+-- 天氣類型 (expanded weather conditions)
 DO $$ BEGIN
-  CREATE TYPE weather_type AS ENUM ('sunny', 'cloudy', 'rainy', 'stormy', 'snowy', 'foggy');
+  CREATE TYPE weather_type AS ENUM (
+    'sunny',         -- 晴天
+    'cloudy',        -- 多雲
+    'overcast',      -- 陰天
+    'light_rain',    -- 小雨
+    'heavy_rain',    -- 大雨
+    'rainy',         -- 雨天 (通用)
+    'thunderstorm',  -- 雷陣雨
+    'stormy',        -- 暴風雨
+    'foggy',         -- 霧
+    'windy',         -- 風大
+    'snowy',         -- 下雪
+    'snow',          -- 雪 (alias)
+    'other'          -- 其他
+  );
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+-- 日誌狀態 (施工日誌審核狀態)
+DO $$ BEGIN
+  CREATE TYPE diary_status AS ENUM (
+    'draft',       -- 草稿
+    'submitted',   -- 已提交
+    'reviewing',   -- 審核中
+    'approved',    -- 已核准
+    'rejected',    -- 已駁回
+    'archived'     -- 已歸檔
+  );
 EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
@@ -123,6 +151,7 @@ END $$;
 -- DOWN (Rollback)
 -- ============================================================================
 -- DROP TYPE IF EXISTS blueprint_business_role;
+-- DROP TYPE IF EXISTS diary_status;
 -- DROP TYPE IF EXISTS weather_type;
 -- DROP TYPE IF EXISTS acceptance_result;
 -- DROP TYPE IF EXISTS issue_status;

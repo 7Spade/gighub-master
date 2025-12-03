@@ -15,6 +15,8 @@ BEGIN
       'equipment',       -- 設備
       'labor',           -- 人工
       'inspection',      -- 檢查
+      'safety',          -- 安全
+      'quality',         -- 品質
       'meeting',         -- 會議
       'other'            -- 其他
     );
@@ -95,12 +97,8 @@ CREATE POLICY diary_entries_delete_policy ON diary_entries
     )
   );
 
--- Trigger for updated_at
-DROP TRIGGER IF EXISTS trg_diary_entries_updated_at ON diary_entries;
-CREATE TRIGGER trg_diary_entries_updated_at
-  BEFORE UPDATE ON diary_entries
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at();
+-- Note: Trigger for updated_at is defined in 20241201000500_create_triggers.sql
+-- to maintain proper migration dependency order
 
 -- Comments
 COMMENT ON TABLE diary_entries IS '日誌工項表 - 記錄每日工作項目詳情';

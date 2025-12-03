@@ -128,6 +128,12 @@ CREATE TRIGGER update_issue_comments_updated_at
   FOR EACH ROW 
   EXECUTE FUNCTION public.update_updated_at();
 
+-- Diary Entries
+CREATE TRIGGER update_diary_entries_updated_at 
+  BEFORE UPDATE ON diary_entries 
+  FOR EACH ROW 
+  EXECUTE FUNCTION public.update_updated_at();
+
 -- ============================================================================
 -- DOWN (Rollback)
 -- ============================================================================
@@ -142,6 +148,7 @@ CREATE TRIGGER update_issue_comments_updated_at
 -- DROP TRIGGER IF EXISTS update_blueprint_roles_updated_at ON blueprint_roles;
 -- DROP TRIGGER IF EXISTS update_tasks_updated_at ON tasks;
 -- DROP TRIGGER IF EXISTS update_diaries_updated_at ON diaries;
+-- DROP TRIGGER IF EXISTS update_diary_entries_updated_at ON diary_entries;
 -- DROP TRIGGER IF EXISTS update_checklists_updated_at ON checklists;
 -- DROP TRIGGER IF EXISTS update_checklist_items_updated_at ON checklist_items;
 -- DROP TRIGGER IF EXISTS update_task_acceptances_updated_at ON task_acceptances;
