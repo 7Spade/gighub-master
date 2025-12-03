@@ -2,6 +2,8 @@
 
 > Foundation / Container / Business 架構層級的決策指引
 
+📖 **詳細架構文件請參考**: [docs/GigHub_Architecture.md](../../docs/GigHub_Architecture.md)
+
 ---
 
 ## 🏗️ 架構總覽
@@ -269,10 +271,12 @@
 
 ## 📚 參考文件
 
-- [系統架構設計圖](../../../docs/architecture/system-architecture.md)
-- [PRD 產品需求](../../../docs/prd/construction-site-management.md)
-- [AI 思維導圖](../../../docs/agent/mindmap.md)
+- [專案架構分析](../../docs/GigHub_Architecture.md)
+- [系統架構設計圖](../../docs/architecture/system-architecture.md)
+- [PRD 產品需求](../../docs/prd/construction-site-management.md)
+- [AI 思維導圖](../../docs/agent/mindmap.md)
+- [術語表](../../docs/GLOSSARY.md)
 
 ---
 
-**最後更新**: 2025-11-27
+**最後更新**: 2025-12-03

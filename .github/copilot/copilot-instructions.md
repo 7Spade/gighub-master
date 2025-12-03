@@ -2,6 +2,8 @@
 
 > 定義 GitHub Copilot 在本專案中的行為模式、語氣風格與開發規則
 
+📖 **完整開發指南請參考**: [docs/README.md](../../docs/README.md)
+
 ---
 
 ## 🎯 核心原則
@@ -200,6 +202,14 @@ it('updateStatus_whenNoPermission_shouldThrowError', () => { ... });
 
 ## 📚 參考資源
 
+### 內部文件
+- [文件中心](../../docs/README.md)
+- [專案架構](../../docs/GigHub_Architecture.md)
+- [編碼標準](../../docs/reference/coding-standards.md)
+- [Git 工作流](../../docs/reference/git-workflow.md)
+- [測試策略](../../docs/reference/testing-strategy.md)
+
+### 外部資源
 - [Angular 風格指南](https://angular.dev/style-guide)
 - [ng-alain 文檔](https://ng-alain.com)
 - [ng-zorro-antd](https://ng.ant.design)
@@ -207,4 +217,4 @@ it('updateStatus_whenNoPermission_shouldThrowError', () => { ... });
 
 ---
 
-**最後更新**: 2025-11-27
+**最後更新**: 2025-12-03
