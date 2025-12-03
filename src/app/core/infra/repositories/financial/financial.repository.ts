@@ -319,4 +319,212 @@ export class FinancialRepository {
       })
     );
   }
+
+  // ============================================================================
+  // Contract CRUD Operations (合約 CRUD 操作)
+  // ============================================================================
+
+  /**
+   * 建立合約
+   * Create contract
+   */
+  createContract(data: Partial<Contract>): Observable<Contract | null> {
+    return from(this.supabase.client.from('contracts').insert(data).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] createContract error:', error);
+          throw error;
+        }
+        return result as Contract;
+      })
+    );
+  }
+
+  /**
+   * 更新合約
+   * Update contract
+   */
+  updateContract(id: string, data: Partial<Contract>): Observable<Contract | null> {
+    return from(this.supabase.client.from('contracts').update(data).eq('id', id).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] updateContract error:', error);
+          throw error;
+        }
+        return result as Contract;
+      })
+    );
+  }
+
+  /**
+   * 刪除合約
+   * Delete contract
+   */
+  deleteContract(id: string): Observable<boolean> {
+    return from(this.supabase.client.from('contracts').delete().eq('id', id)).pipe(
+      map(({ error }) => {
+        if (error) {
+          console.error('[FinancialRepository] deleteContract error:', error);
+          throw error;
+        }
+        return true;
+      })
+    );
+  }
+
+  // ============================================================================
+  // Expense CRUD Operations (費用 CRUD 操作)
+  // ============================================================================
+
+  /**
+   * 建立費用
+   * Create expense
+   */
+  createExpense(data: Partial<Expense>): Observable<Expense | null> {
+    return from(this.supabase.client.from('expenses').insert(data).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] createExpense error:', error);
+          throw error;
+        }
+        return result as Expense;
+      })
+    );
+  }
+
+  /**
+   * 更新費用
+   * Update expense
+   */
+  updateExpense(id: string, data: Partial<Expense>): Observable<Expense | null> {
+    return from(this.supabase.client.from('expenses').update(data).eq('id', id).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] updateExpense error:', error);
+          throw error;
+        }
+        return result as Expense;
+      })
+    );
+  }
+
+  /**
+   * 刪除費用
+   * Delete expense
+   */
+  deleteExpense(id: string): Observable<boolean> {
+    return from(this.supabase.client.from('expenses').delete().eq('id', id)).pipe(
+      map(({ error }) => {
+        if (error) {
+          console.error('[FinancialRepository] deleteExpense error:', error);
+          throw error;
+        }
+        return true;
+      })
+    );
+  }
+
+  // ============================================================================
+  // Payment Request CRUD Operations (請款 CRUD 操作)
+  // ============================================================================
+
+  /**
+   * 建立請款
+   * Create payment request
+   */
+  createPaymentRequest(data: Partial<PaymentRequest>): Observable<PaymentRequest | null> {
+    return from(this.supabase.client.from('payment_requests').insert(data).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] createPaymentRequest error:', error);
+          throw error;
+        }
+        return result as PaymentRequest;
+      })
+    );
+  }
+
+  /**
+   * 更新請款
+   * Update payment request
+   */
+  updatePaymentRequest(id: string, data: Partial<PaymentRequest>): Observable<PaymentRequest | null> {
+    return from(this.supabase.client.from('payment_requests').update(data).eq('id', id).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] updatePaymentRequest error:', error);
+          throw error;
+        }
+        return result as PaymentRequest;
+      })
+    );
+  }
+
+  /**
+   * 刪除請款
+   * Delete payment request
+   */
+  deletePaymentRequest(id: string): Observable<boolean> {
+    return from(this.supabase.client.from('payment_requests').delete().eq('id', id)).pipe(
+      map(({ error }) => {
+        if (error) {
+          console.error('[FinancialRepository] deletePaymentRequest error:', error);
+          throw error;
+        }
+        return true;
+      })
+    );
+  }
+
+  // ============================================================================
+  // Payment CRUD Operations (付款 CRUD 操作)
+  // ============================================================================
+
+  /**
+   * 建立付款
+   * Create payment
+   */
+  createPayment(data: Partial<Payment>): Observable<Payment | null> {
+    return from(this.supabase.client.from('payments').insert(data).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] createPayment error:', error);
+          throw error;
+        }
+        return result as Payment;
+      })
+    );
+  }
+
+  /**
+   * 更新付款
+   * Update payment
+   */
+  updatePayment(id: string, data: Partial<Payment>): Observable<Payment | null> {
+    return from(this.supabase.client.from('payments').update(data).eq('id', id).select().single()).pipe(
+      map(({ data: result, error }) => {
+        if (error) {
+          console.error('[FinancialRepository] updatePayment error:', error);
+          throw error;
+        }
+        return result as Payment;
+      })
+    );
+  }
+
+  /**
+   * 刪除付款
+   * Delete payment
+   */
+  deletePayment(id: string): Observable<boolean> {
+    return from(this.supabase.client.from('payments').delete().eq('id', id)).pipe(
+      map(({ error }) => {
+        if (error) {
+          console.error('[FinancialRepository] deletePayment error:', error);
+          throw error;
+        }
+        return true;
+      })
+    );
+  }
 }
