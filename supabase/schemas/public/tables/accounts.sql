@@ -1,0 +1,31 @@
+-- ============================================================================
+-- Table: accounts (帳號表)
+-- Description: 統一帳號表，包含 user, org, bot 三種類型
+-- Schema: public
+-- ============================================================================
+-- 
+-- 此檔案用於文檔化表格結構。
+-- 實際表格定義在 migrations/20241201000100_create_table_accounts.sql
+-- 
+-- 欄位說明：
+-- - id: UUID 主鍵
+-- - auth_user_id: 連結 auth.users (僅 user 類型需要)
+-- - type: 帳號類型 (user, org, bot)
+-- - status: 帳號狀態 (active, inactive, suspended, deleted)
+-- - name: 帳號名稱
+-- - email: 電子郵件
+-- - avatar_url: 頭像 URL
+-- - avatar: 頭像資料
+-- - metadata: 額外資料 (JSONB)
+-- - created_at: 建立時間
+-- - updated_at: 更新時間
+-- - deleted_at: 軟刪除時間
+-- 
+-- 索引：
+-- - idx_accounts_type: 按類型索引
+-- - idx_accounts_status: 按狀態索引
+-- - idx_accounts_auth_user_id: 按認證用戶 ID 索引
+-- - accounts_auth_user_id_unique_user_only: user 類型的 auth_user_id 唯一索引
+-- 
+-- RLS：啟用
+-- ============================================================================
