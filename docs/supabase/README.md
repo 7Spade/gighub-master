@@ -4,15 +4,16 @@
 
 ---
 
-## 📑 Supabase 索引
+## 📑 Supabase 文檔索引
 
 | 文檔 | 說明 | 連結 |
 |------|------|------|
-| RLS 策略 | Row Level Security 策略 | [rls-policies.md](./rls-policies.md) |
-| 資料庫設計 | PostgreSQL 資料庫設計 | [database-design.md](./database-design.md) |
-| Edge Functions | 邊緣函數指南 | [edge-functions.md](./edge-functions.md) |
-| Realtime | 即時訂閱指南 | [realtime.md](./realtime.md) |
-| Storage | 檔案存儲指南 | [storage.md](./storage.md) |
+| **遷移結構指南** | 結構化遷移命名與設計原則 | [migrations/STRUCTURED_MIGRATION_GUIDE.md](./migrations/STRUCTURED_MIGRATION_GUIDE.md) |
+| **遷移結構樹** | 視覺化遷移結構速查表 | [migrations/MIGRATION_STRUCTURE_TREE.md](./migrations/MIGRATION_STRUCTURE_TREE.md) |
+| Schema 設計 | 資料表結構與命名規範 | [schema/README.md](./schema/README.md) |
+| RLS 政策設計 | Row Level Security 策略 | [rls/README.md](./rls/README.md) |
+| 函數設計 | 資料庫函數與觸發器 | [functions/README.md](./functions/README.md) |
+| 遷移文檔 | 遷移流程與最佳實踐 | [migrations/README.md](./migrations/README.md) |
 
 ---
 
@@ -103,11 +104,13 @@ pnpm supabase migration new <migration_name>
 
 ## 📚 相關文檔
 
+- [結構化遷移指南](./migrations/STRUCTURED_MIGRATION_GUIDE.md) ⭐ **新增**
+- [遷移結構樹速查表](./migrations/MIGRATION_STRUCTURE_TREE.md) ⭐ **新增**
 - [技術規範](../specs/README.md)
 - [資料模型](../reference/data-model.md)
 - [PRD 文件](../prd/construction-site-management.md)
 
 ---
 
-**最後更新**: 2025-11-27  
+**最後更新**: 2025-12-03  
 **維護者**: 開發團隊

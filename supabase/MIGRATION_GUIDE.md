@@ -2,6 +2,10 @@
 
 本指南說明如何將 `supabase/seeds/init.sql` 的內容轉換為 Supabase migration 文件。
 
+> 📚 **相關文檔**:
+> - [結構化遷移指南](../docs/supabase/migrations/STRUCTURED_MIGRATION_GUIDE.md) - 完整命名規範與設計原則
+> - [遷移結構樹速查表](../docs/supabase/migrations/MIGRATION_STRUCTURE_TREE.md) - 視覺化結構參考
+
 ## 方法 1: 使用 Supabase CLI（推薦）
 
 ### 步驟 1: 安裝 Supabase CLI
