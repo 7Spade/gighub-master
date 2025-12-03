@@ -1,435 +1,381 @@
--- Seed: QC Inspections Data
--- Description: 品管檢查模組種子資料
+-- Migration: Create QC Inspections Tables
+-- Description: 品管檢查表 - 品質控制檢查系統
 -- Features:
---   - Sample QC inspections for testing
---   - Inspection items with various statuses
---   - Attachments for evidence
+--   - QC inspection tracking
+--   - Inspection items and checklists
+--   - Attachment support for evidence
+--   - Pass rate calculation
 
 -- ============================================================================
--- Note: This seed file requires the following tables to exist:
---   - blueprints
---   - accounts
---   - tasks
---   - diaries
---   - qc_inspections
---   - qc_inspection_items
---   - qc_inspection_attachments
+-- Enums
 -- ============================================================================
 
+-- 品管檢查狀態
+CREATE TYPE qc_inspection_status AS ENUM (
+  'pending',        -- 待檢查
+  'in_progress',    -- 檢查中
+  'passed',         -- 通過
+  'failed',         -- 未通過
+  'conditionally_passed', -- 有條件通過
+  'cancelled'       -- 已取消
+);
+
+-- 品管檢查類型
+CREATE TYPE qc_inspection_type AS ENUM (
+  'self_check',     -- 自主檢查
+  'supervisor_check', -- 主管檢查
+  'third_party',    -- 第三方檢查
+  'random_check',   -- 隨機抽查
+  'final_check'     -- 最終檢查
+);
+
+-- 品管檢查項目狀態
+CREATE TYPE qc_item_status AS ENUM (
+  'pending',        -- 待檢查
+  'passed',         -- 合格
+  'failed',         -- 不合格
+  'na'              -- 不適用
+);
+
 -- ============================================================================
--- Sample QC Inspections
+-- Table: qc_inspections
 -- ============================================================================
 
--- Insert sample QC inspections (requires existing blueprint_id and account_id)
--- These are template inserts - actual UUIDs should be replaced with valid references
-
-DO $$
-DECLARE
-  v_blueprint_id UUID;
-  v_account_id UUID;
-  v_inspection_id_1 UUID;
-  v_inspection_id_2 UUID;
-  v_inspection_id_3 UUID;
-  v_item_id_1 UUID;
-  v_item_id_2 UUID;
-  v_item_id_3 UUID;
-BEGIN
-  -- Try to get a sample blueprint and account for seeding
-  SELECT id INTO v_blueprint_id FROM blueprints LIMIT 1;
-  SELECT id INTO v_account_id FROM accounts LIMIT 1;
+CREATE TABLE IF NOT EXISTS qc_inspections (
+  -- 主鍵
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
-  -- Only proceed if we have valid references
-  IF v_blueprint_id IS NOT NULL AND v_account_id IS NOT NULL THEN
-    
-    -- ========================================================================
-    -- QC Inspection 1: Self-check - Passed
-    -- ========================================================================
-    INSERT INTO qc_inspections (
-      id,
-      blueprint_id,
-      inspection_code,
-      title,
-      description,
-      inspection_type,
-      status,
-      passed_count,
-      failed_count,
-      total_count,
-      pass_rate,
-      inspector_id,
-      scheduled_date,
-      inspection_date,
-      notes,
-      findings,
-      recommendations,
-      created_by,
-      created_at
-    ) VALUES (
-      gen_random_uuid(),
-      v_blueprint_id,
-      'QC-2024-001',
-      '一樓結構自主檢查',
-      '一樓結構體完成後之自主品質檢查',
-      'self_check',
-      'passed',
-      5,
-      0,
-      5,
-      100.00,
-      v_account_id,
-      CURRENT_DATE - INTERVAL '7 days',
-      NOW() - INTERVAL '6 days',
-      '所有項目均符合規範要求',
-      '無重大發現',
-      '建議持續維持現有品質管控標準',
-      v_account_id,
-      NOW() - INTERVAL '7 days'
+  -- 關聯資訊
+  blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
+  task_id UUID REFERENCES tasks(id) ON DELETE SET NULL,
+  diary_id UUID REFERENCES diaries(id) ON DELETE SET NULL,
+  
+  -- 檢查資訊
+  inspection_code TEXT NOT NULL,           -- 檢查編號
+  title TEXT NOT NULL,                      -- 檢查標題
+  description TEXT,                         -- 檢查說明
+  inspection_type qc_inspection_type DEFAULT 'self_check' NOT NULL,
+  
+  -- 狀態
+  status qc_inspection_status DEFAULT 'pending' NOT NULL,
+  
+  -- 檢查結果
+  passed_count INTEGER DEFAULT 0,           -- 通過項目數
+  failed_count INTEGER DEFAULT 0,           -- 未通過項目數
+  total_count INTEGER DEFAULT 0,            -- 總項目數
+  pass_rate DECIMAL(5,2) DEFAULT 0,         -- 通過率
+  
+  -- 人員資訊
+  inspector_id UUID REFERENCES accounts(id) ON DELETE SET NULL,
+  reviewer_id UUID REFERENCES accounts(id) ON DELETE SET NULL,
+  
+  -- 時間資訊
+  scheduled_date DATE,                      -- 預定檢查日期
+  inspection_date TIMESTAMPTZ,              -- 實際檢查時間
+  reviewed_at TIMESTAMPTZ,                  -- 審核時間
+  
+  -- 備註
+  notes TEXT,
+  findings TEXT,                            -- 發現問題
+  recommendations TEXT,                     -- 建議事項
+  
+  -- 元數據
+  metadata JSONB,
+  
+  -- 時間戳
+  created_by UUID REFERENCES accounts(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  deleted_at TIMESTAMPTZ
+);
+
+-- ============================================================================
+-- Table: qc_inspection_items
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS qc_inspection_items (
+  -- 主鍵
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- 關聯
+  inspection_id UUID NOT NULL REFERENCES qc_inspections(id) ON DELETE CASCADE,
+  
+  -- 項目資訊
+  item_code TEXT NOT NULL,                  -- 項目編號
+  title TEXT NOT NULL,                      -- 項目標題
+  description TEXT,                         -- 項目說明
+  standard TEXT,                            -- 檢查標準
+  
+  -- 檢查結果
+  status qc_item_status DEFAULT 'pending' NOT NULL,
+  actual_value TEXT,                        -- 實測值
+  expected_value TEXT,                      -- 標準值
+  deviation TEXT,                           -- 偏差說明
+  
+  -- 評分
+  score DECIMAL(5,2),                       -- 評分
+  weight DECIMAL(5,2) DEFAULT 1.0,          -- 權重
+  
+  -- 備註
+  notes TEXT,
+  
+  -- 排序
+  sort_order INTEGER DEFAULT 0,
+  
+  -- 時間戳
+  checked_at TIMESTAMPTZ,
+  checked_by UUID REFERENCES accounts(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- ============================================================================
+-- Table: qc_inspection_attachments
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS qc_inspection_attachments (
+  -- 主鍵
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- 關聯
+  inspection_id UUID REFERENCES qc_inspections(id) ON DELETE CASCADE,
+  item_id UUID REFERENCES qc_inspection_items(id) ON DELETE CASCADE,
+  
+  -- 檔案資訊
+  file_name TEXT NOT NULL,
+  file_path TEXT NOT NULL,
+  file_size BIGINT,
+  mime_type TEXT,
+  caption TEXT,
+  
+  -- 上傳者
+  uploaded_by UUID REFERENCES accounts(id) ON DELETE SET NULL,
+  
+  -- 時間戳
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  
+  -- 至少要關聯到 inspection 或 item
+  CONSTRAINT qc_attachment_relation CHECK (inspection_id IS NOT NULL OR item_id IS NOT NULL)
+);
+
+-- ============================================================================
+-- Indexes
+-- ============================================================================
+
+-- QC Inspection Indexes
+CREATE INDEX idx_qc_inspections_blueprint_id ON qc_inspections(blueprint_id);
+CREATE INDEX idx_qc_inspections_task_id ON qc_inspections(task_id) WHERE task_id IS NOT NULL;
+CREATE INDEX idx_qc_inspections_status ON qc_inspections(status);
+CREATE INDEX idx_qc_inspections_type ON qc_inspections(inspection_type);
+CREATE INDEX idx_qc_inspections_scheduled_date ON qc_inspections(scheduled_date);
+CREATE INDEX idx_qc_inspections_not_deleted ON qc_inspections(blueprint_id, status) WHERE deleted_at IS NULL;
+CREATE INDEX idx_qc_inspection_items_inspection_id ON qc_inspection_items(inspection_id);
+CREATE INDEX idx_qc_inspection_items_status ON qc_inspection_items(status);
+CREATE INDEX idx_qc_inspection_attachments_inspection_id ON qc_inspection_attachments(inspection_id) WHERE inspection_id IS NOT NULL;
+CREATE INDEX idx_qc_inspection_attachments_item_id ON qc_inspection_attachments(item_id) WHERE item_id IS NOT NULL;
+
+-- ============================================================================
+-- RLS Policies
+-- ============================================================================
+
+-- Enable RLS
+ALTER TABLE qc_inspections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE qc_inspection_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE qc_inspection_attachments ENABLE ROW LEVEL SECURITY;
+
+-- QC Inspections Policies
+CREATE POLICY qc_inspections_select_policy ON qc_inspections
+  FOR SELECT TO authenticated
+  USING (
+    blueprint_id IN (
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
-    RETURNING id INTO v_inspection_id_1;
-    
-    -- ========================================================================
-    -- QC Inspection 2: Supervisor check - In Progress
-    -- ========================================================================
-    INSERT INTO qc_inspections (
-      id,
-      blueprint_id,
-      inspection_code,
-      title,
-      description,
-      inspection_type,
-      status,
-      passed_count,
-      failed_count,
-      total_count,
-      pass_rate,
-      inspector_id,
-      scheduled_date,
-      notes,
-      created_by,
-      created_at
-    ) VALUES (
-      gen_random_uuid(),
-      v_blueprint_id,
-      'QC-2024-002',
-      '二樓模板工程主管檢查',
-      '二樓模板組立完成後之主管品質檢查',
-      'supervisor_check',
-      'in_progress',
-      3,
-      1,
-      6,
-      50.00,
-      v_account_id,
-      CURRENT_DATE,
-      '檢查進行中，部分項目待複查',
-      v_account_id,
-      NOW() - INTERVAL '2 days'
+  );
+
+CREATE POLICY qc_inspections_insert_policy ON qc_inspections
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    blueprint_id IN (
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
-    RETURNING id INTO v_inspection_id_2;
-    
-    -- ========================================================================
-    -- QC Inspection 3: Third-party check - Failed
-    -- ========================================================================
-    INSERT INTO qc_inspections (
-      id,
-      blueprint_id,
-      inspection_code,
-      title,
-      description,
-      inspection_type,
-      status,
-      passed_count,
-      failed_count,
-      total_count,
-      pass_rate,
-      inspector_id,
-      scheduled_date,
-      inspection_date,
-      notes,
-      findings,
-      recommendations,
-      created_by,
-      created_at
-    ) VALUES (
-      gen_random_uuid(),
-      v_blueprint_id,
-      'QC-2024-003',
-      '消防設備第三方檢查',
-      '消防設備安裝完成後之第三方檢查',
-      'third_party',
-      'failed',
-      2,
-      3,
-      5,
-      40.00,
-      v_account_id,
-      CURRENT_DATE - INTERVAL '3 days',
-      NOW() - INTERVAL '2 days',
-      '多項消防設備安裝不符規範，需進行整改',
-      '發現三項重大缺失：1. 灑水頭間距不足 2. 消防栓位置偏移 3. 警報系統接線錯誤',
-      '建議立即進行整改並重新申請檢查',
-      v_account_id,
-      NOW() - INTERVAL '5 days'
+  );
+
+CREATE POLICY qc_inspections_update_policy ON qc_inspections
+  FOR UPDATE TO authenticated
+  USING (
+    blueprint_id IN (
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
-    RETURNING id INTO v_inspection_id_3;
-    
-    -- ========================================================================
-    -- QC Inspection Items for Inspection 1
-    -- ========================================================================
-    INSERT INTO qc_inspection_items (
-      id,
-      inspection_id,
-      item_code,
-      title,
-      description,
-      standard,
-      status,
-      actual_value,
-      expected_value,
-      score,
-      weight,
-      sort_order,
-      checked_at,
-      checked_by
-    ) VALUES
-    (
-      gen_random_uuid(),
-      v_inspection_id_1,
-      'QC-001-01',
-      '柱鋼筋保護層厚度',
-      '檢查柱鋼筋保護層厚度是否符合設計要求',
-      '保護層厚度 ≥ 40mm',
-      'passed',
-      '45mm',
-      '≥ 40mm',
-      100.00,
-      1.0,
-      1,
-      NOW() - INTERVAL '6 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_1,
-      'QC-001-02',
-      '梁鋼筋間距',
-      '檢查梁主筋間距是否符合設計要求',
-      '主筋間距 ≤ 150mm',
-      'passed',
-      '140mm',
-      '≤ 150mm',
-      100.00,
-      1.0,
-      2,
-      NOW() - INTERVAL '6 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_1,
-      'QC-001-03',
-      '混凝土強度',
-      '檢查混凝土抗壓強度是否達標',
-      '28天抗壓強度 ≥ 280 kgf/cm²',
-      'passed',
-      '320 kgf/cm²',
-      '≥ 280 kgf/cm²',
-      100.00,
-      1.5,
-      3,
-      NOW() - INTERVAL '6 days',
-      v_account_id
-    );
-    
-    -- ========================================================================
-    -- QC Inspection Items for Inspection 2
-    -- ========================================================================
-    INSERT INTO qc_inspection_items (
-      id,
-      inspection_id,
-      item_code,
-      title,
-      description,
-      standard,
-      status,
-      actual_value,
-      expected_value,
-      deviation,
-      score,
-      weight,
-      sort_order,
-      checked_at,
-      checked_by
-    ) VALUES
-    (
-      gen_random_uuid(),
-      v_inspection_id_2,
-      'QC-002-01',
-      '模板垂直度',
-      '檢查模板垂直度偏差',
-      '垂直度偏差 ≤ 3mm/m',
-      'passed',
-      '2mm/m',
-      '≤ 3mm/m',
-      NULL,
-      100.00,
-      1.0,
-      1,
-      NOW() - INTERVAL '1 day',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_2,
-      'QC-002-02',
-      '模板支撐間距',
-      '檢查模板支撐間距是否符合規範',
-      '支撐間距 ≤ 1200mm',
-      'failed',
-      '1350mm',
-      '≤ 1200mm',
-      '超出標準 150mm，需調整',
-      0.00,
-      1.0,
-      2,
-      NOW() - INTERVAL '1 day',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_2,
-      'QC-002-03',
-      '模板平整度',
-      '檢查模板表面平整度',
-      '平整度偏差 ≤ 5mm/2m',
-      'pending',
-      NULL,
-      '≤ 5mm/2m',
-      NULL,
-      NULL,
-      1.0,
-      3,
-      NULL,
-      NULL
-    );
-    
-    -- ========================================================================
-    -- QC Inspection Items for Inspection 3
-    -- ========================================================================
-    INSERT INTO qc_inspection_items (
-      id,
-      inspection_id,
-      item_code,
-      title,
-      description,
-      standard,
-      status,
-      actual_value,
-      expected_value,
-      deviation,
-      score,
-      weight,
-      sort_order,
-      checked_at,
-      checked_by
-    ) VALUES
-    (
-      gen_random_uuid(),
-      v_inspection_id_3,
-      'QC-003-01',
-      '灑水頭間距',
-      '檢查自動灑水頭之間距',
-      '間距 ≤ 2.1m',
-      'failed',
-      '2.5m',
-      '≤ 2.1m',
-      '超出標準 0.4m，需重新配置',
-      0.00,
-      1.5,
-      1,
-      NOW() - INTERVAL '2 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_3,
-      'QC-003-02',
-      '消防栓位置',
-      '檢查消防栓安裝位置',
-      '距離逃生門 ≤ 5m',
-      'failed',
-      '8m',
-      '≤ 5m',
-      '距離過遠，需移位',
-      0.00,
-      1.5,
-      2,
-      NOW() - INTERVAL '2 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_3,
-      'QC-003-03',
-      '警報系統接線',
-      '檢查火災警報系統接線正確性',
-      '符合電路圖設計',
-      'failed',
-      '接線錯誤',
-      '符合電路圖設計',
-      '多處接線與電路圖不符',
-      0.00,
-      2.0,
-      3,
-      NOW() - INTERVAL '2 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_3,
-      'QC-003-04',
-      '滅火器配置',
-      '檢查滅火器配置數量與位置',
-      '每 200m² 至少 1 具',
-      'passed',
-      '符合標準',
-      '每 200m² 至少 1 具',
-      NULL,
-      100.00,
-      1.0,
-      4,
-      NOW() - INTERVAL '2 days',
-      v_account_id
-    ),
-    (
-      gen_random_uuid(),
-      v_inspection_id_3,
-      'QC-003-05',
-      '逃生指示燈',
-      '檢查逃生指示燈安裝與亮度',
-      '亮度 ≥ 1 cd/m²',
-      'passed',
-      '1.5 cd/m²',
-      '≥ 1 cd/m²',
-      NULL,
-      100.00,
-      1.0,
-      5,
-      NOW() - INTERVAL '2 days',
-      v_account_id
-    );
-    
-    RAISE NOTICE 'QC inspections seed data inserted successfully';
-  ELSE
-    RAISE NOTICE 'Skipping QC inspections seed: No blueprint or account found';
-  END IF;
+  );
+
+CREATE POLICY qc_inspections_delete_policy ON qc_inspections
+  FOR DELETE TO authenticated
+  USING (
+    created_by = (SELECT auth.uid())
+    OR blueprint_id IN (
+      SELECT blueprint_id FROM blueprint_members 
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
+    )
+  );
+
+-- QC Inspection Items Policies
+CREATE POLICY qc_inspection_items_select_policy ON qc_inspection_items
+  FOR SELECT TO authenticated
+  USING (
+    inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    )
+  );
+
+CREATE POLICY qc_inspection_items_insert_policy ON qc_inspection_items
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    )
+  );
+
+CREATE POLICY qc_inspection_items_update_policy ON qc_inspection_items
+  FOR UPDATE TO authenticated
+  USING (
+    inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    )
+  );
+
+CREATE POLICY qc_inspection_items_delete_policy ON qc_inspection_items
+  FOR DELETE TO authenticated
+  USING (
+    checked_by = (SELECT auth.uid())
+    OR inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid()) AND bm.blueprint_role IN ('owner', 'admin')
+    )
+  );
+
+-- QC Inspection Attachments Policies
+CREATE POLICY qc_inspection_attachments_select_policy ON qc_inspection_attachments
+  FOR SELECT TO authenticated
+  USING (
+    (inspection_id IS NOT NULL AND inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    ))
+    OR
+    (item_id IS NOT NULL AND item_id IN (
+      SELECT it.id FROM qc_inspection_items it
+      JOIN qc_inspections i ON it.inspection_id = i.id
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    ))
+  );
+
+CREATE POLICY qc_inspection_attachments_insert_policy ON qc_inspection_attachments
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    (inspection_id IS NOT NULL AND inspection_id IN (
+      SELECT i.id FROM qc_inspections i
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    ))
+    OR
+    (item_id IS NOT NULL AND item_id IN (
+      SELECT it.id FROM qc_inspection_items it
+      JOIN qc_inspections i ON it.inspection_id = i.id
+      JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
+      WHERE bm.account_id = (SELECT auth.uid())
+    ))
+  );
+
+CREATE POLICY qc_inspection_attachments_delete_policy ON qc_inspection_attachments
+  FOR DELETE TO authenticated
+  USING (
+    uploaded_by = (SELECT auth.uid())
+  );
+
+-- ============================================================================
+-- Triggers
+-- ============================================================================
+
+-- Update timestamp trigger
+CREATE OR REPLACE FUNCTION update_qc_inspection_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
 END;
 $$;
+
+CREATE TRIGGER trg_qc_inspections_updated_at
+  BEFORE UPDATE ON qc_inspections
+  FOR EACH ROW
+  EXECUTE FUNCTION update_qc_inspection_updated_at();
+
+CREATE TRIGGER trg_qc_inspection_items_updated_at
+  BEFORE UPDATE ON qc_inspection_items
+  FOR EACH ROW
+  EXECUTE FUNCTION update_qc_inspection_updated_at();
 
 -- ============================================================================
 -- Comments
 -- ============================================================================
 
 COMMENT ON TABLE qc_inspections IS '品管檢查表 - 記錄品質控制檢查';
+COMMENT ON COLUMN qc_inspections.id IS '唯一識別碼';
+COMMENT ON COLUMN qc_inspections.blueprint_id IS '所屬藍圖';
+COMMENT ON COLUMN qc_inspections.task_id IS '關聯任務';
+COMMENT ON COLUMN qc_inspections.diary_id IS '關聯日誌';
+COMMENT ON COLUMN qc_inspections.inspection_code IS '檢查編號';
+COMMENT ON COLUMN qc_inspections.title IS '檢查標題';
+COMMENT ON COLUMN qc_inspections.description IS '檢查說明';
+COMMENT ON COLUMN qc_inspections.inspection_type IS '檢查類型';
+COMMENT ON COLUMN qc_inspections.status IS '檢查狀態';
+COMMENT ON COLUMN qc_inspections.passed_count IS '通過項目數';
+COMMENT ON COLUMN qc_inspections.failed_count IS '未通過項目數';
+COMMENT ON COLUMN qc_inspections.total_count IS '總項目數';
+COMMENT ON COLUMN qc_inspections.pass_rate IS '通過率';
+COMMENT ON COLUMN qc_inspections.inspector_id IS '檢查人員';
+COMMENT ON COLUMN qc_inspections.reviewer_id IS '審核人員';
+COMMENT ON COLUMN qc_inspections.scheduled_date IS '預定檢查日期';
+COMMENT ON COLUMN qc_inspections.inspection_date IS '實際檢查時間';
+COMMENT ON COLUMN qc_inspections.reviewed_at IS '審核時間';
+COMMENT ON COLUMN qc_inspections.notes IS '備註';
+COMMENT ON COLUMN qc_inspections.findings IS '發現問題';
+COMMENT ON COLUMN qc_inspections.recommendations IS '建議事項';
+
 COMMENT ON TABLE qc_inspection_items IS '品管檢查項目表 - 記錄檢查項目詳情';
+COMMENT ON COLUMN qc_inspection_items.id IS '唯一識別碼';
+COMMENT ON COLUMN qc_inspection_items.inspection_id IS '所屬檢查';
+COMMENT ON COLUMN qc_inspection_items.item_code IS '項目編號';
+COMMENT ON COLUMN qc_inspection_items.title IS '項目標題';
+COMMENT ON COLUMN qc_inspection_items.description IS '項目說明';
+COMMENT ON COLUMN qc_inspection_items.standard IS '檢查標準';
+COMMENT ON COLUMN qc_inspection_items.status IS '檢查狀態';
+COMMENT ON COLUMN qc_inspection_items.actual_value IS '實測值';
+COMMENT ON COLUMN qc_inspection_items.expected_value IS '標準值';
+COMMENT ON COLUMN qc_inspection_items.deviation IS '偏差說明';
+COMMENT ON COLUMN qc_inspection_items.score IS '評分';
+COMMENT ON COLUMN qc_inspection_items.weight IS '權重';
+
 COMMENT ON TABLE qc_inspection_attachments IS '品管檢查附件表 - 存放檢查相關圖片和文件';
+COMMENT ON COLUMN qc_inspection_attachments.id IS '唯一識別碼';
+COMMENT ON COLUMN qc_inspection_attachments.inspection_id IS '所屬檢查';
+COMMENT ON COLUMN qc_inspection_attachments.item_id IS '所屬項目';
+COMMENT ON COLUMN qc_inspection_attachments.file_name IS '檔案名稱';
+COMMENT ON COLUMN qc_inspection_attachments.file_path IS '檔案路徑';
+COMMENT ON COLUMN qc_inspection_attachments.file_size IS '檔案大小';
+COMMENT ON COLUMN qc_inspection_attachments.mime_type IS '檔案類型';
+COMMENT ON COLUMN qc_inspection_attachments.caption IS '說明文字';
+COMMENT ON COLUMN qc_inspection_attachments.uploaded_by IS '上傳者';
