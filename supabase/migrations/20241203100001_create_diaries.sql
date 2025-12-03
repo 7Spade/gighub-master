@@ -176,100 +176,110 @@ ALTER TABLE diary_entries ENABLE ROW LEVEL SECURITY;
 -- 日誌查看權限
 CREATE POLICY diaries_select_policy ON diaries
   FOR SELECT
+  TO authenticated
   USING (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = auth.uid()
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
     )
   );
 
 -- 日誌建立權限
 CREATE POLICY diaries_insert_policy ON diaries
   FOR INSERT
+  TO authenticated
   WITH CHECK (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = auth.uid()
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
     )
   );
 
 -- 日誌更新權限 (只能更新草稿或已駁回的日誌)
 CREATE POLICY diaries_update_policy ON diaries
   FOR UPDATE
+  TO authenticated
   USING (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = auth.uid()
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
     )
-    AND (status = 'draft' OR status = 'rejected' OR created_by = auth.uid())
+    AND (status = 'draft' OR status = 'rejected' OR created_by = (select auth.uid()))
   );
 
 -- 日誌刪除權限 (只能刪除自己建立的草稿)
 CREATE POLICY diaries_delete_policy ON diaries
   FOR DELETE
+  TO authenticated
   USING (
-    created_by = auth.uid() AND status = 'draft'
+    created_by = (select auth.uid()) AND status = 'draft'
   );
 
 -- 附件查看權限
 CREATE POLICY diary_attachments_select_policy ON diary_attachments
   FOR SELECT
+  TO authenticated
   USING (
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = auth.uid()
+      WHERE bm.account_id = (select auth.uid())
     )
   );
 
 -- 附件建立權限
 CREATE POLICY diary_attachments_insert_policy ON diary_attachments
   FOR INSERT
+  TO authenticated
   WITH CHECK (
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = auth.uid()
+      WHERE bm.account_id = (select auth.uid())
     )
   );
 
 -- 附件刪除權限
 CREATE POLICY diary_attachments_delete_policy ON diary_attachments
   FOR DELETE
+  TO authenticated
   USING (
-    uploaded_by = auth.uid()
+    uploaded_by = (select auth.uid())
     OR diary_id IN (
-      SELECT d.id FROM diaries d WHERE d.created_by = auth.uid()
+      SELECT d.id FROM diaries d WHERE d.created_by = (select auth.uid())
     )
   );
 
 -- 工項查看權限
 CREATE POLICY diary_entries_select_policy ON diary_entries
   FOR SELECT
+  TO authenticated
   USING (
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = auth.uid()
+      WHERE bm.account_id = (select auth.uid())
     )
   );
 
 -- 工項建立權限
 CREATE POLICY diary_entries_insert_policy ON diary_entries
   FOR INSERT
+  TO authenticated
   WITH CHECK (
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = auth.uid()
+      WHERE bm.account_id = (select auth.uid())
     )
   );
 
 -- 工項更新權限
 CREATE POLICY diary_entries_update_policy ON diary_entries
   FOR UPDATE
+  TO authenticated
   USING (
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = auth.uid()
+      WHERE bm.account_id = (select auth.uid())
       AND (d.status = 'draft' OR d.status = 'rejected')
     )
   );
@@ -277,9 +287,10 @@ CREATE POLICY diary_entries_update_policy ON diary_entries
 -- 工項刪除權限
 CREATE POLICY diary_entries_delete_policy ON diary_entries
   FOR DELETE
+  TO authenticated
   USING (
     diary_id IN (
-      SELECT d.id FROM diaries d WHERE d.created_by = auth.uid() AND d.status = 'draft'
+      SELECT d.id FROM diaries d WHERE d.created_by = (select auth.uid()) AND d.status = 'draft'
     )
   );
 
@@ -289,12 +300,16 @@ CREATE POLICY diary_entries_delete_policy ON diary_entries
 
 -- 更新時間觸發器
 CREATE OR REPLACE FUNCTION update_diary_updated_at()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE TRIGGER trg_diaries_updated_at
   BEFORE UPDATE ON diaries

@@ -153,15 +153,16 @@ ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 -- 查看權限：帳戶可以查看所屬組織的審計日誌
 CREATE POLICY audit_logs_select_policy ON audit_logs
   FOR SELECT
+  TO authenticated
   USING (
     -- 使用者可以查看自己的操作
-    actor_id = auth.uid()
+    actor_id = (select auth.uid())
     OR
     -- 使用者可以查看所屬組織的審計日誌
     (
       organization_id IS NOT NULL
       AND organization_id IN (
-        SELECT organization_id FROM organization_members WHERE account_id = auth.uid()
+        SELECT organization_id FROM organization_members WHERE account_id = (select auth.uid())
       )
     )
     OR
@@ -169,7 +170,7 @@ CREATE POLICY audit_logs_select_policy ON audit_logs
     (
       blueprint_id IS NOT NULL
       AND blueprint_id IN (
-        SELECT blueprint_id FROM blueprint_members WHERE account_id = auth.uid()
+        SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
       )
     )
   );
@@ -177,7 +178,8 @@ CREATE POLICY audit_logs_select_policy ON audit_logs
 -- 插入權限：任何認證使用者都可以插入 (記錄操作)
 CREATE POLICY audit_logs_insert_policy ON audit_logs
   FOR INSERT
-  WITH CHECK (auth.uid() IS NOT NULL);
+  TO authenticated
+  WITH CHECK (true);
 
 -- 不允許更新 (不可變)
 -- 不允許刪除 (不可變)
@@ -204,16 +206,17 @@ CREATE OR REPLACE FUNCTION log_audit(
 RETURNS UUID
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = ''
 AS $$
 DECLARE
   v_audit_id UUID;
   v_actor_name TEXT;
 BEGIN
   -- 取得操作者名稱
-  SELECT name INTO v_actor_name FROM accounts WHERE id = auth.uid();
+  SELECT name INTO v_actor_name FROM public.accounts WHERE id = (select auth.uid());
   
   -- 插入審計日誌
-  INSERT INTO audit_logs (
+  INSERT INTO public.audit_logs (
     blueprint_id,
     organization_id,
     entity_type,
@@ -235,7 +238,7 @@ BEGIN
     p_entity_id,
     p_entity_name,
     p_action,
-    auth.uid(),
+    (select auth.uid()),
     v_actor_name,
     p_severity,
     p_old_value,
