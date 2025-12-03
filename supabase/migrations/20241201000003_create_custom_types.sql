@@ -99,6 +99,20 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
 
+-- 日誌狀態 (施工日誌審核狀態)
+DO $$ BEGIN
+  CREATE TYPE diary_status AS ENUM (
+    'draft',       -- 草稿
+    'submitted',   -- 已提交
+    'reviewing',   -- 審核中
+    'approved',    -- 已核准
+    'rejected',    -- 已駁回
+    'archived'     -- 已歸檔
+  );
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
 -- 業務角色
 DO $$ BEGIN
   CREATE TYPE blueprint_business_role AS ENUM (
@@ -123,6 +137,7 @@ END $$;
 -- DOWN (Rollback)
 -- ============================================================================
 -- DROP TYPE IF EXISTS blueprint_business_role;
+-- DROP TYPE IF EXISTS diary_status;
 -- DROP TYPE IF EXISTS weather_type;
 -- DROP TYPE IF EXISTS acceptance_result;
 -- DROP TYPE IF EXISTS issue_status;

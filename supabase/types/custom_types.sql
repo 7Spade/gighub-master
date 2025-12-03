@@ -2,6 +2,7 @@
 -- Custom Types Reference
 -- Description: 自定義類型定義參考
 -- Created: 2024-12-01
+-- Updated: 2024-12-03
 -- ============================================================================
 -- 
 -- 此檔案用於文檔化專案中使用的自定義類型。
@@ -22,24 +23,29 @@
 -- 11. issue_status     - 問題狀態 (new, assigned, in_progress, pending_confirm, resolved, closed, reopened)
 -- 12. acceptance_result - 驗收結果 (pending, passed, failed, conditional)
 -- 13. weather_type     - 天氣類型 (sunny, cloudy, rainy, stormy, snowy, foggy)
--- 14. blueprint_business_role - 業務角色 (project_manager, site_director, supervisor, inspector, ...)
+-- 14. diary_status     - 日誌狀態 (draft, submitted, reviewing, approved, rejected, archived)
+-- 15. blueprint_business_role - 業務角色 (project_manager, site_director, supervisor, inspector, ...)
 -- 
--- QC/驗收/問題模組類型：
--- 15. qc_inspection_status - 品管檢查狀態
--- 16. qc_inspection_type   - 品管檢查類型
--- 17. qc_item_status       - 品管項目狀態
--- 18. acceptance_status    - 驗收狀態
--- 19. acceptance_type      - 驗收類型
--- 20. problem_status       - 問題狀態
--- 21. problem_type         - 問題類型
--- 22. problem_source       - 問題來源
--- 23. problem_priority     - 問題優先級
--- 24. problem_severity     - 問題嚴重度
+-- 日誌模組類型 (定義在 diary_entries migration):
+-- 16. work_item_type   - 工項類型 (construction, material, equipment, labor, inspection, meeting, other)
 -- 
--- 審計日誌類型：
--- 25. audit_action        - 審計動作類型
--- 26. audit_severity      - 審計嚴重程度
--- 27. audit_entity_type   - 審計實體類型
--- 28. audit_actor_type    - 審計操作者類型
+-- QC/驗收/問題模組類型 (定義在 20241203100002_create_qc_acceptance_problem.sql):
+-- 17. qc_inspection_status - 品管檢查狀態
+-- 18. qc_inspection_type   - 品管檢查類型
+-- 19. qc_item_status       - 品管項目狀態
+-- 20. acceptance_status    - 驗收狀態
+-- 21. acceptance_type      - 驗收類型
+-- 22. acceptance_decision  - 驗收決定類型
+-- 23. problem_status       - 問題狀態
+-- 24. problem_type         - 問題類型
+-- 25. problem_source       - 問題來源
+-- 26. problem_priority     - 問題優先級
+-- 27. problem_severity     - 問題嚴重度
+-- 
+-- 審計日誌類型 (定義在 20241203100000_create_audit_logs.sql):
+-- 28. audit_action        - 審計動作類型
+-- 29. audit_severity      - 審計嚴重程度
+-- 30. audit_entity_type   - 審計實體類型
+-- 31. audit_actor_type    - 審計操作者類型
 -- 
 -- ============================================================================
