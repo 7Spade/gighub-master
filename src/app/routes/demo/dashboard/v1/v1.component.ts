@@ -14,6 +14,7 @@ import { timer } from 'rxjs';
 @Component({
   selector: 'app-dashboard-v1',
   templateUrl: './v1.component.html',
+  styleUrls: ['./v1.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [...SHARED_IMPORTS, G2TimelineModule, G2BarModule, G2MiniBarModule, QuickMenuModule, OnboardingModule]
 })

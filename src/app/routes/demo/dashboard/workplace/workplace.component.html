@@ -1,129 +1,169 @@
-<page-header [breadcrumb]="breadcrumb" [content]="content" [extra]="extra">
-  <ng-template #breadcrumb>
-    <nz-breadcrumb>
-      <nz-breadcrumb-item>
-        <a [routerLink]="['/']">首页</a>
-      </nz-breadcrumb-item>
-      <nz-breadcrumb-item>
-        <a [routerLink]="['/']">Dashboard</a>
-      </nz-breadcrumb-item>
-      <nz-breadcrumb-item>施工现场</nz-breadcrumb-item>
-    </nz-breadcrumb>
-  </ng-template>
-  <ng-template #content>
-    <div class="content">
-      <div class="avatar">
-        <nz-avatar nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png" />
+<!-- 藍圖工作台儀表板 -->
+<div class="workplace-dashboard">
+  <!-- 頂部歡迎區 -->
+  <div class="welcome-banner">
+    <div class="banner-content">
+      <div class="user-info">
+        <nz-avatar [nzSize]="80" nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png" class="user-avatar" />
+        <div class="user-detail">
+          <h1 class="greeting">早安，項目經理！</h1>
+          <p class="role-info">高級工程師 | GigHub工程公司 — 華東區項目部 — 第一施工隊</p>
+          <p class="status-info">
+            <nz-tag nzColor="success">
+              <i nz-icon nzType="check-circle" nzTheme="fill"></i>
+              工地施工正常進行中
+            </nz-tag>
+          </p>
+        </div>
       </div>
-      <div class="desc">
-        <div class="desc-title">早安，项目经理！工地施工正常进行中</div>
-        <div>高级工程师 | GigHub工程公司－华东区项目部－第一施工队</div>
-      </div>
-    </div>
-  </ng-template>
-  <ng-template #extra>
-    <div class="page-extra">
-      <div>
-        <p>进行中工区</p>
-        <p>8</p>
-      </div>
-      <div>
-        <p>工期进度</p>
-        <p>
-          78
-          <span> %</span>
-        </p>
-      </div>
-      <div>
-        <p>今日作业人数</p>
-        <p>156</p>
+      <div class="quick-stats">
+        <div class="stat-item">
+          <div class="stat-value">8</div>
+          <div class="stat-label">進行中工區</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">78<span class="unit">%</span></div>
+          <div class="stat-label">工期進度</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">156</div>
+          <div class="stat-label">今日作業人數</div>
+        </div>
       </div>
     </div>
-  </ng-template>
-</page-header>
-<div nz-row [nzGutter]="24">
+  </div>
+</div>
+
+<div nz-row [nzGutter]="[24, 24]" class="main-content">
+  <!-- 左側主內容 -->
   <div nz-col nzXs="24" nzSm="24" nzMd="16">
-    <nz-card
-      nzTitle="进行中的施工项目"
-      [nzExtra]="ingExtra"
-      [nzBordered]="false"
-      [nzLoading]="loading"
-      class="ant-card__body-nopadding mb-lg project-list"
-    >
-      <ng-template #ingExtra>
-        <a (click)="msg.success('to')">全部项目</a>
-      </ng-template>
-      @for (item of notice; track $index) {
-        <div nz-card-grid class="project-grid">
-          <nz-card [nzBordered]="false" class="ant-card__body-nopadding mb0">
-            <nz-card-meta [nzTitle]="noticeTitle" [nzDescription]="item.description">
-              <ng-template #noticeTitle>
-                <div class="card-title">
-                  <nz-avatar [nzSrc]="item.logo" [nzSize]="'small'" />
-                  <a (click)="msg.info('to' + item.href)">{{ item.title }}</a>
-                </div>
-              </ng-template>
-            </nz-card-meta>
-            <div class="project-item">
-              <a (click)="msg.info('show user: ' + item.member)">{{ item.member }}</a>
+    <!-- 進行中的施工項目 -->
+    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card project-card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i nz-icon nzType="project" nzTheme="outline" class="title-icon"></i>
+          進行中的施工項目
+        </div>
+        <a class="view-all" (click)="msg.success('to')">
+          查看全部
+          <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+        </a>
+      </div>
+      
+      <div class="project-grid">
+        @for (item of notice; track $index) {
+          <div class="project-item" (click)="msg.info('to' + item.href)">
+            <div class="project-header">
+              <nz-avatar [nzSrc]="item.logo" [nzSize]="40" class="project-logo" />
+              <div class="project-info">
+                <h4 class="project-name">{{ item.title }}</h4>
+                <p class="project-desc">{{ item.description }}</p>
+              </div>
+            </div>
+            <div class="project-footer">
+              <span class="project-member" (click)="$event.stopPropagation(); msg.info('show user: ' + item.member)">
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+                {{ item.member }}
+              </span>
               @if (item.updatedAt) {
-                <span class="datetime" title="{{ item.updatedAt }}">
+                <span class="project-time">
+                  <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
                   {{ item.updatedAt | _date: 'fn' }}
                 </span>
               }
             </div>
-          </nz-card>
-        </div>
-      }
-    </nz-card>
-    <nz-card nzTitle="施工动态" [nzBordered]="false" [nzLoading]="loading" class="ant-card__body-nopadding mb-lg active-card">
-      <nz-list nzSize="large" class="activities">
-        @for (item of activities; track $index) {
-          <nz-list-item>
-            <nz-list-item-meta [nzAvatar]="item.user.avatar" [nzTitle]="activeTitle" [nzDescription]="activeDescription">
-              <ng-template #activeTitle>
-                <a (click)="msg.success(item.user.name)" class="username">{{ item.user.name }}</a>
-                &nbsp;
-                <span class="event" [innerHTML]="item.template"></span>
-              </ng-template>
-              <ng-template #activeDescription>
-                <span class="datetime" title="{{ item.updatedAt }}">{{ item.updatedAt | _date: 'fn' }}</span>
-              </ng-template>
-            </nz-list-item-meta>
-          </nz-list-item>
+          </div>
         }
-      </nz-list>
+      </div>
+    </nz-card>
+
+    <!-- 施工動態 -->
+    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card activities-card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i nz-icon nzType="history" nzTheme="outline" class="title-icon"></i>
+          施工動態
+        </div>
+      </div>
+      
+      <nz-timeline>
+        @for (item of activities; track $index) {
+          <nz-timeline-item [nzColor]="$index === 0 ? 'blue' : 'gray'">
+            <div class="activity-item">
+              <nz-avatar [nzSrc]="item.user.avatar" nzSize="small" class="activity-avatar" />
+              <div class="activity-content">
+                <span class="activity-user" (click)="msg.success(item.user.name)">{{ item.user.name }}</span>
+                <span class="activity-action" [innerHTML]="item.template"></span>
+                <span class="activity-time">{{ item.updatedAt | _date: 'fn' }}</span>
+              </div>
+            </div>
+          </nz-timeline-item>
+        }
+      </nz-timeline>
     </nz-card>
   </div>
+
+  <!-- 右側邊欄 -->
   <div nz-col nzXs="24" nzSm="24" nzMd="8">
-    <nz-card nzTitle="快速入口 / 常用功能" [nzBordered]="false" class="ant-card__body-nopadding mb-lg">
-      <div class="links">
+    <!-- 快速入口 -->
+    <nz-card [nzBordered]="false" class="modern-card quick-access-card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i nz-icon nzType="appstore" nzTheme="outline" class="title-icon"></i>
+          快速入口
+        </div>
+      </div>
+      
+      <div class="quick-links">
         @for (item of links; track $index) {
-          <a (click)="msg.success(item.title)">{{ item.title }}</a>
+          <a class="quick-link" (click)="msg.success(item.title)">
+            <div class="link-icon" [ngStyle]="{'background': getIconBg($index)}">
+              <i nz-icon [nzType]="getLinkIcon($index)" nzTheme="outline"></i>
+            </div>
+            <span class="link-text">{{ item.title }}</span>
+          </a>
         }
-        <button nz-button (click)="links.push({ title: '新功能', href: 'href' })" [nzType]="'dashed'" [nzSize]="'small'">
-          <i nz-icon nzType="plus"></i>
-          <span>添加</span>
+        <button class="quick-link add-btn" (click)="links.push({ title: '新功能', href: 'href' })">
+          <div class="link-icon add-icon">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+          </div>
+          <span class="link-text">添加</span>
         </button>
       </div>
     </nz-card>
-    <nz-card nzTitle="施工效率指数" [nzBordered]="false" [nzLoading]="loading" class="mb-lg">
+
+    <!-- 施工效率指數 -->
+    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card radar-card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i nz-icon nzType="radar-chart" nzTheme="outline" class="title-icon"></i>
+          施工效率指數
+        </div>
+      </div>
       @if (radarData) {
-        <g2-radar [data]="radarData" [height]="343" [hasLegend]="true" />
+        <g2-radar [data]="radarData" [height]="320" [hasLegend]="true" />
       }
     </nz-card>
-    <nz-card nzTitle="施工班组" [nzBordered]="false" [nzBodyStyle]="{ 'padding-top.px': 12, 'padding-bottom.px': 12 }" class="mb-lg">
-      <div class="members">
-        <div nz-row [nzGutter]="48">
-          @for (i of members; track $index) {
-            <div nz-col [nzSpan]="12">
-              <a (click)="msg.success(i.title)">
-                <nz-avatar [nzSrc]="i.logo" [nzSize]="'small'" />
-                <span class="member">{{ i.title }}</span>
-              </a>
-            </div>
-          }
+
+    <!-- 施工班組 -->
+    <nz-card [nzBordered]="false" class="modern-card team-card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i nz-icon nzType="team" nzTheme="outline" class="title-icon"></i>
+          施工班組
         </div>
+      </div>
+      
+      <div class="team-list">
+        @for (i of members; track $index) {
+          <a class="team-item" (click)="msg.success(i.title)">
+            <nz-avatar [nzSrc]="i.logo" nzSize="small" class="team-avatar" />
+            <span class="team-name">{{ i.title }}</span>
+            <i nz-icon nzType="right" nzTheme="outline" class="team-arrow"></i>
+          </a>
+        }
       </div>
     </nz-card>
   </div>
