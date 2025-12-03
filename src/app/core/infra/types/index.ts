@@ -8,6 +8,7 @@
 
 export * from './account/index';
 export * from './blueprint/index';
+export * from './event/index';
 export * from './financial/index';
 export * from './notification/index';
 export * from './permission/index';

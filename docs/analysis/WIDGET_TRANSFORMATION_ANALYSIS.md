@@ -939,16 +939,27 @@ export class HeaderMyTasksComponent implements OnInit {
 3. [x] 整合 Supabase Realtime
 4. [ ] 測試 UI 功能
 
-### Phase 3: 事件整合（Week 2-3）
+### Phase 3: 事件整合（Week 2-3）✅ 已完成
 
-1. [ ] 建立事件總線系統（依賴 Phase 1 完成）
-2. [ ] 整合任務模組事件
-3. [ ] 整合日誌模組事件（日誌模組完成後）
-4. [ ] 測試事件流
+1. [x] 建立事件總線系統
+   - `src/app/core/infra/types/event/event.types.ts` - 事件類型定義
+   - `src/app/core/infra/types/event/event.factory.ts` - 事件工廠函數
+   - `src/app/shared/services/event-bus/event-bus.service.ts` - 事件總線服務
+2. [x] 整合 NotificationService 訂閱事件
+3. [ ] 整合 TaskService 發布事件（待完成）
+4. [ ] 整合日誌模組事件（日誌模組完成後）
+5. [ ] 測試事件流
 
 ### 實作記錄
 
-**2025-12-03**: Phase 1 & 2 完成
+**2025-12-03 (Phase 3)**: 事件總線系統建立
+- 建立 `src/app/core/infra/types/event/event.types.ts` - 事件類型、Payload 定義
+- 建立 `src/app/core/infra/types/event/event.factory.ts` - 事件建立工廠函數
+- 建立 `src/app/shared/services/event-bus/event-bus.service.ts` - 事件總線核心服務
+- 更新 `NotificationService` - 訂閱事件總線處理任務指派、完成、成員加入事件
+- 建立技術文件 `docs/reference/event-bus-system.md` - 基於 Context7 查詢的技術參考
+
+**2025-12-03 (Phase 1 & 2)**: 通知中心基礎設施
 - 建立 `src/app/core/infra/types/notification/notification.types.ts` - 通知類型定義
 - 建立 `src/app/core/infra/repositories/notification/notification.repository.ts` - 通知資料存取層（含 Supabase Realtime 訂閱）
 - 建立 `src/app/shared/services/notification/notification.service.ts` - 通知服務層（使用 Angular Signals）

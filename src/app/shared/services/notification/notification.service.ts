@@ -26,9 +26,15 @@ import {
   NotificationCategory,
   NotificationQueryOptions,
   NOTIFICATION_CATEGORY_CONFIG,
-  NOTIFICATION_TYPE_CONFIG
+  NOTIFICATION_TYPE_CONFIG,
+  BaseEvent,
+  TaskAssignedPayload,
+  TaskCompletedPayload,
+  MemberJoinedPayload
 } from '@core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
+
+import { EventBusService } from '../event-bus';
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +42,14 @@ import { firstValueFrom } from 'rxjs';
 export class NotificationService {
   // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly repo = inject(NotificationRepository);
+  private readonly eventBus = inject(EventBusService);
   private readonly destroyRef = inject(DestroyRef);
 
   // Realtime subscription cleanup function
   private unsubscribeFn: (() => void) | null = null;
+
+  // Event bus subscriptions
+  private eventSubscriptions: Subscription[] = [];
 
   // ============================================================================
   // State Signals (狀態信號)
@@ -103,9 +113,13 @@ export class NotificationService {
   });
 
   constructor() {
-    // 組件銷毀時取消 Realtime 訂閱
+    // 訂閱事件總線
+    this.subscribeToEventBus();
+
+    // 組件銷毀時取消訂閱
     this.destroyRef.onDestroy(() => {
       this.unsubscribeFromRealtime();
+      this.unsubscribeFromEventBus();
     });
   }
 
@@ -232,6 +246,82 @@ export class NotificationService {
       this.unsubscribeFn();
       this.unsubscribeFn = null;
     }
+  }
+
+  // ============================================================================
+  // Event Bus Methods (事件總線方法)
+  // ============================================================================
+
+  /**
+   * 訂閱事件總線
+   * Subscribe to event bus for automatic notification generation
+   */
+  private subscribeToEventBus(): void {
+    // 訂閱任務指派事件
+    const taskAssignedSub = this.eventBus.onType<TaskAssignedPayload>('task.assigned').subscribe(event => {
+      this.handleTaskAssignedEvent(event);
+    });
+    this.eventSubscriptions.push(taskAssignedSub);
+
+    // 訂閱任務完成事件
+    const taskCompletedSub = this.eventBus.onType<TaskCompletedPayload>('task.completed').subscribe(event => {
+      this.handleTaskCompletedEvent(event);
+    });
+    this.eventSubscriptions.push(taskCompletedSub);
+
+    // 訂閱成員加入事件
+    const memberJoinedSub = this.eventBus.onType<MemberJoinedPayload>('member.joined').subscribe(event => {
+      this.handleMemberJoinedEvent(event);
+    });
+    this.eventSubscriptions.push(memberJoinedSub);
+
+    console.log('[NotificationService] Subscribed to event bus');
+  }
+
+  /**
+   * 取消事件總線訂閱
+   */
+  private unsubscribeFromEventBus(): void {
+    this.eventSubscriptions.forEach(sub => sub.unsubscribe());
+    this.eventSubscriptions = [];
+  }
+
+  /**
+   * 處理任務指派事件
+   */
+  private handleTaskAssignedEvent(event: BaseEvent<TaskAssignedPayload>): void {
+    const { newAssignee, taskName } = event.payload;
+
+    // 這裡可以建立一個臨時的本地通知
+    // 實際的通知會通過 Supabase Realtime 推送
+    console.log('[NotificationService] Task assigned event:', {
+      taskName,
+      assignee: newAssignee.name
+    });
+  }
+
+  /**
+   * 處理任務完成事件
+   */
+  private handleTaskCompletedEvent(event: BaseEvent<TaskCompletedPayload>): void {
+    const { taskName, completedBy } = event.payload;
+
+    console.log('[NotificationService] Task completed event:', {
+      taskName,
+      completedBy: completedBy.name
+    });
+  }
+
+  /**
+   * 處理成員加入事件
+   */
+  private handleMemberJoinedEvent(event: BaseEvent<MemberJoinedPayload>): void {
+    const { userName, blueprintName } = event.payload;
+
+    console.log('[NotificationService] Member joined event:', {
+      userName,
+      blueprintName
+    });
   }
 
   // ============================================================================
