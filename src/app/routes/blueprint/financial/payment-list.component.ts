@@ -13,23 +13,13 @@
  * @module routes/blueprint/financial
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  OnInit,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { STChange, STColumn, STComponent, STPage } from '@delon/abc/st';
-import { Payment, PaymentMethod, PaymentRequest, PaymentRequestStatus } from '@core';
+import { Payment, PaymentMethod, PaymentRequestStatus } from '@core';
+import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-payment-list',
@@ -65,12 +55,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="總付款金額"
-              [nzValue]="totalAmount()"
-              [nzValueStyle]="{ color: '#52c41a' }"
-              nzPrefix="$"
-            ></nz-statistic>
+            <nz-statistic nzTitle="總付款金額" [nzValue]="totalAmount()" [nzValueStyle]="{ color: '#52c41a' }" nzPrefix="$"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
@@ -85,11 +70,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="轉帳佔比"
-              [nzValue]="transferPercentage()"
-              nzSuffix="%"
-            ></nz-statistic>
+            <nz-statistic nzTitle="轉帳佔比" [nzValue]="transferPercentage()" nzSuffix="%"></nz-statistic>
           </nz-card>
         </div>
       </div>
@@ -145,7 +126,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
           [columns]="columns"
           [page]="page"
           [loading]="financialService.loading()"
-          (change)="onTableChange($event)"
+          (change)="onTableChange()"
           [scroll]="{ x: '1000px' }"
         >
           <ng-template st-row="method" let-item>
@@ -179,12 +160,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-card>
 
       <!-- Payment Form Drawer -->
-      <nz-drawer
-        [nzVisible]="drawerVisible()"
-        [nzTitle]="drawerTitle()"
-        [nzWidth]="520"
-        (nzOnClose)="closeDrawer()"
-      >
+      <nz-drawer [nzVisible]="drawerVisible()" [nzTitle]="drawerTitle()" [nzWidth]="520" (nzOnClose)="closeDrawer()">
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="paymentForm" nzLayout="vertical">
             <nz-form-item>
@@ -246,12 +222,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
             <nz-form-item>
               <nz-form-label nzFor="reference_number">參考編號</nz-form-label>
               <nz-form-control>
-                <input
-                  nz-input
-                  formControlName="reference_number"
-                  id="reference_number"
-                  placeholder="例如：銀行交易序號"
-                />
+                <input nz-input formControlName="reference_number" id="reference_number" placeholder="例如：銀行交易序號" />
               </nz-form-control>
             </nz-form-item>
 
@@ -270,13 +241,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
             <div class="drawer-footer">
               <button nz-button nzType="default" (click)="closeDrawer()">取消</button>
-              <button
-                nz-button
-                nzType="primary"
-                [nzLoading]="saving()"
-                [disabled]="paymentForm.invalid"
-                (click)="savePayment()"
-              >
+              <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="paymentForm.invalid" (click)="savePayment()">
                 {{ editingPayment() ? '更新' : '建立' }}
               </button>
             </div>
@@ -285,12 +250,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-drawer>
 
       <!-- Payment Detail Drawer -->
-      <nz-drawer
-        [nzVisible]="detailDrawerVisible()"
-        nzTitle="付款詳情"
-        [nzWidth]="600"
-        (nzOnClose)="closeDetailDrawer()"
-      >
+      <nz-drawer [nzVisible]="detailDrawerVisible()" nzTitle="付款詳情" [nzWidth]="600" (nzOnClose)="closeDetailDrawer()">
         <ng-container *nzDrawerContent>
           @if (viewingPayment(); as payment) {
             <nz-descriptions nzTitle="付款資訊" nzBordered [nzColumn]="1">
@@ -468,8 +428,7 @@ export class PaymentListComponent implements OnInit {
       const search = this.searchText.toLowerCase();
       payments = payments.filter(
         p =>
-          (p.reference_number && p.reference_number.toLowerCase().includes(search)) ||
-          (p.notes && p.notes.toLowerCase().includes(search))
+          (p.reference_number && p.reference_number.toLowerCase().includes(search)) || (p.notes && p.notes.toLowerCase().includes(search))
       );
     }
 
@@ -553,7 +512,7 @@ export class PaymentListComponent implements OnInit {
   }
 
   /** Table change handler */
-  onTableChange(event: STChange): void {
+  onTableChange(): void {
     // Handle table events if needed
   }
 
@@ -621,10 +580,7 @@ export class PaymentListComponent implements OnInit {
       const data = {
         ...formValue,
         blueprint_id: this.id(),
-        payment_date:
-          formValue.payment_date instanceof Date
-            ? formValue.payment_date.toISOString().split('T')[0]
-            : formValue.payment_date
+        payment_date: formValue.payment_date instanceof Date ? formValue.payment_date.toISOString().split('T')[0] : formValue.payment_date
       };
 
       if (this.editingPayment()) {

@@ -13,24 +13,14 @@
  * @module routes/blueprint/financial
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  OnInit,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { STChange, STColumn, STComponent, STPage } from '@delon/abc/st';
-import { PaymentRequest, PaymentRequestStatus, Contract } from '@core';
+import { PaymentRequest, PaymentRequestStatus } from '@core';
+import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-payment-request-list',
@@ -66,11 +56,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="待審核"
-              [nzValue]="pendingRequests()"
-              [nzValueStyle]="{ color: '#fa8c16' }"
-            ></nz-statistic>
+            <nz-statistic nzTitle="待審核" [nzValue]="pendingRequests()" [nzValueStyle]="{ color: '#fa8c16' }"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
@@ -138,7 +124,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
           [columns]="columns"
           [page]="page"
           [loading]="financialService.loading()"
-          (change)="onTableChange($event)"
+          (change)="onTableChange()"
           [scroll]="{ x: '1100px' }"
         >
           <ng-template st-row="status" let-item>
@@ -184,24 +170,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-card>
 
       <!-- Payment Request Form Drawer -->
-      <nz-drawer
-        [nzVisible]="drawerVisible()"
-        [nzTitle]="drawerTitle()"
-        [nzWidth]="520"
-        (nzOnClose)="closeDrawer()"
-      >
+      <nz-drawer [nzVisible]="drawerVisible()" [nzTitle]="drawerTitle()" [nzWidth]="520" (nzOnClose)="closeDrawer()">
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="requestForm" nzLayout="vertical">
             <nz-form-item>
               <nz-form-label nzFor="request_number">請款編號</nz-form-label>
               <nz-form-control>
-                <input
-                  nz-input
-                  formControlName="request_number"
-                  id="request_number"
-                  placeholder="自動生成"
-                  [disabled]="true"
-                />
+                <input nz-input formControlName="request_number" id="request_number" placeholder="自動生成" [disabled]="true" />
               </nz-form-control>
             </nz-form-item>
 
@@ -253,23 +228,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
             <div class="drawer-footer">
               <button nz-button nzType="default" (click)="closeDrawer()">取消</button>
               @if (!editingRequest() || editingRequest()?.status === 'draft') {
-                <button
-                  nz-button
-                  nzType="default"
-                  [nzLoading]="saving()"
-                  [disabled]="requestForm.invalid"
-                  (click)="saveAsDraft()"
-                >
+                <button nz-button nzType="default" [nzLoading]="saving()" [disabled]="requestForm.invalid" (click)="saveAsDraft()">
                   儲存草稿
                 </button>
               }
-              <button
-                nz-button
-                nzType="primary"
-                [nzLoading]="saving()"
-                [disabled]="requestForm.invalid"
-                (click)="submitForApproval()"
-              >
+              <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="requestForm.invalid" (click)="submitForApproval()">
                 {{ editingRequest() ? '更新並提交' : '提交審核' }}
               </button>
             </div>
@@ -278,12 +241,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-drawer>
 
       <!-- Payment Request Detail Drawer -->
-      <nz-drawer
-        [nzVisible]="detailDrawerVisible()"
-        nzTitle="請款詳情"
-        [nzWidth]="600"
-        (nzOnClose)="closeDetailDrawer()"
-      >
+      <nz-drawer [nzVisible]="detailDrawerVisible()" nzTitle="請款詳情" [nzWidth]="600" (nzOnClose)="closeDetailDrawer()">
         <ng-container *nzDrawerContent>
           @if (viewingRequest(); as request) {
             <nz-descriptions nzTitle="基本資訊" nzBordered [nzColumn]="1">
@@ -313,28 +271,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
             <!-- Timeline -->
             <h4>審核流程</h4>
             <nz-timeline>
-              <nz-timeline-item nzColor="blue">
-                建立請款 - {{ request.created_at | date: 'yyyy-MM-dd HH:mm' }}
-              </nz-timeline-item>
+              <nz-timeline-item nzColor="blue"> 建立請款 - {{ request.created_at | date: 'yyyy-MM-dd HH:mm' }} </nz-timeline-item>
               @if (request.status !== 'draft') {
-                <nz-timeline-item nzColor="orange">
-                  提交審核
-                </nz-timeline-item>
+                <nz-timeline-item nzColor="orange"> 提交審核 </nz-timeline-item>
               }
               @if (request.status === 'approved' || request.status === 'paid') {
-                <nz-timeline-item nzColor="green">
-                  審核通過 - {{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }}
-                </nz-timeline-item>
+                <nz-timeline-item nzColor="green"> 審核通過 - {{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }} </nz-timeline-item>
               }
               @if (request.status === 'rejected') {
-                <nz-timeline-item nzColor="red">
-                  審核拒絕
-                </nz-timeline-item>
+                <nz-timeline-item nzColor="red"> 審核拒絕 </nz-timeline-item>
               }
               @if (request.status === 'paid') {
-                <nz-timeline-item nzColor="green">
-                  已完成付款
-                </nz-timeline-item>
+                <nz-timeline-item nzColor="green"> 已完成付款 </nz-timeline-item>
               }
             </nz-timeline>
 
@@ -355,12 +303,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-drawer>
 
       <!-- Reject Modal -->
-      <nz-modal
-        [(nzVisible)]="rejectModalVisible"
-        nzTitle="拒絕請款"
-        (nzOnCancel)="closeRejectModal()"
-        (nzOnOk)="confirmReject()"
-      >
+      <nz-modal [(nzVisible)]="rejectModalVisible" nzTitle="拒絕請款" (nzOnCancel)="closeRejectModal()" (nzOnOk)="confirmReject()">
         <ng-container *nzModalContent>
           <nz-form-item>
             <nz-form-label nzRequired>拒絕原因</nz-form-label>
@@ -490,8 +433,8 @@ export class PaymentRequestListComponent implements OnInit {
 
   /** Computed values */
   readonly totalRequests = computed(() => this.financialService.paymentRequests().length);
-  readonly pendingRequests = computed(() =>
-    this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.PENDING).length
+  readonly pendingRequests = computed(
+    () => this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.PENDING).length
   );
   readonly approvedAmount = computed(() =>
     this.financialService
@@ -513,9 +456,7 @@ export class PaymentRequestListComponent implements OnInit {
     if (this.searchText) {
       const search = this.searchText.toLowerCase();
       requests = requests.filter(
-        r =>
-          r.request_number.toLowerCase().includes(search) ||
-          (r.description && r.description.toLowerCase().includes(search))
+        r => r.request_number.toLowerCase().includes(search) || (r.description && r.description.toLowerCase().includes(search))
       );
     }
 
@@ -583,7 +524,7 @@ export class PaymentRequestListComponent implements OnInit {
   }
 
   /** Table change handler */
-  onTableChange(event: STChange): void {
+  onTableChange(): void {
     // Handle table events if needed
   }
 

@@ -13,9 +13,9 @@
  * @module routes/blueprint/financial
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BlueprintFinancialSummary, Contract, PaymentRequest, PaymentRequestStatus } from '@core';
+import { PaymentRequestStatus } from '@core';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -233,11 +233,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <nz-list nzItemLayout="horizontal" [nzLoading]="financialService.loading()">
             @for (request of recentPaymentRequests(); track request.id) {
               <nz-list-item>
-                <nz-list-item-meta
-                  nzAvatar="audit"
-                  [nzTitle]="request.request_number"
-                  [nzDescription]="request.description || '無描述'"
-                >
+                <nz-list-item-meta nzAvatar="audit" [nzTitle]="request.request_number" [nzDescription]="request.description || '無描述'">
                   <nz-list-item-meta-avatar>
                     <nz-avatar nzIcon="audit"></nz-avatar>
                   </nz-list-item-meta-avatar>

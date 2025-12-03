@@ -13,26 +13,14 @@
  * @module routes/blueprint/financial
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  OnInit,
-  signal,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { STChange, STColumn, STComponent, STData, STPage, STReq, STRes } from '@delon/abc/st';
-import { Contract, FinancialRepository } from '@core';
+import { Contract } from '@core';
+import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-contract-list',
@@ -68,30 +56,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="合約總金額"
-              [nzValue]="totalAmount()"
-              [nzValueStyle]="{ color: '#1890ff' }"
-              nzPrefix="$"
-            ></nz-statistic>
+            <nz-statistic nzTitle="合約總金額" [nzValue]="totalAmount()" [nzValueStyle]="{ color: '#1890ff' }" nzPrefix="$"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="進行中"
-              [nzValue]="activeContracts()"
-              [nzValueStyle]="{ color: '#52c41a' }"
-            ></nz-statistic>
+            <nz-statistic nzTitle="進行中" [nzValue]="activeContracts()" [nzValueStyle]="{ color: '#52c41a' }"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="已完成"
-              [nzValue]="completedContracts()"
-              [nzValueStyle]="{ color: '#666' }"
-            ></nz-statistic>
+            <nz-statistic nzTitle="已完成" [nzValue]="completedContracts()" [nzValueStyle]="{ color: '#666' }"></nz-statistic>
           </nz-card>
         </div>
       </div>
@@ -138,7 +113,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
           [columns]="columns"
           [page]="page"
           [loading]="financialService.loading()"
-          (change)="onTableChange($event)"
+          (change)="onTableChange()"
           [scroll]="{ x: '1200px' }"
         >
           <ng-template st-row="lifecycle" let-item let-index="index">
@@ -172,12 +147,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-card>
 
       <!-- Contract Form Drawer -->
-      <nz-drawer
-        [nzVisible]="drawerVisible()"
-        [nzTitle]="drawerTitle()"
-        [nzWidth]="520"
-        (nzOnClose)="closeDrawer()"
-      >
+      <nz-drawer [nzVisible]="drawerVisible()" [nzTitle]="drawerTitle()" [nzWidth]="520" (nzOnClose)="closeDrawer()">
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="contractForm" nzLayout="vertical">
             <nz-form-item>
@@ -262,13 +232,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
             <div class="drawer-footer">
               <button nz-button nzType="default" (click)="closeDrawer()">取消</button>
-              <button
-                nz-button
-                nzType="primary"
-                [nzLoading]="saving()"
-                [disabled]="contractForm.invalid"
-                (click)="saveContract()"
-              >
+              <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="contractForm.invalid" (click)="saveContract()">
                 {{ editingContract() ? '更新' : '建立' }}
               </button>
             </div>
@@ -277,12 +241,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-drawer>
 
       <!-- Contract Detail Drawer -->
-      <nz-drawer
-        [nzVisible]="detailDrawerVisible()"
-        nzTitle="合約詳情"
-        [nzWidth]="600"
-        (nzOnClose)="closeDetailDrawer()"
-      >
+      <nz-drawer [nzVisible]="detailDrawerVisible()" nzTitle="合約詳情" [nzWidth]="600" (nzOnClose)="closeDetailDrawer()">
         <ng-container *nzDrawerContent>
           @if (viewingContract(); as contract) {
             <nz-descriptions nzTitle="基本資訊" nzBordered [nzColumn]="1">
@@ -428,15 +387,9 @@ export class ContractListComponent implements OnInit {
 
   /** Computed values */
   readonly totalContracts = computed(() => this.financialService.contracts().length);
-  readonly totalAmount = computed(() =>
-    this.financialService.contracts().reduce((sum, c) => sum + (c.contract_amount || 0), 0)
-  );
-  readonly activeContracts = computed(() =>
-    this.financialService.contracts().filter(c => c.lifecycle === 'active').length
-  );
-  readonly completedContracts = computed(() =>
-    this.financialService.contracts().filter(c => c.lifecycle === 'completed').length
-  );
+  readonly totalAmount = computed(() => this.financialService.contracts().reduce((sum, c) => sum + (c.contract_amount || 0), 0));
+  readonly activeContracts = computed(() => this.financialService.contracts().filter(c => c.lifecycle === 'active').length);
+  readonly completedContracts = computed(() => this.financialService.contracts().filter(c => c.lifecycle === 'completed').length);
 
   /** Filtered contracts */
   readonly filteredContracts = computed(() => {
@@ -518,7 +471,7 @@ export class ContractListComponent implements OnInit {
   }
 
   /** Table change handler */
-  onTableChange(event: STChange): void {
+  onTableChange(): void {
     // Handle table events if needed
   }
 

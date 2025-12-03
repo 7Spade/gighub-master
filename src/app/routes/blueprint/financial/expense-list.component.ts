@@ -14,23 +14,13 @@
  * @module routes/blueprint/financial
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  input,
-  OnInit,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { STChange, STColumn, STComponent, STPage } from '@delon/abc/st';
-import { Expense, ExpenseCategory, Contract } from '@core';
+import { Expense, ExpenseCategory } from '@core';
+import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-expense-list',
@@ -66,12 +56,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="總支出金額"
-              [nzValue]="totalAmount()"
-              [nzValueStyle]="{ color: '#fa8c16' }"
-              nzPrefix="$"
-            ></nz-statistic>
+            <nz-statistic nzTitle="總支出金額" [nzValue]="totalAmount()" [nzValueStyle]="{ color: '#fa8c16' }" nzPrefix="$"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
@@ -86,11 +71,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic
-              nzTitle="人工費用佔比"
-              [nzValue]="laborPercentage()"
-              nzSuffix="%"
-            ></nz-statistic>
+            <nz-statistic nzTitle="人工費用佔比" [nzValue]="laborPercentage()" nzSuffix="%"></nz-statistic>
           </nz-card>
         </div>
       </div>
@@ -146,7 +127,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
           [columns]="columns"
           [page]="page"
           [loading]="financialService.loading()"
-          (change)="onTableChange($event)"
+          (change)="onTableChange()"
           [scroll]="{ x: '1100px' }"
         >
           <ng-template st-row="category" let-item>
@@ -177,12 +158,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       </nz-card>
 
       <!-- Expense Form Drawer -->
-      <nz-drawer
-        [nzVisible]="drawerVisible()"
-        [nzTitle]="drawerTitle()"
-        [nzWidth]="520"
-        (nzOnClose)="closeDrawer()"
-      >
+      <nz-drawer [nzVisible]="drawerVisible()" [nzTitle]="drawerTitle()" [nzWidth]="520" (nzOnClose)="closeDrawer()">
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="expenseForm" nzLayout="vertical">
             <nz-form-item>
@@ -278,13 +254,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
             <div class="drawer-footer">
               <button nz-button nzType="default" (click)="closeDrawer()">取消</button>
-              <button
-                nz-button
-                nzType="primary"
-                [nzLoading]="saving()"
-                [disabled]="expenseForm.invalid"
-                (click)="saveExpense()"
-              >
+              <button nz-button nzType="primary" [nzLoading]="saving()" [disabled]="expenseForm.invalid" (click)="saveExpense()">
                 {{ editingExpense() ? '更新' : '建立' }}
               </button>
             </div>
@@ -518,7 +488,7 @@ export class ExpenseListComponent implements OnInit {
   }
 
   /** Table change handler */
-  onTableChange(event: STChange): void {
+  onTableChange(): void {
     // Handle table events if needed
   }
 
@@ -566,10 +536,7 @@ export class ExpenseListComponent implements OnInit {
       const data = {
         ...formValue,
         blueprint_id: this.id(),
-        expense_date:
-          formValue.expense_date instanceof Date
-            ? formValue.expense_date.toISOString().split('T')[0]
-            : formValue.expense_date
+        expense_date: formValue.expense_date instanceof Date ? formValue.expense_date.toISOString().split('T')[0] : formValue.expense_date
       };
 
       if (this.editingExpense()) {
