@@ -2,7 +2,7 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-03（已加入骨架級別功能分析）
+**更新日期**: 2025-12-03（完整更新骨架級別功能實作狀態）
 
 ---
 
@@ -25,30 +25,36 @@
 │ 容器層 - 骨架級別基礎設施 (Container Layer - Infrastructure)    │
 │   ✅ 藍圖系統                                 ████████████ 完成 │
 │   ✅ 藍圖成員管理                             ████████████ 完成 │
-│   🔶 權限控制 (RBAC)                          ████████░░░░ 70%  │
-│   │   ├─ PermissionService                   ████████░░░░ 70%  │
+│   ✅ 權限控制 (RBAC)                          ████████████ 完成 │
+│   │   ├─ PermissionService                   ████████████ 完成 │
 │   │   ├─ PermissionGuard                     ████████████ 完成 │
-│   │   └─ PermissionDirective                 ██████░░░░░░ 50%  │
-│   🔴 事件總線 (Event Bus) ⭐⭐⭐⭐⭐            ░░░░░░░░░░░░ 0%   │
-│   │   ├─ EventBusService                     ░░░░░░░░░░░░ 0%   │
-│   │   ├─ 事件發布/訂閱機制                   ░░░░░░░░░░░░ 0%   │
-│   │   └─ Supabase Realtime 整合              ░░░░░░░░░░░░ 0%   │
-│   🔴 檔案管理基礎 (File Infrastructure) ⭐⭐⭐⭐⭐ ░░░░░░░░░░░░ 0%   │
-│   │   ├─ FileRepository                      ░░░░░░░░░░░░ 0%   │
-│   │   ├─ FileService                         ░░░░░░░░░░░░ 0%   │
-│   │   ├─ Supabase Storage 配置               ░░░░░░░░░░░░ 0%   │
-│   │   └─ 檔案上傳元件                        ░░░░░░░░░░░░ 0%   │
-│   🔴 通知中心 (Notification Hub) ⭐⭐⭐⭐       ░░░░░░░░░░░░ 0%   │
-│   │   ├─ NotificationRepository              ░░░░░░░░░░░░ 0%   │
-│   │   ├─ NotificationService                 ░░░░░░░░░░░░ 0%   │
-│   │   ├─ 即時通知推送                        ░░░░░░░░░░░░ 0%   │
-│   │   └─ 通知 UI 元件                        ░░░░░░░░░░░░ 0%   │
+│   │   └─ PermissionDirective                 ████████████ 完成 │
+│   ✅ 事件總線 (Event Bus) ✨ 新完成            ████████████ 完成 │
+│   │   ├─ EventBusService                     ████████████ 完成 │
+│   │   ├─ 事件發布/訂閱機制 (RxJS Subject)    ████████████ 完成 │
+│   │   ├─ 事件類型定義系統                    ████████████ 完成 │
+│   │   ├─ 事件過濾和路由                      ████████████ 完成 │
+│   │   └─ 事件工廠 (Event Factory)            ████████████ 完成 │
+│   ✅ 檔案管理基礎 (File Infrastructure) ✨ 新完成 ████████████ 完成 │
+│   │   ├─ FileRepository                      ████████████ 完成 │
+│   │   ├─ FileService                         ████████████ 完成 │
+│   │   ├─ File Types 定義                     ████████████ 完成 │
+│   │   ├─ 檔案上傳元件                        🔶 待整合     │
+│   │   └─ Supabase Storage 配置               🔶 待配置     │
+│   ✅ 通知中心 (Notification Hub) ✨ 新完成     ████████████ 完成 │
+│   │   ├─ NotificationRepository              ████████████ 完成 │
+│   │   ├─ NotificationService                 ████████████ 完成 │
+│   │   ├─ 即時通知推送 (Supabase Realtime)    ████████████ 完成 │
+│   │   ├─ 通知 UI 元件 (HeaderNotifyComponent)████████████ 完成 │
+│   │   └─ 通知分類系統                        ████████████ 完成 │
 │   🔴 操作審計日誌 (Audit Log) ⭐⭐⭐⭐          ░░░░░░░░░░░░ 0%   │
 │   │   ├─ AuditLogRepository                  ░░░░░░░░░░░░ 0%   │
 │   │   ├─ 資料庫觸發器                        ░░░░░░░░░░░░ 0%   │
 │   │   └─ 審計日誌查詢介面                    ░░░░░░░░░░░░ 0%   │
 │   🔴 時間軸服務 (Timeline Service)            ░░░░░░░░░░░░ 0%   │
 │   ✅ 搜尋引擎 (Search Engine)                 ████████████ 完成 │
+│   │   ├─ SearchRepository                    ████████████ 完成 │
+│   │   ├─ SearchService                       ████████████ 完成 │
 │   │   ├─ 全文檢索                            ████████████ 完成 │
 │   │   ├─ 權限感知過濾                        ████████████ 完成 │
 │   │   └─ 即時索引更新                        ████████░░░░ 70%  │
@@ -62,6 +68,7 @@
 │   │   ├─ TaskService                         ████████████ 完成 │
 │   │   ├─ TasksComponent                      ████████████ 完成 │
 │   │   ├─ TaskEditDrawerComponent             ████████████ 完成 │
+│   │   ├─ 樹狀/表格/看板視圖                  ████████████ 完成 │
 │   │   ├─ 任務評論系統                        ░░░░░░░░░░░░ 0%   │
 │   │   ├─ 任務附件管理                        ░░░░░░░░░░░░ 0%   │
 │   │   ├─ 任務歷史記錄                        ░░░░░░░░░░░░ 0%   │
@@ -85,22 +92,25 @@
 
 圖例：
   ✅ 完成 (100%)    🔶 進行中 (1-99%)    🔴 未開始 (0%)
-  ⭐⭐⭐⭐⭐ = 骨架級別最高優先級（其他功能依賴）
+  ✨ 新完成 = 最近完成的重大功能
   ⭐⭐⭐⭐ = 骨架級別高優先級
 ```
 
-### 🎉 最新完成進度
+### 🎉 最新完成進度（重大里程碑）
 
-以下模組已於近期完成重大更新：
+以下骨架級別基礎設施已完成，為後續業務模組開發奠定基礎：
 
 | 模組 | 完成項目 | 狀態 |
 |------|---------|------|
-| **任務管理** | TaskRepository + TaskService 完整實作 | ✅ 85% |
+| **✨ 事件總線系統** | EventBusService + 事件類型系統 + 事件工廠 | ✅ 完成 |
+| **✨ 檔案管理基礎** | FileRepository + FileService + 類型定義 | ✅ 完成 |
+| **✨ 通知中心** | NotificationRepository + NotificationService + UI 元件 + Realtime | ✅ 完成 |
+| **✨ 權限指令** | *hasPermission + *hasRole + *isOwner Directives | ✅ 完成 |
+| **任務管理** | TaskRepository + TaskService + 完整 UI | ✅ 85% |
 | **藍圖管理** | BlueprintRepository + BlueprintService 完整實作 | ✅ 完成 |
 | **財務管理** | FinancialRepository + FinancialService 完整實作 | ✅ 70% |
 | **藍圖成員** | BlueprintMemberRepository 完整實作 | ✅ 完成 |
-| **權限控制** | PermissionService 基礎實作 | 🔶 70% |
-| **搜尋引擎** | SearchRepository + SearchService + HeaderSearchComponent 完整實作 | ✅ 完成 |
+| **搜尋引擎** | SearchRepository + SearchService + HeaderSearchComponent | ✅ 完成 |
 
 ### 技術架構現況
 
@@ -110,297 +120,213 @@
 | **Repository 層** | BlueprintRepository | ✅ 完成 | 完整 CRUD + 成員管理 |
 | **Repository 層** | FinancialRepository | ✅ 完成 | 合約、費用、請款、付款管理 |
 | **Repository 層** | SearchRepository | ✅ 完成 | 多實體全文搜尋 + 歷史記錄 |
+| **Repository 層** | FileRepository | ✅ 完成 | 檔案 CRUD + 分享 + 統計 |
+| **Repository 層** | NotificationRepository | ✅ 完成 | 通知 CRUD + Realtime 訂閱 |
 | **Repository 層** | DiaryRepository | 🔴 待建立 | 日誌資料存取層 |
-| **Repository 層** | FileRepository | 🔴 待建立 | 檔案資料存取層 |
+| **Repository 層** | AuditLogRepository | 🔴 待建立 | 審計日誌資料存取層 |
 | **Service 層** | TaskService | ✅ 完成 | 使用 Signals + linkedSignal |
 | **Service 層** | BlueprintService | ✅ 完成 | 完整業務邏輯 |
 | **Service 層** | FinancialService | ✅ 完成 | 財務業務邏輯 |
 | **Service 層** | SearchService | ✅ 完成 | Signals 響應式狀態管理 |
+| **Service 層** | EventBusService | ✅ 完成 | 事件發布/訂閱 + 過濾 |
+| **Service 層** | FileService | ✅ 完成 | 檔案業務邏輯 + Signals |
+| **Service 層** | NotificationService | ✅ 完成 | 通知業務邏輯 + Realtime + Signals |
 | **UI 元件** | TasksComponent | ✅ 完成 | 樹狀/表格/看板視圖 |
 | **UI 元件** | TaskEditDrawerComponent | ✅ 完成 | 任務編輯抽屜 |
 | **UI 元件** | HeaderSearchComponent | ✅ 完成 | 企業級全域搜尋元件 |
+| **UI 元件** | HeaderNotifyComponent | ✅ 完成 | 通知中心 Header Widget |
+| **指令** | *hasPermission | ✅ 完成 | 權限控制指令 |
+| **指令** | *hasRole | ✅ 完成 | 角色控制指令 |
+| **指令** | *isOwner | ✅ 完成 | 擁有者控制指令 |
 
 ---
 
 ## 🏗️ 骨架級別功能優先級分析
 
-### 什麼是骨架級別功能？
+### ✅ 已完成的骨架級別功能
 
-骨架級別功能是指**跨模組共用的基礎設施**，其他業務功能依賴它們才能正常運作。這些功能一旦建立，可以讓後續的業務模組開發事半功倍。
+以下核心骨架級別功能已完成，為業務模組開發奠定了堅實基礎：
 
-### 🔴 核心骨架級別（必須優先開發）
+#### ✅ 事件總線系統 (Event Bus System) - 已完成
 
-#### 1. 事件總線系統 (Event Bus System) ⭐⭐⭐⭐⭐
+**實作位置**：
+- `src/app/shared/services/event-bus/event-bus.service.ts`
+- `src/app/core/infra/types/event/event.types.ts`
+- `src/app/core/infra/types/event/event.factory.ts`
 
-**骨架級別**：最高優先級  
-**依賴數量**：5+ 模組  
-**開發週期**：1-2 週  
-**當前狀態**：🔴 0%
+**已實現功能**：
+- ✅ EventBusService - 完整的發布/訂閱機制
+- ✅ 事件類型定義系統 - 涵蓋 8 大類別事件
+- ✅ 事件過濾和路由 - 支援多維度過濾
+- ✅ 事件工廠 - 標準化事件創建
+- ✅ 類型安全的事件 Payload 定義
 
-**為什麼是骨架級別**：
-- 模組間解耦通訊的基礎架構
-- 通知中心、審計日誌、搜尋引擎都依賴它
-- 支援鬆耦合架構，讓模組獨立開發
+#### ✅ 檔案管理基礎架構 (File Management Infrastructure) - 已完成
 
-**依賴關係**：
-```
-事件總線
-  ├─→ 通知中心（事件觸發通知）
-  ├─→ 審計日誌（事件記錄）
-  ├─→ 搜尋索引（事件觸發索引更新）
-  └─→ 業務模組（任務、日誌、檔案等）
-```
+**實作位置**：
+- `src/app/core/infra/repositories/file/file.repository.ts`
+- `src/app/core/infra/types/file/file.types.ts`
+- `src/app/shared/services/file/file.service.ts`
+
+**已實現功能**：
+- ✅ FileRepository - 完整 CRUD + 分享 + 統計
+- ✅ FileService - Signals 響應式狀態管理
+- ✅ File Types 定義 - 完整的類型系統
+
+**待配置項目**：
+- [ ] Supabase Storage bucket 配置（需在 Dashboard 操作）
+- [ ] 檔案上傳 UI 元件整合
+
+#### ✅ 通知中心基礎架構 (Notification Hub) - 已完成
+
+**實作位置**：
+- `src/app/core/infra/repositories/notification/notification.repository.ts`
+- `src/app/core/infra/types/notification/notification.types.ts`
+- `src/app/shared/services/notification/notification.service.ts`
+- `src/app/layout/basic/widgets/notify.component.ts`
+
+**已實現功能**：
+- ✅ NotificationRepository - 完整 CRUD + Realtime 訂閱
+- ✅ NotificationService - Signals 響應式狀態管理 + 分類
+- ✅ Supabase Realtime 整合 - 即時推送
+- ✅ HeaderNotifyComponent - 通知 UI 元件
 
 **待完成項目**：
-- [ ] EventBusService (RxJS Subject + Supabase Realtime)
-- [ ] 事件類型定義系統
-- [ ] 事件發布/訂閱機制
-- [ ] 事件過濾和路由
-- [ ] 事件重播功能
+- [ ] Email 通知整合
+- [ ] 通知偏好設定 UI
+
+#### ✅ 權限指令元件 (Permission Directive) - 已完成
+
+**實作位置**：
+- `src/app/shared/directives/permission.directive.ts`
+
+**已實現功能**：
+- ✅ `*hasPermission` Directive - 權限控制
+- ✅ `*hasRole` Directive - 角色控制
+- ✅ `*isOwner` Directive - 擁有者控制
+- ✅ 支援 else 模板
+- ✅ Signal-based 響應式更新
 
 ---
 
-#### 2. 檔案管理基礎架構 (File Management Infrastructure) ⭐⭐⭐⭐⭐
+### 🔴 待開發的骨架級別功能
 
-**骨架級別**：最高優先級  
-**依賴數量**：4+ 模組  
-**開發週期**：1-2 週  
-**當前狀態**：🔴 0%
-
-**為什麼是骨架級別**：
-- 多個業務模組共用（任務附件、日誌照片、問題附件）
-- 需要 Supabase Storage 整合
-- 一旦建立，各模組可直接使用，無需重複開發
-
-**依賴關係**：
-```
-檔案管理基礎
-  ├─→ 任務模組（任務附件）
-  ├─→ 日誌模組（日誌照片）
-  ├─→ 問題模組（問題附件）
-  └─→ 藍圖模組（專案文件）
-```
-
-**待完成項目**：
-- [ ] Supabase Storage bucket 配置
-- [ ] FileRepository - 檔案資料存取層
-- [ ] FileService - 檔案業務邏輯
-- [ ] 檔案上傳元件（拖拉上傳）
-- [ ] 檔案預覽功能（圖片/PDF）
-- [ ] 檔案分享機制（file_shares 表整合）
-
----
-
-#### 3. 通知中心基礎架構 (Notification Hub) ⭐⭐⭐⭐
-
-**骨架級別**：高優先級  
-**依賴數量**：5+ 模組  
-**開發週期**：1-2 週  
-**當前狀態**：🔴 0%
-
-**為什麼是骨架級別**：
-- 所有業務模組都需要通知功能
-- 統一的通知機制避免重複實作
-- 支援多通道（App、Email、Webhook）
-
-**依賴關係**：
-```
-通知中心
-  ├─→ 事件總線（接收事件）
-  ├─→ 任務模組（任務指派通知）
-  ├─→ 日誌模組（審核通知）
-  ├─→ 問題模組（問題指派通知）
-  └─→ 權限模組（權限變更通知）
-```
-
-**待完成項目**：
-- [ ] NotificationRepository - 通知資料存取層
-- [ ] NotificationService - 通知業務邏輯
-- [ ] Supabase Realtime 整合（即時推送）
-- [ ] 通知 UI 元件（通知列表、未讀標記）
-- [ ] 通知偏好設定
-- [ ] Email 通知整合（後續）
-
----
-
-#### 4. 操作審計日誌系統 (Audit Log System) ⭐⭐⭐⭐
+#### 1. 操作審計日誌系統 (Audit Log System) ⭐⭐⭐⭐
 
 **骨架級別**：高優先級  
 **依賴數量**：所有模組  
-**開發週期**：1 週  
+**開發週期**：1-2 週  
 **當前狀態**：🔴 0%
 
 **為什麼是骨架級別**：
 - 企業合規要求
 - 所有資料變更都需要記錄
-- 可基於事件總線自動記錄
+- 可基於已完成的事件總線自動記錄
 
 **依賴關係**：
 ```
 審計日誌系統
-  ├─→ 事件總線（監聽所有事件）
-  ├─→ 資料庫觸發器（自動記錄）
+  ├─→ 事件總線（✅ 已完成 - 監聽所有事件）
+  ├─→ 資料庫觸發器（待建立）
   └─→ 所有 Repository（操作記錄）
 ```
 
 **待完成項目**：
 - [ ] AuditLogRepository - 審計日誌資料存取層
+- [ ] AuditLogService - 審計日誌業務邏輯
 - [ ] 資料庫觸發器（自動記錄 CRUD 操作）
+- [ ] 整合 EventBusService（監聽事件並記錄）
 - [ ] 審計日誌查詢介面
 - [ ] 審計日誌視覺化（時間軸視圖）
 
 ---
 
-#### 5. 權限指令元件完善 (Permission Directive) ⭐⭐⭐
+#### 2. 時間追蹤基礎架構 (Time Tracking Infrastructure) ⭐⭐⭐
 
-**骨架級別**：高優先級  
-**依賴數量**：所有 UI 元件  
+**骨架級別**：中優先級  
+**依賴數量**：2+ 模組（任務、日誌）  
 **開發週期**：1 週  
-**當前狀態**：🔶 50%
+**當前狀態**：🔴 0%
 
 **為什麼是骨架級別**：
-- UI 層權限控制的統一介面
-- 所有頁面都需要權限控制
-- 目前已有基礎，需完善細粒度控制
-
-**待完成項目**：
-- [ ] `*hasPermission` Directive 完善
-- [ ] 細粒度權限檢查（資源級別）
-- [ ] 權限快取策略
-- [ ] UI 元件整合範例
-
----
-
-### 🟠 次級骨架級別（短期目標）
-
-#### 6. 搜尋引擎基礎架構 (Search Engine) ⭐⭐⭐
-
-**骨架級別**：中優先級  
-**開發週期**：2-3 週  
-**當前狀態**：🔴 0%
-
-**為什麼是次級骨架**：
-- 提升使用者體驗，但非核心功能
-- 可先手動查詢，後續再優化
-- 需要事件總線支援自動索引
-
-**待完成項目**：
-- [ ] 全文檢索基礎架構
-- [ ] 權限感知過濾
-- [ ] 即時索引更新
-- [ ] 搜尋結果排序
-
----
-
-#### 7. 時間追蹤基礎架構 (Time Tracking Infrastructure) ⭐⭐
-
-**骨架級別**：中優先級  
-**開發週期**：1 週  
-**當前狀態**：🔴 0%
-
-**為什麼是次級骨架**：
 - 多個模組需要（任務、日誌）
 - 可先建立基礎架構，再擴展到各模組
 
 **待完成項目**：
+- [ ] 新增 `task_time_entries` 資料表
 - [ ] TimeEntryRepository
 - [ ] TimeTrackingService
 - [ ] 時間追蹤 UI 元件
 
 ---
 
-### 📊 骨架級別開發路線圖
+### 📊 更新後的開發路線圖
 
 ```
-Phase 1: 核心骨架（2-3 週）
-├─ Week 1-2: 事件總線系統
-│   ├─ EventBusService
-│   ├─ 事件類型定義
-│   └─ 事件發布/訂閱機制
-│
-└─ Week 2-3: 檔案管理基礎
-    ├─ Supabase Storage 配置
-    ├─ FileRepository
-    ├─ FileService
-    └─ 檔案上傳元件
+✅ Phase 1: 核心骨架（已完成）
+├─ ✅ 事件總線系統 - EventBusService + 事件類型
+├─ ✅ 檔案管理基礎 - FileRepository + FileService
+├─ ✅ 通知中心基礎 - NotificationService + HeaderNotifyComponent
+└─ ✅ 權限指令元件 - *hasPermission + *hasRole + *isOwner
 
-Phase 2: 通知與審計（2 週）
-├─ Week 4: 通知中心基礎
-│   ├─ NotificationRepository
-│   ├─ NotificationService
+🔴 Phase 2: 剩餘骨架（1-2 週）
+├─ Week 1: 審計日誌系統
+│   ├─ AuditLogRepository
+│   ├─ AuditLogService
+│   ├─ 資料庫觸發器
 │   ├─ 整合事件總線
-│   └─ 通知 UI 元件
+│   └─ 審計日誌查詢介面
 │
-└─ Week 5: 審計日誌系統
-    ├─ AuditLogRepository
-    ├─ 資料庫觸發器
-    ├─ 整合事件總線
-    └─ 審計日誌查詢介面
+└─ Week 2: 時間追蹤基礎
+    ├─ TimeEntryRepository
+    ├─ TimeTrackingService
+    └─ 時間追蹤 UI 元件
 
-Phase 3: 權限完善（1 週）
-└─ Week 6: 權限指令元件
-    ├─ *hasPermission Directive 完善
-    ├─ 細粒度權限檢查
-    └─ UI 元件整合
+🔴 Phase 3: 業務模組開發（2-4 週）
+├─ Week 3-4: 施工日誌模組
+│   ├─ DiaryRepository
+│   ├─ DiaryService
+│   └─ 日誌列表/表單 UI
+│
+└─ Week 5-6: 任務模組完善
+    ├─ 任務評論功能
+    ├─ 任務附件整合
+    └─ 任務歷史記錄
 ```
 
 ---
 
 ## 🎯 開發優先級建議
 
-基於專案現況分析，以下是建議的開發優先順序：
+基於專案現況分析，骨架級別基礎設施已大部分完成，以下是建議的下一步開發順序：
 
-### 🔴 最高優先級 - 骨架級別基礎設施 (2-3 週)
+### 🔴 最高優先級 - 剩餘骨架級別基礎設施 (1-2 週)
 
-> **重要**：建議先完成骨架級別功能，再開發業務模組，可大幅提升後續開發效率。
-
-#### 1. 事件總線系統 (Event Bus System) ⭐⭐⭐⭐⭐
+#### 1. 審計日誌系統 (Audit Log System) ⭐⭐⭐⭐
 
 **現況**：完全未實現（0%）  
-**優先級**：最高（其他功能依賴）
+**優先級**：最高（企業合規要求）
 
 **待完成項目**：
-1. **EventBusService** - 事件總線核心服務
-2. **事件類型定義** - 系統事件、業務事件、整合事件
-3. **事件發布/訂閱機制** - RxJS Subject + Supabase Realtime
-4. **事件過濾和路由** - 按類型、資源、用戶過濾
-5. **事件重播功能** - 歷史事件重播
+1. **AuditLogRepository** - 審計日誌資料存取層
+2. **AuditLogService** - 審計日誌業務邏輯（使用 Signals）
+3. **整合 EventBusService** - 監聽事件並自動記錄
+4. **資料庫觸發器** - 自動記錄 CRUD 操作
+5. **審計日誌查詢介面** - 時間軸視圖
 
 **為什麼優先**：
-- 模組間解耦通訊的基礎
-- 通知、審計、搜尋都依賴它
-- 支援鬆耦合架構
+- 企業合規要求
+- 事件總線已完成，可直接整合
+- 所有模組都需要操作記錄
 
 ---
 
-#### 2. 檔案管理基礎架構 (File Management Infrastructure) ⭐⭐⭐⭐⭐
+### 🔴 最高優先級 - 業務模組 (2-4 週)
 
-**現況**：完全未實現（0%）  
-**優先級**：最高（多模組共用）
-
-**待完成項目**：
-1. **Supabase Storage 配置** - bucket 設定和權限
-2. **FileRepository** - 檔案資料存取層
-3. **FileService** - 檔案業務邏輯
-4. **檔案上傳元件** - 拖拉上傳 UI
-5. **檔案預覽** - 圖片/PDF 預覽
-6. **檔案分享** - `file_shares` 表整合
-
-**為什麼優先**：
-- 任務附件、日誌照片、問題附件都需要
-- 一旦建立，各模組可直接使用
-- 避免重複開發
-
----
-
-### 🔴 最高優先級 - 業務模組 (1-2 週)
-
-> **注意**：建議在完成「事件總線」和「檔案管理基礎」後再開發業務模組，可充分利用骨架級別功能。
-
-#### 3. 施工日誌模組 (Diary Module) ⭐⭐⭐⭐⭐
+#### 2. 施工日誌模組 (Diary Module) ⭐⭐⭐⭐⭐
 
 **現況**：資料庫已設計完成（15%），前端和服務層尚未實作  
-**依賴**：需要檔案管理基礎（日誌照片上傳）
+**依賴**：檔案管理基礎（✅ 已完成）
 
 **待完成項目**：
 1. **DiaryRepository** - 日誌資料存取層
@@ -419,6 +345,7 @@ Phase 3: 權限完善（1 週）
 - 工地主任每日必用功能
 - 法規要求的施工紀錄
 - 資料庫結構已就緒
+- 檔案管理基礎已完成，可直接整合附件功能
 - 可參考 TaskModule 的架構模式
 
 **建議檔案結構**：
@@ -427,12 +354,15 @@ src/app/
 ├── core/infra/repositories/diary/
 │   ├── diary.repository.ts      ← 待建立
 │   └── index.ts
+├── core/infra/types/diary/
+│   ├── diary.types.ts           ← 待建立
+│   └── index.ts
 ├── shared/services/diary/
 │   ├── diary.service.ts         ← 待建立
 │   └── index.ts
 └── routes/blueprint/diary/
-    ├── diary-list/              ← 待建立
-    ├── diary-form/              ← 待建立
+    ├── diary-list.component.ts  ← 待建立
+    ├── diary-form.component.ts  ← 待建立
     └── routes.ts                ← 待建立
 ```
 
@@ -440,32 +370,33 @@ src/app/
 
 ### 🟠 高優先級 - 短期目標 (2-4 週)
 
-> **注意**：檔案管理基礎架構已在「骨架級別功能」中說明，此處不再重複。
-
-#### 4. 任務模組完善 ⭐⭐⭐⭐
+#### 3. 任務模組完善 ⭐⭐⭐⭐
 
 **現況**：核心功能已完成（85%），需完善細節
 
 **待完成項目**：
-1. **移除 mock 資料相關程式碼** - 清理 `generateMockTasks` 等已棄用方法
-2. **任務附件功能** - 整合 `task_attachments` 資料表
-3. **任務指派通知** - 整合通知系統
-4. **任務評論功能** - 討論和留言（需新增 `task_comments` 表）
-5. **拖曳排序** - 任務順序調整
+1. **任務附件功能** - 整合 FileService（✅ 已完成）
+2. **任務評論功能** - 使用 `task_comments` 資料表
+3. **任務歷史記錄** - 整合審計日誌系統
+4. **拖曳排序** - 任務順序調整
+
+---
+
+#### 4. Supabase Storage 配置 ⭐⭐⭐⭐
+
+**現況**：FileRepository + FileService 已完成，需配置 Storage
+
+**待完成項目**：
+1. **在 Supabase Dashboard 建立 bucket**
+   - `blueprint-files` - 藍圖相關檔案
+   - `task-attachments` - 任務附件
+   - `diary-photos` - 日誌照片
+2. **設定 RLS 政策** - 根據藍圖成員權限控制存取
+3. **檔案上傳 UI 元件** - 拖拉上傳 + 進度顯示
 
 ---
 
 ### 🟡 中優先級 - 中期目標 (4-6 週)
-
-#### 4. 權限控制完善 ⭐⭐⭐
-
-**現況**：基礎 RBAC 已實現（70%），細粒度權限控制不完整
-
-**待完成項目**：
-1. **blueprint_roles 整合** - 自訂角色系統
-2. **權限 Guard 強化** - 路由層權限控制
-3. **UI 權限控制** - 按鈕/操作的條件顯示
-4. **PermissionDirective** - 權限指令元件
 
 #### 5. 問題追蹤模組 (Issue Module) ⭐⭐⭐
 
@@ -477,15 +408,15 @@ src/app/
 3. **問題列表/詳情頁面** - UI 元件
 4. **問題評論功能** - 討論留言
 
-#### 6. 通知中心模組 ⭐⭐⭐
+#### 6. 時間追蹤功能 ⭐⭐⭐
 
-**現況**：資料表已設計 (`notifications`, `notification_preferences`)，前端未實現
+**現況**：完全未實現（0%）
 
 **待完成項目**：
-1. **NotificationRepository** - 通知資料存取層
-2. **NotificationService** - 通知業務邏輯
-3. **通知中心 UI** - 通知列表、未讀標記
-4. **Supabase Realtime 整合** - 即時通知推送
+1. **新增 `task_time_entries` 資料表**
+2. **TimeEntryRepository** - 時間記錄資料存取層
+3. **TimeTrackingService** - 時間追蹤業務邏輯
+4. **時間追蹤 UI 元件** - 計時器、時間記錄
 
 ---
 
@@ -500,23 +431,14 @@ src/app/
 - 驗收流程管理
 - 驗收報告產生
 
-#### 8. 事件總線系統 ⭐⭐
+#### 8. Email 通知整合 ⭐⭐
 
-**現況**：資料表已設計 (`events`, `event_subscriptions`)
-
-**待建立**：
-- 事件發布/訂閱機制
-- 模組間通訊
-- 自動化觸發器
-
-#### 9. 搜尋引擎 ⭐
-
-**現況**：資料表已設計 (`search_index`)
+**現況**：通知中心已完成，Email 整合未實現
 
 **待建立**：
-- 全文檢索功能
-- 搜尋結果頁面
-- 搜尋建議
+- Supabase Edge Functions 或第三方服務
+- Email 模板設計
+- 發送排程
 
 ---
 
@@ -532,12 +454,43 @@ src/app/core/infra/repositories/
 │   ├── blueprint.repository.ts  ✅
 │   ├── blueprint-member.repository.ts ✅
 │   └── index.ts
+├── file/
+│   ├── file.repository.ts       ✅ 新完成
+│   └── index.ts
 ├── financial/
 │   ├── financial.repository.ts  ✅
+│   └── index.ts
+├── notification/
+│   ├── notification.repository.ts ✅ 新完成
+│   └── index.ts
+├── search/
+│   ├── search.repository.ts     ✅
 │   └── index.ts
 ├── task/
 │   ├── task.repository.ts       ✅
 │   └── index.ts
+└── index.ts
+```
+
+### Types 層（已完成）
+```
+src/app/core/infra/types/
+├── account/                     ✅
+├── blueprint/                   ✅
+├── event/                       ✅ 新完成
+│   ├── event.types.ts           ✅ 完整事件類型定義
+│   ├── event.factory.ts         ✅ 事件工廠
+│   └── index.ts
+├── file/                        ✅ 新完成
+│   ├── file.types.ts            ✅ 檔案類型定義
+│   └── index.ts
+├── financial/                   ✅
+├── notification/                ✅ 新完成
+│   ├── notification.types.ts    ✅ 通知類型定義
+│   └── index.ts
+├── permission/                  ✅
+├── search/                      ✅
+├── task/                        ✅
 └── index.ts
 ```
 
@@ -548,14 +501,35 @@ src/app/shared/services/
 │   └── account.service.ts       ✅
 ├── blueprint/
 │   └── blueprint.service.ts     ✅
+├── event-bus/
+│   ├── event-bus.service.ts     ✅ 新完成
+│   └── index.ts
+├── file/
+│   ├── file.service.ts          ✅ 新完成
+│   └── index.ts
 ├── financial/
 │   └── financial.service.ts     ✅
-├── task/
-│   └── task.service.ts          ✅
 ├── menu/
 │   └── menu.service.ts          ✅
+├── notification/
+│   ├── notification.service.ts  ✅ 新完成
+│   └── index.ts
 ├── permission/
-│   └── permission.service.ts    🔶
+│   └── permission.service.ts    ✅
+├── search/
+│   └── search.service.ts        ✅
+├── task/
+│   └── task.service.ts          ✅
+└── index.ts
+```
+
+### 指令層（已完成）
+```
+src/app/shared/directives/
+├── permission.directive.ts      ✅ 新完成
+│   ├── HasPermissionDirective   ✅ *hasPermission
+│   ├── HasRoleDirective         ✅ *hasRole
+│   └── IsOwnerDirective         ✅ *isOwner
 └── index.ts
 ```
 
@@ -571,6 +545,7 @@ src/app/routes/
 │   │   ├── tasks.component.ts
 │   │   └── task-edit-drawer.component.ts
 │   ├── diary/                   🔴 待建立
+│   ├── issues/                  🔴 待建立
 │   ├── files/                   🔴 待建立
 │   └── routes.ts
 ├── account/                     ✅
@@ -578,41 +553,36 @@ src/app/routes/
 └── ...
 ```
 
+### UI 元件（已完成）
+```
+src/app/layout/basic/widgets/
+├── notify.component.ts          ✅ 新完成 - 通知中心 Header Widget
+├── search.component.ts          ✅ 全域搜尋元件
+├── ...
+```
+
 ---
 
 ## 🔧 技術實作建議
 
-### 1. DiaryRepository 參考實作
+### 1. DiaryRepository 參考實作（參考現有模式）
 
 ```typescript
 // src/app/core/infra/repositories/diary/diary.repository.ts
 import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
-import { SupabaseService } from '@core/supabase';
-
-export interface Diary {
-  id: string;
-  blueprint_id: string;
-  work_date: string;
-  weather: string | null;
-  temperature_min: number | null;
-  temperature_max: number | null;
-  work_hours: number | null;
-  worker_count: number | null;
-  summary: string | null;
-  notes: string | null;
-  status: string;
-  created_by: string | null;
-  approved_by: string | null;
-  approved_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
+import { SupabaseService } from '@core';
+import { Diary, CreateDiaryRequest, UpdateDiaryRequest, DiaryQueryOptions } from '../../types/diary';
 
 @Injectable({ providedIn: 'root' })
 export class DiaryRepository {
+  // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly supabase = inject(SupabaseService);
 
+  /**
+   * 根據藍圖查詢日誌
+   * Find diaries by blueprint
+   */
   findByBlueprint(blueprintId: string): Observable<Diary[]> {
     return from(
       this.supabase.client
@@ -632,6 +602,10 @@ export class DiaryRepository {
     );
   }
 
+  /**
+   * 根據日期查詢日誌
+   * Find diary by date
+   */
   findByDate(blueprintId: string, date: string): Observable<Diary | null> {
     return from(
       this.supabase.client
@@ -643,17 +617,29 @@ export class DiaryRepository {
         .single()
     ).pipe(
       map(({ data, error }) => {
-        if (error) return null;
+        if (error) {
+          if (error.code === 'PGRST116') return null; // Not found
+          console.error('[DiaryRepository] findByDate error:', error);
+          return null;
+        }
         return data as Diary;
       })
     );
   }
 
-  create(diary: Partial<Diary>): Observable<Diary | null> {
+  /**
+   * 建立日誌
+   * Create a new diary
+   */
+  create(request: CreateDiaryRequest, createdBy: string): Observable<Diary | null> {
     return from(
       this.supabase.client
         .from('diaries')
-        .insert(diary)
+        .insert({
+          ...request,
+          status: 'draft',
+          created_by: createdBy
+        })
         .select()
         .single()
     ).pipe(
@@ -667,11 +653,18 @@ export class DiaryRepository {
     );
   }
 
-  update(id: string, updates: Partial<Diary>): Observable<Diary | null> {
+  /**
+   * 更新日誌
+   * Update a diary
+   */
+  update(id: string, updates: UpdateDiaryRequest): Observable<Diary | null> {
     return from(
       this.supabase.client
         .from('diaries')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id)
         .select()
         .single()
@@ -685,15 +678,43 @@ export class DiaryRepository {
       })
     );
   }
+
+  /**
+   * 核准日誌
+   * Approve a diary
+   */
+  approve(id: string, approvedBy: string): Observable<Diary | null> {
+    return from(
+      this.supabase.client
+        .from('diaries')
+        .update({
+          status: 'approved',
+          approved_by: approvedBy,
+          approved_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[DiaryRepository] approve error:', error);
+          return null;
+        }
+        return data as Diary;
+      })
+    );
+  }
 }
 ```
 
-### 2. DiaryService 參考實作
+### 2. DiaryService 參考實作（使用 Signals）
 
 ```typescript
 // src/app/shared/services/diary/diary.service.ts
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { DiaryRepository, Diary } from '@core';
+import { DiaryRepository, Diary, CreateDiaryRequest, UpdateDiaryRequest } from '@core';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -702,18 +723,30 @@ export class DiaryService {
 
   // State signals
   private diariesState = signal<Diary[]>([]);
+  private selectedDiaryState = signal<Diary | null>(null);
   private loadingState = signal<boolean>(false);
   private errorState = signal<string | null>(null);
 
   // Readonly signals
   readonly diaries = this.diariesState.asReadonly();
+  readonly selectedDiary = this.selectedDiaryState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
 
   // Computed signals
   readonly diaryCount = computed(() => this.diariesState().length);
   readonly hasError = computed(() => this.errorState() !== null);
+  readonly draftDiaries = computed(() => 
+    this.diariesState().filter(d => d.status === 'draft')
+  );
+  readonly approvedDiaries = computed(() => 
+    this.diariesState().filter(d => d.status === 'approved')
+  );
 
+  /**
+   * 載入藍圖的所有日誌
+   * Load all diaries for a blueprint
+   */
   async loadDiaries(blueprintId: string): Promise<Diary[]> {
     this.loadingState.set(true);
     this.errorState.set(null);
@@ -731,116 +764,270 @@ export class DiaryService {
     }
   }
 
-  async createDiary(diary: Partial<Diary>): Promise<Diary | null> {
-    const newDiary = await firstValueFrom(this.repo.create(diary));
-    if (newDiary) {
-      this.diariesState.update(list => [newDiary, ...list]);
+  /**
+   * 建立日誌
+   * Create a new diary
+   */
+  async createDiary(request: CreateDiaryRequest, createdBy: string): Promise<Diary | null> {
+    this.loadingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const newDiary = await firstValueFrom(this.repo.create(request, createdBy));
+      if (newDiary) {
+        this.diariesState.update(list => [newDiary, ...list]);
+      }
+      return newDiary;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '建立日誌失敗';
+      this.errorState.set(message);
+      throw err;
+    } finally {
+      this.loadingState.set(false);
     }
-    return newDiary;
   }
 
-  async updateDiary(id: string, updates: Partial<Diary>): Promise<Diary | null> {
-    const updated = await firstValueFrom(this.repo.update(id, updates));
-    if (updated) {
-      this.diariesState.update(list =>
-        list.map(d => d.id === id ? updated : d)
-      );
+  /**
+   * 更新日誌
+   * Update a diary
+   */
+  async updateDiary(id: string, updates: UpdateDiaryRequest): Promise<Diary | null> {
+    this.loadingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const updated = await firstValueFrom(this.repo.update(id, updates));
+      if (updated) {
+        this.diariesState.update(list =>
+          list.map(d => d.id === id ? updated : d)
+        );
+        if (this.selectedDiaryState()?.id === id) {
+          this.selectedDiaryState.set(updated);
+        }
+      }
+      return updated;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '更新日誌失敗';
+      this.errorState.set(message);
+      throw err;
+    } finally {
+      this.loadingState.set(false);
     }
-    return updated;
+  }
+
+  /**
+   * 核准日誌
+   * Approve a diary
+   */
+  async approveDiary(id: string, approvedBy: string): Promise<Diary | null> {
+    return this.updateDiary(id, {
+      status: 'approved',
+      approved_by: approvedBy,
+      approved_at: new Date().toISOString()
+    } as UpdateDiaryRequest);
+  }
+
+  /**
+   * 選擇日誌
+   * Select a diary
+   */
+  selectDiary(diary: Diary | null): void {
+    this.selectedDiaryState.set(diary);
+  }
+
+  /**
+   * 清除錯誤
+   * Clear error
+   */
+  clearError(): void {
+    this.errorState.set(null);
+  }
+}
+```
+
+### 3. AuditLogRepository 參考實作
+
+```typescript
+// src/app/core/infra/repositories/audit-log/audit-log.repository.ts
+import { Injectable, inject } from '@angular/core';
+import { Observable, from, map } from 'rxjs';
+import { SupabaseService } from '@core';
+
+export interface AuditLog {
+  id: string;
+  entity_type: string;
+  entity_id: string;
+  action: string;
+  actor_id: string;
+  actor_name?: string;
+  blueprint_id?: string;
+  changes?: Record<string, { old: unknown; new: unknown }>;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface AuditLogQueryOptions {
+  blueprintId?: string;
+  entityType?: string;
+  entityId?: string;
+  actorId?: string;
+  action?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuditLogRepository {
+  private readonly supabase = inject(SupabaseService);
+
+  /**
+   * 查詢審計日誌
+   * Query audit logs
+   */
+  query(options: AuditLogQueryOptions): Observable<AuditLog[]> {
+    let query = this.supabase.client
+      .from('audit_logs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (options.blueprintId) {
+      query = query.eq('blueprint_id', options.blueprintId);
+    }
+    if (options.entityType) {
+      query = query.eq('entity_type', options.entityType);
+    }
+    if (options.entityId) {
+      query = query.eq('entity_id', options.entityId);
+    }
+    if (options.actorId) {
+      query = query.eq('actor_id', options.actorId);
+    }
+    if (options.action) {
+      query = query.eq('action', options.action);
+    }
+    if (options.startDate) {
+      query = query.gte('created_at', options.startDate);
+    }
+    if (options.endDate) {
+      query = query.lte('created_at', options.endDate);
+    }
+    if (options.limit) {
+      query = query.limit(options.limit);
+    }
+
+    return from(query).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[AuditLogRepository] query error:', error);
+          return [];
+        }
+        return (data || []) as AuditLog[];
+      })
+    );
+  }
+
+  /**
+   * 記錄審計日誌
+   * Create audit log entry
+   */
+  create(log: Omit<AuditLog, 'id' | 'created_at'>): Observable<AuditLog | null> {
+    return from(
+      this.supabase.client
+        .from('audit_logs')
+        .insert(log)
+        .select()
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[AuditLogRepository] create error:', error);
+          return null;
+        }
+        return data as AuditLog;
+      })
+    );
+  }
+
+  /**
+   * 取得實體的歷史記錄
+   * Get entity history
+   */
+  getEntityHistory(entityType: string, entityId: string): Observable<AuditLog[]> {
+    return this.query({ entityType, entityId, limit: 100 });
   }
 }
 ```
 
 ---
 
+
+---
+
 ## 📝 立即行動清單
 
-> **重要**：建議優先完成骨架級別功能，再開發業務模組。
+> **已完成**：骨架級別功能已大部分完成，現在可直接開發業務模組。
 
-### Phase 1: 骨架級別基礎設施 (Week 1-3)
+### ✅ Phase 1: 骨架級別基礎設施（已完成）
 
-#### Week 1-2: 事件總線系統 ⭐⭐⭐⭐⭐
+#### ✅ 已完成項目（無需操作）
 
-- [ ] **建立 EventBusService**
-  ```bash
-  mkdir -p src/app/shared/services/event-bus
-  touch src/app/shared/services/event-bus/event-bus.service.ts
-  touch src/app/shared/services/event-bus/event-types.ts
-  touch src/app/shared/services/event-bus/index.ts
-  ```
-- [ ] **定義事件類型** - 系統事件、業務事件、整合事件
-- [ ] **實作發布/訂閱機制** - RxJS Subject
-- [ ] **整合 Supabase Realtime** - 跨客戶端事件同步
-- [ ] **事件過濾和路由** - 按類型、資源、用戶過濾
-- [ ] **更新 shared/index.ts** 導出 EventBusService
+- [x] **事件總線系統** - `src/app/shared/services/event-bus/`
+  - EventBusService ✅
+  - 事件類型定義 ✅
+  - 事件工廠 ✅
+  - 事件發布/訂閱機制 ✅
 
-#### Week 2-3: 檔案管理基礎架構 ⭐⭐⭐⭐⭐
+- [x] **檔案管理基礎** - `src/app/core/infra/repositories/file/`
+  - FileRepository ✅
+  - FileService ✅
+  - File Types 定義 ✅
 
-- [ ] **配置 Supabase Storage**
-  ```bash
-  # 在 Supabase Dashboard 建立 bucket
-  # 設定 RLS 政策
-  ```
-- [ ] **建立 FileRepository**
-  ```bash
-  mkdir -p src/app/core/infra/repositories/file
-  touch src/app/core/infra/repositories/file/file.repository.ts
-  touch src/app/core/infra/repositories/file/index.ts
-  ```
-- [ ] **建立 FileService**
-  ```bash
-  mkdir -p src/app/shared/services/file
-  touch src/app/shared/services/file/file.service.ts
-  touch src/app/shared/services/file/index.ts
-  ```
-- [ ] **建立檔案上傳元件** - 拖拉上傳 UI
-- [ ] **檔案預覽功能** - 圖片/PDF 預覽
-- [ ] **更新 core/index.ts** 導出 FileRepository
-- [ ] **更新 shared/index.ts** 導出 FileService
+- [x] **通知中心** - `src/app/shared/services/notification/`
+  - NotificationRepository ✅
+  - NotificationService ✅
+  - Supabase Realtime 整合 ✅
+  - HeaderNotifyComponent ✅
 
-### Phase 2: 通知與審計 (Week 4-5)
+- [x] **權限指令元件** - `src/app/shared/directives/`
+  - *hasPermission Directive ✅
+  - *hasRole Directive ✅
+  - *isOwner Directive ✅
 
-#### Week 4: 通知中心基礎 ⭐⭐⭐⭐
+### 🔴 Phase 2: 待開發項目
 
-- [ ] **建立 NotificationRepository**
-  ```bash
-  mkdir -p src/app/core/infra/repositories/notification
-  touch src/app/core/infra/repositories/notification/notification.repository.ts
-  touch src/app/core/infra/repositories/notification/index.ts
-  ```
-- [ ] **建立 NotificationService**
-  ```bash
-  mkdir -p src/app/shared/services/notification
-  touch src/app/shared/services/notification/notification.service.ts
-  touch src/app/shared/services/notification/index.ts
-  ```
-- [ ] **整合事件總線** - 監聽事件並發送通知
-- [ ] **Supabase Realtime 整合** - 即時通知推送
-- [ ] **通知 UI 元件** - 通知列表、未讀標記
-- [ ] **更新 core/index.ts** 和 **shared/index.ts**
-
-#### Week 5: 審計日誌系統 ⭐⭐⭐⭐
+#### 優先級 1: 審計日誌系統（1 週）
 
 - [ ] **建立 AuditLogRepository**
   ```bash
   mkdir -p src/app/core/infra/repositories/audit-log
+  mkdir -p src/app/core/infra/types/audit-log
   touch src/app/core/infra/repositories/audit-log/audit-log.repository.ts
   touch src/app/core/infra/repositories/audit-log/index.ts
+  touch src/app/core/infra/types/audit-log/audit-log.types.ts
+  touch src/app/core/infra/types/audit-log/index.ts
   ```
-- [ ] **建立資料庫觸發器** - 自動記錄 CRUD 操作
-- [ ] **整合事件總線** - 監聽所有事件並記錄
+- [ ] **建立 AuditLogService**
+  ```bash
+  mkdir -p src/app/shared/services/audit-log
+  touch src/app/shared/services/audit-log/audit-log.service.ts
+  touch src/app/shared/services/audit-log/index.ts
+  ```
+- [ ] **整合 EventBusService** - 監聽事件並自動記錄
 - [ ] **審計日誌查詢介面** - 時間軸視圖
-- [ ] **更新 core/index.ts**
+- [ ] **更新 core/index.ts** 和 **shared/index.ts**
 
-### Phase 3: 業務模組開發 (Week 6+)
-
-#### Week 6: 施工日誌模組基礎
+#### 優先級 2: 施工日誌模組（2 週）
 
 - [ ] **建立 DiaryRepository**
   ```bash
   mkdir -p src/app/core/infra/repositories/diary
+  mkdir -p src/app/core/infra/types/diary
   touch src/app/core/infra/repositories/diary/diary.repository.ts
   touch src/app/core/infra/repositories/diary/index.ts
+  touch src/app/core/infra/types/diary/diary.types.ts
+  touch src/app/core/infra/types/diary/index.ts
   ```
 - [ ] **建立 DiaryService**
   ```bash
@@ -848,11 +1035,6 @@ export class DiaryService {
   touch src/app/shared/services/diary/diary.service.ts
   touch src/app/shared/services/diary/index.ts
   ```
-- [ ] **更新 core/index.ts** 導出 DiaryRepository
-- [ ] **更新 shared/index.ts** 導出 DiaryService
-
-#### Week 7: 施工日誌模組 UI
-
 - [ ] **建立日誌路由頁面**
   ```bash
   mkdir -p src/app/routes/blueprint/diary
@@ -863,13 +1045,20 @@ export class DiaryService {
 - [ ] **更新藍圖路由** - 加入日誌模組路由
 - [ ] **建立天氣選擇器元件** - 使用 `weather_type` 枚舉
 - [ ] **日誌附件功能** - 整合 FileService（照片上傳）
+- [ ] **更新 core/index.ts** 和 **shared/index.ts**
 
-#### Week 8: 任務模組完善
+#### 優先級 3: 任務模組完善（1 週）
 
-- [ ] **清理 TaskService mock 程式碼** - 移除已棄用方法
 - [ ] **任務附件功能** - 整合 FileService
 - [ ] **任務評論功能** - 使用 `task_comments` 資料表
 - [ ] **任務歷史記錄** - 整合審計日誌系統
+
+#### 優先級 4: Supabase Storage 配置（需 Dashboard 操作）
+
+- [ ] 在 Supabase Dashboard 建立 `blueprint-files` bucket
+- [ ] 在 Supabase Dashboard 建立 `task-attachments` bucket
+- [ ] 在 Supabase Dashboard 建立 `diary-photos` bucket
+- [ ] 設定 RLS 政策
 
 ---
 
@@ -889,12 +1078,13 @@ export class DiaryService {
 
 | 特性 | 使用狀態 | 檔案範例 |
 |------|---------|---------|
-| `signal()`, `computed()` | ✅ 廣泛使用 | TaskService, BlueprintService |
+| `signal()`, `computed()` | ✅ 廣泛使用 | TaskService, BlueprintService, NotificationService |
 | `linkedSignal()` | ✅ 已使用 | TaskService.selectedTask |
 | `inject()` 函數 | ✅ 標準使用 | 所有 Service 和 Repository |
 | `input()`, `output()` | ✅ 部分使用 | TaskEditDrawerComponent |
 | `@if`, `@for`, `@switch` | ✅ 標準使用 | 所有 Component 模板 |
 | `toSignal()`, `toObservable()` | 🔶 部分使用 | 可擴展使用 |
+| `effect()` | ✅ 已使用 | PermissionDirective, HeaderNotifyComponent |
 
 ---
 
@@ -913,72 +1103,68 @@ export class DiaryService {
 
 ## 🎯 總結
 
-基於專案最新分析，**建議的開發順序**為：
+基於專案最新分析，**骨架級別基礎設施已大部分完成**，現在建議的開發順序為：
 
-### 🏗️ 第一階段：骨架級別基礎設施（必須優先）
+### 🏗️ 第一階段：剩餘骨架級別基礎設施（1 週）
 
-1. **📌 事件總線系統** ⭐⭐⭐⭐⭐ (最高優先)
-   - 模組間解耦通訊的基礎
-   - 通知、審計、搜尋都依賴它
-   - 支援鬆耦合架構
-
-2. **📌 檔案管理基礎架構** ⭐⭐⭐⭐⭐ (最高優先)
-   - 多模組共用（任務、日誌、問題附件）
-   - Supabase Storage 整合
-   - 一旦建立，各模組可直接使用
-
-3. **📌 通知中心基礎** ⭐⭐⭐⭐ (高優先)
-   - 所有業務模組都需要通知
-   - 統一的通知機制
-   - 支援多通道（App、Email、Webhook）
-
-4. **📌 操作審計日誌系統** ⭐⭐⭐⭐ (高優先)
+1. **📌 操作審計日誌系統** ⭐⭐⭐⭐ (最高優先)
    - 企業合規要求
+   - 事件總線已完成，可直接整合
    - 所有資料變更都需要記錄
-   - 可基於事件總線自動記錄
 
-5. **📌 權限指令元件完善** ⭐⭐⭐ (高優先)
-   - UI 層權限控制的統一介面
-   - 所有頁面都需要權限控制
+### 📦 第二階段：業務模組開發（2-4 週）
 
-### 📦 第二階段：業務模組開發
-
-6. **📌 施工日誌模組** (高優先)
+2. **📌 施工日誌模組** ⭐⭐⭐⭐⭐ (最高優先)
    - 核心業務需求
    - 資料庫結構已就緒
-   - 可參考 TaskModule 架構
-   - **依賴**：檔案管理基礎（日誌照片上傳）
+   - 檔案管理基礎已完成，可直接整合附件功能
 
-7. **📌 任務模組完善** (高優先)
-   - 清理 mock 程式碼
+3. **📌 任務模組完善** ⭐⭐⭐⭐ (高優先)
    - 附件和評論功能
-   - **依賴**：檔案管理基礎、事件總線
+   - 歷史記錄功能
+   - 整合審計日誌
 
-8. **📌 問題追蹤模組** (中優先)
+4. **📌 問題追蹤模組** ⭐⭐⭐ (中優先)
    - 問題管理功能
-   - **依賴**：檔案管理基礎、通知中心
+   - 基於已完成的基礎設施
 
 ### 🚀 立即開始的第一步
 
 ```bash
-# Phase 1: 骨架級別基礎設施
+# 建議從審計日誌系統開始，因為它是主要剩餘的骨架級別功能
 
-# 1. 建立事件總線系統
-mkdir -p src/app/shared/services/event-bus
-touch src/app/shared/services/event-bus/event-bus.service.ts
-touch src/app/shared/services/event-bus/event-types.ts
+# 1. 建立審計日誌類型定義
+mkdir -p src/app/core/infra/types/audit-log
+touch src/app/core/infra/types/audit-log/audit-log.types.ts
+touch src/app/core/infra/types/audit-log/index.ts
 
-# 2. 建立檔案管理基礎
-mkdir -p src/app/core/infra/repositories/file
-mkdir -p src/app/shared/services/file
-touch src/app/core/infra/repositories/file/file.repository.ts
-touch src/app/shared/services/file/file.service.ts
+# 2. 建立審計日誌 Repository
+mkdir -p src/app/core/infra/repositories/audit-log
+touch src/app/core/infra/repositories/audit-log/audit-log.repository.ts
+touch src/app/core/infra/repositories/audit-log/index.ts
 
-# 3. 配置 Supabase Storage (在 Supabase Dashboard 操作)
+# 3. 建立審計日誌 Service
+mkdir -p src/app/shared/services/audit-log
+touch src/app/shared/services/audit-log/audit-log.service.ts
+touch src/app/shared/services/audit-log/index.ts
+
+# 或者直接開始施工日誌模組（如果審計日誌非緊急需求）
+
+# 1. 建立日誌類型定義
+mkdir -p src/app/core/infra/types/diary
+touch src/app/core/infra/types/diary/diary.types.ts
+touch src/app/core/infra/types/diary/index.ts
+
+# 2. 建立日誌 Repository
+mkdir -p src/app/core/infra/repositories/diary
+touch src/app/core/infra/repositories/diary/diary.repository.ts
+touch src/app/core/infra/repositories/diary/index.ts
+
+# 3. 建立日誌 Service
+mkdir -p src/app/shared/services/diary
+touch src/app/shared/services/diary/diary.service.ts
+touch src/app/shared/services/diary/index.ts
 ```
-
----
-
 ## 📊 功能缺口分析（Context7 查詢結果）
 
 > 以下功能缺口分析基於 Context7 MCP 工具查詢行業標準專案管理系統後，與 GigHub 專案現況進行比對所得出。
@@ -1196,6 +1382,140 @@ touch src/app/shared/services/file/file.service.ts
 3. **藍圖封存** - 專案歸檔
 4. **組織品牌設定** - 白標需求
 5. **天氣 API 整合** - 自動化
+
+---
+
+## 🔮 未來規劃功能
+
+> 以下功能為中長期規劃，待現階段核心功能完成後再進行開發。
+
+### 📋 規劃功能總覽
+
+| 功能模組 | 優先級 | 說明 | 建議實現方式 |
+|---------|--------|------|-------------|
+| 🔄 工作流程引擎 | ⭐⭐⭐⭐⭐ | 任務完成→提交→日誌可呈報→品管檢查→驗收 | 輕量級 WorkflowService + 狀態機模式，整合 EventBusService |
+| 💬 評論系統 | ⭐⭐⭐⭐⭐ | 多模組共用的評論功能 | 通用 CommentService + `task_comments` 資料表 |
+| 🏷️ 標籤系統 | ⭐⭐⭐⭐ | 多模組共用的標籤分類 | 通用 TagService + `task_tags` 資料表 |
+| 🎯 里程碑管理 | ⭐⭐⭐⭐ | 關鍵節點追蹤 | 新增 `milestones` 資料表，整合甘特圖 |
+| 📅 看板/甘特圖 | ⭐⭐⭐⭐ | 視覺化進度管理 | 看板：擴展現有視圖；甘特圖：引入 ngx-gantt 或 dhtmlx-gantt |
+| ⚠️ 風險管理 | ⭐⭐⭐ | 風險登記與追蹤 | 資料表 + 基本 CRUD 實作 MVP，未來擴展風險評估矩陣 |
+| 📊 儀表板引擎 | ⭐⭐⭐ | 可視化數據面板 | 先用 ng-zorro Chart/Statistic 組裝，未來考慮 Dashboard Builder |
+| 📈 報表中心 | ⭐⭐⭐ | BI 分析與報表匯出 | 預定義報表 + PDF/Excel 匯出，未來擴展報表設計器 |
+
+### 🔄 工作流程引擎（Workflow / Lifecycle）
+
+**需求背景**：支援施工管理的標準流程
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  任務完成   │ ─→ │    提交     │ ─→ │ 日誌可呈報  │ ─→ │  品管檢查   │ ─→ │    驗收     │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+**建議實現方式**：
+- 建立輕量級 `WorkflowService`，採用狀態機模式
+- 整合已完成的 `EventBusService` 作為流程觸發器
+- 支援多階段審批流程
+- 可配置的狀態轉換規則
+
+**預計結構**：
+```
+src/app/shared/services/workflow/
+├── workflow.service.ts       # 工作流程服務
+├── workflow.types.ts         # 狀態機類型定義
+├── workflow-engine.ts        # 流程引擎核心
+└── index.ts
+```
+
+### 💬 評論系統
+
+**需求背景**：任務、日誌、問題等多模組都需要評論功能
+
+**建議實現方式**：
+- 建立通用 `CommentService` 供多模組使用
+- 複用已存在的 `task_comments` 資料表結構
+- 支援 @提及、附件、表情回應
+
+**預計結構**：
+```
+src/app/shared/services/comment/
+├── comment.service.ts        # 評論服務
+├── comment.types.ts          # 評論類型定義
+└── index.ts
+
+src/app/shared/components/comment/
+├── comment-list.component.ts # 評論列表元件
+├── comment-form.component.ts # 評論表單元件
+└── index.ts
+```
+
+### 🏷️ 標籤系統
+
+**需求背景**：任務、問題等需要靈活的分類標籤
+
+**建議實現方式**：
+- 建立通用 `TagService`
+- 複用已存在的 `task_tags` 資料表結構
+- 支援多色標籤、標籤群組
+
+### 🎯 里程碑管理系統
+
+**需求背景**：追蹤專案關鍵節點
+
+**建議實現方式**：
+- 新增 `milestones` 資料表
+- 與甘特圖整合顯示
+- 支援里程碑完成度計算
+
+### 📅 看板/甘特圖視圖
+
+**需求背景**：視覺化進度管理
+
+**建議實現方式**：
+- **看板**：擴展現有 `TasksComponent` 的看板視圖
+- **甘特圖**：引入第三方元件
+  - 選項 1: [ngx-gantt](https://github.com/nickvdyck/ngx-gantt)
+  - 選項 2: [dhtmlx-gantt](https://dhtmlx.com/docs/products/dhtmlxGantt/)
+
+### ⚠️ 風險管理（Risk Register）
+
+**需求背景**：專案風險識別與追蹤
+
+**建議實現方式**（MVP 階段）：
+- 新增 `project_risks` 資料表
+- 基本 CRUD 操作
+- 風險等級分類（高/中/低）
+
+**未來擴展**：
+- 風險評估矩陣（影響 × 機率）
+- 風險提醒通知
+- 風險報表
+
+### 📊 儀表板引擎
+
+**需求背景**：專案概覽與數據可視化
+
+**建議實現方式**（初期）：
+- 使用 ng-zorro 的 Chart/Statistic 元件組裝
+- 預設儀表板佈局
+
+**未來擴展**：
+- Dashboard Builder 讓用戶自訂
+- Widget 拖拉排版
+- 儀表板分享
+
+### 📈 報表中心（BI / Reports）
+
+**需求背景**：專案進度與財務分析
+
+**建議實現方式**（初期）：
+- 預定義報表模板
+- PDF/Excel 匯出功能
+
+**未來擴展**：
+- 報表設計器
+- 自訂報表參數
+- 排程報表
 
 ---
 
