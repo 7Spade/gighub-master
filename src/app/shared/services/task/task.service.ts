@@ -5,17 +5,25 @@
  * Task management service (Shared layer)
  *
  * Provides business logic for task operations including:
- * - CRUD operations for tasks
+ * - CRUD operations for tasks (via TaskRepository)
  * - Tree structure management (parent-child relationships)
  * - Progress calculation (bottom-up from leaf tasks)
  * - Status flow management
+ * - Selected task state management (using linkedSignal)
+ *
+ * Uses Angular 20 modern patterns:
+ * - inject() function for dependency injection
+ * - signal(), computed() for reactive state
+ * - linkedSignal() for dependent state synchronization
+ * - firstValueFrom() for Observable-to-Promise conversion
  *
  * @module shared/services/task
  */
 
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, linkedSignal } from '@angular/core';
 import {
   SupabaseService,
+  TaskRepository,
   Task,
   TaskNode,
   FlatTaskNode,
@@ -26,24 +34,53 @@ import {
   KanbanColumn,
   TASK_STATUS_CONFIG
 } from '@core';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
+  // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly supabaseService = inject(SupabaseService);
+  private readonly taskRepository = inject(TaskRepository);
 
-  // State signals
+  // ============================================================================
+  // State Signals (狀態信號)
+  // ============================================================================
+
+  // Core state signals
   private tasksState = signal<Task[]>([]);
   private taskTreeState = signal<TaskNode[]>([]);
   private loadingState = signal<boolean>(false);
   private errorState = signal<string | null>(null);
 
-  // Readonly signals
+  // Readonly signals for external consumption
   readonly tasks = this.tasksState.asReadonly();
   readonly taskTree = this.taskTreeState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
+
+  // Angular 20: linkedSignal - 當 tasks 變化時自動同步選中狀態
+  readonly selectedTask = linkedSignal<Task[], Task | null>({
+    source: this.tasksState,
+    computation: (tasks, previous) => {
+      // 如果有之前選中的任務，檢查它是否還存在於列表中
+      if (previous?.value) {
+        const found = tasks.find(t => t.id === previous.value!.id);
+        return found ?? null;
+      }
+      return null;
+    }
+  });
+
+  // ============================================================================
+  // Computed Signals (計算信號)
+  // ============================================================================
+
+  // Computed signals for derived state
+  readonly taskCount = computed(() => this.tasksState().length);
+  readonly hasError = computed(() => this.errorState() !== null);
+  readonly hasSelectedTask = computed(() => this.selectedTask() !== null);
 
   // Computed signals for kanban view
   readonly kanbanColumns = computed<KanbanColumn[]>(() => {
@@ -56,29 +93,58 @@ export class TaskService {
     }));
   });
 
+  // Computed signal for overall progress
+  readonly overallProgress = computed(() => {
+    const tree = this.taskTreeState();
+    return this.calculateTreeProgress(tree);
+  });
+
   // ============================================================================
-  // Query Methods
+  // Selection Methods (選擇方法)
+  // ============================================================================
+
+  /**
+   * 選擇任務
+   * Select a task
+   */
+  selectTask(task: Task | null): void {
+    this.selectedTask.set(task);
+  }
+
+  /**
+   * 根據 ID 選擇任務
+   * Select task by ID
+   */
+  selectTaskById(id: string): void {
+    const task = this.tasksState().find(t => t.id === id) ?? null;
+    this.selectedTask.set(task);
+  }
+
+  /**
+   * 清除選擇
+   * Clear selection
+   */
+  clearSelection(): void {
+    this.selectedTask.set(null);
+  }
+
+  // ============================================================================
+  // Query Methods (查詢方法)
   // ============================================================================
 
   /**
    * 載入藍圖的所有任務
    * Load all tasks for a blueprint
+   *
+   * Uses TaskRepository for data access
    */
   async loadTasksByBlueprint(blueprintId: string): Promise<Task[]> {
     this.loadingState.set(true);
     this.errorState.set(null);
 
     try {
-      const { data, error } = await this.supabaseService.client
-        .from('tasks')
-        .select('*')
-        .eq('blueprint_id', blueprintId)
-        .is('deleted_at', null)
-        .order('sort_order', { ascending: true });
-
-      if (error) throw error;
-
-      const tasks = (data || []) as Task[];
+      // 使用 TaskRepository 進行資料存取
+      const tasks = await firstValueFrom(this.taskRepository.findByBlueprint(blueprintId));
       this.tasksState.set(tasks);
 
       // Build tree structure
@@ -98,80 +164,49 @@ export class TaskService {
   /**
    * 根據 ID 查詢任務
    * Find task by ID
+   *
+   * Uses TaskRepository for data access
    */
   async findById(id: string): Promise<Task | null> {
-    const { data, error } = await this.supabaseService.client.from('tasks').select('*').eq('id', id).is('deleted_at', null).single();
-
-    if (error) {
-      if (error.code === 'PGRST116') return null; // Not found
-      throw error;
-    }
-
-    return data as Task;
+    return firstValueFrom(this.taskRepository.findById(id));
   }
 
   /**
    * 查詢子任務
    * Find child tasks
+   *
+   * Uses TaskRepository for data access
    */
   async findChildren(parentId: string): Promise<Task[]> {
-    const { data, error } = await this.supabaseService.client
-      .from('tasks')
-      .select('*')
-      .eq('parent_id', parentId)
-      .is('deleted_at', null)
-      .order('sort_order', { ascending: true });
-
-    if (error) throw error;
-    return (data || []) as Task[];
+    return firstValueFrom(this.taskRepository.findChildren(parentId));
   }
 
   // ============================================================================
-  // CRUD Methods
+  // CRUD Methods (增刪改查方法)
   // ============================================================================
 
   /**
    * 建立任務
    * Create a new task
+   *
+   * Uses TaskRepository for data access
    */
   async createTask(request: CreateTaskRequest): Promise<Task> {
     const currentUser = this.supabaseService.currentUser;
     if (!currentUser) throw new Error('未登入');
 
-    // Get max sort_order for positioning
-    const { data: maxOrderData } = await this.supabaseService.client
-      .from('tasks')
-      .select('sort_order')
-      .eq('blueprint_id', request.blueprint_id)
-      .eq('parent_id', request.parent_id ?? null)
-      .order('sort_order', { ascending: false })
-      .limit(1)
-      .single();
+    // Get next sort_order using repository
+    const nextOrder = await firstValueFrom(this.taskRepository.getNextSortOrder(request.blueprint_id, request.parent_id ?? null));
 
-    const nextOrder = (maxOrderData?.sort_order ?? 0) + 1;
+    // Create task with sort_order
+    const taskWithOrder = { ...request };
+    const newTask = await firstValueFrom(this.taskRepository.create(taskWithOrder, currentUser.id));
 
-    const { data, error } = await this.supabaseService.client
-      .from('tasks')
-      .insert({
-        blueprint_id: request.blueprint_id,
-        parent_id: request.parent_id || null,
-        title: request.title,
-        description: request.description || null,
-        status: request.status || TaskStatus.PENDING,
-        priority: request.priority || TaskPriority.MEDIUM,
-        assignee_id: request.assignee_id || null,
-        reviewer_id: request.reviewer_id || null,
-        due_date: request.due_date || null,
-        start_date: request.start_date || null,
-        sort_order: nextOrder,
-        created_by: currentUser.id
-      })
-      .select()
-      .single();
+    if (!newTask) throw new Error('建立任務失敗');
 
-    if (error) throw error;
-
-    const newTask = data as Task;
+    // Update sort_order
+    await firstValueFrom(this.taskRepository.update(newTask.id, { sort_order: nextOrder }));
+    newTask.sort_order = nextOrder;
 
     // Update local state
     this.tasksState.update(tasks => [...tasks, newTask]);
@@ -183,21 +218,13 @@ export class TaskService {
   /**
    * 更新任務
    * Update a task
+   *
+   * Uses TaskRepository for data access
    */
   async updateTask(id: string, request: UpdateTaskRequest): Promise<Task> {
-    const { data, error } = await this.supabaseService.client
-      .from('tasks')
-      .update({
-        ...request,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    const updatedTask = await firstValueFrom(this.taskRepository.update(id, request));
 
-    if (error) throw error;
-
-    const updatedTask = data as Task;
+    if (!updatedTask) throw new Error('更新任務失敗');
 
     // Update local state
     this.tasksState.update(tasks => tasks.map(t => (t.id === id ? updatedTask : t)));
@@ -222,11 +249,13 @@ export class TaskService {
   /**
    * 軟刪除任務
    * Soft delete a task
+   *
+   * Uses TaskRepository for data access
    */
   async deleteTask(id: string): Promise<void> {
-    const { error } = await this.supabaseService.client.from('tasks').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+    const result = await firstValueFrom(this.taskRepository.softDelete(id));
 
-    if (error) throw error;
+    if (!result) throw new Error('刪除任務失敗');
 
     // Update local state
     this.tasksState.update(tasks => tasks.filter(t => t.id !== id));
@@ -421,12 +450,17 @@ export class TaskService {
   }
 
   // ============================================================================
-  // Mock Data for Development
+  // Mock Data for Development (DEPRECATED - 已棄用)
   // ============================================================================
+  // NOTE: These methods are deprecated and will be removed in a future version.
+  // Use the real database methods above instead.
+  // 注意：這些方法已棄用，將在未來版本中移除。請使用上面的真實資料庫方法。
 
   /**
    * 產生模擬任務資料（用於開發測試）
    * Generate mock task data for development testing
+   *
+   * @deprecated Use loadTasksByBlueprint() instead for real database access
    */
   generateMockTasks(blueprintId: string): Task[] {
     const now = new Date().toISOString();
@@ -569,6 +603,8 @@ export class TaskService {
   /**
    * 載入模擬資料
    * Load mock data
+   *
+   * @deprecated Use loadTasksByBlueprint() instead for real database access
    */
   loadMockData(blueprintId: string): void {
     const tasks = this.generateMockTasks(blueprintId);
@@ -579,6 +615,8 @@ export class TaskService {
   /**
    * 建立模擬任務（用於開發測試）
    * Create mock task for development testing
+   *
+   * @deprecated Use createTask() instead for real database access
    */
   createMockTask(request: CreateTaskRequest): Task {
     const now = new Date().toISOString();
@@ -619,6 +657,8 @@ export class TaskService {
   /**
    * 更新模擬任務（用於開發測試）
    * Update mock task for development testing
+   *
+   * @deprecated Use updateTask() instead for real database access
    */
   updateMockTask(id: string, request: UpdateTaskRequest): Task {
     const now = new Date().toISOString();
