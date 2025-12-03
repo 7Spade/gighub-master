@@ -415,7 +415,7 @@ export class TeamMembersComponent implements OnInit {
 
       // Refresh lists
       await this.loadMembers();
-    } catch (error) {
+    } catch {
       this.msg.error('添加成員失敗');
     } finally {
       this.adding.set(false);

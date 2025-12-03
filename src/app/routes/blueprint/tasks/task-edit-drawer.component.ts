@@ -310,22 +310,16 @@ export class TaskEditDrawerComponent implements OnChanges {
           due_date: formValue.due_date ? this.formatDate(formValue.due_date) : null
         };
 
-        try {
-          const newTask = await this.taskService.createTask(createData);
-          this.msg.success('任務建立成功');
-          this.saved.emit(newTask);
-        } catch {
-          // Fallback to mock create for development
-          const newTask = this.taskService.createMockTask(createData);
-          this.msg.success('任務建立成功 (本地模式)');
-          this.saved.emit(newTask);
-        }
+        const newTask = await this.taskService.createTask(createData);
+        this.msg.success('任務建立成功');
+        this.saved.emit(newTask);
       }
 
       this.close();
     } catch (error) {
-      this.msg.error(this.task() ? '任務更新失敗' : '任務建立失敗');
-      console.error('Task save error:', error);
+      const message = this.task() ? '任務更新失敗' : '任務建立失敗';
+      this.msg.error(message);
+      console.error('[TaskEditDrawerComponent] Task save error:', error);
     } finally {
       this.saving.set(false);
     }

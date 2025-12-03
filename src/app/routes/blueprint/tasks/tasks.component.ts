@@ -251,7 +251,7 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
       [blueprintId]="id()"
       [parentTaskId]="parentTaskId()"
       (closed)="onDrawerClose()"
-      (saved)="onTaskSaved($event)"
+      (saved)="onTaskSaved()"
     ></app-task-edit-drawer>
 
     <!-- Node Template for Tree View -->
@@ -594,15 +594,15 @@ export class BlueprintTasksComponent implements OnInit {
 
   async loadTasks(): Promise<void> {
     try {
-      // Try to load real data first
+      // Load real data from database via TaskRepository
       await this.taskService.loadTasksByBlueprint(this.id());
-    } catch {
-      // If no real data, load mock data for development
-      this.taskService.loadMockData(this.id());
+      // Update tree data source
+      this.updateDataSource();
+    } catch (err) {
+      // Log error and show user-friendly message
+      console.error('[TasksComponent] Failed to load tasks:', err);
+      this.msg.error('載入任務失敗，請稍後重試');
     }
-
-    // Update tree data source
-    this.updateDataSource();
   }
 
   private updateDataSource(): void {
@@ -661,7 +661,7 @@ export class BlueprintTasksComponent implements OnInit {
     this.parentTaskId.set(null);
   }
 
-  onTaskSaved(_task: Task): void {
+  onTaskSaved(): void {
     this.updateDataSource();
   }
 
