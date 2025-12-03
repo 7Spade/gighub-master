@@ -1,343 +1,489 @@
 @import '@delon/theme/index';
 
 :host ::ng-deep {
-  // 財務儀表板標題區域
-  .finance-header {
-    padding: 24px 0;
-    
-    .finance-title {
-      h2 {
-        font-size: 24px;
-        font-weight: 600;
-        color: @heading-color;
+  .finance-dashboard {
+    padding: 0;
+  }
+
+  // 頂部標題區
+  .dashboard-header {
+    margin-bottom: 24px;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+    }
+
+    .header-left {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+
+      .header-icon {
         display: flex;
         align-items: center;
-        
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgb(255 255 255 / 15%);
+
         i {
-          font-size: 28px;
-          color: @primary-color;
+          font-size: 32px;
         }
       }
-      
-      .finance-subtitle {
-        display: block;
-        margin-top: 8px;
-        font-size: 14px;
-        color: @text-color-secondary;
+
+      .header-text {
+        h1 {
+          margin: 0 0 8px;
+          font-size: 28px;
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          opacity: 0.85;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      .date-filter {
+        display: flex;
+        padding: 4px;
+        border-radius: 8px;
+        background: rgb(255 255 255 / 10%);
+
+        .date-item {
+          cursor: pointer;
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-size: 13px;
+          transition: all 0.2s;
+
+          &:hover {
+            background: rgb(255 255 255 / 10%);
+          }
+
+          &.active {
+            font-weight: 500;
+            background: rgb(255 255 255 / 25%);
+          }
+        }
+      }
+
+      .date-picker {
+        border: 1px solid rgb(255 255 255 / 20%);
+        border-radius: 8px;
+        background: rgb(255 255 255 / 10%);
+
+        input {
+          color: #fff;
+
+          &::placeholder {
+            color: rgb(255 255 255 / 60%);
+          }
+        }
+
+        .ant-picker-suffix,
+        .ant-picker-separator {
+          color: rgb(255 255 255 / 60%);
+        }
       }
     }
   }
 
-  // 現代化統計卡片樣式
-  .stat-cards {
+  // 統計卡片
+  .stat-row {
     margin-bottom: 24px;
   }
 
   .stat-card {
-    border-radius: 12px;
     overflow: hidden;
+    border-radius: 16px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    
+
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 32px rgb(0 0 0 / 12%);
     }
-    
+
     .ant-card-body {
-      padding: 20px;
+      padding: 0;
     }
-    
-    .stat-card-inner {
+
+    .stat-card-body {
       display: flex;
+      gap: 20px;
       align-items: flex-start;
-      gap: 16px;
+      padding: 24px;
     }
-    
+
     .stat-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
       display: flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
-      
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+
       i {
         font-size: 28px;
         color: #fff;
       }
     }
-    
+
     .stat-content {
       flex: 1;
       min-width: 0;
+
+      .stat-title {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: @text-color-secondary;
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: @heading-color;
+
+        .prefix {
+          font-size: 20px;
+          font-weight: 400;
+        }
+      }
+
+      .stat-trend {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-top: 12px;
+
+        .trend-text {
+          font-size: 12px;
+          color: @text-color-secondary;
+        }
+      }
     }
-    
-    .stat-title {
-      font-size: 14px;
-      color: @text-color-secondary;
-      display: block;
-      margin-bottom: 8px;
-    }
-    
-    .stat-value {
-      font-size: 28px;
-      font-weight: 600;
-      color: @heading-color;
-      line-height: 1.2;
-    }
-    
-    .stat-footer {
-      margin-top: 12px;
-    }
-    
-    .stat-progress {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid @border-color-split;
-    }
-    
-    // 主題色卡片
+
     &.stat-card-primary {
-      background: linear-gradient(135deg, #f0f5ff 0%, #e6f4ff 100%);
-      
+      background: linear-gradient(135deg, #e8f4fc 0%, #f0f7ff 100%);
+
       .stat-icon {
         background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
       }
     }
-    
+
     &.stat-card-success {
-      background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
-      
+      background: linear-gradient(135deg, #f0fff4 0%, #e8f8ed 100%);
+
       .stat-icon {
         background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
       }
     }
-    
+
     &.stat-card-warning {
-      background: linear-gradient(135deg, #fffbe6 0%, #fff1b8 100%);
-      
+      background: linear-gradient(135deg, #fffbe8 0%, #fff7e0 100%);
+
       .stat-icon {
         background: linear-gradient(135deg, #faad14 0%, #d48806 100%);
       }
     }
-    
-    &.stat-card-info {
-      background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
-      
+
+    &.stat-card-danger {
+      background: linear-gradient(135deg, #fff2f0 0%, #ffebe8 100%);
+
       .stat-icon {
-        background: linear-gradient(135deg, #13c2c2 0%, #08979c 100%);
+        background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
       }
     }
   }
 
-  .icon-group {
-    i {
-      cursor: pointer;
-      margin-left: 16px;
-      color: @text-color-secondary;
-      transition: color 0.32s;
+  // 區塊卡片
+  .section-card {
+    margin-bottom: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 
-      &:hover {
-        color: @text-color;
-      }
+    .ant-card-body {
+      padding: 24px;
     }
-  }
 
-  .rank-list {
-    margin: 25px 0 0;
-    padding: 0;
-    list-style: none;
-
-    li {
+    .section-header {
       display: flex;
       align-items: center;
-      margin-top: 16px;
-      padding: 12px 16px;
+      justify-content: space-between;
+      margin-bottom: 24px;
+
+      .section-title {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: @heading-color;
+
+        i {
+          font-size: 22px;
+          color: @primary-color;
+        }
+      }
+
+      .section-extra {
+        .total-label {
+          font-size: 14px;
+          color: @text-color-secondary;
+        }
+
+        .total-value {
+          font-size: 18px;
+          font-weight: 600;
+          color: @primary-color;
+        }
+      }
+    }
+  }
+
+  // 預算網格
+  .budget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .budget-item {
+    padding: 20px;
+    border-radius: 12px;
+    background: @background-color-light;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: @primary-1;
+    }
+
+    .budget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+
+      .budget-name {
+        font-size: 15px;
+        font-weight: 500;
+        color: @heading-color;
+      }
+
+      .budget-values {
+        font-size: 13px;
+
+        .spent {
+          font-weight: 600;
+          color: @heading-color;
+        }
+
+        .divider {
+          margin: 0 4px;
+          color: @text-color-secondary;
+        }
+
+        .budget {
+          color: @text-color-secondary;
+        }
+      }
+    }
+
+    .budget-progress {
+      .ant-progress-text {
+        font-weight: 600;
+      }
+    }
+  }
+
+  // 待付款項
+  .pending-card {
+    .pending-list {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 400px;
+    }
+
+    .pending-item {
+      padding: 16px;
+      border-left: 4px solid @primary-color;
+      border-radius: 12px;
       background: @background-color-light;
-      border-radius: 8px;
       transition: all 0.2s ease;
-      .clearfix();
-      
+
       &:hover {
+        transform: translateX(4px);
         background: @primary-1;
       }
 
-      span {
-        font-size: 14px;
-        line-height: 22px;
-      }
+      &.urgent {
+        border-left-color: @error-color;
+        background: #fff2f0;
 
-      .number {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        margin-top: 0;
-        margin-right: 16px;
-        font-size: 12px;
-        font-weight: 600;
-        line-height: 24px;
-        text-align: center;
-        background-color: @background-color-base;
-        border-radius: 6px;
-
-        &.active {
-          color: #fff;
-          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+        &:hover {
+          background: #ffe7e5;
         }
       }
 
-      .title {
-        overflow: hidden;
-        flex: 1;
-        margin-right: 8px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-weight: 500;
+      .pending-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        .pending-id {
+          font-family: monospace;
+          font-size: 13px;
+          color: @text-color-secondary;
+        }
       }
-      
-      .value {
-        font-weight: 600;
-        color: @primary-color;
+
+      .pending-body {
+        margin-bottom: 12px;
+
+        .pending-project {
+          margin-bottom: 4px;
+          font-size: 15px;
+          font-weight: 500;
+          color: @heading-color;
+        }
+
+        .pending-vendor {
+          font-size: 13px;
+          color: @text-color-secondary;
+        }
       }
+
+      .pending-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .pending-amount {
+          font-size: 18px;
+          font-weight: 600;
+          color: @heading-color;
+        }
+
+        .pending-due {
+          display: flex;
+          gap: 4px;
+          align-items: center;
+          font-size: 12px;
+          color: @text-color-secondary;
+        }
+      }
+    }
+
+    .pending-action {
+      margin-top: 16px;
     }
   }
 
-  .sales-extra {
-    display: inline-block;
-    margin-right: 24px;
-
-    span {
-      cursor: pointer;
-      margin-left: 24px;
-
-      &:hover {
-        color: @primary-color;
-      }
-
-      &.current-date {
-        color: @primary-color;
-      }
-    }
+  // 圖表卡片
+  .chart-card {
+    margin-top: 24px;
   }
 
-  .sales-card {
-    .bar {
-      padding: 0 0 32px 32px;
-    }
-
-    .rank {
-      padding: 0 32px 32px 72px;
-    }
-
-    .ant-tabs-bar {
-      padding-left: 16px;
-
-      .ant-tabs-nav .ant-tabs-tab {
-        padding-top: 16px;
-        padding-bottom: 14px;
-        line-height: 24px;
-      }
-    }
-
-    .ant-tabs-tab {
-      margin-left: 24px;
-
-    }
-
-    .ant-tabs-extra-content {
-      padding-right: 24px;
-      line-height: 55px;
-    }
-
-    .ant-card-head {
-      position: relative;
-    }
-
-    .ant-card-head-title {
-      align-items: normal;
-    }
-  }
-
+  // 離線卡片 (工區財務明細)
   .offline-card {
-    .ant-tabs-ink-bar {
-      bottom: auto;
+    .tab-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 16px;
+
+      .tab-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: @heading-color;
+      }
+
+      .tab-rate {
+        margin-top: 4px;
+        font-size: 24px;
+        font-weight: 700;
+        color: @primary-color;
+      }
     }
 
-    .ant-tabs-bar {
-      border-bottom: none;
+    .tab-content {
+      padding: 24px;
     }
 
-    .ant-tabs-nav-container-scrolling {
-      padding-right: 40px;
-      padding-left: 40px;
-    }
-
-    .ant-tabs-tab-prev-icon::before {
-      position: relative;
-      left: 6px;
-    }
-
-    .ant-tabs-tab-next-icon::before {
-      position: relative;
-      right: 6px;
-    }
-
-    .ant-tabs-tab-active h4 {
-      color: @primary-color;
-    }
-  }
-
-  .trend-text {
-    margin-left: 8px;
-    color: @heading-color;
-  }
-
-  // fix pagination bottom
-  .ant-table-pagination {
-    margin-bottom: 0;
-  }
-
-  .g2-pie {
-    &__legend-block,
-    &__chart {
-      margin: 0;
+    .ant-tabs-nav {
+      margin-bottom: 0;
     }
   }
 
+  // 響應式調整
   @media screen and (max-width: @screen-lg) {
-    .sales-extra {
-      display: none;
-    }
+    .dashboard-header {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
 
-    .rank-list {
-      li {
-        span:first-child {
-          margin-right: 8px;
+      .header-left {
+        flex-direction: column;
+      }
+
+      .header-right {
+        flex-direction: column;
+        width: 100%;
+
+        .date-filter {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .date-picker {
+          width: 100%;
         }
       }
+    }
+
+    .budget-grid {
+      grid-template-columns: 1fr;
     }
   }
 
   @media screen and (max-width: @screen-md) {
-    .rank-title {
-      margin-top: 16px;
-    }
-
-    .sales-card .bar {
-      padding: 16px;
-    }
-  }
-
-  @media screen and (max-width: @screen-sm) {
-    .sales-extra-wrap {
-      display: none;
-    }
-
-    .sales-card {
-      .ant-tabs-content {
-        padding-top: 30px;
+    .stat-card {
+      .stat-card-body {
+        flex-direction: column;
+        text-align: center;
       }
+
+      .stat-trend {
+        justify-content: center;
+      }
+    }
+
+    .section-header {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
     }
   }
 }

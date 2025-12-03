@@ -1,170 +1,245 @@
 <!-- 藍圖工作台儀表板 -->
-<div class="workplace-dashboard">
-  <!-- 頂部歡迎區 -->
-  <div class="welcome-banner">
-    <div class="banner-content">
-      <div class="user-info">
-        <nz-avatar [nzSize]="80" nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png" class="user-avatar" />
-        <div class="user-detail">
-          <h1 class="greeting">早安，項目經理！</h1>
-          <p class="role-info">高級工程師 | GigHub工程公司 — 華東區項目部 — 第一施工隊</p>
-          <p class="status-info">
-            <nz-tag nzColor="success">
-              <i nz-icon nzType="check-circle" nzTheme="fill"></i>
-              工地施工正常進行中
-            </nz-tag>
+<div class="blueprint-dashboard">
+  <!-- 頂部藍圖概覽 -->
+  <div class="blueprint-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="blueprint-icon">
+          <i nz-icon nzType="project" nzTheme="outline"></i>
+        </div>
+        <div class="blueprint-info">
+          <div class="blueprint-title">
+            <h1>{{ blueprintInfo.name }}</h1>
+            <nz-tag nzColor="blue">{{ blueprintInfo.code }}</nz-tag>
+          </div>
+          <p class="blueprint-period">
+            <i nz-icon nzType="calendar" nzTheme="outline"></i>
+            {{ blueprintInfo.startDate }} 至 {{ blueprintInfo.endDate }}
           </p>
         </div>
       </div>
-      <div class="quick-stats">
-        <div class="stat-item">
-          <div class="stat-value">8</div>
-          <div class="stat-label">進行中工區</div>
+      <div class="header-right">
+        <div class="progress-ring">
+          <nz-progress
+            [nzPercent]="blueprintInfo.totalProgress"
+            nzType="circle"
+            [nzWidth]="100"
+            [nzFormat]="progressFormat"
+            nzStrokeColor="#52c41a"
+          />
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-value">78<span class="unit">%</span></div>
-          <div class="stat-label">工期進度</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-value">156</div>
-          <div class="stat-label">今日作業人數</div>
+        <div class="budget-info">
+          <div class="budget-item">
+            <span class="budget-label">總預算</span>
+            <span class="budget-value">¥{{ blueprintInfo.totalBudget | number }}</span>
+          </div>
+          <div class="budget-item">
+            <span class="budget-label">已執行</span>
+            <span class="budget-value spent">¥{{ blueprintInfo.spentBudget | number }}</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div nz-row [nzGutter]="[24, 24]" class="main-content">
-  <!-- 左側主內容 -->
-  <div nz-col nzXs="24" nzSm="24" nzMd="16">
-    <!-- 進行中的施工項目 -->
-    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card project-card">
-      <div class="card-header-flex">
-        <div class="card-title">
-          <i nz-icon nzType="project" nzTheme="outline" class="title-icon"></i>
-          進行中的施工項目
+  <ng-template #progressFormat let-percent>
+    <div class="progress-text">
+      <span class="percent">{{ percent }}%</span>
+      <span class="label">總進度</span>
+    </div>
+  </ng-template>
+
+  <div nz-row [nzGutter]="[24, 24]">
+    <!-- 左側主內容 -->
+    <div nz-col nzXs="24" nzLg="16">
+      <!-- 階段進度 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="ordered-list" nzTheme="outline"></i>
+            <span>施工階段進度</span>
+          </div>
         </div>
-        <a class="view-all" (click)="msg.success('to')">
-          查看全部
-          <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
-        </a>
-      </div>
-      
-      <div class="project-grid">
-        @for (item of notice; track $index) {
-          <div class="project-item" (click)="msg.info('to' + item.href)">
-            <div class="project-header">
-              <nz-avatar [nzSrc]="item.logo" [nzSize]="40" class="project-logo" />
+        <div class="phase-timeline">
+          @for (phase of phases; track phase.id) {
+            <div class="phase-item" [class]="'phase-' + phase.status">
+              <div class="phase-marker">
+                @if (phase.status === 'completed') {
+                  <i nz-icon nzType="check" nzTheme="outline"></i>
+                } @else if (phase.status === 'in-progress') {
+                  <i nz-icon nzType="loading" nzTheme="outline"></i>
+                } @else {
+                  <span class="phase-number">{{ $index + 1 }}</span>
+                }
+              </div>
+              <div class="phase-content">
+                <div class="phase-header">
+                  <span class="phase-name">{{ phase.name }}</span>
+                  <nz-tag [nzColor]="getPhaseStatusColor(phase.status)">{{ getPhaseStatusText(phase.status) }}</nz-tag>
+                </div>
+                <div class="phase-dates">
+                  <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                  {{ phase.startDate }} - {{ phase.endDate }}
+                </div>
+                <div class="phase-progress">
+                  <nz-progress
+                    [nzPercent]="phase.progress"
+                    [nzShowInfo]="true"
+                    nzSize="small"
+                    [nzStrokeColor]="getPhaseStatusColor(phase.status)"
+                  />
+                </div>
+                <div class="phase-tasks">
+                  <span>任務: {{ phase.completedTasks }}/{{ phase.tasks }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 工區狀態 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="environment" nzTheme="outline"></i>
+            <span>工區施工狀態</span>
+          </div>
+          <span class="active-count">{{ activeWorkAreasCount }} 個工區施工中</span>
+        </div>
+        <div class="work-area-grid">
+          @for (area of workAreas; track area.id) {
+            <div class="work-area-card" [class.paused]="area.status === 'paused'">
+              <div class="area-header">
+                <span class="area-name">{{ area.name }}</span>
+                <nz-tag [nzColor]="getWorkAreaStatusColor(area.status)">{{ getWorkAreaStatusText(area.status) }}</nz-tag>
+              </div>
+              <div class="area-stats">
+                <div class="stat-item">
+                  <i nz-icon nzType="user" nzTheme="outline"></i>
+                  <span>{{ area.workers }} 人</span>
+                </div>
+                <div class="stat-item">
+                  <i nz-icon nzType="user" nzTheme="outline"></i>
+                  <span>{{ area.manager }}</span>
+                </div>
+              </div>
+              <div class="area-progress">
+                <div class="progress-label">
+                  <span>進度</span>
+                  <span>{{ area.progress }}%</span>
+                </div>
+                <g2-mini-progress [percent]="area.progress" [strokeWidth]="8" [color]="getWorkAreaStatusColor(area.status) === 'green' ? '#52c41a' : '#faad14'" />
+              </div>
+            </div>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 最近動態 -->
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="history" nzTheme="outline"></i>
+            <span>藍圖動態</span>
+          </div>
+        </div>
+        <nz-timeline>
+          @for (item of activities; track $index) {
+            <nz-timeline-item [nzColor]="$index === 0 ? 'blue' : 'gray'">
+              <div class="activity-item">
+                <nz-avatar [nzSrc]="item.user.avatar" nzSize="small" class="activity-avatar" />
+                <div class="activity-content">
+                  <span class="activity-user" (click)="msg.success(item.user.name)">{{ item.user.name }}</span>
+                  <span class="activity-action" [innerHTML]="item.template"></span>
+                  <span class="activity-time">{{ item.updatedAt | _date: 'fn' }}</span>
+                </div>
+              </div>
+            </nz-timeline-item>
+          }
+        </nz-timeline>
+      </nz-card>
+    </div>
+
+    <!-- 右側邊欄 -->
+    <div nz-col nzXs="24" nzLg="8">
+      <!-- 快速入口 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="appstore" nzTheme="outline"></i>
+            <span>快速入口</span>
+          </div>
+        </div>
+        <div class="quick-links">
+          @for (item of links; track $index) {
+            <a class="quick-link" (click)="msg.success(item.title)">
+              <div class="link-icon" [ngStyle]="{ background: getIconBg($index) }">
+                <i nz-icon [nzType]="getLinkIcon($index)" nzTheme="outline"></i>
+              </div>
+              <span class="link-text">{{ item.title }}</span>
+            </a>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 里程碑 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="flag" nzTheme="outline"></i>
+            <span>關鍵里程碑</span>
+          </div>
+        </div>
+        <nz-timeline>
+          @for (milestone of milestones; track milestone.id) {
+            <nz-timeline-item [nzColor]="getMilestoneColor(milestone.type)">
+              <div class="milestone-item">
+                <div class="milestone-header">
+                  <span class="milestone-title">{{ milestone.title }}</span>
+                  <span class="milestone-date">{{ milestone.date }}</span>
+                </div>
+                <p class="milestone-desc">{{ milestone.description }}</p>
+              </div>
+            </nz-timeline-item>
+          }
+        </nz-timeline>
+      </nz-card>
+
+      <!-- 效率指數 -->
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="radar-chart" nzTheme="outline"></i>
+            <span>藍圖執行效率</span>
+          </div>
+        </div>
+        @if (radarData) {
+          <g2-radar [data]="radarData" [height]="280" [hasLegend]="true" />
+        }
+      </nz-card>
+
+      <!-- 進行中項目 -->
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="project" nzTheme="outline"></i>
+            <span>關聯項目</span>
+          </div>
+        </div>
+        <div class="project-list">
+          @for (item of notice; track $index) {
+            <div class="project-item" (click)="msg.info('查看' + item.title)">
+              <nz-avatar [nzSrc]="item.logo" nzSize="small" class="project-avatar" />
               <div class="project-info">
-                <h4 class="project-name">{{ item.title }}</h4>
-                <p class="project-desc">{{ item.description }}</p>
+                <span class="project-name">{{ item.title }}</span>
+                <span class="project-desc">{{ item.description }}</span>
               </div>
+              <i nz-icon nzType="right" nzTheme="outline" class="project-arrow"></i>
             </div>
-            <div class="project-footer">
-              <span class="project-member" (click)="$event.stopPropagation(); msg.info('show user: ' + item.member)">
-                <i nz-icon nzType="user" nzTheme="outline"></i>
-                {{ item.member }}
-              </span>
-              @if (item.updatedAt) {
-                <span class="project-time">
-                  <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
-                  {{ item.updatedAt | _date: 'fn' }}
-                </span>
-              }
-            </div>
-          </div>
-        }
-      </div>
-    </nz-card>
-
-    <!-- 施工動態 -->
-    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card activities-card">
-      <div class="card-header-flex">
-        <div class="card-title">
-          <i nz-icon nzType="history" nzTheme="outline" class="title-icon"></i>
-          施工動態
+          }
         </div>
-      </div>
-      
-      <nz-timeline>
-        @for (item of activities; track $index) {
-          <nz-timeline-item [nzColor]="$index === 0 ? 'blue' : 'gray'">
-            <div class="activity-item">
-              <nz-avatar [nzSrc]="item.user.avatar" nzSize="small" class="activity-avatar" />
-              <div class="activity-content">
-                <span class="activity-user" (click)="msg.success(item.user.name)">{{ item.user.name }}</span>
-                <span class="activity-action" [innerHTML]="item.template"></span>
-                <span class="activity-time">{{ item.updatedAt | _date: 'fn' }}</span>
-              </div>
-            </div>
-          </nz-timeline-item>
-        }
-      </nz-timeline>
-    </nz-card>
-  </div>
-
-  <!-- 右側邊欄 -->
-  <div nz-col nzXs="24" nzSm="24" nzMd="8">
-    <!-- 快速入口 -->
-    <nz-card [nzBordered]="false" class="modern-card quick-access-card">
-      <div class="card-header-flex">
-        <div class="card-title">
-          <i nz-icon nzType="appstore" nzTheme="outline" class="title-icon"></i>
-          快速入口
-        </div>
-      </div>
-      
-      <div class="quick-links">
-        @for (item of links; track $index) {
-          <a class="quick-link" (click)="msg.success(item.title)">
-            <div class="link-icon" [ngStyle]="{'background': getIconBg($index)}">
-              <i nz-icon [nzType]="getLinkIcon($index)" nzTheme="outline"></i>
-            </div>
-            <span class="link-text">{{ item.title }}</span>
-          </a>
-        }
-        <button class="quick-link add-btn" (click)="links.push({ title: '新功能', href: 'href' })">
-          <div class="link-icon add-icon">
-            <i nz-icon nzType="plus" nzTheme="outline"></i>
-          </div>
-          <span class="link-text">添加</span>
-        </button>
-      </div>
-    </nz-card>
-
-    <!-- 施工效率指數 -->
-    <nz-card [nzBordered]="false" [nzLoading]="loading" class="modern-card radar-card">
-      <div class="card-header-flex">
-        <div class="card-title">
-          <i nz-icon nzType="radar-chart" nzTheme="outline" class="title-icon"></i>
-          施工效率指數
-        </div>
-      </div>
-      @if (radarData) {
-        <g2-radar [data]="radarData" [height]="320" [hasLegend]="true" />
-      }
-    </nz-card>
-
-    <!-- 施工班組 -->
-    <nz-card [nzBordered]="false" class="modern-card team-card">
-      <div class="card-header-flex">
-        <div class="card-title">
-          <i nz-icon nzType="team" nzTheme="outline" class="title-icon"></i>
-          施工班組
-        </div>
-      </div>
-      
-      <div class="team-list">
-        @for (i of members; track $index) {
-          <a class="team-item" (click)="msg.success(i.title)">
-            <nz-avatar [nzSrc]="i.logo" nzSize="small" class="team-avatar" />
-            <span class="team-name">{{ i.title }}</span>
-            <i nz-icon nzType="right" nzTheme="outline" class="team-arrow"></i>
-          </a>
-        }
-      </div>
-    </nz-card>
+      </nz-card>
+    </div>
   </div>
 </div>

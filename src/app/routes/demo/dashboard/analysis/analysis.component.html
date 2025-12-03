@@ -1,230 +1,222 @@
-<!-- 財務儀表板頂部統計卡片 -->
-<div class="finance-header mb-lg">
-  <div class="finance-title">
-    <h2 class="mb0">
-      <i nz-icon nzType="fund" nzTheme="outline" class="mr-sm"></i>
-      財務分析總覽
-    </h2>
-    <span class="finance-subtitle">實時追蹤財務數據與預算執行情況</span>
-  </div>
-</div>
-
-<div nz-row [nzGutter]="[24, 24]" class="stat-cards">
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <nz-card [nzBordered]="false" class="stat-card stat-card-primary">
-      <div class="stat-card-inner">
-        <div class="stat-icon">
-          <i nz-icon nzType="dollar" nzTheme="outline"></i>
+<!-- 財務分析儀表板 -->
+<div class="finance-dashboard">
+  <!-- 頂部標題區 -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-icon">
+          <i nz-icon nzType="fund" nzTheme="outline"></i>
         </div>
-        <div class="stat-content">
-          <span class="stat-title">預算執行率</span>
-          <div class="stat-value">78%</div>
-          <div class="stat-footer">
-            <trend flag="up" class="trend-up">
-              較上週 <span class="ml-xs">+5%</span>
-            </trend>
-          </div>
+        <div class="header-text">
+          <h1>財務分析中心</h1>
+          <p>實時追蹤預算執行、現金流動與財務健康狀況</p>
         </div>
       </div>
-      <div class="stat-progress">
-        <g2-mini-progress height="8" percent="78" strokeWidth="8" target="100" color="#1890ff" />
-      </div>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <nz-card [nzBordered]="false" class="stat-card stat-card-success">
-      <div class="stat-card-inner">
-        <div class="stat-icon">
-          <i nz-icon nzType="rise" nzTheme="outline"></i>
-        </div>
-        <div class="stat-content">
-          <span class="stat-title">收入總額</span>
-          <div class="stat-value">¥1,256,000</div>
-          <div class="stat-footer">
-            @if (data.visitData) {
-              <g2-mini-area color="#52c41a" height="32" [data]="data.visitData" />
-            }
-          </div>
-        </div>
-      </div>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <nz-card [nzBordered]="false" class="stat-card stat-card-warning">
-      <div class="stat-card-inner">
-        <div class="stat-icon">
-          <i nz-icon nzType="fall" nzTheme="outline"></i>
-        </div>
-        <div class="stat-content">
-          <span class="stat-title">支出總額</span>
-          <div class="stat-value">¥823,000</div>
-          <div class="stat-footer">
-            @if (data.visitData) {
-              <g2-mini-bar height="32" color="#faad14" [data]="data.visitData" />
-            }
-          </div>
-        </div>
-      </div>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
-    <nz-card [nzBordered]="false" class="stat-card stat-card-info">
-      <div class="stat-card-inner">
-        <div class="stat-icon">
-          <i nz-icon nzType="audit" nzTheme="outline"></i>
-        </div>
-        <div class="stat-content">
-          <span class="stat-title">待審批</span>
-          <div class="stat-value">23 筆</div>
-          <div class="stat-footer">
-            <span class="text-grey">本月新增 <strong>8</strong> 筆</span>
-          </div>
-        </div>
-      </div>
-    </nz-card>
-  </div>
-</div>
-<nz-card [nzLoading]="loading" [nzBordered]="false" class="ant-card__body-nopadding sales-card">
-  @if (data.salesData) {
-  <nz-tabs [nzTabBarExtraContent]="extraTemplate">
-    @for (tab of saleTabs; track $index) {
-    <nz-tab [nzTitle]="'app.analysis.' + tab | i18n">
-      <ng-template nz-tab>
-        <div nz-row>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="16">
-            <div class="bar">
-              <g2-bar height="295" style="width: 100%" [title]="'app.analysis.' + tab + '-trend' | i18n"
-                [data]="data.salesData" />
-            </div>
-          </div>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8">
-            <div class="rank">
-              <h4 class="ranking-title">{{ 'app.analysis.' + tab + '-ranking' | i18n }}</h4>
-              <ul class="rank-list">
-                @for (i of rankingListData; track $index) {
-                <li>
-                  <span class="number" [class.active]="$index < 3">{{ $index + 1 }}</span>
-                  <span class="title">{{ i.title }}</span>
-                  <span class="value">{{ i.total | number: '3.0' }}</span>
-                </li>
-                }
-              </ul>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </nz-tab>
-    }
-    <ng-template #extraTemplate>
-      <div class="sales-extra-wrap">
-        <div class="sales-extra">
+      <div class="header-right">
+        <div class="date-filter">
           @for (t of dateRangeTypes; track $index) {
-          <span (click)="setDate(t)" [class.current-date]="dateRangeType === t">
-            {{ 'app.analysis.all-' + t | i18n }}
-          </span>
+            <span class="date-item" [class.active]="dateRangeType === t" (click)="setDate(t)">
+              {{ 'app.analysis.all-' + t | i18n }}
+            </span>
           }
         </div>
-        <nz-range-picker [(ngModel)]="dateRange" />
+        <nz-range-picker [(ngModel)]="dateRange" class="date-picker" />
       </div>
-    </ng-template>
-  </nz-tabs>
-  }
-</nz-card>
-<div nz-row [nzGutter]="24">
-  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12">
-    <nz-card [nzLoading]="loading" [nzBordered]="false" [nzTitle]="'app.analysis.online-top-search' | i18n"
-      [nzExtra]="extraOp" class="mb-0">
-      <ng-template #extraOp>
-        <i nz-dropdown [nzDropdownMenu]="extraOpMenu" nz-icon nzType="ellipsis" class="icon-group"></i>
-        <nz-dropdown-menu #extraOpMenu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item>操作一</li>
-            <li nz-menu-item>操作二</li>
-          </ul>
-        </nz-dropdown-menu>
-      </ng-template>
-      <div nz-row [nzGutter]="64">
-        <div nz-col nzXs="24" nzSm="12" class="mb-md">
-          <number-info total="12,321" subTotal="17.1" status="up" [subTitle]="subTitle">
-            <ng-template #subTitle>
-              {{ 'app.analysis.search-users' | i18n }}
-              <i nz-tooltip [nzTooltipTitle]="'app.analysis.introduce' | i18n" nz-icon nzType="info-circle"
-                class="ml-sm"></i>
-            </ng-template>
-          </number-info>
-          @if (data.visitData2) {
-          <g2-mini-area [line]="true" height="45" [data]="data.visitData2" />
-          }
-        </div>
-        <div nz-col nzXs="24" nzSm="12" class="mb-md">
-          <number-info [subTitle]="'app.analysis.per-capita-search' | i18n" total="2.7" subTotal="26.2" status="down" />
-          @if (data.visitData2) {
-          <g2-mini-area [line]="true" height="45" [data]="data.visitData2" />
-          }
-        </div>
+    </div>
+  </div>
+
+  <!-- 財務指標卡片 -->
+  <div nz-row [nzGutter]="[24, 24]" class="stat-row">
+    @for (stat of financialStats; track $index) {
+      <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
+        <nz-card [nzBordered]="false" class="stat-card" [class]="'stat-card-' + stat.color">
+          <div class="stat-card-body">
+            <div class="stat-icon">
+              <i nz-icon [nzType]="stat.icon" nzTheme="outline"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-title">{{ stat.title }}</span>
+              <div class="stat-value">
+                <span class="prefix">{{ stat.prefix }}</span>
+                <span class="number">{{ stat.value | number }}</span>
+                <span class="suffix">{{ stat.suffix }}</span>
+              </div>
+              <div class="stat-trend">
+                <trend [flag]="stat.trend">
+                  {{ stat.trend === 'up' ? '↑' : '↓' }} {{ stat.trendValue }}%
+                </trend>
+                <span class="trend-text">較上月</span>
+              </div>
+            </div>
+          </div>
+        </nz-card>
       </div>
-      <st [data]="data.searchData" [columns]="searchColumn" size="small" ps="5" [page]="{ toTop: false }">
-        <ng-template st-row="range" let-i>
-          <trend [flag]="i.status === 1 ? 'down' : 'up'">
-            <span>{{ i.range }}%</span>
-          </trend>
-        </ng-template>
-      </st>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12">
-    <nz-card [nzLoading]="loading" [nzBordered]="false" [nzTitle]="'app.analysis.the-proportion-of-sales' | i18n"
-      [nzBodyStyle]="{ 'padding.px': 24 }" [nzExtra]="extra" class="sales-card mb-0" style="min-height: 506.5px">
-      <ng-template #extra>
-        <nz-radio-group [(ngModel)]="salesType" (ngModelChange)="changeSaleType()">
-          <label nz-radio-button [nzValue]="'all'">
-            {{ 'app.analysis.channel.all' | i18n }}
-          </label>
-          <label nz-radio-button [nzValue]="'online'">
-            {{ 'app.analysis.channel.online' | i18n }}
-          </label>
-          <label nz-radio-button [nzValue]="'offline'">
-            {{ 'app.analysis.channel.stores' | i18n }}
-          </label>
-        </nz-radio-group>
-        <i nz-dropdown [nzDropdownMenu]="salesExtraMenu" nzPlacement="bottomLeft" nz-icon nzType="ellipsis"
-          class="ml-md"></i>
-        <nz-dropdown-menu #salesExtraMenu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item>操作一</li>
-            <li nz-menu-item>操作二</li>
-          </ul>
-        </nz-dropdown-menu>
-      </ng-template>
-      <h4 class="my-xl">{{ 'app.analysis.sales' | i18n }}</h4>
-      @if (salesPieData) {
-      <g2-pie [data]="salesPieData" [hasLegend]="true" [subTitle]="'app.analysis.sales' | i18n" [height]="248"
-        [lineWidth]="4" [total]="salesTotal" [valueFormat]="handlePieValueFormat" />
-      }
-    </nz-card>
-  </div>
-</div>
-<nz-card [nzLoading]="loading" [nzBordered]="false" [nzBodyStyle]="{ padding: '0 0 32px' }" class="offline-card mt-lg">
-  @if (data.offlineData) {
-  <nz-tabs [(nzSelectedIndex)]="offlineIdx" (nzSelectedIndexChange)="offlineChange($event)">
-    @for (tab of data.offlineData; track $index) {
-    <nz-tab [nzTitle]="nzTabHeading">
-      <ng-template #nzTabHeading>
-        <div class="flex-center-between px-md">
-          <number-info [title]="tab.name" [subTitle]="'app.analysis.conversion-rate' | i18n" gap="2"
-            [total]="tab.cvr * 100 + '%'" [theme]="$index !== offlineIdx ? 'light' : 'default'" class="mr-md" />
-          <g2-pie style="padding-top: 36px; width: 48px" [animate]="false"
-            [color]="$index !== offlineIdx ? '#BDE4FF' : 'rgba(24, 144, 255, 0.85)'" [inner]="0.55" [tooltip]="false"
-            [padding]="[0, 0, 0, 0]" [percent]="tab.cvr * 100" [height]="48" />
-        </div>
-      </ng-template>
-      <ng-template nz-tab>
-        <div class="px-lg">
-          <g2-timeline [data]="tab.chart" [titleMap]="titleMap" />
-        </div>
-      </ng-template>
-    </nz-tab>
     }
-  </nz-tabs>
+  </div>
+
+  <!-- 主內容區 -->
+  <div nz-row [nzGutter]="[24, 24]">
+    <!-- 左側 - 預算執行與現金流 -->
+    <div nz-col nzXs="24" nzLg="16">
+      <!-- 預算執行情況 -->
+      <nz-card [nzLoading]="loading" [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="pie-chart" nzTheme="outline"></i>
+            <span>預算執行情況</span>
+          </div>
+          <div class="section-extra">
+            <span class="total-label">總預算：</span>
+            <span class="total-value">¥2,850,000</span>
+          </div>
+        </div>
+        <div class="budget-grid">
+          @for (category of budgetCategories; track $index) {
+            <div class="budget-item">
+              <div class="budget-header">
+                <span class="budget-name">{{ category.name }}</span>
+                <span class="budget-values">
+                  <span class="spent">¥{{ category.spent | number }}</span>
+                  <span class="divider">/</span>
+                  <span class="budget">¥{{ category.budget | number }}</span>
+                </span>
+              </div>
+              <div class="budget-progress">
+                <nz-progress
+                  [nzPercent]="getBudgetRate(category)"
+                  [nzStrokeColor]="getBudgetStatusColor(category.status)"
+                  [nzShowInfo]="true"
+                  nzSize="small"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 現金流趨勢 -->
+      <nz-card [nzLoading]="loading" [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+            <span>現金流趨勢</span>
+          </div>
+          <nz-radio-group [(ngModel)]="cashFlowType" (ngModelChange)="changeCashFlowType()" nzButtonStyle="solid" nzSize="small">
+            <label nz-radio-button nzValue="month">本月</label>
+            <label nz-radio-button nzValue="quarter">本季</label>
+            <label nz-radio-button nzValue="year">本年</label>
+          </nz-radio-group>
+        </div>
+        @if (data.offlineChartData) {
+          <g2-timeline [data]="data.offlineChartData" [titleMap]="titleMap" [height]="300" />
+        }
+      </nz-card>
+    </div>
+
+    <!-- 右側 - 支出分析與待付款項 -->
+    <div nz-col nzXs="24" nzLg="8">
+      <!-- 支出分佈 -->
+      <nz-card [nzLoading]="loading" [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="fund" nzTheme="outline"></i>
+            <span>支出分佈</span>
+          </div>
+        </div>
+        @if (salesPieData) {
+          <g2-pie
+            [data]="salesPieData"
+            [hasLegend]="true"
+            subTitle="本月總支出"
+            [height]="248"
+            [lineWidth]="3"
+            [total]="salesTotal"
+            [valueFormat]="handlePieValueFormat"
+          />
+        }
+      </nz-card>
+
+      <!-- 待付款項 -->
+      <nz-card [nzBordered]="false" class="section-card pending-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
+            <span>待付款項</span>
+          </div>
+          <nz-badge [nzCount]="pendingPayments.length" nzShowZero />
+        </div>
+        <div class="pending-list">
+          @for (payment of pendingPayments; track payment.id) {
+            <div class="pending-item" [class.urgent]="payment.priority === 'high'">
+              <div class="pending-header">
+                <span class="pending-id">{{ payment.id }}</span>
+                <nz-tag [nzColor]="getPriorityColor(payment.priority)">
+                  {{ payment.priority === 'high' ? '緊急' : payment.priority === 'medium' ? '一般' : '低' }}
+                </nz-tag>
+              </div>
+              <div class="pending-body">
+                <div class="pending-project">{{ payment.project }}</div>
+                <div class="pending-vendor">{{ payment.vendor }}</div>
+              </div>
+              <div class="pending-footer">
+                <span class="pending-amount">¥{{ payment.amount | number }}</span>
+                <span class="pending-due">
+                  <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                  {{ payment.dueDate }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="pending-action">
+          <button nz-button nzType="dashed" nzBlock (click)="msg.info('查看全部待付款項')">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            查看全部
+          </button>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+
+  <!-- 底部 - 財務報表趨勢 -->
+  <nz-card [nzLoading]="loading" [nzBordered]="false" class="section-card chart-card">
+    <div class="section-header">
+      <div class="section-title">
+        <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+        <span>月度財務趨勢</span>
+      </div>
+    </div>
+    @if (data.salesData) {
+      <g2-bar [data]="data.salesData" height="280" />
+    }
+  </nz-card>
+
+  <!-- 工區財務明細 -->
+  @if (data.offlineData) {
+    <nz-card [nzLoading]="loading" [nzBordered]="false" class="section-card offline-card">
+      <div class="section-header">
+        <div class="section-title">
+          <i nz-icon nzType="apartment" nzTheme="outline"></i>
+          <span>工區財務明細</span>
+        </div>
+      </div>
+      <nz-tabs [(nzSelectedIndex)]="offlineIdx" (nzSelectedIndexChange)="offlineChange($event)">
+        @for (tab of data.offlineData; track $index) {
+          <nz-tab [nzTitle]="nzTabHeading">
+            <ng-template #nzTabHeading>
+              <div class="tab-header">
+                <span class="tab-name">{{ tab.name }}</span>
+                <span class="tab-rate">{{ (tab.cvr * 100).toFixed(1) }}%</span>
+              </div>
+            </ng-template>
+            <ng-template nz-tab>
+              <div class="tab-content">
+                <g2-timeline [data]="tab.chart" [titleMap]="titleMap" [height]="280" />
+              </div>
+            </ng-template>
+          </nz-tab>
+        }
+      </nz-tabs>
+    </nz-card>
   }
-</nz-card>
+</div>

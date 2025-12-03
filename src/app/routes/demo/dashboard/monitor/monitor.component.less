@@ -1,104 +1,84 @@
 @import '@delon/theme/index';
 
 :host ::ng-deep {
-  .monitor-dashboard {
+  .org-monitor-dashboard {
     padding: 0;
   }
 
   // 頂部標題區
   .monitor-header {
     margin-bottom: 24px;
-    
+
     .header-content {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       padding: 24px 32px;
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
       border-radius: 16px;
       color: #fff;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
-    
+
     .header-left {
-      .monitor-title {
-        font-size: 28px;
-        font-weight: 600;
-        margin: 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+
+      .header-icon {
         display: flex;
         align-items: center;
-        gap: 12px;
-        
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgb(255 255 255 / 15%);
+
         i {
           font-size: 32px;
         }
       }
-      
-      .monitor-subtitle {
-        margin: 8px 0 0;
-        opacity: 0.8;
-        font-size: 14px;
+
+      .header-text {
+        h1 {
+          margin: 0 0 8px;
+          font-size: 26px;
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          opacity: 0.85;
+        }
       }
     }
-    
+
     .header-right {
       display: flex;
-      align-items: center;
-      gap: 16px;
-      
-      .status-tag {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+
+      .status-badge {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 16px;
+        border-radius: 20px;
         font-size: 14px;
-        padding: 4px 12px;
-        border-radius: 16px;
-        
-        i {
-          margin-right: 6px;
+        font-weight: 500;
+
+        &.success {
+          color: #95de64;
+          background: rgb(82 196 26 / 20%);
         }
       }
-      
-      .update-time {
+
+      .update-info {
+        display: flex;
+        gap: 16px;
         font-size: 13px;
         opacity: 0.8;
-      }
-    }
-  }
-
-  // 監控卡片
-  .monitor-card {
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    margin-bottom: 0;
-    
-    .ant-card-body {
-      padding: 24px;
-    }
-    
-    .card-header {
-      margin-bottom: 20px;
-      
-      .card-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: @heading-color;
-        display: flex;
-        align-items: center;
-        
-        .title-icon {
-          font-size: 18px;
-          margin-right: 8px;
-          color: @primary-color;
-        }
-      }
-    }
-    
-    &.main-card {
-      min-height: 560px;
-    }
-    
-    &.sidebar-card {
-      margin-bottom: 24px;
-      
-      &:last-child {
-        margin-bottom: 0;
       }
     }
   }
@@ -109,190 +89,347 @@
   }
 
   .kpi-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: @background-color-light;
-    border-radius: 12px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
     transition: all 0.3s ease;
-    
+
     &:hover {
-      background: @primary-1;
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
     }
-    
-    .kpi-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .kpi-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      
-      i {
-        font-size: 24px;
-        color: #fff;
-      }
-      
-      &.primary {
-        background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
-      }
-      
-      &.success {
-        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
-      }
-      
-      &.warning {
-        background: linear-gradient(135deg, #faad14 0%, #d48806 100%);
-      }
-      
-      &.info {
-        background: linear-gradient(135deg, #13c2c2 0%, #08979c 100%);
-      }
-    }
-    
-    .kpi-content {
-      flex: 1;
-      
-      .kpi-label {
-        display: block;
-        font-size: 13px;
+      justify-content: space-between;
+      margin-bottom: 12px;
+
+      .kpi-name {
+        font-size: 14px;
         color: @text-color-secondary;
-        margin-bottom: 4px;
       }
-      
-      .kpi-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: @heading-color;
-        line-height: 1.2;
-        
-        &.countdown {
-          font-size: 24px;
+
+      .kpi-trend {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        font-size: 13px;
+
+        &.up {
+          color: @success-color;
+        }
+
+        &.down {
+          color: @error-color;
         }
       }
-      
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: @heading-color;
+
       .kpi-unit {
+        margin-left: 4px;
+        font-size: 16px;
+        font-weight: 400;
+        color: @text-color-secondary;
+      }
+    }
+
+    .kpi-progress {
+      margin-top: 16px;
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
         font-size: 12px;
         color: @text-color-secondary;
-        margin-left: 4px;
       }
     }
   }
 
-  // 地圖區域
-  .map-section {
-    .map-overlay {
-      height: 320px;
-      background: linear-gradient(180deg, rgba(24, 144, 255, 0.05) 0%, rgba(24, 144, 255, 0.02) 100%);
-      border-radius: 12px;
+  // 區塊卡片
+  .section-card {
+    margin-bottom: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .section-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      
-      img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-      }
-    }
-  }
-
-  // 預測內容
-  .forecast-content {
-    .forecast-stat {
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      
-      .forecast-label {
-        font-size: 14px;
-        color: @text-color-secondary;
-      }
-      
-      .forecast-value {
-        font-size: 14px;
-        font-weight: 600;
-        color: @success-color;
-      }
-    }
-    
-    .forecast-chart {
-      margin: 20px 0;
-      padding: 16px 0;
-      background: linear-gradient(180deg, rgba(24, 144, 255, 0.08) 0%, rgba(24, 144, 255, 0.02) 100%);
-      border-radius: 8px;
-    }
-    
-    .forecast-legend {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      
-      .legend-item {
+      margin-bottom: 24px;
+
+      .section-title {
         display: flex;
+        gap: 12px;
         align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: @heading-color;
+
+        i {
+          font-size: 22px;
+          color: @primary-color;
+        }
+      }
+
+      .section-legend {
+        display: flex;
+        gap: 16px;
+
+        .legend-item {
+          display: flex;
+          gap: 6px;
+          align-items: center;
+          font-size: 12px;
+          color: @text-color-secondary;
+
+          .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+
+            &.excellent {
+              background: #52c41a;
+            }
+
+            &.good {
+              background: #1890ff;
+            }
+
+            &.warning {
+              background: #faad14;
+            }
+          }
+        }
+      }
+
+      .live-indicator {
+        display: flex;
         gap: 8px;
-        
-        .legend-dot {
+        align-items: center;
+        font-size: 13px;
+        color: @success-color;
+
+        .live-dot {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          
-          &.max {
-            background: @primary-color;
-          }
-          
-          &.min {
-            background: @success-color;
-          }
-        }
-        
-        .legend-label {
-          flex: 1;
-          font-size: 13px;
-          color: @text-color-secondary;
-        }
-        
-        .legend-value {
-          font-size: 14px;
-          font-weight: 600;
-          color: @heading-color;
+          background: @success-color;
+          animation: pulse 1.5s infinite;
         }
       }
     }
   }
 
-  // 儀表盤容器
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  // 部門網格
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .dept-card {
+    padding: 20px;
+    border-left: 4px solid;
+    border-radius: 12px;
+    background: @background-color-light;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+    }
+
+    .dept-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .dept-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: @heading-color;
+      }
+    }
+
+    .dept-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+
+        .stat-value {
+          font-size: 22px;
+          font-weight: 700;
+          color: @heading-color;
+        }
+
+        .stat-label {
+          font-size: 12px;
+          color: @text-color-secondary;
+        }
+      }
+    }
+
+    .dept-progress {
+      margin-bottom: 12px;
+    }
+
+    .dept-footer {
+      .dept-head {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 13px;
+        color: @text-color-secondary;
+      }
+    }
+  }
+
+  // 活動圖表
+  .activity-chart {
+    margin-bottom: 16px;
+    padding: 16px 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgb(24 144 255 / 6%) 0%, rgb(24 144 255 / 2%) 100%);
+  }
+
+  .activity-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    .activity-stat {
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      background: @background-color-light;
+
+      .stat-label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: @text-color-secondary;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: @heading-color;
+      }
+    }
+  }
+
+  // 告警卡片
+  .alert-card {
+    .error-badge {
+      .ant-badge-count {
+        background: @error-color;
+      }
+    }
+  }
+
+  .alert-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 320px;
+  }
+
+  .alert-item {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &.alert-error {
+      border-left: 3px solid @error-color;
+      background: #fff2f0;
+    }
+
+    &.alert-warning {
+      border-left: 3px solid @warning-color;
+      background: #fffbe6;
+    }
+
+    &.alert-info {
+      border-left: 3px solid @primary-color;
+      background: #e6f7ff;
+    }
+
+    .alert-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+
+    .alert-content {
+      flex: 1;
+      min-width: 0;
+
+      .alert-title {
+        margin-bottom: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        color: @heading-color;
+      }
+
+      .alert-desc {
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: @text-color-secondary;
+      }
+
+      .alert-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: @text-color-secondary;
+      }
+    }
+  }
+
+  // 儀表容器
   .gauge-container {
     display: flex;
     justify-content: center;
     padding: 16px 0;
-  }
-
-  // 餅圖區域
-  .pie-grid {
-    padding: 16px 0;
-    
-    .pie-item {
-      text-align: center;
-      
-      .pie-label {
-        margin-top: 8px;
-        font-size: 13px;
-        color: @text-color-secondary;
-      }
-    }
-  }
-
-  // 標籤雲容器
-  .tag-cloud-container {
-    padding: 16px 0;
-    display: flex;
-    justify-content: center;
   }
 
   // 水波圖容器
@@ -302,43 +439,59 @@
     padding: 16px 0;
   }
 
-  // 底部行
-  .bottom-row {
-    margin-top: 24px;
+  // 餅圖區域
+  .pie-grid {
+    padding: 16px 0;
+
+    .pie-item {
+      text-align: center;
+    }
   }
 
-  // 響應式調整
+  // 標籤雲
+  .tag-cloud-container {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+  }
+
+  // 底部行
+  .bottom-row {
+    margin-top: 0;
+  }
+
+  // 響應式
   @media screen and (max-width: @screen-lg) {
     .monitor-header {
       .header-content {
         flex-direction: column;
+        gap: 20px;
         text-align: center;
-        gap: 16px;
       }
-      
-      .header-right {
+
+      .header-left {
         flex-direction: column;
       }
-    }
-    
-    .map-section {
-      .map-overlay {
-        height: auto;
-        min-height: 200px;
+
+      .header-right {
+        align-items: center;
       }
+    }
+
+    .dept-grid {
+      grid-template-columns: 1fr;
     }
   }
 
   @media screen and (max-width: @screen-md) {
     .kpi-card {
-      flex-direction: column;
-      text-align: center;
-      
-      .kpi-content {
-        .kpi-value {
-          font-size: 24px;
-        }
+      .kpi-value {
+        font-size: 28px;
       }
+    }
+
+    .activity-stats {
+      grid-template-columns: 1fr;
     }
   }
 }

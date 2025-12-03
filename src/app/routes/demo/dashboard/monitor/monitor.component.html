@@ -1,227 +1,257 @@
 <!-- 組織監控儀表板 -->
-<div class="monitor-dashboard">
+<div class="org-monitor-dashboard">
   <!-- 頂部標題區 -->
   <div class="monitor-header">
     <div class="header-content">
       <div class="header-left">
-        <h1 class="monitor-title">
-          <i nz-icon nzType="monitor" nzTheme="outline"></i>
-          組織監控中心
-        </h1>
-        <p class="monitor-subtitle">實時追蹤組織運營數據與關鍵指標</p>
+        <div class="header-icon">
+          <i nz-icon nzType="cluster" nzTheme="outline"></i>
+        </div>
+        <div class="header-text">
+          <h1>組織運營監控中心</h1>
+          <p>全面追蹤組織運營狀況、部門績效與資源配置</p>
+        </div>
       </div>
       <div class="header-right">
-        <nz-tag nzColor="success" class="status-tag">
+        <div class="status-badge success">
           <i nz-icon nzType="check-circle" nzTheme="fill"></i>
           系統運行正常
-        </nz-tag>
-        <span class="update-time">最後更新：{{ activeStat.t2 }}</span>
+        </div>
+        <div class="update-info">
+          <span class="uptime">可用率: {{ systemUptime }}</span>
+          <span class="update-time">更新於: {{ lastUpdateTime | date: 'HH:mm:ss' }}</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <div nz-row [nzGutter]="[24, 24]">
-    <!-- 左側主內容區 -->
-    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="18">
-      <nz-card [nzBordered]="false" class="monitor-card main-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="dashboard" nzTheme="outline" class="title-icon"></i>
-            運營活動總覽
+  <!-- 組織 KPI -->
+  <div nz-row [nzGutter]="[24, 24]" class="kpi-row">
+    @for (kpi of orgKPIs; track kpi.id) {
+      <div nz-col nzXs="24" nzSm="12" nzMd="12" nzLg="6">
+        <nz-card [nzBordered]="false" class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-name">{{ kpi.name }}</span>
+            <span class="kpi-trend" [class.up]="kpi.trend === 'up'" [class.down]="kpi.trend === 'down'">
+              @if (kpi.trend !== 'stable') {
+                <i nz-icon [nzType]="kpi.trend === 'up' ? 'arrow-up' : 'arrow-down'" nzTheme="outline"></i>
+                {{ kpi.trendValue }}%
+              } @else {
+                <i nz-icon nzType="minus" nzTheme="outline"></i>
+                持平
+              }
+            </span>
           </div>
-        </div>
-        
-        <!-- 關鍵指標 -->
-        <div nz-row [nzGutter]="[24, 24]" class="kpi-row">
-          <div nz-col nzXs="24" nzSm="12" nzMd="6">
-            <div class="kpi-card">
-              <div class="kpi-icon primary">
-                <i nz-icon nzType="stock" nzTheme="outline"></i>
-              </div>
-              <div class="kpi-content">
-                <span class="kpi-label">{{ 'app.monitor.total-transactions' | i18n }}</span>
-                <div class="kpi-value">2,345</div>
-                <span class="kpi-unit">立方米</span>
-              </div>
+          <div class="kpi-value">
+            {{ kpi.value | number }}
+            <span class="kpi-unit">{{ kpi.unit }}</span>
+          </div>
+          <div class="kpi-progress">
+            <div class="progress-label">
+              <span>目標: {{ kpi.target | number }} {{ kpi.unit }}</span>
+              <span>{{ getKPIProgress(kpi) }}%</span>
             </div>
-          </div>
-          <div nz-col nzXs="24" nzSm="12" nzMd="6">
-            <div class="kpi-card">
-              <div class="kpi-icon success">
-                <i nz-icon nzType="aim" nzTheme="outline"></i>
-              </div>
-              <div class="kpi-content">
-                <span class="kpi-label">{{ 'app.monitor.sales-target' | i18n }}</span>
-                <div class="kpi-value">78%</div>
-                <span class="kpi-unit">達成率</span>
-              </div>
-            </div>
-          </div>
-          <div nz-col nzXs="24" nzSm="12" nzMd="6">
-            <div class="kpi-card">
-              <div class="kpi-icon warning">
-                <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
-              </div>
-              <div class="kpi-content">
-                <span class="kpi-label">{{ 'app.monitor.remaining-time' | i18n }}</span>
-                <div class="kpi-value countdown">
-                  <count-down [config]="cd" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div nz-col nzXs="24" nzSm="12" nzMd="6">
-            <div class="kpi-card">
-              <div class="kpi-icon info">
-                <i nz-icon nzType="team" nzTheme="outline"></i>
-              </div>
-              <div class="kpi-content">
-                <span class="kpi-label">{{ 'app.monitor.total-transactions-per-second' | i18n }}</span>
-                <div class="kpi-value">156</div>
-                <span class="kpi-unit">人次</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 地圖區域 -->
-        <div class="map-section">
-          <div class="map-overlay">
-            <img
-              nz-tooltip
-              [nzTooltipTitle]="'app.monitor.waiting-for-implementation' | i18n"
-              nzTooltipPlacement="top"
-              src="https://gw.alipayobjects.com/zos/rmsportal/HBWnDEUXCnGnGrRfrpKa.png"
-              alt="site-layout"
+            <nz-progress
+              [nzPercent]="getKPIProgress(kpi)"
+              [nzShowInfo]="false"
+              nzSize="small"
+              [nzStrokeColor]="getKPIProgress(kpi) >= 80 ? '#52c41a' : getKPIProgress(kpi) >= 60 ? '#1890ff' : '#faad14'"
             />
           </div>
+        </nz-card>
+      </div>
+    }
+  </div>
+
+  <div nz-row [nzGutter]="[24, 24]">
+    <!-- 左側 - 部門狀態與活動監控 -->
+    <div nz-col nzXs="24" nzLg="16">
+      <!-- 部門運營狀態 -->
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="apartment" nzTheme="outline"></i>
+            <span>部門運營狀態</span>
+          </div>
+          <div class="section-legend">
+            <span class="legend-item"><span class="dot excellent"></span>優秀</span>
+            <span class="legend-item"><span class="dot good"></span>良好</span>
+            <span class="legend-item"><span class="dot warning"></span>注意</span>
+          </div>
+        </div>
+        <div class="dept-grid">
+          @for (dept of departments; track dept.id) {
+            <div class="dept-card" [style.border-left-color]="getStatusColor(dept.status)">
+              <div class="dept-header">
+                <span class="dept-name">{{ dept.name }}</span>
+                <nz-tag [nzColor]="getStatusColor(dept.status)">{{ getStatusText(dept.status) }}</nz-tag>
+              </div>
+              <div class="dept-stats">
+                <div class="stat-item">
+                  <span class="stat-value">{{ dept.memberCount }}</span>
+                  <span class="stat-label">人員</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ dept.activeProjects }}</span>
+                  <span class="stat-label">項目</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ dept.completionRate }}%</span>
+                  <span class="stat-label">完成率</span>
+                </div>
+              </div>
+              <div class="dept-progress">
+                <nz-progress
+                  [nzPercent]="dept.completionRate"
+                  [nzShowInfo]="false"
+                  nzSize="small"
+                  [nzStrokeColor]="getStatusColor(dept.status)"
+                />
+              </div>
+              <div class="dept-footer">
+                <span class="dept-head">
+                  <i nz-icon nzType="user" nzTheme="outline"></i>
+                  {{ dept.head }}
+                </span>
+              </div>
+            </div>
+          }
         </div>
       </nz-card>
-    </div>
-    
-    <!-- 右側側邊欄 -->
-    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="6">
-      <!-- 活動預測 -->
-      <nz-card [nzBordered]="false" class="monitor-card sidebar-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="fund-projection-screen" nzTheme="outline" class="title-icon"></i>
-            {{ 'app.monitor.activity-forecast' | i18n }}
+
+      <!-- 即時活動監控 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="stock" nzTheme="outline"></i>
+            <span>即時活動監控</span>
+          </div>
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            即時更新中
           </div>
         </div>
         @if (activeData) {
-          <div class="forecast-content">
-            <div class="forecast-stat">
-              <span class="forecast-label">進度預測</span>
-              <span class="forecast-value">按計劃推進</span>
+          <div class="activity-chart">
+            <g2-mini-area [animate]="true" line [borderWidth]="2" [height]="180" [padding]="[10, 0, 20, 0]" [data]="activeData" />
+          </div>
+          <div class="activity-stats">
+            <div class="activity-stat">
+              <span class="stat-label">峰值活動</span>
+              <span class="stat-value">{{ activeStat.max }}</span>
             </div>
-            <div class="forecast-chart">
-              <g2-mini-area [animate]="false" line [borderWidth]="2" [height]="100" [padding]="0" [data]="activeData" />
+            <div class="activity-stat">
+              <span class="stat-label">平均活動</span>
+              <span class="stat-value">{{ activeStat.min }}</span>
             </div>
-            <div class="forecast-legend">
-              <div class="legend-item">
-                <span class="legend-dot max"></span>
-                <span class="legend-label">最高</span>
-                <span class="legend-value">{{ activeStat.max }}%</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-dot min"></span>
-                <span class="legend-label">平均</span>
-                <span class="legend-value">{{ activeStat.min }}%</span>
-              </div>
+            <div class="activity-stat">
+              <span class="stat-label">當前時段</span>
+              <span class="stat-value">{{ activeStat.t2 }}</span>
             </div>
           </div>
         }
       </nz-card>
-      
-      <!-- 效率儀表 -->
-      <nz-card [nzBordered]="false" class="monitor-card sidebar-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="dashboard" nzTheme="outline" class="title-icon"></i>
-            {{ 'app.monitor.efficiency' | i18n }}
+    </div>
+
+    <!-- 右側 - 告警與效率 -->
+    <div nz-col nzXs="24" nzLg="8">
+      <!-- 系統告警 -->
+      <nz-card [nzBordered]="false" class="section-card alert-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="alert" nzTheme="outline"></i>
+            <span>系統告警</span>
+          </div>
+          <nz-badge [nzCount]="errorAlertCount" nzShowZero class="error-badge" />
+        </div>
+        <div class="alert-list">
+          @for (alert of alerts; track alert.id) {
+            <div class="alert-item" [class]="'alert-' + alert.type">
+              <div class="alert-icon" [style.color]="getAlertColor(alert.type)">
+                <i nz-icon [nzType]="getAlertIcon(alert.type)" nzTheme="fill"></i>
+              </div>
+              <div class="alert-content">
+                <div class="alert-title">{{ alert.title }}</div>
+                <div class="alert-desc">{{ alert.description }}</div>
+                <div class="alert-meta">
+                  <span class="alert-dept">{{ alert.department }}</span>
+                  <span class="alert-time">{{ alert.time }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 運營效率 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="dashboard" nzTheme="outline"></i>
+            <span>運營效率指數</span>
           </div>
         </div>
         @if (percent) {
           <div class="gauge-container">
-            <g2-gauge [title]="'app.monitor.ratio' | i18n" [height]="180" [percent]="percent" [format]="couponFormat" />
+            <g2-gauge [title]="'整體效率'" [height]="200" [percent]="percent" [format]="couponFormat" />
           </div>
         }
+      </nz-card>
+
+      <!-- 資源使用率 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="database" nzTheme="outline"></i>
+            <span>資源使用率</span>
+          </div>
+        </div>
+        <div class="water-wave-container">
+          <g2-water-wave title="資源使用" [percent]="72" [height]="160" />
+        </div>
       </nz-card>
     </div>
   </div>
 
-  <!-- 底部圖表區 -->
+  <!-- 底部 - 分類分析 -->
   <div nz-row [nzGutter]="[24, 24]" class="bottom-row">
-    <div nz-col nzXs="24" nzSm="24" nzLg="12">
-      <nz-card [nzBordered]="false" class="monitor-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="pie-chart" nzTheme="outline" class="title-icon"></i>
-            {{ 'app.monitor.proportion-per-category' | i18n }}
+    <div nz-col nzXs="24" nzLg="12">
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="pie-chart" nzTheme="outline"></i>
+            <span>工程類別分佈</span>
           </div>
         </div>
         <div nz-row [nzGutter]="[16, 16]" class="pie-grid">
           <div nz-col [nzSpan]="8">
             <div class="pie-item">
-              <g2-pie [animate]="false" [percent]="35" [subTitle]="'app.monitor.fast-food' | i18n" total="35%" [height]="128" [lineWidth]="2" />
-              <div class="pie-label">土建工程</div>
+              <g2-pie [animate]="false" [percent]="42" subTitle="土建工程" total="42%" [height]="128" [lineWidth]="3" />
             </div>
           </div>
           <div nz-col [nzSpan]="8">
             <div class="pie-item">
-              <g2-pie
-                [animate]="false"
-                color="#5DDECF"
-                [percent]="28"
-                [subTitle]="'app.monitor.western-food' | i18n"
-                total="28%"
-                [height]="128"
-                [lineWidth]="2"
-              />
-              <div class="pie-label">機電安裝</div>
+              <g2-pie [animate]="false" color="#13c2c2" [percent]="28" subTitle="機電工程" total="28%" [height]="128" [lineWidth]="3" />
             </div>
           </div>
           <div nz-col [nzSpan]="8">
             <div class="pie-item">
-              <g2-pie
-                [animate]="false"
-                color="#2FC25B"
-                [percent]="37"
-                [subTitle]="'app.monitor.hot-pot' | i18n"
-                total="37%"
-                [height]="128"
-                [lineWidth]="2"
-              />
-              <div class="pie-label">裝飾裝修</div>
+              <g2-pie [animate]="false" color="#722ed1" [percent]="30" subTitle="裝飾工程" total="30%" [height]="128" [lineWidth]="3" />
             </div>
           </div>
         </div>
       </nz-card>
     </div>
-    <div nz-col nzXs="24" nzSm="24" nzLg="6">
-      <nz-card [nzBordered]="false" class="monitor-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="cloud" nzTheme="outline" class="title-icon"></i>
-            {{ 'app.monitor.popular-searches' | i18n }}
+    <div nz-col nzXs="24" nzLg="12">
+      <nz-card [nzBordered]="false" [nzLoading]="loading" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="cloud" nzTheme="outline"></i>
+            <span>熱門標籤</span>
           </div>
         </div>
         <div class="tag-cloud-container">
-          <g2-tag-cloud [data]="tags" [height]="180" />
-        </div>
-      </nz-card>
-    </div>
-    <div nz-col nzXs="24" nzSm="24" nzLg="6">
-      <nz-card [nzBordered]="false" class="monitor-card">
-        <div class="card-header">
-          <div class="card-title">
-            <i nz-icon nzType="database" nzTheme="outline" class="title-icon"></i>
-            {{ 'app.monitor.resource-surplus' | i18n }}
-          </div>
-        </div>
-        <div class="water-wave-container">
-          <g2-water-wave [title]="'app.monitor.fund-surplus' | i18n" [percent]="68" [height]="180" />
+          <g2-tag-cloud [data]="tags" [height]="200" />
         </div>
       </nz-card>
     </div>
