@@ -1,0 +1,33 @@
+-- ============================================================================
+-- Updated At Triggers Reference
+-- Description: updated_at 觸發器參考文檔
+-- Created: 2024-12-01
+-- ============================================================================
+-- 
+-- 此檔案用於文檔化專案中使用的觸發器。
+-- 實際觸發器定義在 migrations/20241201000500_create_triggers.sql
+-- 
+-- 觸發器清單：
+-- 
+-- 1. update_accounts_updated_at
+-- 2. update_organizations_updated_at
+-- 3. update_organization_members_updated_at
+-- 4. update_teams_updated_at
+-- 5. update_team_members_updated_at
+-- 6. update_blueprints_updated_at
+-- 7. update_blueprint_members_updated_at
+-- 8. update_blueprint_team_roles_updated_at
+-- 9. update_blueprint_roles_updated_at
+-- 10. update_tasks_updated_at
+-- 11. update_diaries_updated_at
+-- 12. update_checklists_updated_at
+-- 13. update_checklist_items_updated_at
+-- 14. update_task_acceptances_updated_at
+-- 15. update_todos_updated_at
+-- 16. update_issues_updated_at
+-- 17. update_issue_comments_updated_at
+-- 
+-- 觸發器函數：
+-- public.update_updated_at() - 自動更新 updated_at 欄位
+-- 
+-- ============================================================================

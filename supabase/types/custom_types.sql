@@ -1,0 +1,45 @@
+-- ============================================================================
+-- Custom Types Reference
+-- Description: 自定義類型定義參考
+-- Created: 2024-12-01
+-- ============================================================================
+-- 
+-- 此檔案用於文檔化專案中使用的自定義類型。
+-- 實際類型定義在 migrations/20241201000003_create_custom_types.sql
+-- 
+-- 類型清單：
+-- 
+-- 1. account_type      - 帳號類型 (user, org, bot)
+-- 2. account_status    - 帳號狀態 (active, inactive, suspended, deleted)
+-- 3. organization_role - 組織角色 (owner, admin, member)
+-- 4. team_role         - 團隊角色 (leader, member)
+-- 5. blueprint_role    - 藍圖成員角色 (viewer, contributor, maintainer)
+-- 6. blueprint_team_access - 藍圖團隊存取 (read, write, admin)
+-- 7. module_type       - 啟用模組 (tasks, diary, dashboard, bot_workflow, files, todos, checklists, issues)
+-- 8. task_status       - 任務狀態 (pending, in_progress, in_review, completed, cancelled, blocked)
+-- 9. task_priority     - 任務優先級 (lowest, low, medium, high, highest)
+-- 10. issue_severity   - 問題嚴重度 (low, medium, high, critical)
+-- 11. issue_status     - 問題狀態 (new, assigned, in_progress, pending_confirm, resolved, closed, reopened)
+-- 12. acceptance_result - 驗收結果 (pending, passed, failed, conditional)
+-- 13. weather_type     - 天氣類型 (sunny, cloudy, rainy, stormy, snowy, foggy)
+-- 14. blueprint_business_role - 業務角色 (project_manager, site_director, supervisor, inspector, ...)
+-- 
+-- QC/驗收/問題模組類型：
+-- 15. qc_inspection_status - 品管檢查狀態
+-- 16. qc_inspection_type   - 品管檢查類型
+-- 17. qc_item_status       - 品管項目狀態
+-- 18. acceptance_status    - 驗收狀態
+-- 19. acceptance_type      - 驗收類型
+-- 20. problem_status       - 問題狀態
+-- 21. problem_type         - 問題類型
+-- 22. problem_source       - 問題來源
+-- 23. problem_priority     - 問題優先級
+-- 24. problem_severity     - 問題嚴重度
+-- 
+-- 審計日誌類型：
+-- 25. audit_action        - 審計動作類型
+-- 26. audit_severity      - 審計嚴重程度
+-- 27. audit_entity_type   - 審計實體類型
+-- 28. audit_actor_type    - 審計操作者類型
+-- 
+-- ============================================================================
