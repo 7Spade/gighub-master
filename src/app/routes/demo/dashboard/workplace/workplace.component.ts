@@ -25,58 +25,58 @@ export class DashboardWorkplaceComponent implements OnInit {
 
   links = [
     {
-      title: '操作一',
+      title: '进度报表',
       href: ''
     },
     {
-      title: '操作二',
+      title: '材料管理',
       href: ''
     },
     {
-      title: '操作三',
+      title: '安全检查',
       href: ''
     },
     {
-      title: '操作四',
+      title: '质量验收',
       href: ''
     },
     {
-      title: '操作五',
+      title: '人员调度',
       href: ''
     },
     {
-      title: '操作六',
+      title: '设备管理',
       href: ''
     }
   ];
   members = [
     {
       id: 'members-1',
-      title: '科学搬砖组',
+      title: '土建施工队',
       logo: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
       link: ''
     },
     {
       id: 'members-2',
-      title: '程序员日常',
+      title: '机电安装队',
       logo: 'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png',
       link: ''
     },
     {
       id: 'members-3',
-      title: '设计天团',
+      title: '装饰装修队',
       logo: 'https://gw.alipayobjects.com/zos/rmsportal/dURIMkkrRFpPgTuzkwnB.png',
       link: ''
     },
     {
       id: 'members-4',
-      title: '中二少女团',
+      title: '安全监督组',
       logo: 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png',
       link: ''
     },
     {
       id: 'members-5',
-      title: '骗你学计算机',
+      title: '质量检测组',
       logo: 'https://gw.alipayobjects.com/zos/rmsportal/siCrBXXhmvTQGWPNLBow.png',
       link: ''
     }

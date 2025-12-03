@@ -7,7 +7,7 @@
       <nz-breadcrumb-item>
         <a [routerLink]="['/']">Dashboard</a>
       </nz-breadcrumb-item>
-      <nz-breadcrumb-item>工作台</nz-breadcrumb-item>
+      <nz-breadcrumb-item>施工现场</nz-breadcrumb-item>
     </nz-breadcrumb>
   </ng-template>
   <ng-template #content>
@@ -16,27 +16,27 @@
         <nz-avatar nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png" />
       </div>
       <div class="desc">
-        <div class="desc-title">早安，山治，我要吃肉！</div>
-        <div>假砖家 | 地球－伟大航道－黄金梅丽号－厨房－小强部门</div>
+        <div class="desc-title">早安，项目经理！工地施工正常进行中</div>
+        <div>高级工程师 | GigHub工程公司－华东区项目部－第一施工队</div>
       </div>
     </div>
   </ng-template>
   <ng-template #extra>
     <div class="page-extra">
       <div>
-        <p>项目数</p>
-        <p>56</p>
+        <p>进行中工区</p>
+        <p>8</p>
       </div>
       <div>
-        <p>团队内排名</p>
+        <p>工期进度</p>
         <p>
-          8
-          <span> / 24</span>
+          78
+          <span> %</span>
         </p>
       </div>
       <div>
-        <p>项目访问</p>
-        <p>2,223</p>
+        <p>今日作业人数</p>
+        <p>156</p>
       </div>
     </div>
   </ng-template>
@@ -44,7 +44,7 @@
 <div nz-row [nzGutter]="24">
   <div nz-col nzXs="24" nzSm="24" nzMd="16">
     <nz-card
-      nzTitle="进行中的项目"
+      nzTitle="进行中的施工项目"
       [nzExtra]="ingExtra"
       [nzBordered]="false"
       [nzLoading]="loading"
@@ -76,7 +76,7 @@
         </div>
       }
     </nz-card>
-    <nz-card nzTitle="动态" [nzBordered]="false" [nzLoading]="loading" class="ant-card__body-nopadding mb-lg active-card">
+    <nz-card nzTitle="施工动态" [nzBordered]="false" [nzLoading]="loading" class="ant-card__body-nopadding mb-lg active-card">
       <nz-list nzSize="large" class="activities">
         @for (item of activities; track $index) {
           <nz-list-item>
@@ -96,23 +96,23 @@
     </nz-card>
   </div>
   <div nz-col nzXs="24" nzSm="24" nzMd="8">
-    <nz-card nzTitle="快速开始 / 便捷导航" [nzBordered]="false" class="ant-card__body-nopadding mb-lg">
+    <nz-card nzTitle="快速入口 / 常用功能" [nzBordered]="false" class="ant-card__body-nopadding mb-lg">
       <div class="links">
         @for (item of links; track $index) {
           <a (click)="msg.success(item.title)">{{ item.title }}</a>
         }
-        <button nz-button (click)="links.push({ title: 'new titel', href: 'href' })" [nzType]="'dashed'" [nzSize]="'small'">
+        <button nz-button (click)="links.push({ title: '新功能', href: 'href' })" [nzType]="'dashed'" [nzSize]="'small'">
           <i nz-icon nzType="plus"></i>
           <span>添加</span>
         </button>
       </div>
     </nz-card>
-    <nz-card nzTitle="XX 指数" [nzBordered]="false" [nzLoading]="loading" class="mb-lg">
+    <nz-card nzTitle="施工效率指数" [nzBordered]="false" [nzLoading]="loading" class="mb-lg">
       @if (radarData) {
         <g2-radar [data]="radarData" [height]="343" [hasLegend]="true" />
       }
     </nz-card>
-    <nz-card nzTitle="团队" [nzBordered]="false" [nzBodyStyle]="{ 'padding-top.px': 12, 'padding-bottom.px': 12 }" class="mb-lg">
+    <nz-card nzTitle="施工班组" [nzBordered]="false" [nzBodyStyle]="{ 'padding-top.px': 12, 'padding-bottom.px': 12 }" class="mb-lg">
       <div class="members">
         <div nz-row [nzGutter]="48">
           @for (i of members; track $index) {
