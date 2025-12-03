@@ -1,8 +1,8 @@
 # 📋 GigHub 下一步開發指南
 
-> 基於專案現況分析的開發方向建議
+> 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**建立日期**: 2025-12-02
+**更新日期**: 2025-12-03
 
 ---
 
@@ -22,29 +22,49 @@
 ├────────────────────────────────────────────────────────────────┤
 │ 容器層 (Container Layer)                                        │
 │   ✅ 藍圖系統                                 ████████████ 完成 │
+│   ✅ 藍圖成員管理                             ████████████ 完成 │
 │   🔶 權限控制 (RBAC)                          ████████░░░░ 70%  │
 │   🔴 事件總線                                 ░░░░░░░░░░░░ 0%   │
 │   🔴 搜尋引擎                                 ░░░░░░░░░░░░ 0%   │
 ├────────────────────────────────────────────────────────────────┤
 │ 業務層 (Business Layer)                                         │
-│   🔶 任務管理                                 ████░░░░░░░░ 30%  │
-│   🔶 日誌管理                                 ██░░░░░░░░░░ 15%  │
-│   🔶 待辦事項                                 ████░░░░░░░░ 35%  │
-│   🔴 品質驗收                                 ░░░░░░░░░░░░ 0%   │
-│   🔴 檔案管理                                 ░░░░░░░░░░░░ 0%   │
+│   ✅ 任務管理 (Task Module)                   ██████████░░ 85%  │
+│   ✅ 財務管理 (Financial Module)              ████████░░░░ 70%  │
+│   🔶 日誌管理 (Diary Module)                  ██░░░░░░░░░░ 15%  │
+│   🔶 待辦事項 (Todo Module)                   ████░░░░░░░░ 35%  │
+│   🔴 品質驗收 (Acceptance)                    ░░░░░░░░░░░░ 0%   │
+│   🔴 檔案管理 (File Module)                   ░░░░░░░░░░░░ 0%   │
+│   🔴 問題追蹤 (Issue Module)                  ░░░░░░░░░░░░ 0%   │
+│   🔴 通知中心 (Notification)                  ░░░░░░░░░░░░ 0%   │
 └────────────────────────────────────────────────────────────────┘
 ```
 
-### 技術棧
+### 🎉 最新完成進度
 
-| 層級 | 技術 | 版本 | 說明 |
+以下模組已於近期完成重大更新：
+
+| 模組 | 完成項目 | 狀態 |
+|------|---------|------|
+| **任務管理** | TaskRepository + TaskService 完整實作 | ✅ 85% |
+| **藍圖管理** | BlueprintRepository + BlueprintService 完整實作 | ✅ 完成 |
+| **財務管理** | FinancialRepository + FinancialService 完整實作 | ✅ 70% |
+| **藍圖成員** | BlueprintMemberRepository 完整實作 | ✅ 完成 |
+| **權限控制** | PermissionService 基礎實作 | 🔶 70% |
+
+### 技術架構現況
+
+| 層級 | 元件 | 狀態 | 說明 |
 |------|------|------|------|
-| 前端框架 | Angular (Standalone Components) | 20.3+ | 使用 Signals, inject(), @if/@for 控制流 |
-| UI 框架 | NG-ZORRO + @delon/abc | 20.x | 企業級 UI 元件庫 |
-| 狀態管理 | Angular Signals | 20.3+ | signal(), computed(), linkedSignal() |
-| 後端服務 | Supabase (PostgreSQL + Auth) | 2.86+ | BaaS 後端服務 |
-| 型別系統 | TypeScript | 5.9 | 完整類型安全 |
-| 響應式 | RxJS | 7.8 | 搭配 toSignal()/toObservable() |
+| **Repository 層** | TaskRepository | ✅ 完成 | 完整 CRUD + 查詢選項 |
+| **Repository 層** | BlueprintRepository | ✅ 完成 | 完整 CRUD + 成員管理 |
+| **Repository 層** | FinancialRepository | ✅ 完成 | 合約、費用、請款、付款管理 |
+| **Repository 層** | DiaryRepository | 🔴 待建立 | 日誌資料存取層 |
+| **Repository 層** | FileRepository | 🔴 待建立 | 檔案資料存取層 |
+| **Service 層** | TaskService | ✅ 完成 | 使用 Signals + linkedSignal |
+| **Service 層** | BlueprintService | ✅ 完成 | 完整業務邏輯 |
+| **Service 層** | FinancialService | ✅ 完成 | 財務業務邏輯 |
+| **UI 元件** | TasksComponent | ✅ 完成 | 樹狀/表格/看板視圖 |
+| **UI 元件** | TaskEditDrawerComponent | ✅ 完成 | 任務編輯抽屜 |
 
 ---
 
@@ -54,67 +74,77 @@
 
 ### 🔴 最高優先級 - 立即執行 (1-2 週)
 
-#### 1. 任務管理模組完善 ⭐⭐⭐⭐⭐
+#### 1. 施工日誌模組 (Diary Module) ⭐⭐⭐⭐⭐
 
-**現況**：UI 框架已完成（樹狀圖、表格、看板視圖），但後端整合不完整
+**現況**：資料庫已設計完成，前端和服務層尚未實作
 
 **待完成項目**：
-1. **TaskRepository 資料存取層** - 連接 Supabase
-2. **任務 RPC 函數** - 建立/更新/刪除任務的原子操作
-3. **任務指派功能** - 連接 `task_assignees` 資料表
-4. **進度計算** - 從葉節點向上計算父任務進度
-5. **移除 Mock 資料** - 切換到真實資料庫操作
+1. **DiaryRepository** - 日誌資料存取層
+2. **DiaryService** - 日誌業務邏輯（使用 Signals）
+3. **日誌列表頁面** - `routes/blueprint/diary/diary-list/`
+4. **日誌建立/編輯表單** - `routes/blueprint/diary/diary-form/`
+5. **日誌條目管理** - 工作項目記錄
+6. **天氣選擇器** - 基於 `weather_type` 枚舉
 
-**涉及檔案**：
-```
-src/app/
-├── core/infra/repositories/task/        ← 待建立
-├── shared/services/task/task.service.ts ← 需修改（移除 mock）
-└── routes/blueprint/tasks/              ← 已完成 UI
-```
+**已有資料表**：
+- `diaries` - 日誌主表
+- `diary_attachments` - 日誌附件
 
 **為什麼優先**：
-- 任務是核心業務模組，所有其他功能依附於此
-- UI 已完成，只需完成後端整合
-- 資料庫 schema 已設計完成
+- 工地主任每日必用功能
+- 法規要求的施工紀錄
+- 資料庫結構已就緒
+- 可參考 TaskModule 的架構模式
+
+**建議檔案結構**：
+```
+src/app/
+├── core/infra/repositories/diary/
+│   ├── diary.repository.ts      ← 待建立
+│   └── index.ts
+├── shared/services/diary/
+│   ├── diary.service.ts         ← 待建立
+│   └── index.ts
+└── routes/blueprint/diary/
+    ├── diary-list/              ← 待建立
+    ├── diary-form/              ← 待建立
+    └── routes.ts                ← 待建立
+```
 
 ---
 
 ### 🟠 高優先級 - 短期目標 (2-4 週)
 
-#### 2. 施工日誌模組 ⭐⭐⭐⭐
-
-**現況**：資料庫已設計，前端僅有列表框架
-
-**待完成項目**：
-1. **DiaryRepository** - 資料存取層
-2. **日誌建立表單** - 完整的日誌填寫 UI
-3. **日誌條目管理** - `daily_log_entries` 整合
-4. **照片上傳** - Supabase Storage 整合
-5. **天氣選擇器** - 基於 `weather_type` 枚舉
-
-**相關資料表**：
-- `daily_logs` - 日誌主表
-- `daily_log_entries` - 日誌條目
-
-**商業價值**：
-- 工地主任每日必用功能
-- 法規要求的施工紀錄
-
-#### 3. 檔案管理模組 ⭐⭐⭐⭐
+#### 2. 檔案管理模組 (File Module) ⭐⭐⭐⭐
 
 **現況**：資料庫結構已在 `seed.sql` 中設計，前端未開始
 
 **待完成項目**：
-1. **Supabase Storage 配置** - bucket 設定
+1. **Supabase Storage 配置** - bucket 設定和權限
 2. **FileRepository** - 資料存取層
-3. **FileService** - 業務邏輯
+3. **FileService** - 檔案業務邏輯
 4. **檔案上傳元件** - 拖拉上傳 UI
 5. **檔案預覽** - 圖片/PDF 預覽
+6. **檔案分享** - `file_shares` 表整合
+
+**已有資料表**：
+- `files` - 檔案主表
+- `file_shares` - 檔案分享
 
 **依賴關係**：
 - 日誌照片上傳需要此模組
 - 任務附件需要此模組
+
+#### 3. 任務模組完善 ⭐⭐⭐⭐
+
+**現況**：核心功能已完成（85%），需完善細節
+
+**待完成項目**：
+1. **移除 mock 資料相關程式碼** - 清理 `generateMockTasks` 等已棄用方法
+2. **任務附件功能** - 整合 `task_attachments` 資料表
+3. **任務指派通知** - 整合通知系統
+4. **任務評論功能** - 討論和留言（需新增 `task_comments` 表）
+5. **拖曳排序** - 任務順序調整
 
 ---
 
@@ -122,544 +152,294 @@ src/app/
 
 #### 4. 權限控制完善 ⭐⭐⭐
 
-**現況**：基礎 RBAC 已實現，但細粒度權限控制不完整
+**現況**：基礎 RBAC 已實現（70%），細粒度權限控制不完整
 
 **待完成項目**：
 1. **blueprint_roles 整合** - 自訂角色系統
 2. **權限 Guard 強化** - 路由層權限控制
 3. **UI 權限控制** - 按鈕/操作的條件顯示
-4. **PermissionDirective** - 權限指令
+4. **PermissionDirective** - 權限指令元件
 
-#### 5. 任務評論與討論 ⭐⭐⭐
+#### 5. 問題追蹤模組 (Issue Module) ⭐⭐⭐
 
-**現況**：資料表已設計 (`task_comments`)，前端未實現
+**現況**：資料表已設計 (`issues`, `issue_comments`)，前端未實現
 
 **待完成項目**：
-1. **TaskCommentService** - 評論 CRUD
-2. **CommentThreadComponent** - 評論列表
-3. **@提及功能** - 使用者提及
+1. **IssueRepository** - 問題資料存取層
+2. **IssueService** - 問題業務邏輯
+3. **問題列表/詳情頁面** - UI 元件
+4. **問題評論功能** - 討論留言
+
+#### 6. 通知中心模組 ⭐⭐⭐
+
+**現況**：資料表已設計 (`notifications`, `notification_preferences`)，前端未實現
+
+**待完成項目**：
+1. **NotificationRepository** - 通知資料存取層
+2. **NotificationService** - 通知業務邏輯
+3. **通知中心 UI** - 通知列表、未讀標記
+4. **Supabase Realtime 整合** - 即時通知推送
 
 ---
 
 ### 🟢 一般優先級 - 長期目標 (6+ 週)
 
-#### 6. 品質驗收模組 ⭐⭐
+#### 7. 品質驗收模組 ⭐⭐
 
-**現況**：僅有資料庫 enum 定義
-
-**待建立**：
-- 檢查清單系統
-- 驗收流程
-- 驗收報告
-
-#### 7. 通知中心 ⭐⭐
+**現況**：資料表已設計 (`task_acceptances`, `checklists`, `checklist_items`)
 
 **待建立**：
-- 通知資料表
-- 即時通知 (Supabase Realtime)
-- 通知 UI 元件
+- 驗收清單系統
+- 驗收流程管理
+- 驗收報告產生
 
-#### 8. 報表與分析 ⭐
+#### 8. 事件總線系統 ⭐⭐
+
+**現況**：資料表已設計 (`events`, `event_subscriptions`)
 
 **待建立**：
-- 進度報表
-- 工時統計
-- Dashboard 強化
+- 事件發布/訂閱機制
+- 模組間通訊
+- 自動化觸發器
+
+#### 9. 搜尋引擎 ⭐
+
+**現況**：資料表已設計 (`search_index`)
+
+**待建立**：
+- 全文檢索功能
+- 搜尋結果頁面
+- 搜尋建議
 
 ---
 
-## 📁 建議的目錄結構
+## 📁 現有目錄結構參考
 
-### 任務模組完整結構
+### Repository 層（已完成）
 ```
-src/app/
-├── core/
-│   ├── facades/
-│   │   └── task/
-│   │       ├── task.facade.ts
-│   │       └── index.ts
-│   └── infra/
-│       ├── repositories/
-│       │   └── task/
-│       │       ├── task.repository.ts
-│       │       └── index.ts
-│       └── types/
-│           └── task/
-│               └── index.ts
-├── shared/
-│   ├── services/
-│   │   └── task/
-│   │       ├── task.service.ts    ← 已存在，需修改
-│   │       └── index.ts
-│   └── models/
-│       └── task/
-│           ├── task.models.ts
-│           └── index.ts
-└── routes/
-    └── blueprint/
-        └── tasks/                  ← 已完成
-            ├── task-list/
-            ├── task-detail/
-            ├── task-create/
-            └── components/
+src/app/core/infra/repositories/
+├── account/
+│   ├── account.repository.ts    ✅
+│   └── index.ts
+├── blueprint/
+│   ├── blueprint.repository.ts  ✅
+│   ├── blueprint-member.repository.ts ✅
+│   └── index.ts
+├── financial/
+│   ├── financial.repository.ts  ✅
+│   └── index.ts
+├── task/
+│   ├── task.repository.ts       ✅
+│   └── index.ts
+└── index.ts
 ```
 
-### 日誌模組結構
+### Service 層（已完成）
 ```
-src/app/
-├── core/
-│   └── infra/
-│       └── repositories/
-│           └── diary/
-│               ├── diary.repository.ts
-│               └── index.ts
-├── shared/
-│   └── services/
-│       └── diary/
-│           ├── diary.service.ts
-│           └── index.ts
-└── routes/
-    └── blueprint/
-        └── diary/
-            ├── diary-list/
-            ├── diary-form/
-            ├── diary-detail/
-            └── components/
+src/app/shared/services/
+├── account/
+│   └── account.service.ts       ✅
+├── blueprint/
+│   └── blueprint.service.ts     ✅
+├── financial/
+│   └── financial.service.ts     ✅
+├── task/
+│   └── task.service.ts          ✅
+├── menu/
+│   └── menu.service.ts          ✅
+├── permission/
+│   └── permission.service.ts    🔶
+└── index.ts
+```
+
+### 路由頁面（部分完成）
+```
+src/app/routes/
+├── blueprint/
+│   ├── list/                    ✅ 藍圖列表
+│   ├── create-blueprint/        ✅ 建立藍圖
+│   ├── overview/                ✅ 藍圖總覽
+│   ├── members/                 ✅ 成員管理
+│   ├── tasks/                   ✅ 任務管理
+│   │   ├── tasks.component.ts
+│   │   └── task-edit-drawer.component.ts
+│   ├── diary/                   🔴 待建立
+│   ├── files/                   🔴 待建立
+│   └── routes.ts
+├── account/                     ✅
+├── passport/                    ✅
+└── ...
 ```
 
 ---
 
-## 🔧 技術建議 (Angular 20 現代化模式)
+## 🔧 技術實作建議
 
-> 以下技術建議基於 Angular 20.3.x 官方文檔，使用 Context7 驗證的最新 API 和最佳實踐。
-
-### 1. Repository 模式 (使用 inject() 函數)
-
-建議所有資料存取都通過 Repository 層，使用 Angular 20 的 `inject()` 函數進行依賴注入：
+### 1. DiaryRepository 參考實作
 
 ```typescript
-// src/app/core/infra/repositories/task/task.repository.ts
-import { inject, Injectable } from '@angular/core';
+// src/app/core/infra/repositories/diary/diary.repository.ts
+import { Injectable, inject } from '@angular/core';
+import { Observable, from, map } from 'rxjs';
 import { SupabaseService } from '@core/supabase';
-import type { Database } from '@core/supabase/database.types';
 
-type Task = Database['public']['Tables']['tasks']['Row'];
-type CreateTaskRequest = Database['public']['Tables']['tasks']['Insert'];
+export interface Diary {
+  id: string;
+  blueprint_id: string;
+  work_date: string;
+  weather: string | null;
+  temperature_min: number | null;
+  temperature_max: number | null;
+  work_hours: number | null;
+  worker_count: number | null;
+  summary: string | null;
+  notes: string | null;
+  status: string;
+  created_by: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 @Injectable({ providedIn: 'root' })
-export class TaskRepository {
-  // Angular 20 推薦使用 inject() 函數而非構造函數注入
+export class DiaryRepository {
   private readonly supabase = inject(SupabaseService);
 
-  async findByBlueprint(blueprintId: string): Promise<Task[]> {
-    const { data, error } = await this.supabase.client
-      .from('tasks')
-      .select('*')
-      .eq('blueprint_id', blueprintId)
-      .is('deleted_at', null)
-      .order('sort_order');
-    
-    if (error) throw error;
-    return data as Task[];
+  findByBlueprint(blueprintId: string): Observable<Diary[]> {
+    return from(
+      this.supabase.client
+        .from('diaries')
+        .select('*')
+        .eq('blueprint_id', blueprintId)
+        .is('deleted_at', null)
+        .order('work_date', { ascending: false })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[DiaryRepository] findByBlueprint error:', error);
+          return [];
+        }
+        return (data || []) as Diary[];
+      })
+    );
   }
 
-  async create(request: CreateTaskRequest): Promise<Task> {
-    // 使用 RPC 函數進行原子操作
-    const { data, error } = await this.supabase.client
-      .rpc('create_task', { ...request });
-    
-    if (error) throw error;
-    return data;
+  findByDate(blueprintId: string, date: string): Observable<Diary | null> {
+    return from(
+      this.supabase.client
+        .from('diaries')
+        .select('*')
+        .eq('blueprint_id', blueprintId)
+        .eq('work_date', date)
+        .is('deleted_at', null)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) return null;
+        return data as Diary;
+      })
+    );
   }
 
-  async update(id: string, updates: Partial<Task>): Promise<Task> {
-    const { data, error } = await this.supabase.client
-      .from('tasks')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
+  create(diary: Partial<Diary>): Observable<Diary | null> {
+    return from(
+      this.supabase.client
+        .from('diaries')
+        .insert(diary)
+        .select()
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[DiaryRepository] create error:', error);
+          return null;
+        }
+        return data as Diary;
+      })
+    );
   }
 
-  async delete(id: string): Promise<void> {
-    const { error } = await this.supabase.client
-      .from('tasks')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', id);
-    
-    if (error) throw error;
+  update(id: string, updates: Partial<Diary>): Observable<Diary | null> {
+    return from(
+      this.supabase.client
+        .from('diaries')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error('[DiaryRepository] update error:', error);
+          return null;
+        }
+        return data as Diary;
+      })
+    );
   }
 }
 ```
 
-### 2. Signal 狀態管理 (Angular 20 Signals + linkedSignal)
-
-使用 Angular 20 的 `signal()`、`computed()` 和 `linkedSignal()` 進行響應式狀態管理：
+### 2. DiaryService 參考實作
 
 ```typescript
-// src/app/shared/services/task/task.service.ts
-import { inject, Injectable, signal, computed, linkedSignal } from '@angular/core';
-import { TaskRepository } from '@core/infra/repositories/task';
-import type { Task } from '@shared/models/task';
+// src/app/shared/services/diary/diary.service.ts
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { DiaryRepository, Diary } from '@core';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class TaskService {
-  private readonly repo = inject(TaskRepository);
-  
-  // 核心狀態 signals
-  private readonly tasksState = signal<Task[]>([]);
-  private readonly loadingState = signal<boolean>(false);
-  private readonly errorState = signal<string | null>(null);
-  
-  // Readonly signals 供外部消費
-  readonly tasks = this.tasksState.asReadonly();
+export class DiaryService {
+  private readonly repo = inject(DiaryRepository);
+
+  // State signals
+  private diariesState = signal<Diary[]>([]);
+  private loadingState = signal<boolean>(false);
+  private errorState = signal<string | null>(null);
+
+  // Readonly signals
+  readonly diaries = this.diariesState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
-  
-  // Computed signals - 自動追蹤依賴並更新
-  readonly taskTree = computed(() => this.buildTree(this.tasksState()));
-  readonly taskCount = computed(() => this.tasksState().length);
-  readonly hasError = computed(() => this.errorState() !== null);
-  
-  // linkedSignal - 當來源 signal 變化時自動更新選中狀態
-  readonly selectedTask = linkedSignal<Task[], Task | null>({
-    source: this.tasksState,
-    computation: (tasks, previous) => {
-      // 保持選中狀態，如果任務還存在則保留選擇
-      if (previous?.value) {
-        return tasks.find(t => t.id === previous.value!.id) ?? null;
-      }
-      return null;
-    }
-  });
 
-  async loadTasks(blueprintId: string): Promise<void> {
+  // Computed signals
+  readonly diaryCount = computed(() => this.diariesState().length);
+  readonly hasError = computed(() => this.errorState() !== null);
+
+  async loadDiaries(blueprintId: string): Promise<Diary[]> {
     this.loadingState.set(true);
     this.errorState.set(null);
-    
+
     try {
-      const tasks = await this.repo.findByBlueprint(blueprintId);
-      this.tasksState.set(tasks);
+      const diaries = await firstValueFrom(this.repo.findByBlueprint(blueprintId));
+      this.diariesState.set(diaries);
+      return diaries;
     } catch (err) {
-      this.errorState.set(err instanceof Error ? err.message : '載入失敗');
+      const message = err instanceof Error ? err.message : '載入日誌失敗';
+      this.errorState.set(message);
+      throw err;
     } finally {
       this.loadingState.set(false);
     }
   }
 
-  selectTask(task: Task): void {
-    this.selectedTask.set(task);
-  }
-
-  private buildTree(tasks: Task[]): Task[] {
-    // 建立任務樹狀結構
-    const taskMap = new Map(tasks.map(t => [t.id, { ...t, children: [] }]));
-    const roots: Task[] = [];
-    
-    for (const task of taskMap.values()) {
-      if (task.parent_id && taskMap.has(task.parent_id)) {
-        taskMap.get(task.parent_id)!.children.push(task);
-      } else {
-        roots.push(task);
-      }
+  async createDiary(diary: Partial<Diary>): Promise<Diary | null> {
+    const newDiary = await firstValueFrom(this.repo.create(diary));
+    if (newDiary) {
+      this.diariesState.update(list => [newDiary, ...list]);
     }
-    
-    return roots;
-  }
-}
-```
-
-### 3. RxJS 整合 (toSignal 和 toObservable)
-
-在需要與 RxJS Observable 互操作時，使用 Angular 20 的 `toSignal()` 和 `toObservable()`：
-
-```typescript
-// 將 Observable 轉換為 Signal
-import { Component, inject } from '@angular/core';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { interval, switchMap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-
-@Component({
-  selector: 'app-realtime-status',
-  standalone: true,
-  template: `
-    <div>狀態: {{ status() }}</div>
-    <div>搜尋結果: {{ searchResults() | json }}</div>
-  `
-})
-export class RealtimeStatusComponent {
-  private readonly http = inject(HttpClient);
-  
-  // Observable → Signal (自動訂閱和取消訂閱)
-  readonly status = toSignal(
-    interval(5000).pipe(
-      switchMap(() => this.http.get<string>('/api/status'))
-    ),
-    { initialValue: '載入中...' }
-  );
-
-  // 搜尋功能：Signal → Observable → Signal
-  readonly searchQuery = signal('');
-  
-  readonly searchResults = toSignal(
-    toObservable(this.searchQuery).pipe(
-      switchMap(query => this.http.get<any[]>(`/api/search?q=${query}`))
-    ),
-    { initialValue: [] }
-  );
-}
-```
-
-### 4. Supabase TypeScript 類型安全
-
-使用 Supabase CLI 生成 TypeScript 類型，確保完整的類型安全：
-
-```bash
-# 生成類型定義
-npx supabase gen types typescript --local > src/app/core/supabase/database.types.ts
-```
-
-```typescript
-// src/app/core/supabase/supabase.service.ts
-import { inject, Injectable } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from '@env/environment';
-import type { Database } from './database.types';
-
-@Injectable({ providedIn: 'root' })
-export class SupabaseService {
-  // 使用泛型確保類型安全
-  readonly client: SupabaseClient<Database> = createClient<Database>(
-    environment.supabaseUrl,
-    environment.supabaseAnonKey
-  );
-
-  // 類型安全的表格存取
-  from<T extends keyof Database['public']['Tables']>(table: T) {
-    return this.client.from(table);
+    return newDiary;
   }
 
-  // 類型安全的 RPC 調用
-  rpc<T extends keyof Database['public']['Functions']>(
-    fn: T,
-    args: Database['public']['Functions'][T]['Args']
-  ) {
-    return this.client.rpc(fn, args as any);
-  }
-}
-```
-
-### 5. 元件設計模式 (Angular 20 Standalone)
-
-使用 Angular 20 的 Standalone Components 和現代化模式：
-
-```typescript
-// src/app/routes/blueprint/tasks/task-list/task-list.component.ts
-import { Component, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { SHARED_IMPORTS } from '@shared';
-import { TaskService } from '@shared/services/task';
-import type { Task } from '@shared/models/task';
-
-@Component({
-  selector: 'app-task-list',
-  standalone: true,
-  imports: [SHARED_IMPORTS],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (taskService.loading()) {
-      <nz-spin nzTip="載入中..."></nz-spin>
-    } @else if (taskService.hasError()) {
-      <nz-alert 
-        nzType="error" 
-        [nzMessage]="taskService.error()"
-        nzShowIcon
-      ></nz-alert>
-    } @else {
-      <nz-table
-        #basicTable
-        [nzData]="taskService.tasks()"
-        [nzFrontPagination]="false"
-        [nzShowPagination]="true"
-        nzSize="middle"
-      >
-        <thead>
-          <tr>
-            <th>任務名稱</th>
-            <th>狀態</th>
-            <th>進度</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (task of basicTable.data; track task.id) {
-            <tr 
-              [class.selected]="taskService.selectedTask()?.id === task.id"
-              (click)="taskService.selectTask(task)"
-            >
-              <td>{{ task.name }}</td>
-              <td>
-                <nz-tag [nzColor]="getStatusColor(task.status)">
-                  {{ task.status }}
-                </nz-tag>
-              </td>
-              <td>
-                <nz-progress 
-                  [nzPercent]="task.progress" 
-                  nzSize="small"
-                ></nz-progress>
-              </td>
-              <td>
-                <a (click)="onEdit.emit(task); $event.stopPropagation()">編輯</a>
-                <nz-divider nzType="vertical"></nz-divider>
-                <a 
-                  nz-popconfirm
-                  nzPopconfirmTitle="確定要刪除嗎？"
-                  (nzOnConfirm)="onDelete.emit(task)"
-                  (click)="$event.stopPropagation()"
-                >刪除</a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </nz-table>
+  async updateDiary(id: string, updates: Partial<Diary>): Promise<Diary | null> {
+    const updated = await firstValueFrom(this.repo.update(id, updates));
+    if (updated) {
+      this.diariesState.update(list =>
+        list.map(d => d.id === id ? updated : d)
+      );
     }
-  `
-})
-export class TaskListComponent {
-  // Angular 20: 使用 inject() 函數
-  readonly taskService = inject(TaskService);
-  
-  // Angular 20: 使用 input() 和 output() 函數
-  readonly blueprintId = input.required<string>();
-  readonly onEdit = output<Task>();
-  readonly onDelete = output<Task>();
-
-  getStatusColor(status: string): string {
-    const colors: Record<string, string> = {
-      'pending': 'default',
-      'in_progress': 'processing',
-      'completed': 'success',
-      'blocked': 'error'
-    };
-    return colors[status] ?? 'default';
-  }
-}
-```
-
-### 6. 錯誤處理模式
-
-統一使用專案的錯誤處理模式，搭配 Angular 20 的 Signal：
-
-```typescript
-import { inject, Injectable, signal, computed } from '@angular/core';
-import { NzMessageService } from 'ng-zorro-antd/message';
-
-@Injectable({ providedIn: 'root' })
-export class TaskService {
-  private readonly msg = inject(NzMessageService);
-  private readonly repo = inject(TaskRepository);
-  
-  private readonly errorState = signal<Error | null>(null);
-  readonly error = this.errorState.asReadonly();
-  readonly hasError = computed(() => this.errorState() !== null);
-
-  async createTask(request: CreateTaskRequest): Promise<Task | null> {
-    try {
-      const task = await this.repo.create(request);
-      this.msg.success('任務建立成功');
-      this.errorState.set(null);
-      return task;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('操作失敗');
-      this.errorState.set(error);
-      this.msg.error(error.message);
-      return null;
-    }
-  }
-}
-```
-
-### 7. 表單處理 (Reactive Forms + Signal)
-
-結合 Angular Reactive Forms 和 Signals：
-
-```typescript
-// src/app/routes/blueprint/tasks/task-form/task-form.component.ts
-import { Component, inject, input, output, effect } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { SHARED_IMPORTS } from '@shared';
-
-@Component({
-  selector: 'app-task-form',
-  standalone: true,
-  imports: [SHARED_IMPORTS],
-  template: `
-    <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzRequired nzFor="name">任務名稱</nz-form-label>
-        <nz-form-control [nzSpan]="14" nzErrorTip="請輸入任務名稱">
-          <input nz-input formControlName="name" id="name" />
-        </nz-form-control>
-      </nz-form-item>
-      
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzFor="description">描述</nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <textarea nz-input formControlName="description" id="description" rows="4"></textarea>
-        </nz-form-control>
-      </nz-form-item>
-      
-      <nz-form-item>
-        <nz-form-control [nzSpan]="14" [nzOffset]="6">
-          <button nz-button nzType="primary" [disabled]="!form.valid">
-            {{ editMode() ? '更新' : '建立' }}
-          </button>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-  `
-})
-export class TaskFormComponent {
-  private readonly fb = inject(FormBuilder);
-  
-  // 使用 input signal 接收編輯資料
-  readonly task = input<Task | null>(null);
-  readonly onSave = output<CreateTaskRequest>();
-  
-  readonly editMode = computed(() => this.task() !== null);
-  
-  readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    description: [''],
-    parent_id: [null as string | null],
-    priority: ['medium' as 'low' | 'medium' | 'high']
-  });
-
-  constructor() {
-    // 使用 effect 監聽 task 變化並更新表單
-    effect(() => {
-      const task = this.task();
-      if (task) {
-        this.form.patchValue({
-          name: task.name,
-          description: task.description ?? '',
-          parent_id: task.parent_id,
-          priority: task.priority
-        });
-      } else {
-        this.form.reset({ priority: 'medium' });
-      }
-    });
-  }
-
-  onSubmit(): void {
-    if (this.form.valid) {
-      this.onSave.emit(this.form.value as CreateTaskRequest);
-    }
+    return updated;
   }
 }
 ```
@@ -668,57 +448,76 @@ export class TaskFormComponent {
 
 ## 📝 立即行動清單
 
-### 本週 (Week 1) - 基礎設施建立
+### 本週 (Week 1) - 日誌模組基礎建設
 
-- [ ] **生成 Supabase TypeScript 類型**
+- [ ] **建立 DiaryRepository**
   ```bash
-  npx supabase gen types typescript --local > src/app/core/supabase/database.types.ts
+  # 建立目錄和檔案
+  mkdir -p src/app/core/infra/repositories/diary
+  touch src/app/core/infra/repositories/diary/diary.repository.ts
+  touch src/app/core/infra/repositories/diary/index.ts
   ```
-- [ ] 建立 `TaskRepository` 資料存取層（使用 `inject()` 函數）
-- [ ] 實現任務 CRUD 的真實資料庫操作（完整類型安全）
-- [ ] 移除 `TaskService` 中的 mock 資料
-- [ ] 使用 `signal()` 和 `computed()` 重構狀態管理
+- [ ] **建立 DiaryService**
+  ```bash
+  mkdir -p src/app/shared/services/diary
+  touch src/app/shared/services/diary/diary.service.ts
+  touch src/app/shared/services/diary/index.ts
+  ```
+- [ ] **更新 core/index.ts** 導出 DiaryRepository
+- [ ] **更新 shared/index.ts** 導出 DiaryService
 
-### 下週 (Week 2) - 進階功能整合
+### 下週 (Week 2) - 日誌模組 UI
 
-- [ ] 實現 `linkedSignal` 管理任務選擇狀態
-- [ ] 實現任務指派功能（使用 `task_assignees` 資料表）
-- [ ] 實現父任務進度自動計算（使用 `computed()` signals）
-- [ ] 使用 `effect()` 處理副作用（如：通知、日誌）
-- [ ] 測試完整的任務管理流程
+- [ ] **建立日誌路由頁面**
+  ```bash
+  mkdir -p src/app/routes/blueprint/diary
+  touch src/app/routes/blueprint/diary/diary-list.component.ts
+  touch src/app/routes/blueprint/diary/diary-form.component.ts
+  touch src/app/routes/blueprint/diary/routes.ts
+  ```
+- [ ] **更新藍圖路由** - 加入日誌模組路由
+- [ ] **建立天氣選擇器元件** - 使用 `weather_type` 枚舉
+- [ ] **日誌附件功能** - 整合 `diary_attachments` 表
 
-### 第三週 (Week 3) - 日誌模組開發
+### 第三週 (Week 3) - 檔案管理模組
 
-- [ ] 建立 `DiaryRepository` 資料存取層
-- [ ] 完成日誌表單 UI（使用 Reactive Forms + Signal）
-- [ ] 整合 Supabase Storage 進行照片上傳
-- [ ] 實現日誌條目管理
-- [ ] 使用 `toSignal()` 整合 Supabase Realtime 訂閱
+- [ ] **配置 Supabase Storage** - 建立 bucket 和權限
+- [ ] **建立 FileRepository** 資料存取層
+- [ ] **建立 FileService** 業務邏輯
+- [ ] **建立檔案上傳元件** - 拖拉上傳
+- [ ] **整合到日誌附件** - 照片上傳功能
+
+### 第四週 (Week 4) - 清理和優化
+
+- [ ] **清理 TaskService mock 程式碼** - 移除已棄用方法
+- [ ] **任務附件功能** - 整合 FileService
+- [ ] **權限控制強化** - PermissionDirective
+- [ ] **測試和文件更新**
 
 ---
 
-## 🔄 版本升級建議
+## 🔄 版本狀態
 
-### 當前版本狀態
+### 當前版本
 
-| 套件 | 當前版本 | 最新版本 | 建議 |
-|------|---------|---------|------|
-| @angular/core | 20.3.0 | 20.3.x | ✅ 已是最新 |
-| @delon/abc | 20.1.0 | 20.1.x | ✅ 已是最新 |
-| ng-zorro-antd | 20.4.3 | 20.4.x | ✅ 已是最新 |
-| @supabase/supabase-js | 2.86.0 | 2.x | ✅ 已是最新 |
-| TypeScript | 5.9.2 | 5.9.x | ✅ 已是最新 |
+| 套件 | 版本 | 狀態 |
+|------|------|------|
+| @angular/core | 20.3.0 | ✅ 最新 |
+| @delon/abc | 20.1.0 | ✅ 最新 |
+| ng-zorro-antd | 20.4.3 | ✅ 最新 |
+| @supabase/supabase-js | 2.86.0 | ✅ 最新 |
+| TypeScript | 5.9.2 | ✅ 最新 |
 
-### Angular 20 新特性使用
+### Angular 20 特性使用情況
 
-本專案應充分利用 Angular 20 的新特性：
-
-1. **`signal()`, `computed()`, `effect()`** - 響應式狀態管理
-2. **`linkedSignal()`** - 依賴狀態同步
-3. **`inject()` 函數** - 現代化依賴注入
-4. **`input()`, `output()` 函數** - 元件通訊
-5. **`@if`, `@for`, `@switch`** - 控制流語法
-6. **`toSignal()`, `toObservable()`** - RxJS 互操作
+| 特性 | 使用狀態 | 檔案範例 |
+|------|---------|---------|
+| `signal()`, `computed()` | ✅ 廣泛使用 | TaskService, BlueprintService |
+| `linkedSignal()` | ✅ 已使用 | TaskService.selectedTask |
+| `inject()` 函數 | ✅ 標準使用 | 所有 Service 和 Repository |
+| `input()`, `output()` | ✅ 部分使用 | TaskEditDrawerComponent |
+| `@if`, `@for`, `@switch` | ✅ 標準使用 | 所有 Component 模板 |
+| `toSignal()`, `toObservable()` | 🔶 部分使用 | 可擴展使用 |
 
 ---
 
@@ -737,31 +536,41 @@ export class TaskFormComponent {
 
 ## 🎯 總結
 
-基於專案分析和 Angular 20 最佳實踐，**建議的開發順序**為：
+基於專案最新分析，**建議的開發順序**為：
 
-1. **📌 基礎設施現代化**
-   - 生成 Supabase TypeScript 類型
-   - 建立類型安全的 Repository 層
-   - 採用 Angular 20 Signal 模式
+1. **📌 施工日誌模組** (最高優先) 
+   - 核心業務需求
+   - 資料庫結構已就緒
+   - 可參考 TaskModule 架構
 
-2. **📌 任務模組完善** - 最高優先，已有 UI 只需完成後端
+2. **📌 檔案管理模組** (高優先)
+   - 支援日誌和任務附件
+   - Supabase Storage 整合
 
-3. **📌 施工日誌模組** - 核心業務需求
+3. **📌 任務模組完善** (高優先)
+   - 清理 mock 程式碼
+   - 附件和評論功能
 
-4. **📌 檔案管理模組** - 支援日誌和任務附件
+4. **📌 權限控制完善** (中優先)
+   - PermissionDirective
+   - 細粒度存取控制
 
-5. **權限控制完善** - 提升安全性
+5. **其他模組** - 按需開發
 
-6. **其他模組** - 按需開發
+### 🚀 立即開始的第一步
 
-### 最重要的下一步
+```bash
+# 1. 建立 DiaryRepository
+mkdir -p src/app/core/infra/repositories/diary
 
-1. 執行 `npx supabase gen types typescript --local > src/app/core/supabase/database.types.ts` 生成類型
-2. 完成 `TaskRepository`（使用 `inject()` 函數和完整類型）
-3. 重構 `TaskService`（使用 `signal()`, `computed()`, `linkedSignal()`）
-4. 移除 mock 資料，連接真實資料庫
+# 2. 建立 DiaryService  
+mkdir -p src/app/shared/services/diary
+
+# 3. 建立日誌頁面路由
+mkdir -p src/app/routes/blueprint/diary
+```
 
 ---
 
-**最後更新**: 2025-12-02
-**技術參考**: Angular 20.3 官方文檔 (via Context7)
+**最後更新**: 2025-12-03
+**分析基準**: 專案最新程式碼狀態
