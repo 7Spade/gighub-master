@@ -8,43 +8,60 @@
 --   - Attachment management
 
 -- ============================================================================
--- Enums
+-- Enums (with conditional creation to avoid conflicts with seed.sql)
 -- ============================================================================
 
--- 天氣類型
-CREATE TYPE weather_type AS ENUM (
-  'sunny',
-  'cloudy',
-  'overcast',
-  'light_rain',
-  'heavy_rain',
-  'thunderstorm',
-  'foggy',
-  'windy',
-  'snow',
-  'other'
-);
+-- 天氣類型 - Only create if not exists (may already exist in seed.sql)
+-- Note: PostgreSQL doesn't support CREATE TYPE IF NOT EXISTS, so we use DO block
+DO $$
+BEGIN
+  -- Check if weather_type already exists
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'weather_type') THEN
+    CREATE TYPE weather_type AS ENUM (
+      'sunny',
+      'cloudy',
+      'overcast',
+      'light_rain',
+      'heavy_rain',
+      'thunderstorm',
+      'foggy',
+      'windy',
+      'snow',
+      'other'
+    );
+  END IF;
+END $$;
 
 -- 日誌狀態
-CREATE TYPE diary_status AS ENUM (
-  'draft',
-  'submitted',
-  'approved',
-  'rejected',
-  'archived'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'diary_status') THEN
+    CREATE TYPE diary_status AS ENUM (
+      'draft',
+      'submitted',
+      'approved',
+      'rejected',
+      'archived'
+    );
+  END IF;
+END $$;
 
 -- 工項類型
-CREATE TYPE work_item_type AS ENUM (
-  'construction',
-  'inspection',
-  'material',
-  'equipment',
-  'safety',
-  'quality',
-  'meeting',
-  'other'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'work_item_type') THEN
+    CREATE TYPE work_item_type AS ENUM (
+      'construction',
+      'inspection',
+      'material',
+      'equipment',
+      'safety',
+      'quality',
+      'meeting',
+      'other'
+    );
+  END IF;
+END $$;
 
 -- ============================================================================
 -- Table: diaries
