@@ -58,6 +58,23 @@ CREATE INDEX IF NOT EXISTS idx_diaries_not_deleted ON diaries(blueprint_id, work
 -- Enable RLS
 ALTER TABLE diaries ENABLE ROW LEVEL SECURITY;
 
+-- Comments
+COMMENT ON TABLE diaries IS '施工日誌表 - 記錄每日施工情況';
+COMMENT ON COLUMN diaries.id IS '唯一識別碼';
+COMMENT ON COLUMN diaries.blueprint_id IS '所屬藍圖';
+COMMENT ON COLUMN diaries.work_date IS '工作日期';
+COMMENT ON COLUMN diaries.weather IS '天氣狀況';
+COMMENT ON COLUMN diaries.temperature_min IS '最低溫度 (°C)';
+COMMENT ON COLUMN diaries.temperature_max IS '最高溫度 (°C)';
+COMMENT ON COLUMN diaries.work_hours IS '工作時數';
+COMMENT ON COLUMN diaries.worker_count IS '出工人數';
+COMMENT ON COLUMN diaries.summary IS '工作摘要';
+COMMENT ON COLUMN diaries.notes IS '備註';
+COMMENT ON COLUMN diaries.status IS '審核狀態';
+COMMENT ON COLUMN diaries.created_by IS '建立者';
+COMMENT ON COLUMN diaries.approved_by IS '核准者';
+COMMENT ON COLUMN diaries.approved_at IS '核准時間';
+
 -- ============================================================================
 -- DOWN (Rollback)
 -- ============================================================================

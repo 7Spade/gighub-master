@@ -15,6 +15,8 @@ BEGIN
       'equipment',       -- 設備
       'labor',           -- 人工
       'inspection',      -- 檢查
+      'safety',          -- 安全
+      'quality',         -- 品質
       'meeting',         -- 會議
       'other'            -- 其他
     );

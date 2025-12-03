@@ -22,25 +22,25 @@
 -- 10. issue_severity   - 問題嚴重度 (low, medium, high, critical)
 -- 11. issue_status     - 問題狀態 (new, assigned, in_progress, pending_confirm, resolved, closed, reopened)
 -- 12. acceptance_result - 驗收結果 (pending, passed, failed, conditional)
--- 13. weather_type     - 天氣類型 (sunny, cloudy, rainy, stormy, snowy, foggy)
+-- 13. weather_type     - 天氣類型 (sunny, cloudy, overcast, light_rain, heavy_rain, rainy, thunderstorm, stormy, foggy, windy, snowy, snow, other)
 -- 14. diary_status     - 日誌狀態 (draft, submitted, reviewing, approved, rejected, archived)
 -- 15. blueprint_business_role - 業務角色 (project_manager, site_director, supervisor, inspector, ...)
 -- 
 -- 日誌模組類型 (定義在 diary_entries migration):
--- 16. work_item_type   - 工項類型 (construction, material, equipment, labor, inspection, meeting, other)
+-- 16. work_item_type   - 工項類型 (construction, material, equipment, labor, inspection, safety, quality, meeting, other)
 -- 
 -- QC/驗收/問題模組類型 (定義在 20241203100002_create_qc_acceptance_problem.sql):
--- 17. qc_inspection_status - 品管檢查狀態
--- 18. qc_inspection_type   - 品管檢查類型
--- 19. qc_item_status       - 品管項目狀態
--- 20. acceptance_status    - 驗收狀態
--- 21. acceptance_type      - 驗收類型
--- 22. acceptance_decision  - 驗收決定類型
--- 23. problem_status       - 問題狀態
--- 24. problem_type         - 問題類型
--- 25. problem_source       - 問題來源
--- 26. problem_priority     - 問題優先級
--- 27. problem_severity     - 問題嚴重度
+-- 17. qc_inspection_status - 品管檢查狀態 (pending, in_progress, passed, failed, conditionally_passed, cancelled)
+-- 18. qc_inspection_type   - 品管檢查類型 (self_check, supervisor_check, third_party, random_check, final_check)
+-- 19. qc_item_status       - 品管項目狀態 (pending, passed, failed, na)
+-- 20. acceptance_status    - 驗收狀態 (pending, in_progress, passed, failed, conditionally_passed, cancelled)
+-- 21. acceptance_type      - 驗收類型 (interim, final, partial, stage, completion)
+-- 22. acceptance_decision  - 驗收決定類型 (approve, reject, conditional, defer)
+-- 23. problem_status       - 問題狀態 (open, assessing, assigned, in_progress, resolved, verifying, closed, cancelled, deferred)
+-- 24. problem_type         - 問題類型 (defect, risk, gap, improvement, change_request, non_conformance, safety, quality, other)
+-- 25. problem_source       - 問題來源 (qc_inspection, acceptance, self_report, customer, audit, other)
+-- 26. problem_priority     - 問題優先級 (critical, high, medium, low)
+-- 27. problem_severity     - 問題嚴重度 (critical, major, minor, cosmetic)
 -- 
 -- 審計日誌類型 (定義在 20241203100000_create_audit_logs.sql):
 -- 28. audit_action        - 審計動作類型
