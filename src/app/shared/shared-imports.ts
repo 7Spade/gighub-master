@@ -1,7 +1,7 @@
 // ============================================
 // Angular 核心模块（Angular Core Modules）
 // ============================================
-import { AsyncPipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe as NgDatePipe, DecimalPipe, JsonPipe, NgTemplateOutlet, PercentPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
 // ============================================
@@ -32,6 +32,10 @@ export const SHARED_IMPORTS = [
   NgTemplateOutlet,
   AsyncPipe,
   JsonPipe,
+  CurrencyPipe,
+  DecimalPipe,
+  PercentPipe,
+  NgDatePipe,
 
   // Delon 主题
   DatePipe,

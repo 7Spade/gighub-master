@@ -45,6 +45,11 @@ export const routes: Routes = [
             path: 'tasks',
             loadComponent: () => import('./tasks/tasks.component').then(m => m.BlueprintTasksComponent),
             data: { title: '任務管理' }
+          },
+          {
+            path: 'financial',
+            loadChildren: () => import('./financial/routes').then(m => m.routes),
+            data: { title: '財務管理' }
           }
         ]
       }

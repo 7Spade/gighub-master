@@ -344,4 +344,360 @@ export class FinancialService {
     this.payments.set([]);
     this.error.set(null);
   }
+
+  // ============================================================================
+  // Contract CRUD Methods (合約 CRUD 方法)
+  // ============================================================================
+
+  /**
+   * 載入合約（別名）
+   * Load contracts (alias)
+   */
+  async loadContracts(blueprintId: string): Promise<Contract[]> {
+    return this.loadContractsForBlueprint(blueprintId);
+  }
+
+  /**
+   * 建立合約
+   * Create contract
+   */
+  async createContract(data: Partial<Contract>): Promise<Contract | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const contract = await firstValueFrom(this.financialRepository.createContract(data));
+      if (contract) {
+        this.contracts.update(list => [contract, ...list]);
+      }
+      return contract;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '建立合約失敗';
+      console.error('[FinancialService] createContract error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 更新合約
+   * Update contract
+   */
+  async updateContract(id: string, data: Partial<Contract>): Promise<Contract | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const contract = await firstValueFrom(this.financialRepository.updateContract(id, data));
+      if (contract) {
+        this.contracts.update(list => list.map(c => (c.id === id ? contract : c)));
+      }
+      return contract;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '更新合約失敗';
+      console.error('[FinancialService] updateContract error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 刪除合約
+   * Delete contract
+   */
+  async deleteContract(id: string): Promise<boolean> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      await firstValueFrom(this.financialRepository.deleteContract(id));
+      this.contracts.update(list => list.filter(c => c.id !== id));
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '刪除合約失敗';
+      console.error('[FinancialService] deleteContract error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // ============================================================================
+  // Expense CRUD Methods (費用 CRUD 方法)
+  // ============================================================================
+
+  /**
+   * 載入費用（別名）
+   * Load expenses (alias)
+   */
+  async loadExpenses(blueprintId: string): Promise<Expense[]> {
+    return this.loadExpensesForBlueprint(blueprintId);
+  }
+
+  /**
+   * 建立費用
+   * Create expense
+   */
+  async createExpense(data: Partial<Expense>): Promise<Expense | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const expense = await firstValueFrom(this.financialRepository.createExpense(data));
+      if (expense) {
+        this.expenses.update(list => [expense, ...list]);
+      }
+      return expense;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '建立費用失敗';
+      console.error('[FinancialService] createExpense error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 更新費用
+   * Update expense
+   */
+  async updateExpense(id: string, data: Partial<Expense>): Promise<Expense | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const expense = await firstValueFrom(this.financialRepository.updateExpense(id, data));
+      if (expense) {
+        this.expenses.update(list => list.map(e => (e.id === id ? expense : e)));
+      }
+      return expense;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '更新費用失敗';
+      console.error('[FinancialService] updateExpense error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 刪除費用
+   * Delete expense
+   */
+  async deleteExpense(id: string): Promise<boolean> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      await firstValueFrom(this.financialRepository.deleteExpense(id));
+      this.expenses.update(list => list.filter(e => e.id !== id));
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '刪除費用失敗';
+      console.error('[FinancialService] deleteExpense error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // ============================================================================
+  // Payment Request CRUD Methods (請款 CRUD 方法)
+  // ============================================================================
+
+  /**
+   * 載入請款（別名）
+   * Load payment requests (alias)
+   */
+  async loadPaymentRequests(blueprintId: string): Promise<PaymentRequest[]> {
+    return this.loadPaymentRequestsForBlueprint(blueprintId);
+  }
+
+  /**
+   * 建立請款
+   * Create payment request
+   */
+  async createPaymentRequest(data: Partial<PaymentRequest>): Promise<PaymentRequest | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const request = await firstValueFrom(this.financialRepository.createPaymentRequest(data));
+      if (request) {
+        this.paymentRequests.update(list => [request, ...list]);
+      }
+      return request;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '建立請款失敗';
+      console.error('[FinancialService] createPaymentRequest error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 更新請款
+   * Update payment request
+   */
+  async updatePaymentRequest(id: string, data: Partial<PaymentRequest>): Promise<PaymentRequest | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const request = await firstValueFrom(this.financialRepository.updatePaymentRequest(id, data));
+      if (request) {
+        this.paymentRequests.update(list => list.map(r => (r.id === id ? request : r)));
+      }
+      return request;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '更新請款失敗';
+      console.error('[FinancialService] updatePaymentRequest error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 核准請款
+   * Approve payment request
+   */
+  async approvePaymentRequest(id: string): Promise<PaymentRequest | null> {
+    return this.updatePaymentRequest(id, {
+      status: 'approved' as unknown as import('@core').PaymentRequestStatus,
+      approved_at: new Date().toISOString()
+    });
+  }
+
+  /**
+   * 拒絕請款
+   * Reject payment request
+   */
+  async rejectPaymentRequest(id: string, reason: string): Promise<PaymentRequest | null> {
+    return this.updatePaymentRequest(id, {
+      status: 'rejected' as unknown as import('@core').PaymentRequestStatus,
+      rejected_reason: reason
+    });
+  }
+
+  /**
+   * 刪除請款
+   * Delete payment request
+   */
+  async deletePaymentRequest(id: string): Promise<boolean> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      await firstValueFrom(this.financialRepository.deletePaymentRequest(id));
+      this.paymentRequests.update(list => list.filter(r => r.id !== id));
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '刪除請款失敗';
+      console.error('[FinancialService] deletePaymentRequest error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // ============================================================================
+  // Payment CRUD Methods (付款 CRUD 方法)
+  // ============================================================================
+
+  /**
+   * 載入付款（別名）
+   * Load payments (alias)
+   */
+  async loadPayments(blueprintId: string): Promise<Payment[]> {
+    return this.loadPaymentsForBlueprint(blueprintId);
+  }
+
+  /**
+   * 建立付款
+   * Create payment
+   */
+  async createPayment(data: Partial<Payment>): Promise<Payment | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const payment = await firstValueFrom(this.financialRepository.createPayment(data));
+      if (payment) {
+        this.payments.update(list => [payment, ...list]);
+        // 如果有關聯請款單，更新其狀態為已付款
+        if (data.payment_request_id) {
+          await this.updatePaymentRequest(data.payment_request_id, {
+            status: 'paid' as unknown as import('@core').PaymentRequestStatus
+          });
+        }
+      }
+      return payment;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '建立付款失敗';
+      console.error('[FinancialService] createPayment error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 更新付款
+   * Update payment
+   */
+  async updatePayment(id: string, data: Partial<Payment>): Promise<Payment | null> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const payment = await firstValueFrom(this.financialRepository.updatePayment(id, data));
+      if (payment) {
+        this.payments.update(list => list.map(p => (p.id === id ? payment : p)));
+      }
+      return payment;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '更新付款失敗';
+      console.error('[FinancialService] updatePayment error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  /**
+   * 刪除付款
+   * Delete payment
+   */
+  async deletePayment(id: string): Promise<boolean> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      await firstValueFrom(this.financialRepository.deletePayment(id));
+      this.payments.update(list => list.filter(p => p.id !== id));
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '刪除付款失敗';
+      console.error('[FinancialService] deletePayment error:', err);
+      this.error.set(message);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
 }
