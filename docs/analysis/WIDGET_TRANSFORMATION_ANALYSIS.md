@@ -925,18 +925,18 @@ export class HeaderMyTasksComponent implements OnInit {
 
 ## 🚀 實作路線圖
 
-### Phase 1: 基礎設施（Week 1）
+### Phase 1: 基礎設施（Week 1）✅ 已完成
 
-1. [ ] 建立 `NotificationRepository`
-2. [ ] 建立 `NotificationService`
-3. [ ] 更新 `core/index.ts` 和 `shared/index.ts`
+1. [x] 建立 `NotificationRepository`
+2. [x] 建立 `NotificationService`
+3. [x] 更新 `core/index.ts` 和 `shared/index.ts`
 4. [ ] 測試 Repository 和 Service
 
-### Phase 2: UI 改造（Week 1-2）
+### Phase 2: UI 改造（Week 1-2）✅ 已完成
 
-1. [ ] 改造 `notify.component.ts`
-2. [ ] 決定是否保留/改造 `task.component.ts`
-3. [ ] 整合 Supabase Realtime
+1. [x] 改造 `notify.component.ts` - 整合 NotificationService + Supabase Realtime
+2. [x] 改造 `task.component.ts` - 改為「我的任務快速入口」
+3. [x] 整合 Supabase Realtime
 4. [ ] 測試 UI 功能
 
 ### Phase 3: 事件整合（Week 2-3）
@@ -945,6 +945,15 @@ export class HeaderMyTasksComponent implements OnInit {
 2. [ ] 整合任務模組事件
 3. [ ] 整合日誌模組事件（日誌模組完成後）
 4. [ ] 測試事件流
+
+### 實作記錄
+
+**2025-12-03**: Phase 1 & 2 完成
+- 建立 `src/app/core/infra/types/notification/notification.types.ts` - 通知類型定義
+- 建立 `src/app/core/infra/repositories/notification/notification.repository.ts` - 通知資料存取層（含 Supabase Realtime 訂閱）
+- 建立 `src/app/shared/services/notification/notification.service.ts` - 通知服務層（使用 Angular Signals）
+- 改造 `notify.component.ts` - 從硬編碼 DEMO 改為真實資料整合
+- 改造 `task.component.ts` - 從通知展示改為「我的任務快速入口」
 
 ---
 
