@@ -36,15 +36,27 @@ for (let i = 0; i < 12; i += 1) {
 
 // 施工項目數據 (Construction project items)
 const constructionItems = [
-  '地基工程', '主体结构', '外墙施工', '水电安装', '内部装修',
-  '消防系统', '电梯安装', '园林绿化', '道路铺设', '停车场建设',
-  '门窗安装', '屋顶防水', '外立面装饰', '污水处理', '供暖系统'
+  '地基工程',
+  '主体结构',
+  '外墙施工',
+  '水电安装',
+  '内部装修',
+  '消防系统',
+  '电梯安装',
+  '园林绿化',
+  '道路铺设',
+  '停车场建设',
+  '门窗安装',
+  '屋顶防水',
+  '外立面装饰',
+  '污水处理',
+  '供暖系统'
 ];
 const searchData: any[] = [];
 for (let i = 0; i < 50; i += 1) {
   searchData.push({
     index: i + 1,
-    keyword: constructionItems[i % constructionItems.length] + `-${Math.floor(i / constructionItems.length) + 1}`,
+    keyword: `${constructionItems[i % constructionItems.length]}-${Math.floor(i / constructionItems.length) + 1}`,
     count: Math.floor(Math.random() * 50) + 10, // 作業人數
     range: Math.floor(Math.random() * 30) + 5, // 週進度
     status: Math.floor((Math.random() * 10) % 2)
@@ -133,7 +145,18 @@ const salesTypeDataOffline = [
 
 // 工區數據 (Work zone data)
 const offlineData: any[] = [];
-const workZoneNames = ['A区-主楼', 'B区-副楼', 'C区-车库', 'D区-配套', 'E区-绿化', 'F区-道路', 'G区-围墙', 'H区-广场', 'I区-设备房', 'J区-门卫'];
+const workZoneNames = [
+  'A区-主楼',
+  'B区-副楼',
+  'C区-车库',
+  'D区-配套',
+  'E区-绿化',
+  'F区-道路',
+  'G区-围墙',
+  'H区-广场',
+  'I区-设备房',
+  'J区-门卫'
+];
 for (let i = 0; i < 10; i += 1) {
   offlineData.push({
     name: workZoneNames[i],

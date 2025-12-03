@@ -11,27 +11,27 @@
 
     .header-content {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       padding: 24px 32px;
-      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
       border-radius: 16px;
       color: #fff;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
 
     .header-left {
       display: flex;
-      align-items: center;
       gap: 20px;
+      align-items: center;
 
       .header-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgb(255 255 255 / 15%);
 
         i {
           font-size: 32px;
@@ -40,14 +40,14 @@
 
       .header-text {
         h1 {
+          margin: 0 0 8px;
           font-size: 26px;
           font-weight: 600;
-          margin: 0 0 8px;
         }
 
         p {
-          font-size: 14px;
           margin: 0;
+          font-size: 14px;
           opacity: 0.85;
         }
       }
@@ -56,21 +56,21 @@
     .header-right {
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
       gap: 12px;
+      align-items: flex-end;
 
       .status-badge {
         display: flex;
-        align-items: center;
         gap: 8px;
+        align-items: center;
         padding: 8px 16px;
         border-radius: 20px;
         font-size: 14px;
         font-weight: 500;
 
         &.success {
-          background: rgba(82, 196, 26, 0.2);
           color: #95de64;
+          background: rgb(82 196 26 / 20%);
         }
       }
 
@@ -90,12 +90,12 @@
 
   .kpi-card {
     border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
     transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
     }
 
     .ant-card-body {
@@ -104,8 +104,8 @@
 
     .kpi-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 12px;
 
       .kpi-name {
@@ -114,10 +114,10 @@
       }
 
       .kpi-trend {
-        font-size: 13px;
         display: flex;
-        align-items: center;
         gap: 4px;
+        align-items: center;
+        font-size: 13px;
 
         &.up {
           color: @success-color;
@@ -132,14 +132,14 @@
     .kpi-value {
       font-size: 36px;
       font-weight: 700;
-      color: @heading-color;
       line-height: 1.2;
+      color: @heading-color;
 
       .kpi-unit {
+        margin-left: 4px;
         font-size: 16px;
         font-weight: 400;
         color: @text-color-secondary;
-        margin-left: 4px;
       }
     }
 
@@ -149,18 +149,18 @@
       .progress-label {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 8px;
         font-size: 12px;
         color: @text-color-secondary;
-        margin-bottom: 8px;
       }
     }
   }
 
   // 區塊卡片
   .section-card {
-    border-radius: 16px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 
     .ant-card-body {
       padding: 24px;
@@ -168,14 +168,14 @@
 
     .section-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 24px;
 
       .section-title {
         display: flex;
-        align-items: center;
         gap: 12px;
+        align-items: center;
         font-size: 18px;
         font-weight: 600;
         color: @heading-color;
@@ -192,8 +192,8 @@
 
         .legend-item {
           display: flex;
-          align-items: center;
           gap: 6px;
+          align-items: center;
           font-size: 12px;
           color: @text-color-secondary;
 
@@ -219,8 +219,8 @@
 
       .live-indicator {
         display: flex;
-        align-items: center;
         gap: 8px;
+        align-items: center;
         font-size: 13px;
         color: @success-color;
 
@@ -237,18 +237,18 @@
 
   @keyframes pulse {
     0% {
-      opacity: 1;
       transform: scale(1);
+      opacity: 1;
     }
 
     50% {
-      opacity: 0.5;
       transform: scale(1.2);
+      opacity: 0.5;
     }
 
     100% {
-      opacity: 1;
       transform: scale(1);
+      opacity: 1;
     }
   }
 
@@ -261,20 +261,20 @@
 
   .dept-card {
     padding: 20px;
-    background: @background-color-light;
-    border-radius: 12px;
     border-left: 4px solid;
+    border-radius: 12px;
+    background: @background-color-light;
     transition: all 0.2s ease;
 
     &:hover {
       transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
     }
 
     .dept-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 16px;
 
       .dept-name {
@@ -312,21 +312,21 @@
 
     .dept-footer {
       .dept-head {
+        display: flex;
+        gap: 6px;
+        align-items: center;
         font-size: 13px;
         color: @text-color-secondary;
-        display: flex;
-        align-items: center;
-        gap: 6px;
       }
     }
   }
 
   // 活動圖表
   .activity-chart {
-    padding: 16px 0;
-    background: linear-gradient(180deg, rgba(24, 144, 255, 0.06) 0%, rgba(24, 144, 255, 0.02) 100%);
-    border-radius: 12px;
     margin-bottom: 16px;
+    padding: 16px 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgb(24 144 255 / 6%) 0%, rgb(24 144 255 / 2%) 100%);
   }
 
   .activity-stats {
@@ -335,16 +335,16 @@
     gap: 16px;
 
     .activity-stat {
-      text-align: center;
       padding: 16px;
-      background: @background-color-light;
       border-radius: 10px;
+      text-align: center;
+      background: @background-color-light;
 
       .stat-label {
         display: block;
+        margin-bottom: 4px;
         font-size: 12px;
         color: @text-color-secondary;
-        margin-bottom: 4px;
       }
 
       .stat-value {
@@ -365,11 +365,11 @@
   }
 
   .alert-list {
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
     max-height: 320px;
-    overflow-y: auto;
   }
 
   .alert-item {
@@ -380,18 +380,18 @@
     transition: all 0.2s ease;
 
     &.alert-error {
-      background: #fff2f0;
       border-left: 3px solid @error-color;
+      background: #fff2f0;
     }
 
     &.alert-warning {
-      background: #fffbe6;
       border-left: 3px solid @warning-color;
+      background: #fffbe6;
     }
 
     &.alert-info {
-      background: #e6f7ff;
       border-left: 3px solid @primary-color;
+      background: #e6f7ff;
     }
 
     .alert-icon {
@@ -404,16 +404,16 @@
       min-width: 0;
 
       .alert-title {
+        margin-bottom: 4px;
         font-size: 14px;
         font-weight: 600;
         color: @heading-color;
-        margin-bottom: 4px;
       }
 
       .alert-desc {
+        margin-bottom: 8px;
         font-size: 13px;
         color: @text-color-secondary;
-        margin-bottom: 8px;
       }
 
       .alert-meta {
@@ -450,9 +450,9 @@
 
   // 標籤雲
   .tag-cloud-container {
-    padding: 16px 0;
     display: flex;
     justify-content: center;
+    padding: 16px 0;
   }
 
   // 底部行
@@ -465,8 +465,8 @@
     .monitor-header {
       .header-content {
         flex-direction: column;
-        text-align: center;
         gap: 20px;
+        text-align: center;
       }
 
       .header-left {

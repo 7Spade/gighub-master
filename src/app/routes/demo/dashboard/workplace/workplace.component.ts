@@ -68,9 +68,36 @@ export class DashboardWorkplaceComponent implements OnInit {
 
   // 階段列表
   phases: BlueprintPhase[] = [
-    { id: 'p1', name: '基礎工程', progress: 100, startDate: '2024-03', endDate: '2024-05', status: 'completed', tasks: 24, completedTasks: 24 },
-    { id: 'p2', name: '主體結構', progress: 85, startDate: '2024-05', endDate: '2024-09', status: 'in-progress', tasks: 36, completedTasks: 30 },
-    { id: 'p3', name: '機電安裝', progress: 35, startDate: '2024-07', endDate: '2024-11', status: 'in-progress', tasks: 28, completedTasks: 10 },
+    {
+      id: 'p1',
+      name: '基礎工程',
+      progress: 100,
+      startDate: '2024-03',
+      endDate: '2024-05',
+      status: 'completed',
+      tasks: 24,
+      completedTasks: 24
+    },
+    {
+      id: 'p2',
+      name: '主體結構',
+      progress: 85,
+      startDate: '2024-05',
+      endDate: '2024-09',
+      status: 'in-progress',
+      tasks: 36,
+      completedTasks: 30
+    },
+    {
+      id: 'p3',
+      name: '機電安裝',
+      progress: 35,
+      startDate: '2024-07',
+      endDate: '2024-11',
+      status: 'in-progress',
+      tasks: 28,
+      completedTasks: 10
+    },
     { id: 'p4', name: '裝飾裝修', progress: 0, startDate: '2024-10', endDate: '2025-03', status: 'upcoming', tasks: 42, completedTasks: 0 },
     { id: 'p5', name: '竣工驗收', progress: 0, startDate: '2025-03', endDate: '2025-06', status: 'upcoming', tasks: 18, completedTasks: 0 }
   ];

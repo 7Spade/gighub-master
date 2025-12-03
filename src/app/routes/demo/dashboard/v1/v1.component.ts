@@ -1,5 +1,5 @@
-import { DatePipe } from '@angular/common';
 import { Platform } from '@angular/cdk/platform';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DOCUMENT } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Chart } from '@antv/g2';
@@ -45,7 +45,17 @@ interface QuickAction {
   templateUrl: './v1.component.html',
   styleUrls: ['./v1.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [...SHARED_IMPORTS, G2TimelineModule, G2BarModule, G2MiniBarModule, G2MiniAreaModule, G2MiniProgressModule, QuickMenuModule, OnboardingModule, DatePipe]
+  imports: [
+    ...SHARED_IMPORTS,
+    G2TimelineModule,
+    G2BarModule,
+    G2MiniBarModule,
+    G2MiniAreaModule,
+    G2MiniProgressModule,
+    QuickMenuModule,
+    OnboardingModule,
+    DatePipe
+  ]
 })
 export class DashboardV1Component implements OnInit {
   private readonly http = inject(_HttpClient);
@@ -68,10 +78,34 @@ export class DashboardV1Component implements OnInit {
 
   // 個人任務列表
   myTasks: PersonalTask[] = [
-    { id: 'T001', title: 'A區基礎驗收準備', project: '華南商業中心', priority: 'high', dueDate: '2024-12-05', progress: 85, completed: false },
-    { id: 'T002', title: '材料進場檢驗報告', project: '華南商業中心', priority: 'medium', dueDate: '2024-12-06', progress: 60, completed: false },
+    {
+      id: 'T001',
+      title: 'A區基礎驗收準備',
+      project: '華南商業中心',
+      priority: 'high',
+      dueDate: '2024-12-05',
+      progress: 85,
+      completed: false
+    },
+    {
+      id: 'T002',
+      title: '材料進場檢驗報告',
+      project: '華南商業中心',
+      priority: 'medium',
+      dueDate: '2024-12-06',
+      progress: 60,
+      completed: false
+    },
     { id: 'T003', title: '施工日誌整理', project: '科技園區項目', priority: 'low', dueDate: '2024-12-07', progress: 30, completed: false },
-    { id: 'T004', title: '安全培訓資料編寫', project: '華南商業中心', priority: 'medium', dueDate: '2024-12-08', progress: 45, completed: false },
+    {
+      id: 'T004',
+      title: '安全培訓資料編寫',
+      project: '華南商業中心',
+      priority: 'medium',
+      dueDate: '2024-12-08',
+      progress: 45,
+      completed: false
+    },
     { id: 'T005', title: '週報撰寫提交', project: '全部項目', priority: 'high', dueDate: '2024-12-04', progress: 100, completed: true }
   ];
 

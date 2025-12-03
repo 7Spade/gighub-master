@@ -79,7 +79,16 @@ export class DashboardAnalysisComponent implements OnInit {
     { title: '本月預算', value: 2850000, prefix: '¥', suffix: '', icon: 'wallet', color: 'primary', trend: 'up', trendValue: 12.5 },
     { title: '已執行金額', value: 1856000, prefix: '¥', suffix: '', icon: 'check-circle', color: 'success', trend: 'up', trendValue: 8.3 },
     { title: '待付款項', value: 523000, prefix: '¥', suffix: '', icon: 'clock-circle', color: 'warning', trend: 'down', trendValue: 5.2 },
-    { title: '逾期未付', value: 128000, prefix: '¥', suffix: '', icon: 'exclamation-circle', color: 'danger', trend: 'up', trendValue: 15.8 }
+    {
+      title: '逾期未付',
+      value: 128000,
+      prefix: '¥',
+      suffix: '',
+      icon: 'exclamation-circle',
+      color: 'danger',
+      trend: 'up',
+      trendValue: 15.8
+    }
   ];
 
   budgetCategories: BudgetCategory[] = [

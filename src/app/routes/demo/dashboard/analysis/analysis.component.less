@@ -11,27 +11,27 @@
 
     .header-content {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       padding: 24px 32px;
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
       border-radius: 16px;
       color: #fff;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
     }
 
     .header-left {
       display: flex;
-      align-items: center;
       gap: 20px;
+      align-items: center;
 
       .header-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgb(255 255 255 / 15%);
 
         i {
           font-size: 32px;
@@ -40,14 +40,14 @@
 
       .header-text {
         h1 {
+          margin: 0 0 8px;
           font-size: 28px;
           font-weight: 600;
-          margin: 0 0 8px;
         }
 
         p {
-          font-size: 14px;
           margin: 0;
+          font-size: 14px;
           opacity: 0.85;
         }
       }
@@ -55,49 +55,49 @@
 
     .header-right {
       display: flex;
-      align-items: center;
       gap: 16px;
+      align-items: center;
 
       .date-filter {
         display: flex;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
         padding: 4px;
+        border-radius: 8px;
+        background: rgb(255 255 255 / 10%);
 
         .date-item {
-          padding: 8px 16px;
-          font-size: 13px;
           cursor: pointer;
+          padding: 8px 16px;
           border-radius: 6px;
+          font-size: 13px;
           transition: all 0.2s;
 
           &:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgb(255 255 255 / 10%);
           }
 
           &.active {
-            background: rgba(255, 255, 255, 0.25);
             font-weight: 500;
+            background: rgb(255 255 255 / 25%);
           }
         }
       }
 
       .date-picker {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgb(255 255 255 / 20%);
         border-radius: 8px;
+        background: rgb(255 255 255 / 10%);
 
         input {
           color: #fff;
 
           &::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgb(255 255 255 / 60%);
           }
         }
 
         .ant-picker-suffix,
         .ant-picker-separator {
-          color: rgba(255, 255, 255, 0.6);
+          color: rgb(255 255 255 / 60%);
         }
       }
     }
@@ -109,13 +109,13 @@
   }
 
   .stat-card {
-    border-radius: 16px;
     overflow: hidden;
+    border-radius: 16px;
     transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 32px rgb(0 0 0 / 12%);
     }
 
     .ant-card-body {
@@ -123,20 +123,20 @@
     }
 
     .stat-card-body {
-      padding: 24px;
       display: flex;
-      align-items: flex-start;
       gap: 20px;
+      align-items: flex-start;
+      padding: 24px;
     }
 
     .stat-icon {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
       width: 64px;
       height: 64px;
       border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
 
       i {
         font-size: 28px;
@@ -149,17 +149,17 @@
       min-width: 0;
 
       .stat-title {
-        font-size: 14px;
-        color: @text-color-secondary;
         display: block;
         margin-bottom: 8px;
+        font-size: 14px;
+        color: @text-color-secondary;
       }
 
       .stat-value {
         font-size: 32px;
         font-weight: 700;
-        color: @heading-color;
         line-height: 1.2;
+        color: @heading-color;
 
         .prefix {
           font-size: 20px;
@@ -168,10 +168,10 @@
       }
 
       .stat-trend {
-        margin-top: 12px;
         display: flex;
-        align-items: center;
         gap: 8px;
+        align-items: center;
+        margin-top: 12px;
 
         .trend-text {
           font-size: 12px;
@@ -215,9 +215,9 @@
 
   // 區塊卡片
   .section-card {
-    border-radius: 16px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 
     .ant-card-body {
       padding: 24px;
@@ -225,14 +225,14 @@
 
     .section-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 24px;
 
       .section-title {
         display: flex;
-        align-items: center;
         gap: 12px;
+        align-items: center;
         font-size: 18px;
         font-weight: 600;
         color: @heading-color;
@@ -267,8 +267,8 @@
 
   .budget-item {
     padding: 20px;
-    background: @background-color-light;
     border-radius: 12px;
+    background: @background-color-light;
     transition: all 0.2s ease;
 
     &:hover {
@@ -277,8 +277,8 @@
 
     .budget-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 12px;
 
       .budget-name {
@@ -291,13 +291,13 @@
         font-size: 13px;
 
         .spent {
-          color: @heading-color;
           font-weight: 600;
+          color: @heading-color;
         }
 
         .divider {
-          color: @text-color-secondary;
           margin: 0 4px;
+          color: @text-color-secondary;
         }
 
         .budget {
@@ -316,23 +316,23 @@
   // 待付款項
   .pending-card {
     .pending-list {
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 12px;
       max-height: 400px;
-      overflow-y: auto;
     }
 
     .pending-item {
       padding: 16px;
-      background: @background-color-light;
-      border-radius: 12px;
       border-left: 4px solid @primary-color;
+      border-radius: 12px;
+      background: @background-color-light;
       transition: all 0.2s ease;
 
       &:hover {
-        background: @primary-1;
         transform: translateX(4px);
+        background: @primary-1;
       }
 
       &.urgent {
@@ -346,14 +346,14 @@
 
       .pending-header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         margin-bottom: 8px;
 
         .pending-id {
+          font-family: monospace;
           font-size: 13px;
           color: @text-color-secondary;
-          font-family: monospace;
         }
       }
 
@@ -361,10 +361,10 @@
         margin-bottom: 12px;
 
         .pending-project {
+          margin-bottom: 4px;
           font-size: 15px;
           font-weight: 500;
           color: @heading-color;
-          margin-bottom: 4px;
         }
 
         .pending-vendor {
@@ -375,8 +375,8 @@
 
       .pending-footer {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
 
         .pending-amount {
           font-size: 18px;
@@ -385,11 +385,11 @@
         }
 
         .pending-due {
+          display: flex;
+          gap: 4px;
+          align-items: center;
           font-size: 12px;
           color: @text-color-secondary;
-          display: flex;
-          align-items: center;
-          gap: 4px;
         }
       }
     }
@@ -419,10 +419,10 @@
       }
 
       .tab-rate {
+        margin-top: 4px;
         font-size: 24px;
         font-weight: 700;
         color: @primary-color;
-        margin-top: 4px;
       }
     }
 
@@ -453,8 +453,8 @@
         width: 100%;
 
         .date-filter {
-          width: 100%;
           justify-content: center;
+          width: 100%;
         }
 
         .date-picker {

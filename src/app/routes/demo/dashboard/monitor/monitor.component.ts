@@ -10,8 +10,8 @@ import { G2TagCloudModule } from '@delon/chart/tag-cloud';
 import { G2WaterWaveModule } from '@delon/chart/water-wave';
 import { _HttpClient } from '@delon/theme';
 import { SHARED_IMPORTS } from '@shared';
-import type { CountdownConfig } from 'ngx-countdown';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
+import type { CountdownConfig } from 'ngx-countdown';
 import { zip } from 'rxjs';
 
 interface OrganizationKPI {
@@ -99,9 +99,23 @@ export class DashboardMonitorComponent implements OnInit, OnDestroy {
 
   // 告警列表
   alerts: AlertItem[] = [
-    { id: 'a1', type: 'error', title: 'C區安全隱患', description: '發現臨邊防護不完善，需立即整改', time: '10分鐘前', department: '安全監督部' },
+    {
+      id: 'a1',
+      type: 'error',
+      title: 'C區安全隱患',
+      description: '發現臨邊防護不完善，需立即整改',
+      time: '10分鐘前',
+      department: '安全監督部'
+    },
     { id: 'a2', type: 'warning', title: 'B區進度延誤', description: '機電安裝進度落後計劃15%', time: '30分鐘前', department: '機電安裝部' },
-    { id: 'a3', type: 'info', title: '材料到貨提醒', description: '鋼筋材料已到達工地，請安排驗收', time: '1小時前', department: '物資管理部' },
+    {
+      id: 'a3',
+      type: 'info',
+      title: '材料到貨提醒',
+      description: '鋼筋材料已到達工地，請安排驗收',
+      time: '1小時前',
+      department: '物資管理部'
+    },
     { id: 'a4', type: 'warning', title: '人員出勤異常', description: '今日土建部出勤率低於90%', time: '2小時前', department: '人力資源部' }
   ];
 
