@@ -1,0 +1,32 @@
+---
+# Auto Triggers Configuration
+# 基於 mcp-servers.yml 的自動觸發規則
+
+version: '1.0'
+
+triggers:
+  on-file-change:
+    patterns:
+      - '**/*.ts'
+      - '**/*.html'
+      - '**/*.scss'
+      - '**/*.css'
+      - '**/*.json'
+      - '**/*.sql'
+    agents:
+      - default
+    mcp-servers:
+      - context7
+      - github
+      - supabase
+      - redis
+      - memory
+      - sequential-thinking
+      - software-planning-tool
+      - everything
+      - filesystem
+      - git
+      - time
+      - fetch
+      - puppeteer
+      - playwright
