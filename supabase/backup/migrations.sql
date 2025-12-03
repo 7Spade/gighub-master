@@ -6,6 +6,37 @@
 -- 
 -- 注意：此檔案僅供測試用途，原始檔案保持不變
 -- Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+--
+-- ############################################################################
+-- Run Order (執行順序) - 種子檔案執行順序
+-- ############################################################################
+-- 
+-- 如果需要分別執行各個種子檔案，請按照以下順序執行：
+--
+--   1. seed.sql (本檔案 - 必須先執行 - 建立基礎架構)
+--      - 建立核心 ENUM 類型（account_type, weather_type 等）
+--      - 建立核心表（accounts, organizations, blueprints, tasks 等）
+--      - 建立 RLS 政策和輔助函數
+--
+--   2. seed_diaries.sql (施工日誌)
+--      - 依賴：seed.sql (blueprints, tasks, accounts)
+--
+--   3. seed_qc_inspections.sql (品管檢查)
+--      - 依賴：seed.sql, seed_diaries.sql (diaries)
+--
+--   4. seed_acceptances.sql (驗收記錄)
+--      - 依賴：seed.sql, seed_qc_inspections.sql (qc_inspections)
+--
+--   5. seed_problems.sql (問題管理)
+--      - 依賴：seed.sql, seed_qc_inspections.sql, seed_acceptances.sql
+--
+--   6. seed_audit_logs.sql (審計日誌)
+--      - 依賴：seed.sql (organizations, blueprints, accounts)
+--
+--   7. seed_search_history.sql (搜尋歷史)
+--      - 依賴：seed.sql (僅需 auth.users)
+--      - 可獨立執行
+--
 -- ############################################################################
 
 -- ============================================================================

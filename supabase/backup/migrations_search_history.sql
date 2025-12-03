@@ -9,6 +9,18 @@
 -- - Category-based search filtering
 -- - Automatic cleanup of old history
 --
+-- Prerequisites:
+--   先執行 seed.sql (建立 auth.users 相關依賴)
+--
+-- Run Order (執行順序):
+--   1. seed.sql (必須先執行 - 建立基礎架構)
+--   2. seed_diaries.sql
+--   3. seed_qc_inspections.sql
+--   4. seed_acceptances.sql
+--   5. seed_problems.sql
+--   6. seed_audit_logs.sql
+--   7. seed_search_history.sql (本檔案 - 可獨立執行，僅依賴 auth.users)
+--
 -- Created: 2024-12-03
 -- ============================================================================
 

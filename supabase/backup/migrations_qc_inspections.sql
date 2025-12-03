@@ -2,13 +2,17 @@
 -- Description: 品管檢查表 - 品質控制檢查系統
 -- 
 -- Prerequisites: 
---   先執行 seed.sql (建立基礎表：blueprints, tasks, diaries, accounts)
+--   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts)
+--   先執行 seed_diaries.sql (建立 diaries 表)
 --
 -- Run Order (執行順序):
---   1. seed.sql (必須先執行)
---   2. seed_qc_inspections.sql (本檔案)
---   3. seed_acceptances.sql
---   4. seed_problems.sql
+--   1. seed.sql (必須先執行 - 建立基礎架構)
+--   2. seed_diaries.sql
+--   3. seed_qc_inspections.sql (本檔案)
+--   4. seed_acceptances.sql
+--   5. seed_problems.sql
+--   6. seed_audit_logs.sql
+--   7. seed_search_history.sql
 --
 -- Features:
 --   - QC inspection tracking
@@ -21,6 +25,7 @@
 -- ============================================================================
 
 -- 品管檢查狀態
+DROP TYPE IF EXISTS qc_inspection_status CASCADE;
 CREATE TYPE qc_inspection_status AS ENUM (
   'pending',        -- 待檢查
   'in_progress',    -- 檢查中
@@ -31,6 +36,7 @@ CREATE TYPE qc_inspection_status AS ENUM (
 );
 
 -- 品管檢查類型
+DROP TYPE IF EXISTS qc_inspection_type CASCADE;
 CREATE TYPE qc_inspection_type AS ENUM (
   'self_check',     -- 自主檢查
   'supervisor_check', -- 主管檢查
@@ -40,6 +46,7 @@ CREATE TYPE qc_inspection_type AS ENUM (
 );
 
 -- 品管檢查項目狀態
+DROP TYPE IF EXISTS qc_item_status CASCADE;
 CREATE TYPE qc_item_status AS ENUM (
   'pending',        -- 待檢查
   'passed',         -- 合格

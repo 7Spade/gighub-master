@@ -3,14 +3,18 @@
 -- 
 -- Prerequisites: 
 --   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts)
+--   先執行 seed_diaries.sql (建立 diaries 表)
 --   先執行 seed_qc_inspections.sql (建立 qc_inspections, qc_inspection_items 表)
 --   先執行 seed_acceptances.sql (建立 acceptances 表)
 --
 -- Run Order (執行順序):
---   1. seed.sql (必須先執行)
---   2. seed_qc_inspections.sql
---   3. seed_acceptances.sql
---   4. seed_problems.sql (本檔案)
+--   1. seed.sql (必須先執行 - 建立基礎架構)
+--   2. seed_diaries.sql
+--   3. seed_qc_inspections.sql
+--   4. seed_acceptances.sql
+--   5. seed_problems.sql (本檔案)
+--   6. seed_audit_logs.sql
+--   7. seed_search_history.sql
 --
 -- Features:
 --   - Problem lifecycle management (Open → Assessing → Assigned → In Progress → Resolved → Verifying → Closed)
@@ -24,6 +28,7 @@
 -- ============================================================================
 
 -- 問題類型
+DROP TYPE IF EXISTS problem_type CASCADE;
 CREATE TYPE problem_type AS ENUM (
   'defect',         -- 缺陷
   'risk',           -- 風險
@@ -37,6 +42,7 @@ CREATE TYPE problem_type AS ENUM (
 );
 
 -- 問題狀態 (生命週期)
+DROP TYPE IF EXISTS problem_status CASCADE;
 CREATE TYPE problem_status AS ENUM (
   'open',           -- 開立
   'assessing',      -- 評估中
@@ -50,6 +56,7 @@ CREATE TYPE problem_status AS ENUM (
 );
 
 -- 問題優先級
+DROP TYPE IF EXISTS problem_priority CASCADE;
 CREATE TYPE problem_priority AS ENUM (
   'critical',       -- 嚴重
   'high',           -- 高
@@ -58,6 +65,7 @@ CREATE TYPE problem_priority AS ENUM (
 );
 
 -- 問題嚴重程度
+DROP TYPE IF EXISTS problem_severity CASCADE;
 CREATE TYPE problem_severity AS ENUM (
   'critical',       -- 嚴重
   'major',          -- 主要
@@ -66,6 +74,7 @@ CREATE TYPE problem_severity AS ENUM (
 );
 
 -- 問題來源
+DROP TYPE IF EXISTS problem_source CASCADE;
 CREATE TYPE problem_source AS ENUM (
   'qc_inspection',  -- 品管檢查
   'acceptance',     -- 驗收
