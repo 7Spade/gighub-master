@@ -1,5 +1,15 @@
 -- Migration: Create QC Inspections Tables
 -- Description: 品管檢查表 - 品質控制檢查系統
+-- 
+-- Prerequisites: 
+--   先執行 seed.sql (建立基礎表：blueprints, tasks, diaries, accounts)
+--
+-- Run Order (執行順序):
+--   1. seed.sql (必須先執行)
+--   2. seed_qc_inspections.sql (本檔案)
+--   3. seed_acceptances.sql
+--   4. seed_problems.sql
+--
 -- Features:
 --   - QC inspection tracking
 --   - Inspection items and checklists
@@ -214,7 +224,7 @@ CREATE POLICY qc_inspections_delete_policy ON qc_inspections
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
+      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
     )
   );
 
@@ -256,7 +266,7 @@ CREATE POLICY qc_inspection_items_delete_policy ON qc_inspection_items
     OR inspection_id IN (
       SELECT i.id FROM qc_inspections i
       JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (SELECT auth.uid()) AND bm.blueprint_role IN ('owner', 'admin')
+      WHERE bm.account_id = (SELECT auth.uid()) AND bm.role IN ('contributor', 'maintainer')
     )
   );
 

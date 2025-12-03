@@ -1,5 +1,17 @@
 -- Migration: Create Problems Tables
 -- Description: 問題管理表 - 問題生命週期管理系統
+-- 
+-- Prerequisites: 
+--   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts)
+--   先執行 seed_qc_inspections.sql (建立 qc_inspections, qc_inspection_items 表)
+--   先執行 seed_acceptances.sql (建立 acceptances 表)
+--
+-- Run Order (執行順序):
+--   1. seed.sql (必須先執行)
+--   2. seed_qc_inspections.sql
+--   3. seed_acceptances.sql
+--   4. seed_problems.sql (本檔案)
+--
 -- Features:
 --   - Problem lifecycle management (Open → Assessing → Assigned → In Progress → Resolved → Verifying → Closed)
 --   - Problem types (defect, risk, gap, improvement, change request)
@@ -271,7 +283,7 @@ CREATE POLICY problems_delete_policy ON problems
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
+      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
     )
   );
 
