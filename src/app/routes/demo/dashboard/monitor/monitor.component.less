@@ -1,104 +1,84 @@
 @import '@delon/theme/index';
 
 :host ::ng-deep {
-  .monitor-dashboard {
+  .org-monitor-dashboard {
     padding: 0;
   }
 
   // 頂部標題區
   .monitor-header {
     margin-bottom: 24px;
-    
+
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 24px 32px;
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
       border-radius: 16px;
       color: #fff;
     }
-    
+
     .header-left {
-      .monitor-title {
-        font-size: 28px;
-        font-weight: 600;
-        margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      .header-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
-        gap: 12px;
-        
+        justify-content: center;
+
         i {
           font-size: 32px;
         }
       }
-      
-      .monitor-subtitle {
-        margin: 8px 0 0;
-        opacity: 0.8;
-        font-size: 14px;
+
+      .header-text {
+        h1 {
+          font-size: 26px;
+          font-weight: 600;
+          margin: 0 0 8px;
+        }
+
+        p {
+          font-size: 14px;
+          margin: 0;
+          opacity: 0.85;
+        }
       }
     }
-    
+
     .header-right {
       display: flex;
-      align-items: center;
-      gap: 16px;
-      
-      .status-tag {
-        font-size: 14px;
-        padding: 4px 12px;
-        border-radius: 16px;
-        
-        i {
-          margin-right: 6px;
-        }
-      }
-      
-      .update-time {
-        font-size: 13px;
-        opacity: 0.8;
-      }
-    }
-  }
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
 
-  // 監控卡片
-  .monitor-card {
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    margin-bottom: 0;
-    
-    .ant-card-body {
-      padding: 24px;
-    }
-    
-    .card-header {
-      margin-bottom: 20px;
-      
-      .card-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: @heading-color;
+      .status-badge {
         display: flex;
         align-items: center;
-        
-        .title-icon {
-          font-size: 18px;
-          margin-right: 8px;
-          color: @primary-color;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+
+        &.success {
+          background: rgba(82, 196, 26, 0.2);
+          color: #95de64;
         }
       }
-    }
-    
-    &.main-card {
-      min-height: 560px;
-    }
-    
-    &.sidebar-card {
-      margin-bottom: 24px;
-      
-      &:last-child {
-        margin-bottom: 0;
+
+      .update-info {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        opacity: 0.8;
       }
     }
   }
@@ -109,190 +89,347 @@
   }
 
   .kpi-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: @background-color-light;
-    border-radius: 12px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
-    
+
     &:hover {
-      background: @primary-1;
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
-    
-    .kpi-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .kpi-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      
-      i {
-        font-size: 24px;
-        color: #fff;
-      }
-      
-      &.primary {
-        background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
-      }
-      
-      &.success {
-        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
-      }
-      
-      &.warning {
-        background: linear-gradient(135deg, #faad14 0%, #d48806 100%);
-      }
-      
-      &.info {
-        background: linear-gradient(135deg, #13c2c2 0%, #08979c 100%);
-      }
-    }
-    
-    .kpi-content {
-      flex: 1;
-      
-      .kpi-label {
-        display: block;
-        font-size: 13px;
+      margin-bottom: 12px;
+
+      .kpi-name {
+        font-size: 14px;
         color: @text-color-secondary;
-        margin-bottom: 4px;
       }
-      
-      .kpi-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: @heading-color;
-        line-height: 1.2;
-        
-        &.countdown {
-          font-size: 24px;
+
+      .kpi-trend {
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &.up {
+          color: @success-color;
+        }
+
+        &.down {
+          color: @error-color;
         }
       }
-      
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: @heading-color;
+      line-height: 1.2;
+
       .kpi-unit {
-        font-size: 12px;
+        font-size: 16px;
+        font-weight: 400;
         color: @text-color-secondary;
         margin-left: 4px;
       }
     }
-  }
 
-  // 地圖區域
-  .map-section {
-    .map-overlay {
-      height: 320px;
-      background: linear-gradient(180deg, rgba(24, 144, 255, 0.05) 0%, rgba(24, 144, 255, 0.02) 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      
-      img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+    .kpi-progress {
+      margin-top: 16px;
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: @text-color-secondary;
+        margin-bottom: 8px;
       }
     }
   }
 
-  // 預測內容
-  .forecast-content {
-    .forecast-stat {
+  // 區塊卡片
+  .section-card {
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        color: @heading-color;
+
+        i {
+          font-size: 22px;
+          color: @primary-color;
+        }
+      }
+
+      .section-legend {
+        display: flex;
+        gap: 16px;
+
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: @text-color-secondary;
+
+          .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+
+            &.excellent {
+              background: #52c41a;
+            }
+
+            &.good {
+              background: #1890ff;
+            }
+
+            &.warning {
+              background: #faad14;
+            }
+          }
+        }
+      }
+
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: @success-color;
+
+        .live-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: @success-color;
+          animation: pulse 1.5s infinite;
+        }
+      }
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // 部門網格
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .dept-card {
+    padding: 20px;
+    background: @background-color-light;
+    border-radius: 12px;
+    border-left: 4px solid;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .dept-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      
-      .forecast-label {
-        font-size: 14px;
-        color: @text-color-secondary;
-      }
-      
-      .forecast-value {
-        font-size: 14px;
+
+      .dept-name {
+        font-size: 16px;
         font-weight: 600;
-        color: @success-color;
+        color: @heading-color;
       }
     }
-    
-    .forecast-chart {
-      margin: 20px 0;
-      padding: 16px 0;
-      background: linear-gradient(180deg, rgba(24, 144, 255, 0.08) 0%, rgba(24, 144, 255, 0.02) 100%);
-      border-radius: 8px;
-    }
-    
-    .forecast-legend {
+
+    .dept-stats {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      
-      .legend-item {
+      gap: 24px;
+      margin-bottom: 16px;
+
+      .stat-item {
         display: flex;
-        align-items: center;
-        gap: 8px;
-        
-        .legend-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          
-          &.max {
-            background: @primary-color;
-          }
-          
-          &.min {
-            background: @success-color;
-          }
-        }
-        
-        .legend-label {
-          flex: 1;
-          font-size: 13px;
-          color: @text-color-secondary;
-        }
-        
-        .legend-value {
-          font-size: 14px;
-          font-weight: 600;
+        flex-direction: column;
+
+        .stat-value {
+          font-size: 22px;
+          font-weight: 700;
           color: @heading-color;
         }
+
+        .stat-label {
+          font-size: 12px;
+          color: @text-color-secondary;
+        }
+      }
+    }
+
+    .dept-progress {
+      margin-bottom: 12px;
+    }
+
+    .dept-footer {
+      .dept-head {
+        font-size: 13px;
+        color: @text-color-secondary;
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
     }
   }
 
-  // 儀表盤容器
+  // 活動圖表
+  .activity-chart {
+    padding: 16px 0;
+    background: linear-gradient(180deg, rgba(24, 144, 255, 0.06) 0%, rgba(24, 144, 255, 0.02) 100%);
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .activity-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    .activity-stat {
+      text-align: center;
+      padding: 16px;
+      background: @background-color-light;
+      border-radius: 10px;
+
+      .stat-label {
+        display: block;
+        font-size: 12px;
+        color: @text-color-secondary;
+        margin-bottom: 4px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: @heading-color;
+      }
+    }
+  }
+
+  // 告警卡片
+  .alert-card {
+    .error-badge {
+      .ant-badge-count {
+        background: @error-color;
+      }
+    }
+  }
+
+  .alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .alert-item {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &.alert-error {
+      background: #fff2f0;
+      border-left: 3px solid @error-color;
+    }
+
+    &.alert-warning {
+      background: #fffbe6;
+      border-left: 3px solid @warning-color;
+    }
+
+    &.alert-info {
+      background: #e6f7ff;
+      border-left: 3px solid @primary-color;
+    }
+
+    .alert-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+
+    .alert-content {
+      flex: 1;
+      min-width: 0;
+
+      .alert-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: @heading-color;
+        margin-bottom: 4px;
+      }
+
+      .alert-desc {
+        font-size: 13px;
+        color: @text-color-secondary;
+        margin-bottom: 8px;
+      }
+
+      .alert-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: @text-color-secondary;
+      }
+    }
+  }
+
+  // 儀表容器
   .gauge-container {
     display: flex;
     justify-content: center;
     padding: 16px 0;
-  }
-
-  // 餅圖區域
-  .pie-grid {
-    padding: 16px 0;
-    
-    .pie-item {
-      text-align: center;
-      
-      .pie-label {
-        margin-top: 8px;
-        font-size: 13px;
-        color: @text-color-secondary;
-      }
-    }
-  }
-
-  // 標籤雲容器
-  .tag-cloud-container {
-    padding: 16px 0;
-    display: flex;
-    justify-content: center;
   }
 
   // 水波圖容器
@@ -302,43 +439,59 @@
     padding: 16px 0;
   }
 
-  // 底部行
-  .bottom-row {
-    margin-top: 24px;
+  // 餅圖區域
+  .pie-grid {
+    padding: 16px 0;
+
+    .pie-item {
+      text-align: center;
+    }
   }
 
-  // 響應式調整
+  // 標籤雲
+  .tag-cloud-container {
+    padding: 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  // 底部行
+  .bottom-row {
+    margin-top: 0;
+  }
+
+  // 響應式
   @media screen and (max-width: @screen-lg) {
     .monitor-header {
       .header-content {
         flex-direction: column;
         text-align: center;
-        gap: 16px;
+        gap: 20px;
       }
-      
-      .header-right {
+
+      .header-left {
         flex-direction: column;
       }
-    }
-    
-    .map-section {
-      .map-overlay {
-        height: auto;
-        min-height: 200px;
+
+      .header-right {
+        align-items: center;
       }
+    }
+
+    .dept-grid {
+      grid-template-columns: 1fr;
     }
   }
 
   @media screen and (max-width: @screen-md) {
     .kpi-card {
-      flex-direction: column;
-      text-align: center;
-      
-      .kpi-content {
-        .kpi-value {
-          font-size: 24px;
-        }
+      .kpi-value {
+        font-size: 28px;
       }
+    }
+
+    .activity-stats {
+      grid-template-columns: 1fr;
     }
   }
 }

@@ -1,276 +1,225 @@
 <!-- 個人/團隊儀表板 -->
-<div class="dashboard-header">
-  <div class="welcome-section">
-    <div class="welcome-content">
-      <h1 class="welcome-title">
-        <span class="greeting">早安！</span>
-        <span class="highlight">今天也要加油 💪</span>
-      </h1>
-      <p class="welcome-subtitle">工地施工進度 · 項目管理總覽</p>
-    </div>
-    <div class="header-actions">
-      <button nz-button nzType="primary" nzSize="large">
-        <i nz-icon nzType="plus" nzTheme="outline"></i>
-        新增任務
-      </button>
-    </div>
-  </div>
-</div>
-
-<quick-menu>
-  <nz-list [nzBordered]="false" [nzSplit]="false">
-    <nz-list-item>
-      <a routerLink="/">首頁</a>
-    </nz-list-item>
-    <nz-list-item>
-      <a routerLink="/widgets">小部件</a>
-    </nz-list-item>
-    <nz-list-item>
-      <a routerLink="/style/typography">排版</a>
-    </nz-list-item>
-    <nz-list-item>
-      <a routerLink="/style/gridmasonry">瀑布流</a>
-    </nz-list-item>
-    <nz-list-item>
-      <a routerLink="/pro/result/success">成功頁</a>
-    </nz-list-item>
-  </nz-list>
-</quick-menu>
-
-<!-- 統計卡片區 -->
-<div nz-row [nzGutter]="[16, 16]" class="stat-row">
-  <div nz-col nzXs="24" nzSm="12" nzMd="6">
-    <div class="modern-stat-card gradient-primary">
-      <div class="stat-bg-icon">
-        <i nz-icon nzType="team" nzTheme="outline"></i>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value-lg">156</div>
-        <div class="stat-label">今日作業人數</div>
-      </div>
-      <div class="stat-chart">
-        @if (webSite) {
-          <g2-mini-bar
-            height="40"
-            color="rgba(255,255,255,0.65)"
-            borderWidth="2"
-            [padding]="[8, 16]"
-            [data]="webSite"
-            tooltipType="mini"
-            (ready)="fixDark($event)"
-          />
-        }
-      </div>
-    </div>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="6">
-    <div class="modern-stat-card gradient-success">
-      <div class="stat-bg-icon">
-        <i nz-icon nzType="check-circle" nzTheme="outline"></i>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value-lg">78%</div>
-        <div class="stat-label">整體完成進度</div>
-      </div>
-      <div class="stat-chart">
-        @if (webSite) {
-          <g2-mini-bar
-            height="40"
-            color="rgba(255,255,255,0.65)"
-            borderWidth="2"
-            [padding]="[8, 16]"
-            [data]="webSite"
-            tooltipType="mini"
-            (ready)="fixDark($event)"
-          />
-        }
-      </div>
-    </div>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="6">
-    <div class="modern-stat-card gradient-warning">
-      <div class="stat-bg-icon">
-        <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value-lg">23</div>
-        <div class="stat-label">進行中任務</div>
-      </div>
-      <div class="stat-chart">
-        @if (webSite) {
-          <g2-mini-bar
-            height="40"
-            color="rgba(255,255,255,0.65)"
-            borderWidth="2"
-            [padding]="[8, 16]"
-            [data]="webSite"
-            tooltipType="mini"
-            (ready)="fixDark($event)"
-          />
-        }
-      </div>
-    </div>
-  </div>
-  <div nz-col nzXs="24" nzSm="12" nzMd="6">
-    <div class="modern-stat-card gradient-danger">
-      <div class="stat-bg-icon">
-        <i nz-icon nzType="warning" nzTheme="outline"></i>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value-lg">5</div>
-        <div class="stat-label">待處理問題</div>
-      </div>
-      <div class="stat-chart">
-        @if (webSite) {
-          <g2-mini-bar
-            height="40"
-            color="rgba(255,255,255,0.65)"
-            borderWidth="2"
-            [padding]="[8, 16]"
-            [data]="webSite"
-            tooltipType="mini"
-            (ready)="fixDark($event)"
-          />
-        }
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 圖表區 -->
-<div nz-row [nzGutter]="[16, 16]" class="chart-row">
-  <div nz-col nzXs="24" nzMd="12">
-    <nz-card [nzBordered]="false" class="modern-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i nz-icon nzType="bar-chart" nzTheme="outline" class="title-icon"></i>
-          施工進度統計
+<div class="personal-dashboard">
+  <!-- 頂部歡迎區 -->
+  <div class="welcome-banner">
+    <div class="banner-content">
+      <div class="welcome-left">
+        <div class="greeting-section">
+          <h1 class="greeting-text">{{ greeting }}，項目經理！</h1>
+          <p class="greeting-sub">今天是 {{ currentDate | date: 'yyyy年MM月dd日 EEEE' }}，祝您工作順利！</p>
         </div>
-        <span class="card-subtitle">各月份施工完成度分析</span>
-      </div>
-      @if (salesData) {
-        <g2-bar height="280" [data]="salesData" />
-      }
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzMd="12">
-    <nz-card [nzBordered]="false" class="modern-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i nz-icon nzType="line-chart" nzTheme="outline" class="title-icon"></i>
-          施工趨勢
-        </div>
-        <span class="card-subtitle">作業人數與任務完成對比</span>
-      </div>
-      @if (offlineChartData) {
-        <g2-timeline [data]="offlineChartData" [height]="294" [titleMap]="{ y1: '作業人數', y2: '完成任務' }" />
-      }
-    </nz-card>
-  </div>
-</div>
-
-<!-- 底部區塊 -->
-<div nz-row [nzGutter]="[16, 16]">
-  <div nz-col nzXs="24" nzMd="12">
-    <nz-card [nzBordered]="false" class="modern-card feature-card">
-      <div class="feature-content">
-        <div class="feature-icon">
-          <i nz-icon nzType="project" nzTheme="outline"></i>
-        </div>
-        <div class="feature-text">
-          <h3>GigHub 工地管理系統</h3>
-          <p class="feature-desc">智能化施工進度追蹤</p>
-          <ul class="feature-list">
-            <li>
-              <i nz-icon nzType="check" nzTheme="outline"></i>
-              實時監控工地施工進度和作業人員狀態
-            </li>
-            <li>
-              <i nz-icon nzType="check" nzTheme="outline"></i>
-              智能分析施工效率，優化資源配置
-            </li>
-            <li>
-              <i nz-icon nzType="check" nzTheme="outline"></i>
-              多維度數據展示，助力項目決策
-            </li>
-          </ul>
-          <a nz-button nzType="link" class="feature-link">
-            查看更多
-            <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
-          </a>
-        </div>
-      </div>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzMd="12">
-    <nz-card [nzBordered]="false" class="modern-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i nz-icon nzType="file-text" nzTheme="outline" class="title-icon"></i>
-          施工日誌
-        </div>
-        <span class="card-subtitle">今日施工記錄匯總</span>
-      </div>
-      <div class="log-list">
-        @for (item of todoData; track $index) {
-          <div class="log-item" [class.completed]="item.completed">
-            <nz-avatar [nzSrc]="'./assets/tmp/img/' + item.avatar + '.png'" nzSize="small" />
-            <div class="log-content">
-              <strong>{{ item.name }}</strong>
-              <p>{{ item.content }}</p>
-            </div>
-            <nz-tag [nzColor]="item.completed ? 'success' : 'processing'">
-              {{ item.completed ? '已完成' : '進行中' }}
-            </nz-tag>
+        <div class="quick-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ personalStats.myTasks }}</span>
+            <span class="stat-label">我的任務</span>
           </div>
-        }
-      </div>
-    </nz-card>
-  </div>
-  <div nz-col nzXs="24" nzMd="12">
-    <nz-card [nzBordered]="false" class="modern-card">
-      <div class="card-header">
-        <div class="card-title">
-          <i nz-icon nzType="unordered-list" nzTheme="outline" class="title-icon"></i>
-          待辦事項
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value success">{{ personalStats.completedToday }}</span>
+            <span class="stat-label">今日完成</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ personalStats.teamTasks }}</span>
+            <span class="stat-label">團隊任務</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value primary">{{ personalStats.efficiency }}%</span>
+            <span class="stat-label">工作效率</span>
+          </div>
         </div>
-        <span class="card-subtitle">任務清單管理</span>
       </div>
-      <div class="todo-list">
-        @for (item of todoData; track $index) {
-          <div class="todo-item" [class.completed]="item.completed">
-            <div class="todo-checkbox">
-              <label nz-checkbox [(ngModel)]="item.completed"></label>
+      <div class="welcome-right">
+        <nz-avatar [nzSize]="80" nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png" class="user-avatar" />
+      </div>
+    </div>
+  </div>
+
+  <quick-menu>
+    <nz-list [nzBordered]="false" [nzSplit]="false">
+      <nz-list-item>
+        <a routerLink="/">首頁</a>
+      </nz-list-item>
+      <nz-list-item>
+        <a routerLink="/widgets">小部件</a>
+      </nz-list-item>
+      <nz-list-item>
+        <a routerLink="/style/typography">排版</a>
+      </nz-list-item>
+    </nz-list>
+  </quick-menu>
+
+  <!-- 快捷操作區 -->
+  <div class="quick-actions-section">
+    <div class="quick-actions-grid">
+      @for (action of quickActions; track $index) {
+        <div class="action-item">
+          <div class="action-icon" [style.background]="action.color">
+            <i nz-icon [nzType]="action.icon" nzTheme="outline"></i>
+          </div>
+          <span class="action-title">{{ action.title }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="[24, 24]">
+    <!-- 左側 - 我的任務 -->
+    <div nz-col nzXs="24" nzLg="16">
+      <!-- 任務進度卡片 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+            <span>我的任務</span>
+          </div>
+          <div class="section-meta">
+            <nz-tag nzColor="success">已完成 {{ completedTasksCount }}</nz-tag>
+            <nz-tag nzColor="processing">進行中 {{ pendingTasksCount }}</nz-tag>
+          </div>
+        </div>
+        <div class="task-list">
+          @for (task of myTasks; track task.id) {
+            <div class="task-item" [class.completed]="task.completed">
+              <div class="task-checkbox">
+                <label nz-checkbox [(ngModel)]="task.completed" (ngModelChange)="toggleTask(task)"></label>
+              </div>
+              <div class="task-content">
+                <div class="task-header">
+                  <span class="task-title" [class.text-deleted]="task.completed">{{ task.title }}</span>
+                  <nz-tag [nzColor]="getPriorityColor(task.priority)" class="priority-tag">
+                    {{ task.priority === 'high' ? '緊急' : task.priority === 'medium' ? '一般' : '低' }}
+                  </nz-tag>
+                </div>
+                <div class="task-meta">
+                  <span class="task-project">
+                    <i nz-icon nzType="project" nzTheme="outline"></i>
+                    {{ task.project }}
+                  </span>
+                  <span class="task-due">
+                    <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                    {{ task.dueDate }}
+                  </span>
+                </div>
+                <div class="task-progress">
+                  <nz-progress [nzPercent]="task.progress" nzSize="small" [nzStatus]="task.completed ? 'success' : 'active'" />
+                </div>
+              </div>
             </div>
-            <div class="todo-content">
-              <strong>{{ item.name }}</strong>
-              <p [class.text-deleted]="item.completed">{{ item.content }}</p>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 工作趨勢 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+            <span>工作趨勢</span>
+          </div>
+        </div>
+        @if (offlineChartData) {
+          <g2-timeline [data]="offlineChartData" [height]="280" [titleMap]="{ y1: '完成任務', y2: '新增任務' }" />
+        }
+      </nz-card>
+    </div>
+
+    <!-- 右側 - 團隊與動態 -->
+    <div nz-col nzXs="24" nzLg="8">
+      <!-- 團隊成員 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="team" nzTheme="outline"></i>
+            <span>團隊成員</span>
+          </div>
+          <span class="online-count">{{ onlineTeamMembersCount }} 人在線</span>
+        </div>
+        <div class="team-list">
+          @for (member of teamMembers; track member.id) {
+            <div class="team-member">
+              <div class="member-avatar">
+                <nz-avatar [nzSrc]="'./assets/tmp/img/' + member.avatar + '.png'" nzSize="small" />
+                <span class="status-dot" [style.background]="getStatusColor(member.status)"></span>
+              </div>
+              <div class="member-info">
+                <span class="member-name">{{ member.name }}</span>
+                <span class="member-role">{{ member.role }}</span>
+              </div>
+              <div class="member-tasks">
+                <nz-tag>{{ member.taskCount }} 任務</nz-tag>
+              </div>
             </div>
-            <div class="todo-actions">
-              <i nz-dropdown [nzDropdownMenu]="todoMenus" nzPlacement="topRight" nz-icon nzType="more" class="action-icon"></i>
-              <nz-dropdown-menu #todoMenus="nzDropdownMenu">
-                <ul nz-menu>
-                  @if (item.completed) {
-                    <li nz-menu-item (click)="item.completed = false">
-                      <i nz-icon nzType="undo" nzTheme="outline"></i>
-                      標記進行中
-                    </li>
-                  } @else {
-                    <li nz-menu-item (click)="item.completed = true">
-                      <i nz-icon nzType="check" nzTheme="outline"></i>
-                      標記完成
-                    </li>
-                  }
-                  <li nz-menu-item nzDanger (click)="todoData.splice(todoData.indexOf(item), 1)">
-                    <i nz-icon nzType="delete" nzTheme="outline"></i>
-                    刪除
-                  </li>
-                </ul>
-              </nz-dropdown-menu>
+          }
+        </div>
+      </nz-card>
+
+      <!-- 最近動態 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="history" nzTheme="outline"></i>
+            <span>最近動態</span>
+          </div>
+        </div>
+        <nz-timeline>
+          @for (activity of recentActivities; track $index) {
+            <nz-timeline-item [nzColor]="getActivityTypeColor(activity.type)">
+              <div class="activity-item">
+                <div class="activity-content">
+                  <span class="activity-user">{{ activity.user }}</span>
+                  <span class="activity-action">{{ activity.action }}</span>
+                  <span class="activity-target">{{ activity.target }}</span>
+                </div>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </nz-timeline-item>
+          }
+        </nz-timeline>
+      </nz-card>
+
+      <!-- 本週統計 -->
+      <nz-card [nzBordered]="false" class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+            <span>本週統計</span>
+          </div>
+        </div>
+        @if (webSite) {
+          <div class="weekly-chart">
+            <g2-mini-area [line]="true" height="80" [data]="webSite" (ready)="fixDark($event)" />
+          </div>
+          <div class="weekly-stats">
+            <div class="weekly-stat-item">
+              <span class="stat-label">完成任務</span>
+              <span class="stat-value">28</span>
+            </div>
+            <div class="weekly-stat-item">
+              <span class="stat-label">工作時長</span>
+              <span class="stat-value">42h</span>
+            </div>
+            <div class="weekly-stat-item">
+              <span class="stat-label">效率提升</span>
+              <span class="stat-value success">+12%</span>
             </div>
           </div>
         }
-      </div>
-    </nz-card>
+      </nz-card>
+    </div>
   </div>
+
+  <!-- 底部 - 月度績效 -->
+  <nz-card [nzBordered]="false" class="section-card performance-card">
+    <div class="section-header">
+      <div class="section-title">
+        <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+        <span>月度績效統計</span>
+      </div>
+    </div>
+    @if (salesData) {
+      <g2-bar [data]="salesData" height="260" />
+    }
+  </nz-card>
 </div>
