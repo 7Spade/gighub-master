@@ -134,7 +134,7 @@ RETURNS TABLE (
   query TEXT,
   categories TEXT[],
   result_count INTEGER,
-  timestamp TIMESTAMPTZ
+  searched_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -146,7 +146,7 @@ BEGIN
     sh.query,
     sh.categories,
     sh.result_count,
-    sh.timestamp
+    sh.timestamp AS searched_at
   FROM search_history sh
   WHERE sh.user_id = p_user_id
   ORDER BY sh.query, sh.timestamp DESC
