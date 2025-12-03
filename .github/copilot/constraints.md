@@ -2,6 +2,8 @@
 
 > 本專案絕對禁止的行為與反模式清單
 
+📖 **編碼標準請參考**: [docs/reference/coding-standards.md](../../docs/reference/coding-standards.md)
+
 ---
 
 ## 🚫 絕對禁止的程式碼模式
@@ -358,4 +360,12 @@ export class TaskComponent {}
 
 ---
 
-**最後更新**: 2025-11-27
+## 📚 參考文件
+
+- [編碼標準](../../docs/reference/coding-standards.md)
+- [測試策略](../../docs/reference/testing-strategy.md)
+- [程式碼審查指南](../../docs/contributing/code-review-guidelines.md)
+
+---
+
+**最後更新**: 2025-12-03

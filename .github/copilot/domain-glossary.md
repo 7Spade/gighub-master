@@ -1,6 +1,19 @@
 # 工地領域專有名詞對照表
 
-> 工地施工進度追蹤管理系統的領域專有名詞與翻譯對照
+> GigHub 工地施工進度追蹤管理系統的領域專有名詞與翻譯對照
+
+📖 **完整術語表請參考**: [docs/GLOSSARY.md](../../docs/GLOSSARY.md)
+
+---
+
+## 🏗️ 架構術語
+
+| 術語 | 英文 | 定義 |
+|------|------|------|
+| 基礎層 | Foundation Layer | 處理帳戶、認證、組織等基礎設施 |
+| 容器層 | Container Layer | 提供資料隔離、權限控制的邏輯容器 |
+| 業務層 | Business Layer | 實現具體業務功能（任務、日誌等）|
+| 藍圖 | Blueprint | 邏輯容器，提供資料隔離和上下文共享 |
 
 ---
 
@@ -244,6 +257,16 @@
 | 即時訂閱 | Realtime Subscription | 資料即時更新訂閱 |
 | 虛擬捲動 | Virtual Scrolling | 大量資料渲染優化 |
 
+## 🤖 AI 術語
+
+| 術語 | 英文 | 定義 |
+|------|------|------|
+| Agent | AI Agent | 專門化的 AI 代理，處理特定領域任務 |
+| Prompt | Prompt Template | 可重複使用的 AI 提示模板 |
+| Instruction | Coding Instruction | 自動套用的編碼標準指引 |
+| Blueprint | Code Blueprint | 標準化的程式碼生成模板 |
+| MCP | Model Context Protocol | AI 模型上下文協議 |
+
 ---
 
-**最後更新**: 2025-11-27
+**最後更新**: 2025-12-03

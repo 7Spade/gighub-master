@@ -2,6 +2,8 @@
 
 > Store / Service / Component 測試覆蓋標準與最佳實踐
 
+📖 **詳細測試策略請參考**: [docs/reference/testing-strategy.md](../../docs/reference/testing-strategy.md)
+
 ---
 
 ## 🎯 測試覆蓋率目標
@@ -459,4 +461,11 @@ yarn test --watch
 
 ---
 
-**最後更新**: 2025-11-27
+## 📚 參考文件
+
+- [測試策略](../../docs/reference/testing-strategy.md)
+- [編碼標準](../../docs/reference/coding-standards.md)
+
+---
+
+**最後更新**: 2025-12-03
