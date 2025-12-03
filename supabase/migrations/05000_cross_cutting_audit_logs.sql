@@ -1,78 +1,113 @@
--- Migration: Create Audit Logs Table
--- Description: 審計日誌表 - 企業級不可變審計記錄
+-- ============================================================================
+-- Migration: 05000_cross_cutting_audit_logs.sql
+-- Layer: Cross-Cutting (跨切面功能)
+-- Module: Audit Logs (審計日誌)
+-- Description: 企業級不可變審計記錄系統
+--
 -- Features:
---   - Append-only immutable records
---   - Comprehensive operation tracking
---   - Evidence chain preservation
---   - High throughput write operations
+--   - Append-only immutable records (不可變記錄)
+--   - Comprehensive operation tracking (完整操作追蹤)
+--   - Evidence chain preservation (證據鏈保存)
+--   - High throughput write operations (高吞吐寫入)
+--
+-- Dependencies:
+--   - accounts table (01000)
+--   - organizations table (01001)
+--   - blueprints table (02000)
+--
+-- Based on GigHub Architecture:
+--   - Three-layer architecture (Foundation/Container/Business)
+--   - Blueprint as logical container
+--   - RLS with helper functions pattern
+-- ============================================================================
 
 -- ============================================================================
--- Enums
+-- 1. Enums (枚舉類型)
 -- ============================================================================
 
 -- 審計動作類型
-CREATE TYPE audit_action AS ENUM (
-  'create',
-  'update',
-  'delete',
-  'view',
-  'export',
-  'import',
-  'approve',
-  'reject',
-  'assign',
-  'unassign',
-  'login',
-  'logout',
-  'password_change',
-  'permission_change',
-  'role_change',
-  'status_change',
-  'archive',
-  'restore',
-  'share',
-  'comment',
-  'upload',
-  'download'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'audit_action') THEN
+    CREATE TYPE audit_action AS ENUM (
+      'create',
+      'update',
+      'delete',
+      'view',
+      'export',
+      'import',
+      'approve',
+      'reject',
+      'assign',
+      'unassign',
+      'login',
+      'logout',
+      'password_change',
+      'permission_change',
+      'role_change',
+      'status_change',
+      'archive',
+      'restore',
+      'share',
+      'comment',
+      'upload',
+      'download'
+    );
+  END IF;
+END $$;
 
 -- 審計嚴重程度
-CREATE TYPE audit_severity AS ENUM (
-  'info',
-  'warning',
-  'error',
-  'critical'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'audit_severity') THEN
+    CREATE TYPE audit_severity AS ENUM (
+      'info',
+      'warning',
+      'error',
+      'critical'
+    );
+  END IF;
+END $$;
 
 -- 審計實體類型
-CREATE TYPE audit_entity_type AS ENUM (
-  'account',
-  'organization',
-  'blueprint',
-  'task',
-  'diary',
-  'file',
-  'issue',
-  'checklist',
-  'acceptance',
-  'contract',
-  'payment',
-  'notification',
-  'comment',
-  'team',
-  'role',
-  'permission'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'audit_entity_type') THEN
+    CREATE TYPE audit_entity_type AS ENUM (
+      'account',
+      'organization',
+      'blueprint',
+      'task',
+      'diary',
+      'file',
+      'issue',
+      'checklist',
+      'acceptance',
+      'contract',
+      'payment',
+      'notification',
+      'comment',
+      'team',
+      'role',
+      'permission'
+    );
+  END IF;
+END $$;
 
 -- 審計操作者類型
-CREATE TYPE audit_actor_type AS ENUM (
-  'user',
-  'system',
-  'bot'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'audit_actor_type') THEN
+    CREATE TYPE audit_actor_type AS ENUM (
+      'user',
+      'system',
+      'bot'
+    );
+  END IF;
+END $$;
 
 -- ============================================================================
--- Table: audit_logs
+-- 2. Table Definition (資料表定義)
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -114,55 +149,68 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- ============================================================================
--- Indexes (Optimized for common query patterns)
+-- 3. Indexes (索引)
 -- ============================================================================
 
 -- 藍圖查詢
-CREATE INDEX idx_audit_logs_blueprint_id ON audit_logs(blueprint_id) WHERE blueprint_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_blueprint_id 
+  ON audit_logs(blueprint_id) WHERE blueprint_id IS NOT NULL;
 
 -- 組織查詢
-CREATE INDEX idx_audit_logs_organization_id ON audit_logs(organization_id) WHERE organization_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_organization_id 
+  ON audit_logs(organization_id) WHERE organization_id IS NOT NULL;
 
 -- 實體類型和 ID 查詢
-CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity 
+  ON audit_logs(entity_type, entity_id);
 
 -- 動作查詢
-CREATE INDEX idx_audit_logs_action ON audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action 
+  ON audit_logs(action);
 
 -- 操作者查詢
-CREATE INDEX idx_audit_logs_actor_id ON audit_logs(actor_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_actor_id 
+  ON audit_logs(actor_id);
 
 -- 時間範圍查詢
-CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at 
+  ON audit_logs(created_at DESC);
 
 -- 複合索引：藍圖 + 時間
-CREATE INDEX idx_audit_logs_blueprint_time ON audit_logs(blueprint_id, created_at DESC) WHERE blueprint_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_blueprint_time 
+  ON audit_logs(blueprint_id, created_at DESC) WHERE blueprint_id IS NOT NULL;
 
 -- 複合索引：實體 + 時間
-CREATE INDEX idx_audit_logs_entity_time ON audit_logs(entity_type, entity_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity_time 
+  ON audit_logs(entity_type, entity_id, created_at DESC);
 
 -- 嚴重程度查詢 (用於警告和錯誤過濾)
-CREATE INDEX idx_audit_logs_severity ON audit_logs(severity) WHERE severity IN ('warning', 'error', 'critical');
+CREATE INDEX IF NOT EXISTS idx_audit_logs_severity 
+  ON audit_logs(severity) WHERE severity IN ('warning', 'error', 'critical');
 
 -- ============================================================================
--- RLS Policies
+-- 4. Row Level Security (RLS)
 -- ============================================================================
 
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- 查看權限：帳戶可以查看所屬組織的審計日誌
+-- Drop existing policies for idempotency
+DROP POLICY IF EXISTS audit_logs_select_policy ON audit_logs;
+DROP POLICY IF EXISTS audit_logs_insert_policy ON audit_logs;
+
+-- 查看權限：帳戶可以查看所屬組織/藍圖的審計日誌
 CREATE POLICY audit_logs_select_policy ON audit_logs
   FOR SELECT
   TO authenticated
   USING (
     -- 使用者可以查看自己的操作
-    actor_id = (select auth.uid())
+    actor_id = (SELECT auth.uid())
     OR
     -- 使用者可以查看所屬組織的審計日誌
     (
       organization_id IS NOT NULL
       AND organization_id IN (
-        SELECT organization_id FROM organization_members WHERE account_id = (select auth.uid())
+        SELECT organization_id FROM organization_members WHERE account_id = (SELECT auth.uid())
       )
     )
     OR
@@ -170,7 +218,7 @@ CREATE POLICY audit_logs_select_policy ON audit_logs
     (
       blueprint_id IS NOT NULL
       AND blueprint_id IN (
-        SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
+        SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
       )
     )
   );
@@ -181,11 +229,11 @@ CREATE POLICY audit_logs_insert_policy ON audit_logs
   TO authenticated
   WITH CHECK (true);
 
--- 不允許更新 (不可變)
--- 不允許刪除 (不可變)
+-- 不允許更新 (不可變) - 無 UPDATE 政策
+-- 不允許刪除 (不可變) - 無 DELETE 政策
 
 -- ============================================================================
--- Helper Functions
+-- 5. Helper Functions (輔助函數)
 -- ============================================================================
 
 -- 記錄審計日誌函數
@@ -213,7 +261,7 @@ DECLARE
   v_actor_name TEXT;
 BEGIN
   -- 取得操作者名稱
-  SELECT name INTO v_actor_name FROM public.accounts WHERE id = (select auth.uid());
+  SELECT name INTO v_actor_name FROM public.accounts WHERE id = (SELECT auth.uid());
   
   -- 插入審計日誌
   INSERT INTO public.audit_logs (
@@ -238,7 +286,7 @@ BEGIN
     p_entity_id,
     p_entity_name,
     p_action,
-    (select auth.uid()),
+    (SELECT auth.uid()),
     v_actor_name,
     p_severity,
     p_old_value,
@@ -254,7 +302,7 @@ END;
 $$;
 
 -- ============================================================================
--- Comments
+-- 6. Comments (文件註解)
 -- ============================================================================
 
 COMMENT ON TABLE audit_logs IS '審計日誌表 - 記錄所有系統操作的不可變審計追蹤';

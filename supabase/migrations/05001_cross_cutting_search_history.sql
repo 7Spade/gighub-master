@@ -1,27 +1,33 @@
 -- ============================================================================
--- Search History Table Migration
--- 搜尋歷史表遷移
+-- Migration: 05001_cross_cutting_search_history.sql
+-- Layer: Cross-Cutting (跨切面功能)
+-- Module: Search History (搜尋歷史)
+-- Description: 搜尋歷史表 - 支援企業搜尋引擎功能
 --
--- Creates the search_history table for storing user search queries and history.
--- Supports the enterprise search engine with features like:
--- - Search history tracking per user
--- - Search analytics (result counts, click tracking)
--- - Category-based search filtering
--- - Automatic cleanup of old history
+-- Features:
+--   - Search history tracking per user (用戶搜尋記錄)
+--   - Search analytics (搜尋分析)
+--   - Category-based search filtering (分類過濾)
+--   - Automatic cleanup of old history (自動清理)
 --
--- Created: 2024-12-03
+-- Dependencies:
+--   - auth.users table (Supabase Auth)
+--   - pg_trgm extension
+--
+-- Based on GigHub Architecture:
+--   - Three-layer architecture (Foundation/Container/Business)
+--   - User-scoped data with RLS
 -- ============================================================================
 
 -- ============================================================================
--- 0. Enable Required Extensions
+-- 1. Extensions (擴展)
 -- ============================================================================
 
 -- Enable pg_trgm extension for trigram-based text search
--- This is required for the gin_trgm_ops operator class used in the search index
 CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 -- ============================================================================
--- 1. Create search_history table
+-- 2. Table Definition (資料表定義)
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS search_history (
@@ -49,7 +55,7 @@ CREATE TABLE IF NOT EXISTS search_history (
 );
 
 -- ============================================================================
--- 2. Create Indexes for Performance
+-- 3. Indexes (索引)
 -- ============================================================================
 
 -- Index for user-specific queries (most common access pattern)
@@ -69,11 +75,16 @@ CREATE INDEX IF NOT EXISTS idx_search_history_query_trgm
   ON search_history USING gin (query gin_trgm_ops);
 
 -- ============================================================================
--- 3. Row Level Security (RLS)
+-- 4. Row Level Security (RLS)
 -- ============================================================================
 
--- Enable RLS
 ALTER TABLE search_history ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies for idempotency
+DROP POLICY IF EXISTS "Users can view own search history" ON search_history;
+DROP POLICY IF EXISTS "Users can insert own search history" ON search_history;
+DROP POLICY IF EXISTS "Users can update own search history" ON search_history;
+DROP POLICY IF EXISTS "Users can delete own search history" ON search_history;
 
 -- Policy: Users can only see their own search history
 CREATE POLICY "Users can view own search history"
@@ -105,7 +116,7 @@ CREATE POLICY "Users can delete own search history"
   USING (auth.uid() = user_id);
 
 -- ============================================================================
--- 4. Helper Functions
+-- 5. Helper Functions (輔助函數)
 -- ============================================================================
 
 -- Function: Get popular search queries (for suggestions)
@@ -180,23 +191,23 @@ END;
 $$;
 
 -- ============================================================================
--- 5. Comments for Documentation
--- ============================================================================
-
-COMMENT ON TABLE search_history IS 'Stores user search queries for history, suggestions, and analytics';
-COMMENT ON COLUMN search_history.id IS 'Unique identifier for the search history entry';
-COMMENT ON COLUMN search_history.user_id IS 'Reference to the user who performed the search';
-COMMENT ON COLUMN search_history.query IS 'The search query string (2-500 characters)';
-COMMENT ON COLUMN search_history.categories IS 'Array of search categories (e.g., task, blueprint, diary)';
-COMMENT ON COLUMN search_history.result_count IS 'Number of results returned for this search';
-COMMENT ON COLUMN search_history.has_click IS 'Whether the user clicked on a result';
-COMMENT ON COLUMN search_history.clicked_result_id IS 'ID of the result that was clicked';
-COMMENT ON COLUMN search_history.timestamp IS 'When the search was performed';
-
--- ============================================================================
--- 6. Grant Permissions
+-- 6. Permissions (權限授予)
 -- ============================================================================
 
 -- Grant usage on functions to authenticated users
 GRANT EXECUTE ON FUNCTION get_popular_searches(INTEGER) TO authenticated;
 GRANT EXECUTE ON FUNCTION get_user_recent_searches(UUID, INTEGER) TO authenticated;
+
+-- ============================================================================
+-- 7. Comments (文件註解)
+-- ============================================================================
+
+COMMENT ON TABLE search_history IS '搜尋歷史表 - 存儲用戶搜尋查詢的歷史記錄、建議和分析';
+COMMENT ON COLUMN search_history.id IS '唯一識別碼';
+COMMENT ON COLUMN search_history.user_id IS '執行搜尋的用戶參考';
+COMMENT ON COLUMN search_history.query IS '搜尋查詢字串 (1-500 字元)';
+COMMENT ON COLUMN search_history.categories IS '搜尋分類陣列 (例如：task, blueprint, diary)';
+COMMENT ON COLUMN search_history.result_count IS '此搜尋返回的結果數';
+COMMENT ON COLUMN search_history.has_click IS '用戶是否點擊了結果';
+COMMENT ON COLUMN search_history.clicked_result_id IS '被點擊的結果 ID';
+COMMENT ON COLUMN search_history.timestamp IS '搜尋執行時間';

@@ -206,3 +206,35 @@ Layer 8 (Documentation)
 **詳細指南**: [STRUCTURED_MIGRATION_GUIDE.md](./STRUCTURED_MIGRATION_GUIDE.md)
 
 **最後更新**: 2025-12-03
+
+---
+
+## 📂 現有遷移檔案清單
+
+以下是目前專案中已建立的結構化遷移檔案：
+
+| 檔案名稱 | 層級 | 模組 | 說明 |
+|----------|------|------|------|
+| `03100_business_diaries.sql` | Business | Diaries | 施工日誌模組 |
+| `04000_extended_qc_inspections.sql` | Extended | QC | 品質管理檢查模組 |
+| `04100_extended_acceptances.sql` | Extended | Acceptances | 驗收管理模組 |
+| `04200_extended_problems.sql` | Extended | Problems | 問題管理模組 |
+| `05000_cross_cutting_audit_logs.sql` | Cross-Cutting | Audit Logs | 審計日誌模組 |
+| `05001_cross_cutting_search_history.sql` | Cross-Cutting | Search | 搜尋歷史模組 |
+
+### 未來待建立的遷移檔案
+
+| 建議檔案名稱 | 層級 | 說明 |
+|--------------|------|------|
+| `00000_extensions.sql` | Core | PostgreSQL 擴展 |
+| `00001_create_schemas.sql` | Core | Schema 定義 |
+| `00002_create_enums.sql` | Core | 所有 ENUM 類型 |
+| `01000_foundation_accounts.sql` | Foundation | 帳戶表 |
+| `01001_foundation_organizations.sql` | Foundation | 組織表 |
+| `02000_container_blueprints.sql` | Container | 藍圖表 |
+| `03000_business_tasks.sql` | Business | 任務表 |
+| `06000_storage_buckets.sql` | Storage | 儲存桶配置 |
+
+---
+
+**更新日期**: 2025-12-03

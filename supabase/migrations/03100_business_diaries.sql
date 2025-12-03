@@ -1,58 +1,42 @@
--- Migration: Create Diaries Table (Extended)
--- Description: 施工日誌表擴展 - 現場證據紀錄系統
--- 
--- 此遷移腳本設計為完全冪等 (idempotent)，可以安全地在 Supabase SQL Editor 中直接執行。
--- 與 seed.sql 兼容 - 所有元素都使用 IF NOT EXISTS 或條件檢查。
+-- ============================================================================
+-- Migration: 03100_business_diaries.sql
+-- Layer: Business Modules (業務層)
+-- Module: Diaries (施工日誌)
+-- Description: 施工日誌模組 - 記錄每日施工情況
 --
 -- Features:
---   - Daily work logging with approval workflow
---   - Weather and environment tracking
---   - Worker attendance records
---   - Attachment management
---   - Work item entries with task linking
+--   - Daily work diary with weather tracking (每日工作日誌與天氣追蹤)
+--   - Diary attachments for photos/documents (日誌附件)
+--   - Work item entries (工項記錄)
+--   - Approval workflow support (審核流程支援)
 --
--- Based on Context7 Supabase Documentation Best Practices:
---   - Use DO $$ blocks with pg_type/pg_class checks for conditional creation
---   - Use CREATE INDEX IF NOT EXISTS for idempotent index creation
---   - Drop and recreate policies to avoid conflicts
---   - Use (select auth.uid()) pattern for optimized RLS performance
---   - Use TO authenticated clause for all RLS policies
+-- Dependencies:
+--   - blueprints table (02000)
+--   - accounts table (01000)
+--   - blueprint_members table (02001)
+--   - tasks table (03000)
+--
+-- Based on GigHub Architecture:
+--   - Three-layer architecture (Foundation/Container/Business)
+--   - Blueprint as logical container
+--   - RLS with helper functions pattern
+-- ============================================================================
 
 -- ============================================================================
--- Enums (with conditional creation to avoid conflicts with seed.sql)
+-- 1. Enums (枚舉類型)
 -- ============================================================================
-
--- 天氣類型 - Only create if not exists (may already exist in seed.sql)
--- Note: PostgreSQL doesn't support CREATE TYPE IF NOT EXISTS, so we use DO block
-DO $$
-BEGIN
-  -- Check if weather_type already exists in pg_type
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'weather_type') THEN
-    CREATE TYPE weather_type AS ENUM (
-      'sunny',
-      'cloudy',
-      'overcast',
-      'light_rain',
-      'heavy_rain',
-      'thunderstorm',
-      'foggy',
-      'windy',
-      'snow',
-      'other'
-    );
-  END IF;
-END $$;
 
 -- 日誌狀態
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'diary_status') THEN
     CREATE TYPE diary_status AS ENUM (
-      'draft',
-      'submitted',
-      'approved',
-      'rejected',
-      'archived'
+      'draft',        -- 草稿
+      'submitted',    -- 已提交
+      'reviewing',    -- 審核中
+      'approved',     -- 已核准
+      'rejected',     -- 已駁回
+      'archived'      -- 已歸檔
     );
   END IF;
 END $$;
@@ -62,41 +46,46 @@ DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'work_item_type') THEN
     CREATE TYPE work_item_type AS ENUM (
-      'construction',
-      'inspection',
-      'material',
-      'equipment',
-      'safety',
-      'quality',
-      'meeting',
-      'other'
+      'construction', -- 施工
+      'inspection',   -- 檢查
+      'delivery',     -- 進料
+      'equipment',    -- 機具
+      'safety',       -- 安全
+      'meeting',      -- 會議
+      'other'         -- 其他
     );
   END IF;
 END $$;
 
 -- ============================================================================
--- Table: diaries (Enhanced with new columns if migrating from seed.sql)
+-- 2. Table Definitions (資料表定義)
 -- ============================================================================
 
--- Create table if not exists
+-- 施工日誌表
 CREATE TABLE IF NOT EXISTS diaries (
   -- 主鍵
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
-  -- 藍圖關聯 (必須)
+  -- 藍圖關聯
   blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
   
-  -- 日誌內容
+  -- 日期資訊
   work_date DATE NOT NULL,
+  
+  -- 天氣資訊
   weather weather_type,
-  temperature_min DECIMAL(4,1),
-  temperature_max DECIMAL(4,1),
-  work_hours DECIMAL(4,1),
+  temperature_min INTEGER,
+  temperature_max INTEGER,
+  
+  -- 工作資訊
+  work_hours DECIMAL(4,2),
   worker_count INTEGER,
+  
+  -- 內容
   summary TEXT,
   notes TEXT,
   
-  -- 狀態 (使用 diary_status enum，如果表已存在可能需要調整)
+  -- 狀態
   status diary_status DEFAULT 'draft' NOT NULL,
   
   -- 審核資訊
@@ -110,7 +99,7 @@ CREATE TABLE IF NOT EXISTS diaries (
   deleted_at TIMESTAMPTZ
 );
 
--- Add unique constraint if not exists (uses DO block to check)
+-- Add unique constraint (uses DO block for idempotency)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -123,10 +112,7 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
 
--- ============================================================================
--- Table: diary_attachments
--- ============================================================================
-
+-- 日誌附件表
 CREATE TABLE IF NOT EXISTS diary_attachments (
   -- 主鍵
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -148,10 +134,7 @@ CREATE TABLE IF NOT EXISTS diary_attachments (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- ============================================================================
--- Table: diary_entries
--- ============================================================================
-
+-- 日誌工項表
 CREATE TABLE IF NOT EXISTS diary_entries (
   -- 主鍵
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -181,7 +164,7 @@ CREATE TABLE IF NOT EXISTS diary_entries (
 );
 
 -- ============================================================================
--- Indexes (all with IF NOT EXISTS for idempotency)
+-- 3. Indexes (索引)
 -- ============================================================================
 
 -- 日誌查詢
@@ -205,34 +188,22 @@ CREATE INDEX IF NOT EXISTS idx_diary_entries_diary_id ON diary_entries(diary_id)
 CREATE INDEX IF NOT EXISTS idx_diary_entries_task_id ON diary_entries(task_id) WHERE task_id IS NOT NULL;
 
 -- ============================================================================
--- RLS Policies (Drop and recreate pattern for idempotency)
--- 
--- Following Supabase best practices from Context7:
--- - Use TO authenticated clause for all policies
--- - Use (select auth.uid()) pattern for optimized performance
--- - Each policy handles single operation (SELECT, INSERT, UPDATE, DELETE)
+-- 4. Row Level Security (RLS)
 -- ============================================================================
 
 ALTER TABLE diaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE diary_attachments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE diary_entries ENABLE ROW LEVEL SECURITY;
 
--- Drop existing policies if they exist (for idempotency)
+-- Drop existing policies for idempotency
 DROP POLICY IF EXISTS diaries_select_policy ON diaries;
 DROP POLICY IF EXISTS diaries_insert_policy ON diaries;
 DROP POLICY IF EXISTS diaries_update_policy ON diaries;
 DROP POLICY IF EXISTS diaries_delete_policy ON diaries;
-DROP POLICY IF EXISTS diaries_select ON diaries;
-DROP POLICY IF EXISTS diaries_insert ON diaries;
-DROP POLICY IF EXISTS diaries_update ON diaries;
-DROP POLICY IF EXISTS diaries_delete ON diaries;
 
 DROP POLICY IF EXISTS diary_attachments_select_policy ON diary_attachments;
 DROP POLICY IF EXISTS diary_attachments_insert_policy ON diary_attachments;
 DROP POLICY IF EXISTS diary_attachments_delete_policy ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_select ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_insert ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_delete ON diary_attachments;
 
 DROP POLICY IF EXISTS diary_entries_select_policy ON diary_entries;
 DROP POLICY IF EXISTS diary_entries_insert_policy ON diary_entries;
@@ -245,7 +216,7 @@ CREATE POLICY diaries_select_policy ON diaries
   TO authenticated
   USING (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
   );
 
@@ -255,7 +226,7 @@ CREATE POLICY diaries_insert_policy ON diaries
   TO authenticated
   WITH CHECK (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
   );
 
@@ -265,9 +236,9 @@ CREATE POLICY diaries_update_policy ON diaries
   TO authenticated
   USING (
     blueprint_id IN (
-      SELECT blueprint_id FROM blueprint_members WHERE account_id = (select auth.uid())
+      SELECT blueprint_id FROM blueprint_members WHERE account_id = (SELECT auth.uid())
     )
-    AND (status = 'draft' OR status = 'rejected' OR created_by = (select auth.uid()))
+    AND (status = 'draft' OR status = 'rejected' OR created_by = (SELECT auth.uid()))
   );
 
 -- 日誌刪除權限 (只能刪除自己建立的草稿)
@@ -275,7 +246,7 @@ CREATE POLICY diaries_delete_policy ON diaries
   FOR DELETE
   TO authenticated
   USING (
-    created_by = (select auth.uid()) AND status = 'draft'
+    created_by = (SELECT auth.uid()) AND status = 'draft'
   );
 
 -- 附件查看權限
@@ -286,7 +257,7 @@ CREATE POLICY diary_attachments_select_policy ON diary_attachments
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (select auth.uid())
+      WHERE bm.account_id = (SELECT auth.uid())
     )
   );
 
@@ -298,7 +269,7 @@ CREATE POLICY diary_attachments_insert_policy ON diary_attachments
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (select auth.uid())
+      WHERE bm.account_id = (SELECT auth.uid())
     )
   );
 
@@ -307,9 +278,9 @@ CREATE POLICY diary_attachments_delete_policy ON diary_attachments
   FOR DELETE
   TO authenticated
   USING (
-    uploaded_by = (select auth.uid())
+    uploaded_by = (SELECT auth.uid())
     OR diary_id IN (
-      SELECT d.id FROM diaries d WHERE d.created_by = (select auth.uid())
+      SELECT d.id FROM diaries d WHERE d.created_by = (SELECT auth.uid())
     )
   );
 
@@ -321,7 +292,7 @@ CREATE POLICY diary_entries_select_policy ON diary_entries
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (select auth.uid())
+      WHERE bm.account_id = (SELECT auth.uid())
     )
   );
 
@@ -333,7 +304,7 @@ CREATE POLICY diary_entries_insert_policy ON diary_entries
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (select auth.uid())
+      WHERE bm.account_id = (SELECT auth.uid())
     )
   );
 
@@ -345,7 +316,7 @@ CREATE POLICY diary_entries_update_policy ON diary_entries
     diary_id IN (
       SELECT d.id FROM diaries d
       JOIN blueprint_members bm ON d.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (select auth.uid())
+      WHERE bm.account_id = (SELECT auth.uid())
       AND (d.status = 'draft' OR d.status = 'rejected')
     )
   );
@@ -356,12 +327,12 @@ CREATE POLICY diary_entries_delete_policy ON diary_entries
   TO authenticated
   USING (
     diary_id IN (
-      SELECT d.id FROM diaries d WHERE d.created_by = (select auth.uid()) AND d.status = 'draft'
+      SELECT d.id FROM diaries d WHERE d.created_by = (SELECT auth.uid()) AND d.status = 'draft'
     )
   );
 
 -- ============================================================================
--- Triggers (Drop and recreate for idempotency)
+-- 5. Triggers (觸發器)
 -- ============================================================================
 
 -- 更新時間觸發器函數
@@ -377,7 +348,7 @@ BEGIN
 END;
 $$;
 
--- Drop existing triggers if they exist
+-- Drop existing triggers for idempotency
 DROP TRIGGER IF EXISTS trg_diaries_updated_at ON diaries;
 DROP TRIGGER IF EXISTS trg_diary_entries_updated_at ON diary_entries;
 
@@ -393,7 +364,7 @@ CREATE TRIGGER trg_diary_entries_updated_at
   EXECUTE FUNCTION update_diary_updated_at();
 
 -- ============================================================================
--- Comments
+-- 6. Comments (文件註解)
 -- ============================================================================
 
 COMMENT ON TABLE diaries IS '施工日誌表 - 記錄每日施工情況';
