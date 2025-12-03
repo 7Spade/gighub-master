@@ -1,5 +1,18 @@
 -- Migration: Create Diaries Table
 -- Description: 施工日誌表 - 現場證據紀錄系統
+--
+-- Prerequisites:
+--   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts, weather_type enum)
+--
+-- Run Order (執行順序):
+--   1. seed.sql (必須先執行 - 建立基礎架構)
+--   2. seed_diaries.sql (本檔案)
+--   3. seed_qc_inspections.sql
+--   4. seed_acceptances.sql
+--   5. seed_problems.sql
+--   6. seed_audit_logs.sql
+--   7. seed_search_history.sql
+--
 -- Features:
 --   - Daily work logging
 --   - Weather and environment tracking
@@ -11,7 +24,9 @@
 -- Enums
 -- ============================================================================
 
--- 天氣類型
+-- 天氣類型 (如果 seed.sql 已建立則跳過)
+-- Note: seed.sql 已定義 weather_type，此處使用 DROP/CREATE 確保相容性
+DROP TYPE IF EXISTS weather_type CASCADE;
 CREATE TYPE weather_type AS ENUM (
   'sunny',
   'cloudy',
@@ -26,6 +41,7 @@ CREATE TYPE weather_type AS ENUM (
 );
 
 -- 日誌狀態
+DROP TYPE IF EXISTS diary_status CASCADE;
 CREATE TYPE diary_status AS ENUM (
   'draft',
   'submitted',
@@ -35,6 +51,7 @@ CREATE TYPE diary_status AS ENUM (
 );
 
 -- 工項類型
+DROP TYPE IF EXISTS work_item_type CASCADE;
 CREATE TYPE work_item_type AS ENUM (
   'construction',
   'inspection',
