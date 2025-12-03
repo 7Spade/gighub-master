@@ -9,5 +9,24 @@ triggers:
     patterns:
       - '**/*.ts'
       - '**/*.html'
+      - '**/*.scss'
+      - '**/*.css'
+      - '**/*.json'
+      - '**/*.sql'
     agents:
       - default
+    mcp-servers:
+      - context7
+      - github
+      - supabase
+      - redis
+      - memory
+      - sequential-thinking
+      - software-planning-tool
+      - everything
+      - filesystem
+      - git
+      - time
+      - fetch
+      - puppeteer
+      - playwright
