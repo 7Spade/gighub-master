@@ -13,6 +13,14 @@
 -- ============================================================================
 
 -- ============================================================================
+-- 0. Enable Required Extensions
+-- ============================================================================
+
+-- Enable pg_trgm extension for trigram-based text search
+-- This is required for the gin_trgm_ops operator class used in the search index
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+-- ============================================================================
 -- 1. Create search_history table
 -- ============================================================================
 
