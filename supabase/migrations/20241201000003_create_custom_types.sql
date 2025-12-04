@@ -128,20 +128,17 @@ EXCEPTION
 END $$;
 
 -- 業務角色
+-- 注意：此列舉必須與 20241201001000_create_rbac_default_roles.sql 中的 RBAC 預設角色對應
 DO $$ BEGIN
   CREATE TYPE blueprint_business_role AS ENUM (
     'project_manager',   -- 專案經理
     'site_director',     -- 工地主任
-    'supervisor',        -- 監工
-    'inspector',         -- 檢驗員
-    'contractor',        -- 承包商
-    'subcontractor',     -- 分包商
-    'consultant',        -- 顧問
-    'engineer',          -- 工程師
-    'safety_officer',    -- 安全官員
-    'quality_control',   -- 品管人員
-    'observer',          -- 觀察者
-    'guest'              -- 訪客
+    'site_supervisor',   -- 現場監督
+    'worker',            -- 施工人員
+    'qa_staff',          -- 品管人員
+    'safety_health',     -- 公共安全衛生
+    'finance',           -- 財務
+    'observer'           -- 觀察者
   );
 EXCEPTION
   WHEN duplicate_object THEN NULL;
