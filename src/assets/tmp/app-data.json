@@ -121,40 +121,28 @@
         "hideInBreadcrumb": true,
         "children": [
           {
-            "text": "藍圖儀表板",
-            "i18n": "menu.blueprint.dashboard",
-            "icon": "anticon-dashboard",
-            "link": "/blueprint/{blueprintId}/dashboard"
-          },
-          {
             "text": "藍圖概覽",
             "i18n": "menu.blueprint.overview",
             "icon": "anticon-file-text",
             "link": "/blueprint/{blueprintId}/overview"
           },
           {
-            "text": "藍圖編輯器",
-            "i18n": "menu.blueprint.editor",
-            "icon": "anticon-edit",
-            "link": "/blueprint/{blueprintId}/editor"
+            "text": "任務管理",
+            "i18n": "menu.blueprint.tasks",
+            "icon": "anticon-ordered-list",
+            "link": "/blueprint/{blueprintId}/tasks"
           },
           {
-            "text": "版本管理",
-            "i18n": "menu.blueprint.versions",
-            "icon": "anticon-history",
-            "link": "/blueprint/{blueprintId}/versions"
-          },
-          {
-            "text": "協作成員",
-            "i18n": "menu.blueprint.collaborators",
+            "text": "成員管理",
+            "i18n": "menu.blueprint.members",
             "icon": "anticon-team",
-            "link": "/blueprint/{blueprintId}/collaborators"
+            "link": "/blueprint/{blueprintId}/members"
           },
           {
-            "text": "藍圖設定",
-            "i18n": "menu.blueprint.settings",
-            "icon": "anticon-setting",
-            "link": "/blueprint/{blueprintId}/settings"
+            "text": "財務管理",
+            "i18n": "menu.blueprint.financial",
+            "icon": "anticon-dollar",
+            "link": "/blueprint/{blueprintId}/financial/overview"
           }
         ]
       }
