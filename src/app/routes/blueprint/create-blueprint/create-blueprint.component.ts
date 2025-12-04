@@ -12,15 +12,17 @@
 
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { BlueprintFacade, ModuleType, ContextType } from '@core';
+import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES } from '@core';
 import { CreateBlueprintRequest, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-create-blueprint',
@@ -60,12 +62,21 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 
         <nz-form-item>
           <nz-form-label>啟用模組</nz-form-label>
-          <nz-form-control>
+          <nz-form-control [nzExtra]="moduleHint">
             <nz-select formControlName="enabledModules" nzMode="multiple" nzPlaceHolder="選擇要啟用的模組" [nzDisabled]="loading()">
               @for (module of moduleOptions; track module.value) {
-                <nz-option [nzValue]="module.value" [nzLabel]="module.label"></nz-option>
+                <nz-option [nzValue]="module.value" [nzLabel]="module.label" nzCustomContent>
+                  <span nz-icon [nzType]="module.icon"></span>
+                  {{ module.label }}
+                  @if (module.isCore) {
+                    <span class="core-badge">核心</span>
+                  }
+                </nz-option>
               }
             </nz-select>
+            <ng-template #moduleHint>
+              <span class="hint-text">建議啟用核心模組以獲得完整的施工管理功能</span>
+            </ng-template>
           </nz-form-control>
         </nz-form-item>
 
@@ -105,10 +116,31 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
       .modal-footer button + button {
         margin-left: 8px;
       }
+      .core-badge {
+        font-size: 10px;
+        padding: 1px 4px;
+        background: #1890ff;
+        color: white;
+        border-radius: 2px;
+        margin-left: 6px;
+      }
+      .hint-text {
+        font-size: 12px;
+        color: #999;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, NzFormModule, NzInputModule, NzButtonModule, NzSelectModule, NzCheckboxModule]
+  imports: [
+    ReactiveFormsModule,
+    NzFormModule,
+    NzInputModule,
+    NzButtonModule,
+    NzSelectModule,
+    NzCheckboxModule,
+    NzIconModule,
+    NzTooltipModule
+  ]
 })
 export class CreateBlueprintComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -126,16 +158,8 @@ export class CreateBlueprintComponent implements OnInit {
     isPublic: [false]
   });
 
-  moduleOptions = [
-    { value: ModuleType.TASKS, label: '任務管理' },
-    { value: ModuleType.DIARY, label: '施工日誌' },
-    { value: ModuleType.DASHBOARD, label: '儀表板' },
-    { value: ModuleType.FILES, label: '檔案管理' },
-    { value: ModuleType.TODOS, label: '待辦事項' },
-    { value: ModuleType.CHECKLISTS, label: '檢查清單' },
-    { value: ModuleType.ISSUES, label: '問題追蹤' },
-    { value: ModuleType.BOT_WORKFLOW, label: '自動化流程' }
-  ];
+  // Use essential modules following Occam's Razor principle
+  moduleOptions = ESSENTIAL_MODULES;
 
   private ownerId = signal<string | null>(null);
 

@@ -49,25 +49,65 @@ export enum BlueprintTeamAccess {
  * Module type enumeration
  *
  * Corresponds to database module_type enum
+ *
+ * Following Occam's Razor principle:
+ * - Core modules: tasks, diary, checklists, issues, files, financial
+ * - Optional: acceptance
+ * - Deprecated: dashboard, bot_workflow, todos (kept for backward compatibility)
  */
 export enum ModuleType {
+  // ============ Core Modules (核心模組) ============
   /** 任務管理 | Task management */
   TASKS = 'tasks',
   /** 施工日誌 | Construction diary */
   DIARY = 'diary',
-  /** 儀表板 | Dashboard */
-  DASHBOARD = 'dashboard',
-  /** 自動化流程 | Bot workflow */
-  BOT_WORKFLOW = 'bot_workflow',
-  /** 檔案管理 | File management */
-  FILES = 'files',
-  /** 待辦事項 | Todos */
-  TODOS = 'todos',
   /** 檢查清單 | Checklists */
   CHECKLISTS = 'checklists',
   /** 問題追蹤 | Issue tracking */
-  ISSUES = 'issues'
+  ISSUES = 'issues',
+  /** 檔案管理 | File management */
+  FILES = 'files',
+  /** 財務管理 | Financial management */
+  FINANCIAL = 'financial',
+
+  // ============ Optional Modules (選用模組) ============
+  /** 品質驗收 | Acceptance */
+  ACCEPTANCE = 'acceptance',
+
+  // ============ Deprecated (保留但不推薦) ============
+  /** @deprecated 使用獨立視圖而非模組 | Use standalone view instead */
+  DASHBOARD = 'dashboard',
+  /** @deprecated 進階功能，暫不支援 | Advanced feature, not supported yet */
+  BOT_WORKFLOW = 'bot_workflow',
+  /** @deprecated 與 tasks 功能重複 | Redundant with tasks */
+  TODOS = 'todos'
 }
+
+/**
+ * Essential module configuration
+ * 核心模組配置（依據奧卡姆剃刀原則）
+ */
+export interface ModuleConfig {
+  value: ModuleType;
+  label: string;
+  icon: string;
+  description: string;
+  isCore: boolean;
+}
+
+/**
+ * Essential modules list for blueprint creation
+ * 藍圖建立時的核心模組列表
+ */
+export const ESSENTIAL_MODULES: ModuleConfig[] = [
+  { value: ModuleType.TASKS, label: '任務管理', icon: 'ordered-list', description: '工作項目追蹤與進度管理', isCore: true },
+  { value: ModuleType.DIARY, label: '施工日誌', icon: 'file-text', description: '每日施工記錄與天氣', isCore: true },
+  { value: ModuleType.CHECKLISTS, label: '檢查清單', icon: 'check-square', description: '品質檢查與巡檢清單', isCore: true },
+  { value: ModuleType.ISSUES, label: '問題追蹤', icon: 'warning', description: '施工問題登記與追蹤', isCore: true },
+  { value: ModuleType.FILES, label: '檔案管理', icon: 'folder', description: '專案文件與圖面管理', isCore: true },
+  { value: ModuleType.FINANCIAL, label: '財務管理', icon: 'dollar', description: '合約、費用與請款管理', isCore: true },
+  { value: ModuleType.ACCEPTANCE, label: '品質驗收', icon: 'audit', description: '工程驗收與簽核', isCore: false }
+];
 
 // ============================================================================
 // Blueprint Entity Interfaces (藍圖實體介面)

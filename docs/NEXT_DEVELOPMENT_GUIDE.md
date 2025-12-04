@@ -2,11 +2,47 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（Bug 修復 + 模組隔離）
+**更新日期**: 2025-12-04（資料庫觸發器 + 模組簡化）
 
 ---
 
-## 🔧 最新 Bug 修復（2025-12-04）
+## 🔧 最新更新（2025-12-04）
+
+### 資料庫審計觸發器 ✅ 新增
+- **問題 1 解決方案**: 建立自動審計觸發器，所有 CRUD 操作自動記錄至 `audit_logs`
+- 新增 `trigger_audit_log()` 通用觸發器函數
+- 為以下表建立審計觸發器：
+  - `tasks`, `blueprints`, `blueprint_members`
+  - `contracts`, `expenses`, `payment_requests`, `payments`
+  - `diaries`, `issues`, `checklists`, `files` (如存在)
+
+### 任務進度計算 ✅ 新增
+- **問題 2 解決方案**: 建立任務進度自動計算
+- `calculate_task_progress()` - 基於子任務平均進度計算
+- `trigger_update_parent_task_progress()` - 子任務變更時自動更新父任務
+- `get_task_tree_progress()` - 取得藍圖整體進度統計
+
+### 模組類型簡化 ✅ 新增（奧卡姆剃刀原則）
+- **問題 5 解決方案**: 簡化模組類型，只保留核心功能
+- 新增核心模組：`financial`（財務管理）、`acceptance`（品質驗收）
+- 保留但標記為 deprecated：`dashboard`、`bot_workflow`、`todos`
+- 新增 `ESSENTIAL_MODULES` 常數供 UI 使用
+- 更新 `CreateBlueprintComponent` 使用簡化模組列表
+
+**核心模組（建議啟用）：**
+| 模組 | 說明 | 狀態 |
+|------|------|------|
+| `tasks` | 任務管理 - 工作項目追蹤 | 核心 |
+| `diary` | 施工日誌 - 每日記錄 | 核心 |
+| `checklists` | 檢查清單 - 品質巡檢 | 核心 |
+| `issues` | 問題追蹤 - 缺失管理 | 核心 |
+| `files` | 檔案管理 - 文件圖面 | 核心 |
+| `financial` | 財務管理 - 合約費用 | 核心（新增）|
+| `acceptance` | 品質驗收 - 工程驗收 | 選用（新增）|
+
+---
+
+## 🔧 已修復 Bug（2025-12-04）
 
 ### 財務模組修復 ✅
 - **問題 7-9**: 財務 CRUD 錯誤（TypeScript 類型與資料庫 schema 不匹配）
@@ -24,9 +60,9 @@
 - 快捷導航改為直接連結而非 tab 切換
 
 ### 備註
-- **問題 1**: 活動紀錄需要資料庫中的 audit_logs 資料才能顯示
-- **問題 2**: 任務資料需要資料庫整合才能持久化（非 UI 問題）
-- **問題 5**: 模組類型由資料庫 ENUM 定義，只有 8 種：tasks, diary, dashboard, bot_workflow, files, todos, checklists, issues
+- **問題 1**: ✅ 已解決 - 建立資料庫觸發器自動記錄審計日誌
+- **問題 2**: ✅ 已解決 - 建立任務進度計算觸發器
+- **問題 5**: ✅ 已解決 - 簡化模組類型，遵循奧卡姆剃刀原則
 - **問題 10**: 所有頁面已確認都有返回按鈕
 
 ---

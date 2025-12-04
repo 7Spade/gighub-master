@@ -17,7 +17,7 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade } from '@core';
+import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade, ModuleType } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -661,7 +661,7 @@ export class BlueprintOverviewComponent implements OnInit {
   /** Check if tasks module is enabled */
   readonly isTasksModuleEnabled = computed(() => {
     const modules = this.blueprint()?.enabled_modules || [];
-    return modules.includes('tasks' as any);
+    return modules.includes(ModuleType.TASKS);
   });
 
   readonly membersCount = computed(() => {
@@ -785,12 +785,15 @@ export class BlueprintOverviewComponent implements OnInit {
     const labelMap: Record<string, string> = {
       tasks: '任務管理',
       diary: '施工日誌',
+      checklists: '檢查清單',
+      issues: '問題追蹤',
+      files: '檔案管理',
+      financial: '財務管理',
+      acceptance: '品質驗收',
+      // Deprecated but kept for backward compatibility
       dashboard: '儀表板',
       bot_workflow: '自動化流程',
-      files: '檔案管理',
-      todos: '待辦事項',
-      checklists: '檢查清單',
-      issues: '問題追蹤'
+      todos: '待辦事項'
     };
     return labelMap[module] || module;
   }
