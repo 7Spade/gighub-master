@@ -138,19 +138,21 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
               <!-- Quick Navigation Cards -->
               <div nz-row [nzGutter]="16" class="quick-nav-row">
-                <div nz-col [nzSpan]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="switchToTab(1)" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="ordered-list" class="nav-icon" style="color: #1890ff;"></span>
-                      <div class="nav-text">
-                        <h4>任務管理</h4>
-                        <p>管理施工任務與進度追蹤</p>
+                @if (isTasksModuleEnabled()) {
+                  <div nz-col [nzSpan]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToTasks()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="ordered-list" class="nav-icon" style="color: #1890ff;"></span>
+                        <div class="nav-text">
+                          <h4>任務管理</h4>
+                          <p>管理施工任務與進度追蹤</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
+                    </nz-card>
+                  </div>
+                }
                 <div nz-col [nzSpan]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="switchToTab(2)" nzHoverable>
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToMembers()" nzHoverable>
                     <div class="nav-card-content">
                       <span nz-icon nzType="team" class="nav-icon" style="color: #52c41a;"></span>
                       <div class="nav-text">
@@ -161,7 +163,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                   </nz-card>
                 </div>
                 <div nz-col [nzSpan]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="switchToTab(3)" nzHoverable>
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFinancialOverview()" nzHoverable>
                     <div class="nav-card-content">
                       <span nz-icon nzType="dollar" class="nav-icon" style="color: #faad14;"></span>
                       <div class="nav-text">
@@ -174,27 +176,29 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
               </div>
             </nz-tab>
 
-            <!-- 任務管理 Tab -->
-            <nz-tab nzTitle="任務管理">
-              <div class="tab-header">
-                <h3>任務管理</h3>
-                <button nz-button nzType="primary" (click)="goToTasks()">
-                  <span nz-icon nzType="fullscreen"></span>
-                  開啟完整視圖
-                </button>
-              </div>
-              <nz-card [nzBordered]="false">
-                <nz-empty nzNotFoundContent="請點擊上方按鈕進入完整任務管理視圖">
-                  <ng-template #nzNotFoundFooter>
-                    <p class="text-muted">完整任務管理包含樹狀圖、表格、看板視圖</p>
-                    <button nz-button nzType="primary" (click)="goToTasks()">
-                      <span nz-icon nzType="ordered-list"></span>
-                      進入任務管理
-                    </button>
-                  </ng-template>
-                </nz-empty>
-              </nz-card>
-            </nz-tab>
+            <!-- 任務管理 Tab - only show if tasks module is enabled -->
+            @if (isTasksModuleEnabled()) {
+              <nz-tab nzTitle="任務管理">
+                <div class="tab-header">
+                  <h3>任務管理</h3>
+                  <button nz-button nzType="primary" (click)="goToTasks()">
+                    <span nz-icon nzType="fullscreen"></span>
+                    開啟完整視圖
+                  </button>
+                </div>
+                <nz-card [nzBordered]="false">
+                  <nz-empty nzNotFoundContent="請點擊上方按鈕進入完整任務管理視圖">
+                    <ng-template #nzNotFoundFooter>
+                      <p class="text-muted">完整任務管理包含樹狀圖、表格、看板視圖</p>
+                      <button nz-button nzType="primary" (click)="goToTasks()">
+                        <span nz-icon nzType="ordered-list"></span>
+                        進入任務管理
+                      </button>
+                    </ng-template>
+                  </nz-empty>
+                </nz-card>
+              </nz-tab>
+            }
 
             <!-- 成員管理 Tab -->
             <nz-tab nzTitle="成員管理">
@@ -654,6 +658,12 @@ export class BlueprintOverviewComponent implements OnInit {
     return this.blueprint()?.enabled_modules?.length || 0;
   });
 
+  /** Check if tasks module is enabled */
+  readonly isTasksModuleEnabled = computed(() => {
+    const modules = this.blueprint()?.enabled_modules || [];
+    return modules.includes('tasks' as any);
+  });
+
   readonly membersCount = computed(() => {
     return this.members().length;
   });
@@ -822,6 +832,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'members']);
+    }
+  }
+
+  goToFinancialOverview(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'financial', 'overview']);
     }
   }
 
