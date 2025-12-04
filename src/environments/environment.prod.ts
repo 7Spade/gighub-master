@@ -1,10 +1,12 @@
 // Type definition for environment variables (injected at build time via @ngx-env/builder)
-declare interface ImportMeta {
-  readonly env: {
-    readonly NEXT_PUBLIC_SUPABASE_URL?: string;
-    readonly NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
-    [key: string]: string | undefined;
-  };
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly NEXT_PUBLIC_SUPABASE_URL?: string;
+      readonly NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
+      [key: string]: string | undefined;
+    };
+  }
 }
 
 import { Environment } from '@delon/theme';
