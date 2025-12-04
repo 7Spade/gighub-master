@@ -58,6 +58,12 @@ export class MenuManagementService {
   private readonly configState = signal<MenuConfig | null>(null);
   private readonly loadingState = signal<boolean>(false);
 
+  /**
+   * Tracks the last menu update to prevent duplicate consecutive updates
+   * 追蹤上次菜單更新以防止重複連續更新
+   */
+  private lastMenuContext: { type: ContextType; paramsKey: string } | null = null;
+
   readonly config = this.configState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
 
@@ -81,15 +87,47 @@ export class MenuManagementService {
 
   /**
    * 更新菜單
+   * Update menu with duplicate prevention
+   *
+   * Includes state tracking to prevent duplicate consecutive updates
+   * which can cause performance issues or infinite loops.
    */
   updateMenu(contextType: ContextType, params?: ContextParams): void {
     const config = this.configState();
     if (!config) return;
 
+    // Create a stable key from params to check for duplicates
+    const paramsKey = this.createParamsKey(params);
+
+    // Skip update if context type and params are the same as last update
+    if (this.lastMenuContext && this.lastMenuContext.type === contextType && this.lastMenuContext.paramsKey === paramsKey) {
+      console.log('[MenuManagementService] ⏭️ Skipping duplicate menu update:', { contextType, params });
+      return;
+    }
+
     const baseMenu = this.getBaseMenu(contextType, config);
     const menu = this.processParams(baseMenu, params);
 
     this.menuService.add(menu);
+
+    // Record this update
+    this.lastMenuContext = { type: contextType, paramsKey };
+    console.log('[MenuManagementService] ✅ Menu updated:', { contextType, params });
+  }
+
+  /**
+   * 創建參數鍵
+   * Create a stable key from params for comparison
+   */
+  private createParamsKey(params?: ContextParams): string {
+    if (!params) return '';
+    return JSON.stringify({
+      userId: params.userId || '',
+      organizationId: params.organizationId || '',
+      teamId: params.teamId || '',
+      botId: params.botId || '',
+      blueprintId: params.blueprintId || ''
+    });
   }
 
   /**
