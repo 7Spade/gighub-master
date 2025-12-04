@@ -126,22 +126,31 @@ export interface Contract {
  * 費用實體介面
  *
  * Corresponds to database expenses table
+ * Note: Database schema uses 'title' for expense name and 'amount' for total
  */
 export interface Expense {
   id: string;
   blueprint_id: string;
   contract_id?: string | null;
-  category: ExpenseCategory;
-  description: string;
-  unit_price: number;
-  quantity: number;
+  /** 費用名稱 (database: title) */
+  title: string;
+  /** 費用說明 (database: description) */
+  description?: string | null;
+  /** 金額 (database: amount) */
   amount: number;
+  /** 幣別 (database: currency, default: TWD) */
+  currency?: string;
+  /** 費用日期 (database: expense_date) */
   expense_date: string;
-  receipt_url?: string | null;
+  /** 費用類別 (database: category) */
+  category?: string | null;
+  /** 收據/發票編號 (database: receipt_number) */
+  receipt_number?: string | null;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }
 
 /**
@@ -149,22 +158,39 @@ export interface Expense {
  * 請款單實體介面
  *
  * Corresponds to database payment_requests table
+ * Note: Database uses 'lifecycle' (blueprint_lifecycle enum) instead of 'status'
  */
 export interface PaymentRequest {
   id: string;
   blueprint_id: string;
   contract_id?: string | null;
-  request_number: string;
-  requested_amount: number;
-  status: PaymentRequestStatus;
+  /** 請款單編號 (database: request_number) */
+  request_number?: string | null;
+  /** 請款名稱 (database: title) */
+  title: string;
+  /** 請款說明 (database: description) */
   description?: string | null;
-  requested_by?: string | null;
-  approved_by?: string | null;
+  /** 請款金額 (database: requested_amount) */
+  requested_amount: number;
+  /** 幣別 (database: currency, default: TWD) */
+  currency?: string;
+  /** 生命週期狀態 (database: lifecycle) - maps to draft, active, on_hold, archived, deleted */
+  lifecycle: string;
+  /** 請款日期 (database: request_date) */
+  request_date?: string;
+  /** 預計付款日期 (database: due_date) */
+  due_date?: string | null;
+  /** 請款人 (database: requester_id) */
+  requester_id?: string | null;
+  /** 核准人 (database: approver_id) */
+  approver_id?: string | null;
+  /** 核准時間 (database: approved_at) */
   approved_at?: string | null;
-  rejected_reason?: string | null;
   metadata?: Record<string, unknown>;
+  created_by?: string | null;
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }
 
 /**
@@ -172,18 +198,29 @@ export interface PaymentRequest {
  * 付款實體介面
  *
  * Corresponds to database payments table
+ * Note: Database uses 'paid_amount' instead of 'amount', 'paid_at' instead of 'payment_date'
  */
 export interface Payment {
   id: string;
   blueprint_id: string;
-  payment_request_id?: string | null;
-  amount: number;
-  payment_method: PaymentMethod;
-  payment_date: string;
+  /** 關聯請款單 ID (database: payment_request_id) - required in database */
+  payment_request_id: string;
+  /** 付款編號 (database: payment_number) */
+  payment_number?: string | null;
+  /** 付款金額 (database: paid_amount) */
+  paid_amount: number;
+  /** 幣別 (database: currency, default: TWD) */
+  currency?: string;
+  /** 付款日期 (database: paid_at) */
+  paid_at: string;
+  /** 付款方式 (database: payment_method) */
+  payment_method?: string | null;
+  /** 銀行參考編號 (database: reference_number) */
   reference_number?: string | null;
+  /** 備註 (database: notes) */
   notes?: string | null;
   metadata?: Record<string, unknown>;
-  paid_by?: string | null;
+  created_by?: string | null;
   created_at?: string;
   updated_at?: string;
 }

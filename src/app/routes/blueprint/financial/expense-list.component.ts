@@ -17,7 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Expense, ExpenseCategory } from '@core';
+import { Expense } from '@core';
 import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -151,16 +151,29 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="expenseForm" nzLayout="vertical">
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="description">費用描述</nz-form-label>
-              <nz-form-control nzErrorTip="請輸入費用描述">
-                <input nz-input formControlName="description" id="description" placeholder="請輸入費用描述" />
+              <nz-form-label nzRequired nzFor="title">費用名稱</nz-form-label>
+              <nz-form-control nzErrorTip="請輸入費用名稱">
+                <input nz-input formControlName="title" id="title" placeholder="請輸入費用名稱" />
               </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="category">費用類別</nz-form-label>
-              <nz-form-control nzErrorTip="請選擇費用類別">
-                <nz-select formControlName="category" id="category" style="width: 100%">
+              <nz-form-label nzFor="description">費用描述</nz-form-label>
+              <nz-form-control>
+                <textarea
+                  nz-input
+                  formControlName="description"
+                  id="description"
+                  placeholder="請輸入費用描述（選填）"
+                  [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzFor="category">費用類別</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="category" id="category" nzPlaceHolder="選擇類別（選填）" nzAllowClear style="width: 100%">
                   <nz-option nzValue="labor" nzLabel="人工"></nz-option>
                   <nz-option nzValue="material" nzLabel="材料"></nz-option>
                   <nz-option nzValue="equipment" nzLabel="設備"></nz-option>
@@ -170,46 +183,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               </nz-form-control>
             </nz-form-item>
 
-            <div nz-row [nzGutter]="16">
-              <div nz-col [nzSpan]="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired nzFor="unit_price">單價</nz-form-label>
-                  <nz-form-control nzErrorTip="請輸入單價">
-                    <nz-input-number
-                      formControlName="unit_price"
-                      id="unit_price"
-                      [nzMin]="0"
-                      [nzStep]="100"
-                      [nzFormatter]="currencyFormatter"
-                      [nzParser]="currencyParser"
-                      style="width: 100%"
-                    ></nz-input-number>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-              <div nz-col [nzSpan]="12">
-                <nz-form-item>
-                  <nz-form-label nzRequired nzFor="quantity">數量</nz-form-label>
-                  <nz-form-control nzErrorTip="請輸入數量">
-                    <nz-input-number
-                      formControlName="quantity"
-                      id="quantity"
-                      [nzMin]="0"
-                      [nzStep]="1"
-                      style="width: 100%"
-                    ></nz-input-number>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-
             <nz-form-item>
-              <nz-form-label nzFor="amount">金額（自動計算）</nz-form-label>
-              <nz-form-control>
+              <nz-form-label nzRequired nzFor="amount">金額</nz-form-label>
+              <nz-form-control nzErrorTip="請輸入金額">
                 <nz-input-number
                   formControlName="amount"
                   id="amount"
-                  [nzDisabled]="true"
+                  [nzMin]="0"
+                  [nzStep]="100"
                   [nzFormatter]="currencyFormatter"
                   [nzParser]="currencyParser"
                   style="width: 100%"
@@ -348,11 +329,10 @@ export class ExpenseListComponent implements OnInit {
 
   /** Form */
   expenseForm: FormGroup = this.fb.group({
-    description: ['', [Validators.required]],
-    category: [ExpenseCategory.OTHER, [Validators.required]],
-    unit_price: [0, [Validators.required, Validators.min(0)]],
-    quantity: [1, [Validators.required, Validators.min(0)]],
-    amount: [{ value: 0, disabled: true }],
+    title: ['', [Validators.required]],
+    description: [''],
+    category: [null],
+    amount: [0, [Validators.required, Validators.min(0)]],
     expense_date: [new Date(), [Validators.required]],
     contract_id: [null]
   });
@@ -375,7 +355,7 @@ export class ExpenseListComponent implements OnInit {
     if (total === 0) return 0;
     const laborAmount = this.financialService
       .expenses()
-      .filter(e => e.category === ExpenseCategory.LABOR)
+      .filter(e => e.category === 'labor')
       .reduce((sum, e) => sum + (e.amount || 0), 0);
     return Math.round((laborAmount / total) * 100);
   });
@@ -386,7 +366,7 @@ export class ExpenseListComponent implements OnInit {
 
     if (this.searchText) {
       const search = this.searchText.toLowerCase();
-      expenses = expenses.filter(e => e.description.toLowerCase().includes(search));
+      expenses = expenses.filter(e => e.title?.toLowerCase().includes(search) || e.description?.toLowerCase().includes(search));
     }
 
     if (this.selectedCategory) {
@@ -410,11 +390,9 @@ export class ExpenseListComponent implements OnInit {
 
   /** Table columns */
   columns: STColumn[] = [
-    { title: '費用描述', index: 'description', width: 200 },
+    { title: '費用名稱', index: 'title', width: 200 },
     { title: '類別', render: 'category', width: 100 },
     { title: '金額', render: 'amount', width: 120 },
-    { title: '單價', index: 'unit_price', type: 'currency', width: 100 },
-    { title: '數量', index: 'quantity', width: 80 },
     { title: '費用日期', index: 'expense_date', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
     { title: '操作', render: 'actions', fixed: 'right', width: 100 }
   ];
@@ -434,20 +412,11 @@ export class ExpenseListComponent implements OnInit {
   currencyParser = (value: string): number => Number(value.replace(/\$\s?|(,*)/g, ''));
 
   constructor() {
-    // Listen to unit_price and quantity changes to calculate amount
-    this.expenseForm.get('unit_price')?.valueChanges.subscribe(() => this.calculateAmount());
-    this.expenseForm.get('quantity')?.valueChanges.subscribe(() => this.calculateAmount());
+    // No longer needed - amount is directly entered
   }
 
   ngOnInit(): void {
     this.loadExpenses();
-  }
-
-  /** Calculate amount from unit_price * quantity */
-  private calculateAmount(): void {
-    const unitPrice = this.expenseForm.get('unit_price')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
-    this.expenseForm.get('amount')?.setValue(unitPrice * quantity);
   }
 
   /** Load expenses */
@@ -490,11 +459,12 @@ export class ExpenseListComponent implements OnInit {
   openCreateDrawer(): void {
     this.editingExpense.set(null);
     this.expenseForm.reset({
-      category: ExpenseCategory.OTHER,
-      unit_price: 0,
-      quantity: 1,
+      title: '',
+      description: '',
+      category: null,
       amount: 0,
-      expense_date: new Date()
+      expense_date: new Date(),
+      contract_id: null
     });
     this.drawerVisible.set(true);
   }
@@ -509,10 +479,9 @@ export class ExpenseListComponent implements OnInit {
   editExpense(expense: Expense): void {
     this.editingExpense.set(expense);
     this.expenseForm.patchValue({
-      description: expense.description,
+      title: expense.title,
+      description: expense.description || '',
       category: expense.category,
-      unit_price: expense.unit_price,
-      quantity: expense.quantity,
       amount: expense.amount,
       expense_date: expense.expense_date,
       contract_id: expense.contract_id
@@ -559,17 +528,17 @@ export class ExpenseListComponent implements OnInit {
   }
 
   /** Get category color */
-  getCategoryColor(category: string): string {
+  getCategoryColor(category: string | null | undefined): string {
     switch (category) {
-      case ExpenseCategory.LABOR:
+      case 'labor':
         return 'blue';
-      case ExpenseCategory.MATERIAL:
+      case 'material':
         return 'orange';
-      case ExpenseCategory.EQUIPMENT:
+      case 'equipment':
         return 'purple';
-      case ExpenseCategory.MANAGEMENT:
+      case 'management':
         return 'cyan';
-      case ExpenseCategory.OTHER:
+      case 'other':
         return 'default';
       default:
         return 'default';
@@ -577,20 +546,20 @@ export class ExpenseListComponent implements OnInit {
   }
 
   /** Get category label */
-  getCategoryLabel(category: string): string {
+  getCategoryLabel(category: string | null | undefined): string {
     switch (category) {
-      case ExpenseCategory.LABOR:
+      case 'labor':
         return '人工';
-      case ExpenseCategory.MATERIAL:
+      case 'material':
         return '材料';
-      case ExpenseCategory.EQUIPMENT:
+      case 'equipment':
         return '設備';
-      case ExpenseCategory.MANAGEMENT:
+      case 'management':
         return '管理費';
-      case ExpenseCategory.OTHER:
+      case 'other':
         return '其他';
       default:
-        return category;
+        return category || '-';
     }
   }
 

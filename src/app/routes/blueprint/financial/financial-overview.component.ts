@@ -15,7 +15,6 @@
 
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaymentRequestStatus } from '@core';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -222,15 +221,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <nz-list nzItemLayout="horizontal" [nzLoading]="financialService.loading()">
             @for (request of recentPaymentRequests(); track request.id) {
               <nz-list-item>
-                <nz-list-item-meta nzAvatar="audit" [nzTitle]="request.request_number" [nzDescription]="request.description || '無描述'">
+                <nz-list-item-meta
+                  nzAvatar="audit"
+                  [nzTitle]="request.title || request.request_number || '請款單'"
+                  [nzDescription]="request.description || '無描述'"
+                >
                   <nz-list-item-meta-avatar>
                     <nz-avatar nzIcon="audit"></nz-avatar>
                   </nz-list-item-meta-avatar>
                 </nz-list-item-meta>
                 <ul nz-list-item-actions>
                   <nz-list-item-action>
-                    <nz-tag [nzColor]="getStatusColor(request.status)">
-                      {{ getStatusLabel(request.status) }}
+                    <nz-tag [nzColor]="getStatusColor(request.lifecycle)">
+                      {{ getStatusLabel(request.lifecycle) }}
                     </nz-tag>
                   </nz-list-item-action>
                   <nz-list-item-action>
@@ -411,9 +414,9 @@ export class FinancialOverviewComponent implements OnInit {
     return s.total_requested - s.total_paid;
   });
 
-  /** Pending payment request count */
+  /** Pending payment request count - use lifecycle */
   readonly pendingRequestCount = computed(() => {
-    return this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.PENDING).length;
+    return this.financialService.paymentRequests().filter(r => r.lifecycle === 'active').length;
   });
 
   /** Recent payment requests */
@@ -450,39 +453,39 @@ export class FinancialOverviewComponent implements OnInit {
     return '#52c41a';
   }
 
-  /** Get status color */
-  getStatusColor(status: PaymentRequestStatus): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status color - use lifecycle */
+  getStatusColor(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return 'default';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return 'processing';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return 'success';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return 'warning';
+      case 'deleted':
         return 'error';
-      case PaymentRequestStatus.PAID:
-        return 'green';
       default:
         return 'default';
     }
   }
 
-  /** Get status label */
-  getStatusLabel(status: PaymentRequestStatus): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status label - use lifecycle */
+  getStatusLabel(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return '草稿';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return '待審核';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return '已核准';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return '暫緩';
+      case 'deleted':
         return '已拒絕';
-      case PaymentRequestStatus.PAID:
-        return '已付款';
       default:
-        return status;
+        return lifecycle;
     }
   }
 
