@@ -9,7 +9,7 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: import.meta.env['NG_APP_SUPABASE_URL'] || '',
-    anonKey: import.meta.env['NG_APP_SUPABASE_ANON_KEY'] || ''
+    url: import.meta.env['NEXT_PUBLIC_SUPABASE_URL'] || '',
+    anonKey: import.meta.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || ''
   }
 } as Environment;
