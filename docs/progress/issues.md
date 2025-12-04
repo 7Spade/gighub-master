@@ -1,8 +1,8 @@
 # ⚠️ 已知問題清單
 
 > 最後更新: 2025-12-04  
-> 總計問題數量: 31 項  
-> 總預計修復工時: 524h
+> 總計問題數量: 36 項  
+> 總預計修復工時: 539h
 
 ---
 
@@ -13,8 +13,8 @@
 | 🔴 P0 阻塞 | 4    | 38h    | 阻塞核心功能，必須立即修復 |
 | 🟠 P1 關鍵 | 5    | 144h   | 影響核心功能，需儘快修復   |
 | 🟡 P2 重要 | 6    | 182h   | 影響用戶體驗，需排程修復   |
-| 🟢 P3 輕微 | 10   | 40h    | 可延後修復                 |
-| 🔧 技術債  | 6    | 120h   | 需要重構                   |
+| 🟢 P3 輕微 | 11   | 43h    | 可延後修復                 |
+| 🔧 技術債  | 10   | 154h   | 需要重構                   |
 
 ---
 
@@ -575,6 +575,112 @@ const newTask = this.taskService.createMockTask(createData);
 
 ---
 
+### TD-007: TypeScript any 類型濫用
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | 多處程式碼使用 `any` 類型而非具體型別                           |
+| 影響範圍 | 型別安全、程式碼維護性                                          |
+| 業務影響 | 潛在的運行時錯誤、IDE 自動完成失效                              |
+| 狀態     | 🔧 待處理                                                       |
+| 預計工時 | 8h                                                              |
+
+**發現位置**:
+| 檔案 | 行數 | 問題 |
+| ---- | ---- | ---- |
+| `src/app/routes/blueprint/members/members.component.ts` | 159 | `signal<any[]>([])` |
+| `src/app/core/facades/blueprint/blueprint.facade.ts` | 105, 117, 124 | `Promise<any[]>`, `Promise<any>` |
+| `src/app/shared/services/blueprint/blueprint.service.ts` | 173, 187, 206 | `Promise<any[]>`, `Promise<any>` |
+| `src/app/core/infra/repositories/search/search.repository.ts` | 139, 170, 201, 226, 345, 451, 474, 496, 518 | 多處 `any` 類型 |
+
+**建議修復**:
+- 為藍圖成員定義 `BlueprintMember` 介面
+- 為搜尋結果定義具體型別
+- 使用泛型替代 `any`
+
+---
+
+### TD-008: console.log 未清理
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | 生產程式碼中存在大量 console.log/error/warn 語句                |
+| 影響範圍 | 效能、安全性、程式碼品質                                        |
+| 業務影響 | 可能洩露敏感資訊、影響效能                                      |
+| 狀態     | 🔧 待處理                                                       |
+| 預計工時 | 4h                                                              |
+
+**發現位置** (共 50+ 處):
+| 檔案 | 說明 |
+| ---- | ---- |
+| `src/app/routes/passport/lock/lock.component.ts:35,36` | `console.log('Valid!')` |
+| `src/app/routes/passport/login/login.component.ts:102` | `console.error('Login error:', err)` |
+| `src/app/core/net/refresh-token.ts:75` | `console.log(res)` |
+| `src/app/core/facades/account/base-account-crud.facade.ts` | 6 處 console.log/error |
+| `src/app/routes/blueprint/*` | 多處 console.error |
+| `src/app/routes/account/*` | 多處 console.error |
+
+**建議修復**:
+- 使用統一的 Logger 服務替代 console 語句
+- 在生產環境禁用 debug 級別日誌
+- 移除開發用的 console.log
+
+---
+
+### TD-009: Deprecated 方法未移除
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | 存在標記為 @deprecated 的方法仍在使用                           |
+| 影響範圍 | 任務服務                                                        |
+| 業務影響 | 技術債累積、維護困難                                            |
+| 相關檔案 | `src/app/shared/services/task/task.service.ts`                  |
+| 狀態     | 🔧 待處理                                                       |
+| 預計工時 | 4h                                                              |
+
+**發現位置**:
+```typescript
+// src/app/shared/services/task/task.service.ts
+// Line 453: Mock Data for Development (DEPRECATED - 已棄用)
+// Line 463: @deprecated Use loadTasksByBlueprint() instead
+// Line 607: @deprecated Use loadTasksByBlueprint() instead
+// Line 619: @deprecated Use createTask() instead
+// Line 661: @deprecated Use updateTask() instead
+```
+
+**建議修復**:
+- 確保所有調用方都已遷移到新 API
+- 移除 deprecated 方法
+- 移除相關的 Mock 資料
+
+---
+
+### TD-010: 大型檔案需拆分
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | 多個檔案超過 500 行，違反專案規範                               |
+| 影響範圍 | 程式碼維護性、可讀性                                            |
+| 業務影響 | 開發效率降低、程式碼審查困難                                    |
+| 狀態     | 🔧 待處理                                                       |
+| 預計工時 | 24h                                                             |
+
+**超過 500 行的檔案**:
+| 檔案 | 行數 | 建議 |
+| ---- | ---- | ---- |
+| `src/app/core/infra/repositories/problem/problem.repository.ts` | 910 | 拆分為多個 Repository |
+| `src/app/routes/blueprint/overview/overview.component.ts` | 858 | 拆分為子組件 |
+| `src/app/shared/services/diary/diary.service.ts` | 826 | 拆分為多個服務 |
+| `src/app/shared/services/problem/problem.service.ts` | 814 | 拆分為多個服務 |
+| `src/app/shared/services/file/file.service.ts` | 809 | 拆分為多個服務 |
+| `src/app/routes/blueprint/financial/payment-request-list.component.ts` | 720 | 拆分為子組件 |
+| `src/app/shared/services/financial/financial.service.ts` | 703 | 拆分為多個服務 |
+| `src/app/shared/services/task/task.service.ts` | 689 | 拆分為多個服務 |
+| `src/app/layout/basic/widgets/search.component.ts` | 687 | 拆分為子組件 |
+| `src/app/routes/blueprint/tasks/tasks.component.ts` | 681 | 拆分為子組件 |
+
+---
+
 ## 🟢 P3 - 輕微問題 (新增)
 
 ### ISSUE-024: Account Service 有 TODO 未實現
@@ -632,6 +738,24 @@ const newTask = this.taskService.createMockTask(createData);
 
 ---
 
+### ISSUE-027: Todos 組件使用 Placeholder 邏輯
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | Team/User Todos 組件使用 Placeholder 邏輯而非實際資料           |
+| 影響範圍 | 待辦事項功能                                                    |
+| 業務影響 | 待辦事項功能不完整                                              |
+| 相關檔案 | `src/app/routes/account/todos/components/team-todos.component.ts:56` <br> `src/app/routes/account/todos/components/user-todos.component.ts:56` |
+| 狀態     | 🟢 待處理                                                       |
+| 預計工時 | 4h                                                              |
+
+**程式碼證據**:
+```typescript
+// Placeholder - would fetch from service
+```
+
+---
+
 ## 📝 問題追蹤表
 
 | 問題編號   | 嚴重程度 | 狀態   | 負責人 | 預計完成日期 | 預計工時 |
@@ -662,12 +786,17 @@ const newTask = this.taskService.createMockTask(createData);
 | ISSUE-024  | 🟢 P3    | 待處理 | -      | -            | 2h       |
 | ISSUE-025  | 🟢 P3    | 待處理 | -      | -            | 1h       |
 | ISSUE-026  | 🟢 P3    | 待處理 | -      | -            | 2h       |
+| ISSUE-027  | 🟢 P3    | 待處理 | -      | -            | 4h       |
 | TD-001     | 🔧 TD    | 待處理 | -      | -            | 16h      |
 | TD-002     | 🔧 TD    | 待處理 | -      | -            | 8h       |
 | TD-003     | 🔧 TD    | 待處理 | -      | -            | 54h      |
 | TD-004     | 🔧 TD    | 待處理 | -      | -            | 6h       |
 | TD-005     | 🔧 TD    | 待處理 | -      | -            | 8h       |
 | TD-006     | 🔧 TD    | 待處理 | -      | -            | 6h       |
+| TD-007     | 🔧 TD    | 待處理 | -      | -            | 8h       |
+| TD-008     | 🔧 TD    | 待處理 | -      | -            | 4h       |
+| TD-009     | 🔧 TD    | 待處理 | -      | -            | 4h       |
+| TD-010     | 🔧 TD    | 待處理 | -      | -            | 24h      |
 
 ---
 
@@ -678,9 +807,9 @@ const newTask = this.taskService.createMockTask(createData);
 | 🔴 P0 阻塞 | 4      | 38h        |
 | 🟠 P1 關鍵 | 5      | 144h       |
 | 🟡 P2 重要 | 6      | 182h       |
-| 🟢 P3 輕微 | 10     | 33h        |
-| 🔧 技術債  | 6      | 98h        |
-| **總計**   | **31** | **495h**   |
+| 🟢 P3 輕微 | 11     | 37h        |
+| 🔧 技術債  | 10     | 138h       |
+| **總計**   | **36** | **539h**   |
 
 ---
 
@@ -711,14 +840,31 @@ const newTask = this.taskService.createMockTask(createData);
 14. ISSUE-014: 元數據系統 (28h)
 15. ISSUE-015: API 閘道完善 (32h)
 
-### Sprint 6+ (持續): P3 + 技術債 - 131h
-16. 所有 P3 輕微問題 (33h)
-17. 所有技術債務 (98h)
+### Sprint 6+ (持續): P3 + 技術債 - 175h
+16. 所有 P3 輕微問題 (37h)
+17. 所有技術債務 (138h)
 
 ### Sprint 5+ (Week 9+): 剩餘問題
 10. 其他 P2 問題
 11. P3 輕微問題
 12. 技術債務
+
+---
+
+## 🔍 技術債詳細清單
+
+| 編號   | 類別 | 問題 | 檔案數 | 工時 |
+| ------ | ---- | ---- | ------ | ---- |
+| TD-001 | 結構 | 大型組件檔案需要拆分 | 3 | 16h |
+| TD-002 | 結構 | 服務間依賴複雜 | 5+ | 8h |
+| TD-003 | 測試 | 缺乏單元測試覆蓋 | 全域 | 54h |
+| TD-004 | 型別 | TypeScript Strict Mode 警告 | 10+ | 6h |
+| TD-005 | 程式碼 | 重複程式碼 | 8+ | 8h |
+| TD-006 | Mock | Mock 資料未完全清理 | 4 | 6h |
+| TD-007 | 型別 | any 類型濫用 | 15+ | 8h |
+| TD-008 | 日誌 | console.log 未清理 | 50+ | 4h |
+| TD-009 | 棄用 | Deprecated 方法未移除 | 1 | 4h |
+| TD-010 | 結構 | 大型檔案需拆分 (10個超500行) | 10 | 24h |
 
 ---
 
