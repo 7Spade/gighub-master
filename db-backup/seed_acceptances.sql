@@ -1,20 +1,5 @@
 -- Migration: Create Acceptances Tables
 -- Description: 驗收表 - 驗收流程管理系統
--- 
--- Prerequisites: 
---   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts)
---   先執行 seed_diaries.sql (建立 diaries 表)
---   先執行 seed_qc_inspections.sql (建立 qc_inspections 表)
---
--- Run Order (執行順序):
---   1. seed.sql (必須先執行 - 建立基礎架構)
---   2. seed_diaries.sql
---   3. seed_qc_inspections.sql
---   4. seed_acceptances.sql (本檔案)
---   5. seed_problems.sql
---   6. seed_audit_logs.sql
---   7. seed_search_history.sql
---
 -- Features:
 --   - Acceptance workflow management
 --   - Multi-level approval support
@@ -26,7 +11,6 @@
 -- ============================================================================
 
 -- 驗收狀態
-DROP TYPE IF EXISTS acceptance_status CASCADE;
 CREATE TYPE acceptance_status AS ENUM (
   'pending',        -- 待驗收
   'in_progress',    -- 驗收中
@@ -37,7 +21,6 @@ CREATE TYPE acceptance_status AS ENUM (
 );
 
 -- 驗收類型
-DROP TYPE IF EXISTS acceptance_type CASCADE;
 CREATE TYPE acceptance_type AS ENUM (
   'interim',        -- 期中驗收
   'final',          -- 最終驗收
@@ -47,7 +30,6 @@ CREATE TYPE acceptance_type AS ENUM (
 );
 
 -- 驗收決定類型
-DROP TYPE IF EXISTS acceptance_decision CASCADE;
 CREATE TYPE acceptance_decision AS ENUM (
   'approve',        -- 核准
   'reject',         -- 駁回
@@ -214,7 +196,7 @@ CREATE POLICY acceptances_delete_policy ON acceptances
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
     )
   );
 

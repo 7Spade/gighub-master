@@ -556,7 +556,7 @@ CREATE POLICY qc_inspections_delete_policy ON qc_inspections
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
     )
   );
 
@@ -598,7 +598,7 @@ CREATE POLICY qc_inspection_items_delete_policy ON qc_inspection_items
     OR inspection_id IN (
       SELECT i.id FROM qc_inspections i
       JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (SELECT auth.uid()) AND bm.role IN ('contributor', 'maintainer')
+      WHERE bm.account_id = (SELECT auth.uid()) AND bm.blueprint_role IN ('owner', 'admin')
     )
   );
 
@@ -674,7 +674,7 @@ CREATE POLICY acceptances_delete_policy ON acceptances
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
     )
   );
 
@@ -758,7 +758,7 @@ CREATE POLICY problems_delete_policy ON problems
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
     )
   );
 

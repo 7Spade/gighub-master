@@ -1,19 +1,5 @@
 -- Migration: Create QC Inspections Tables
 -- Description: 品管檢查表 - 品質控制檢查系統
--- 
--- Prerequisites: 
---   先執行 seed.sql (建立基礎表：blueprints, tasks, accounts)
---   先執行 seed_diaries.sql (建立 diaries 表)
---
--- Run Order (執行順序):
---   1. seed.sql (必須先執行 - 建立基礎架構)
---   2. seed_diaries.sql
---   3. seed_qc_inspections.sql (本檔案)
---   4. seed_acceptances.sql
---   5. seed_problems.sql
---   6. seed_audit_logs.sql
---   7. seed_search_history.sql
---
 -- Features:
 --   - QC inspection tracking
 --   - Inspection items and checklists
@@ -25,7 +11,6 @@
 -- ============================================================================
 
 -- 品管檢查狀態
-DROP TYPE IF EXISTS qc_inspection_status CASCADE;
 CREATE TYPE qc_inspection_status AS ENUM (
   'pending',        -- 待檢查
   'in_progress',    -- 檢查中
@@ -36,7 +21,6 @@ CREATE TYPE qc_inspection_status AS ENUM (
 );
 
 -- 品管檢查類型
-DROP TYPE IF EXISTS qc_inspection_type CASCADE;
 CREATE TYPE qc_inspection_type AS ENUM (
   'self_check',     -- 自主檢查
   'supervisor_check', -- 主管檢查
@@ -46,7 +30,6 @@ CREATE TYPE qc_inspection_type AS ENUM (
 );
 
 -- 品管檢查項目狀態
-DROP TYPE IF EXISTS qc_item_status CASCADE;
 CREATE TYPE qc_item_status AS ENUM (
   'pending',        -- 待檢查
   'passed',         -- 合格
@@ -231,7 +214,7 @@ CREATE POLICY qc_inspections_delete_policy ON qc_inspections
     created_by = (SELECT auth.uid())
     OR blueprint_id IN (
       SELECT blueprint_id FROM blueprint_members 
-      WHERE account_id = (SELECT auth.uid()) AND role IN ('contributor', 'maintainer')
+      WHERE account_id = (SELECT auth.uid()) AND blueprint_role IN ('owner', 'admin')
     )
   );
 
@@ -273,7 +256,7 @@ CREATE POLICY qc_inspection_items_delete_policy ON qc_inspection_items
     OR inspection_id IN (
       SELECT i.id FROM qc_inspections i
       JOIN blueprint_members bm ON i.blueprint_id = bm.blueprint_id
-      WHERE bm.account_id = (SELECT auth.uid()) AND bm.role IN ('contributor', 'maintainer')
+      WHERE bm.account_id = (SELECT auth.uid()) AND bm.blueprint_role IN ('owner', 'admin')
     )
   );
 
