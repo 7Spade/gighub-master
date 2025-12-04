@@ -2,7 +2,68 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-03（完整更新骨架級別功能實作狀態）
+**更新日期**: 2025-12-04（藍圖內部功能分析更新）
+
+---
+
+## 🚨 藍圖內部功能現況分析（2025-12-04 更新）
+
+### 藍圖列表 (Blueprint List)
+- ✅ 藍圖卡片列表顯示 - 正常顯示
+- ✅ 建立藍圖功能 - 模態框可用
+- ✅ 進入藍圖詳情 - 點擊卡片可進入
+
+### 藍圖詳情頁面 (Blueprint Detail)
+
+#### 當前頁面結構
+```
+/blueprint/:id/overview    ← 概覽頁面（有 Tabs: 概覽, 財務, 活動）
+/blueprint/:id/tasks       ← 任務管理（獨立頁面，需透過按鈕導航）
+/blueprint/:id/members     ← 成員管理（獨立頁面，需透過按鈕導航）
+/blueprint/:id/financial/* ← 財務模組（獨立子路由）
+```
+
+#### 問題識別
+
+| 功能區塊 | 現況 | 問題描述 |
+|---------|------|---------|
+| **概覽 (Overview Tab)** | 🔶 50% | 基本資訊顯示完成，但缺少快捷操作按鈕、進度統計、模組卡片導航 |
+| **財務 (Financial Tab)** | 🔶 40% | 財務概覽表格顯示正常，但缺少「新增合約」「管理費用」等操作按鈕入口 |
+| **活動 (Activity Tab)** | 🔴 0% | 顯示「暫無活動記錄」，需整合審計日誌或活動時間軸 |
+| **任務管理入口** | 🔶 存在 | 需點擊 Header 按鈕進入，不在 Tab 導航中 |
+| **成員管理入口** | 🔶 存在 | 需點擊 Header 按鈕進入，不在 Tab 導航中 |
+
+#### 財務模組子頁面
+```
+/blueprint/:id/financial/overview          ✅ 財務概覽 - 完成（有統計卡片、導航入口）
+/blueprint/:id/financial/contracts         ✅ 合約管理 - 完成（完整 CRUD + 搜尋篩選）
+/blueprint/:id/financial/expenses          ✅ 費用管理 - 完成（完整 CRUD + 搜尋篩選）
+/blueprint/:id/financial/payment-requests  ✅ 請款管理 - 完成（完整 CRUD + 狀態流轉）
+/blueprint/:id/financial/payments          ✅ 付款紀錄 - 完成（完整 CRUD）
+```
+
+#### 菜單配置問題
+
+`app-data.json` 中的藍圖菜單配置與實際路由不匹配：
+
+| 菜單配置路徑 | 實際路由 | 狀態 |
+|-------------|---------|------|
+| `/blueprint/{blueprintId}/dashboard` | 不存在 | ❌ 需移除或建立 |
+| `/blueprint/{blueprintId}/overview` | ✅ 存在 | ✅ 正確 |
+| `/blueprint/{blueprintId}/editor` | 不存在 | ❌ 需移除或建立 |
+| `/blueprint/{blueprintId}/versions` | 不存在 | ❌ 需移除或建立 |
+| `/blueprint/{blueprintId}/collaborators` | `/members` | ⚠️ 路徑不匹配 |
+| `/blueprint/{blueprintId}/settings` | 不存在 | ❌ 需建立 |
+
+### 🔴 缺失的基礎功能
+
+1. **藍圖儀表板 (Dashboard)** - 進度總覽、KPI 統計
+2. **藍圖設定 (Settings)** - 藍圖配置、模組啟用/停用
+3. **版本管理 (Versions)** - 如需要版本控制功能
+4. **日誌模組 (Diary)** - 施工日誌
+5. **問題追蹤 (Issues)** - 問題登記與追蹤
+6. **檔案管理 (Files)** - 藍圖檔案列表
+7. **活動時間軸 (Activity)** - 操作記錄、變更歷史
 
 ---
 
@@ -23,7 +84,12 @@
 │   ✅ 資料隔離系統 (RLS)                       ███████████░ 85%  │
 ├────────────────────────────────────────────────────────────────┤
 │ 容器層 - 骨架級別基礎設施 (Container Layer - Infrastructure)    │
-│   ✅ 藍圖系統                                 ████████████ 完成 │
+│   🔶 藍圖系統                                 ████████░░░░ 70%  │
+│   │   ├─ 藍圖列表/建立                       ████████████ 完成 │
+│   │   ├─ 藍圖概覽                            ██████░░░░░░ 50%  │
+│   │   ├─ 藍圖儀表板                          ░░░░░░░░░░░░ 0%   │
+│   │   ├─ 藍圖設定                            ░░░░░░░░░░░░ 0%   │
+│   │   └─ 菜單/導航整合                       ████░░░░░░░░ 40%  │
 │   ✅ 藍圖成員管理                             ████████████ 完成 │
 │   ✅ 權限控制 (RBAC)                          ████████████ 完成 │
 │   │   ├─ PermissionService                   ████████████ 完成 │
@@ -63,7 +129,7 @@
 │   🔶 生命週期管理 (Lifecycle Management)      ████░░░░░░░░ 40%  │
 ├────────────────────────────────────────────────────────────────┤
 │ 業務層 (Business Layer)                                         │
-│   ✅ 任務管理 (Task Module)                   ██████████░░ 85%  │
+│   🔶 任務管理 (Task Module)                   ██████████░░ 85%  │
 │   │   ├─ TaskRepository                      ████████████ 完成 │
 │   │   ├─ TaskService                         ████████████ 完成 │
 │   │   ├─ TasksComponent                      ████████████ 完成 │
@@ -73,10 +139,15 @@
 │   │   ├─ 任務附件管理                        ░░░░░░░░░░░░ 0%   │
 │   │   ├─ 任務歷史記錄                        ░░░░░░░░░░░░ 0%   │
 │   │   └─ 時間追蹤                            ░░░░░░░░░░░░ 0%   │
-│   ✅ 財務管理 (Financial Module)              ████████░░░░ 70%  │
+│   🔶 財務管理 (Financial Module)              ████████░░░░ 75%  │
 │   │   ├─ FinancialRepository                 ████████████ 完成 │
 │   │   ├─ FinancialService                    ████████████ 完成 │
-│   │   └─ UI 元件                             ██████░░░░░░ 50%  │
+│   │   ├─ 財務概覽頁面                        ████████████ 完成 │
+│   │   ├─ 合約管理 (完整 CRUD)                ████████████ 完成 │
+│   │   ├─ 費用管理 (完整 CRUD)                ████████████ 完成 │
+│   │   ├─ 請款管理 (完整 CRUD)                ████████████ 完成 │
+│   │   ├─ 付款紀錄 (完整 CRUD)                ████████████ 完成 │
+│   │   └─ 概覽頁財務入口按鈕                  ░░░░░░░░░░░░ 0%   │
 │   🔶 日誌管理 (Diary Module)                  ██░░░░░░░░░░ 15%  │
 │   │   ├─ 資料表設計                          ████████████ 完成 │
 │   │   ├─ DiaryRepository                     ░░░░░░░░░░░░ 0%   │
@@ -96,6 +167,52 @@
   ⭐⭐⭐⭐ = 骨架級別高優先級
 ```
 
+### 🔴 立即待辦：藍圖內部功能整合
+
+根據 2025-12-04 分析，以下為藍圖功能的優先修復項目：
+
+#### 第一優先：概覽頁面導航整合 (1-2 天)
+
+將任務管理、成員管理整合到概覽頁面的 Tab 導航中，並增加財務模組入口按鈕：
+
+```typescript
+// 建議的 Tab 結構
+<nz-tabset>
+  <nz-tab nzTitle="概覽">...</nz-tab>        // 現有
+  <nz-tab nzTitle="任務管理">...</nz-tab>     // 嵌入 TasksComponent
+  <nz-tab nzTitle="成員管理">...</nz-tab>     // 嵌入 MembersComponent  
+  <nz-tab nzTitle="財務">...</nz-tab>         // 增加入口按鈕
+  <nz-tab nzTitle="活動">...</nz-tab>         // 需實作活動時間軸
+</nz-tabset>
+```
+
+#### 第二優先：菜單配置修正 (0.5 天)
+
+更新 `src/assets/tmp/app-data.json` 中的藍圖菜單配置：
+
+```diff
+- "/blueprint/{blueprintId}/dashboard"     → 移除或建立頁面
+- "/blueprint/{blueprintId}/editor"        → 移除
+- "/blueprint/{blueprintId}/versions"      → 移除
+- "/blueprint/{blueprintId}/collaborators" → 改為 "/blueprint/{blueprintId}/members"
+- "/blueprint/{blueprintId}/settings"      → 建立藍圖設定頁面
+```
+
+#### 第三優先：活動時間軸 (3-5 天)
+
+1. 建立 `AuditLogRepository` 和 `AuditLogService`
+2. 在概覽頁面的「活動」Tab 中顯示操作歷史
+3. 整合 EventBusService 自動記錄變更
+
+#### 第四優先：藍圖設定頁面 (2-3 天)
+
+1. 建立 `/blueprint/:id/settings` 路由
+2. 實作藍圖編輯表單
+3. 實作模組啟用/停用功能
+4. 實作藍圖刪除/封存功能
+
+---
+
 ### 🎉 最新完成進度（重大里程碑）
 
 以下骨架級別基礎設施已完成，為後續業務模組開發奠定基礎：
@@ -106,9 +223,9 @@
 | **✨ 檔案管理基礎** | FileRepository + FileService + 類型定義 | ✅ 完成 |
 | **✨ 通知中心** | NotificationRepository + NotificationService + UI 元件 + Realtime | ✅ 完成 |
 | **✨ 權限指令** | *hasPermission + *hasRole + *isOwner Directives | ✅ 完成 |
-| **任務管理** | TaskRepository + TaskService + 完整 UI | ✅ 85% |
-| **藍圖管理** | BlueprintRepository + BlueprintService 完整實作 | ✅ 完成 |
-| **財務管理** | FinancialRepository + FinancialService 完整實作 | ✅ 70% |
+| **任務管理** | TaskRepository + TaskService + 完整 UI | 🔶 85% |
+| **藍圖管理** | BlueprintRepository + BlueprintService 完整實作 | 🔶 70% |
+| **財務管理** | FinancialRepository + FinancialService + 完整 CRUD UI | 🔶 75% |
 | **藍圖成員** | BlueprintMemberRepository 完整實作 | ✅ 完成 |
 | **搜尋引擎** | SearchRepository + SearchService + HeaderSearchComponent | ✅ 完成 |
 
