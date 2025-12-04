@@ -196,25 +196,28 @@ invalid input value for enum public.blueprint_business_role: "site_supervisor"
 
 ### 根本原因分析
 `blueprint_business_role` 枚舉定義不一致：
-- **遷移文件** (`20241201000003_create_custom_types.sql`) 定義了 12 個值：`project_manager`, `site_director`, `supervisor`, `inspector`, `contractor`, `subcontractor`, `consultant`, `engineer`, `safety_officer`, `quality_control`, `observer`, `guest`
+- **遷移文件** (`20241201000003_create_custom_types.sql`) 已更新為正確的 8 個值
 - **RBAC 預設角色** (`20241201001000_create_rbac_default_roles.sql`) 使用：`project_manager`, `site_director`, `site_supervisor`, `worker`, `qa_staff`, `safety_health`, `finance`, `observer`
 - **備份文件** (`db-backup/seed.sql`) 使用正確的 8 個值
 
+**問題根因：** 當數據庫中已存在舊版本的 `blueprint_business_role` enum 時，遷移使用的 `EXCEPTION WHEN duplicate_object THEN NULL;` 語法會跳過整個創建過程，導致新的 enum 值無法被添加。
+
 ### 解決方案
-更新 `migrations/20241201000003_create_custom_types.sql` 中的 `blueprint_business_role` 枚舉定義，使其與 RBAC 預設角色和前端代碼一致：
-```sql
-CREATE TYPE blueprint_business_role AS ENUM (
-  'project_manager',   -- 專案經理
-  'site_director',     -- 工地主任
-  'site_supervisor',   -- 現場監督
-  'worker',            -- 施工人員
-  'qa_staff',          -- 品管人員
-  'safety_health',     -- 公共安全衛生
-  'finance',           -- 財務
-  'observer'           -- 觀察者
-);
-```
+新增遷移文件 `20241205000000_fix_blueprint_business_role_enum.sql`：
+1. 使用 `ALTER TYPE ... ADD VALUE IF NOT EXISTS` 添加可能缺失的 enum 值
+2. 驗證所有必要的 enum 值都存在
+3. 添加詳細的文檔註解
+
+這個修復遷移會安全地添加以下 enum 值（如果缺失）：
+- `project_manager` (專案經理)
+- `site_director` (工地主任)
+- `site_supervisor` (現場監督)
+- `worker` (施工人員)
+- `qa_staff` (品管人員)
+- `safety_health` (公共安全衛生)
+- `finance` (財務)
+- `observer` (觀察者)
 
 ---
 
-**最後更新：** 2024-12-04
+**最後更新：** 2024-12-05
