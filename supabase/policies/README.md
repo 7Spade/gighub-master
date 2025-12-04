@@ -16,13 +16,13 @@
 | accounts | 自己 | 自己 | 自己 | - |
 | organizations | 成員 | 認證 | owner/admin | owner |
 | organization_members | 成員 | admin | admin | admin |
-| teams | 組織成員 | admin | admin/leader | admin |
+| teams | 組織成員 | owner/admin | admin/leader | admin |
 | team_members | 組織成員 | admin/leader | admin/leader | admin/leader |
 
 ### Blueprint Tables
 | 表格 | SELECT | INSERT | UPDATE | DELETE |
 |------|--------|--------|--------|--------|
-| blueprints | 存取權 | API函數 | owner | owner |
+| blueprints | 存取權 | 擁有者/組織admin | owner | owner |
 | blueprint_members | 存取權 | owner/maintainer | owner/maintainer | owner/maintainer |
 | blueprint_roles | 存取權 | owner/maintainer | owner/maintainer | owner/maintainer |
 | blueprint_team_roles | 存取權 | owner | owner | owner |
