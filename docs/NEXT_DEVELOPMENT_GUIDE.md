@@ -2,36 +2,36 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（藍圖內部功能分析更新）
+**更新日期**: 2025-12-04（藍圖 UI 整合完成更新）
 
 ---
 
-## 🚨 藍圖內部功能現況分析（2025-12-04 更新）
+## ✅ 藍圖內部功能現況分析（2025-12-04 已完成整合）
 
 ### 藍圖列表 (Blueprint List)
 - ✅ 藍圖卡片列表顯示 - 正常顯示
 - ✅ 建立藍圖功能 - 模態框可用
 - ✅ 進入藍圖詳情 - 點擊卡片可進入
 
-### 藍圖詳情頁面 (Blueprint Detail)
+### 藍圖詳情頁面 (Blueprint Detail) - ✅ 已完成 UI 整合
 
-#### 當前頁面結構
+#### 當前頁面結構（已更新）
 ```
-/blueprint/:id/overview    ← 概覽頁面（有 Tabs: 概覽, 財務, 活動）
-/blueprint/:id/tasks       ← 任務管理（獨立頁面，需透過按鈕導航）
-/blueprint/:id/members     ← 成員管理（獨立頁面，需透過按鈕導航）
+/blueprint/:id/overview    ← 概覽頁面（Tabs: 概覽, 任務管理, 成員管理, 財務, 活動）
+/blueprint/:id/tasks       ← 任務管理（完整視圖：樹狀/表格/看板）
+/blueprint/:id/members     ← 成員管理（完整視圖）
 /blueprint/:id/financial/* ← 財務模組（獨立子路由）
 ```
 
-#### 問題識別
+#### ✅ 已完成的整合
 
-| 功能區塊 | 現況 | 問題描述 |
+| 功能區塊 | 現況 | 完成內容 |
 |---------|------|---------|
-| **概覽 (Overview Tab)** | 🔶 50% | 基本資訊顯示完成，但缺少快捷操作按鈕、進度統計、模組卡片導航 |
-| **財務 (Financial Tab)** | 🔶 40% | 財務概覽表格顯示正常，但缺少「新增合約」「管理費用」等操作按鈕入口 |
-| **活動 (Activity Tab)** | 🔴 0% | 顯示「暫無活動記錄」，需整合審計日誌或活動時間軸 |
-| **任務管理入口** | 🔶 存在 | 需點擊 Header 按鈕進入，不在 Tab 導航中 |
-| **成員管理入口** | 🔶 存在 | 需點擊 Header 按鈕進入，不在 Tab 導航中 |
+| **概覽 (Overview Tab)** | ✅ 100% | 基本資訊 + 快捷導航卡片（任務/成員/財務） |
+| **任務管理 Tab** | ✅ 100% | 整合到 Tab 中，提供完整視圖入口 |
+| **成員管理 Tab** | ✅ 100% | 整合到 Tab 中，顯示成員預覽和完整視圖入口 |
+| **財務 Tab** | ✅ 100% | 新增操作按鈕（合約/費用/請款/付款管理入口） |
+| **活動 Tab** | 🔶 待實作 | 顯示「活動時間軸功能即將推出」提示 |
 
 #### 財務模組子頁面
 ```
@@ -42,28 +42,24 @@
 /blueprint/:id/financial/payments          ✅ 付款紀錄 - 完成（完整 CRUD）
 ```
 
-#### 菜單配置問題
+#### ✅ 菜單配置已修正
 
-`app-data.json` 中的藍圖菜單配置與實際路由不匹配：
+`app-data.json` 中的藍圖菜單配置已更新為實際可用路由：
 
-| 菜單配置路徑 | 實際路由 | 狀態 |
-|-------------|---------|------|
-| `/blueprint/{blueprintId}/dashboard` | 不存在 | ❌ 需移除或建立 |
-| `/blueprint/{blueprintId}/overview` | ✅ 存在 | ✅ 正確 |
-| `/blueprint/{blueprintId}/editor` | 不存在 | ❌ 需移除或建立 |
-| `/blueprint/{blueprintId}/versions` | 不存在 | ❌ 需移除或建立 |
-| `/blueprint/{blueprintId}/collaborators` | `/members` | ⚠️ 路徑不匹配 |
-| `/blueprint/{blueprintId}/settings` | 不存在 | ❌ 需建立 |
+| 菜單項目 | 路由 | 狀態 |
+|---------|------|------|
+| 藍圖概覽 | `/blueprint/{blueprintId}/overview` | ✅ 正確 |
+| 任務管理 | `/blueprint/{blueprintId}/tasks` | ✅ 正確 |
+| 成員管理 | `/blueprint/{blueprintId}/members` | ✅ 正確 |
+| 財務管理 | `/blueprint/{blueprintId}/financial/overview` | ✅ 正確 |
 
-### 🔴 缺失的基礎功能
+### 🔴 待實作的基礎功能
 
-1. **藍圖儀表板 (Dashboard)** - 進度總覽、KPI 統計
+1. **活動時間軸 (Activity)** - 操作記錄、變更歷史（需 AuditLog）
 2. **藍圖設定 (Settings)** - 藍圖配置、模組啟用/停用
-3. **版本管理 (Versions)** - 如需要版本控制功能
-4. **日誌模組 (Diary)** - 施工日誌
-5. **問題追蹤 (Issues)** - 問題登記與追蹤
-6. **檔案管理 (Files)** - 藍圖檔案列表
-7. **活動時間軸 (Activity)** - 操作記錄、變更歷史
+3. **日誌模組 (Diary)** - 施工日誌
+4. **問題追蹤 (Issues)** - 問題登記與追蹤
+5. **檔案管理 (Files)** - 藍圖檔案列表
 
 ---
 
@@ -84,12 +80,14 @@
 │   ✅ 資料隔離系統 (RLS)                       ███████████░ 85%  │
 ├────────────────────────────────────────────────────────────────┤
 │ 容器層 - 骨架級別基礎設施 (Container Layer - Infrastructure)    │
-│   🔶 藍圖系統                                 ████████░░░░ 70%  │
+│   ✅ 藍圖系統 ✨ UI整合完成                    ██████████░░ 85%  │
 │   │   ├─ 藍圖列表/建立                       ████████████ 完成 │
-│   │   ├─ 藍圖概覽                            ██████░░░░░░ 50%  │
-│   │   ├─ 藍圖儀表板                          ░░░░░░░░░░░░ 0%   │
-│   │   ├─ 藍圖設定                            ░░░░░░░░░░░░ 0%   │
-│   │   └─ 菜單/導航整合                       ████░░░░░░░░ 40%  │
+│   │   ├─ 藍圖概覽 (Tab 整合)                 ████████████ 完成 │
+│   │   ├─ 任務管理 Tab                        ████████████ 完成 │
+│   │   ├─ 成員管理 Tab                        ████████████ 完成 │
+│   │   ├─ 財務管理 Tab (含操作按鈕)           ████████████ 完成 │
+│   │   ├─ 活動時間軸 Tab                      🔶 待審計日誌  │
+│   │   └─ 菜單/導航配置                       ████████████ 完成 │
 │   ✅ 藍圖成員管理                             ████████████ 完成 │
 │   ✅ 權限控制 (RBAC)                          ████████████ 完成 │
 │   │   ├─ PermissionService                   ████████████ 完成 │
@@ -167,36 +165,40 @@
   ⭐⭐⭐⭐ = 骨架級別高優先級
 ```
 
-### 🔴 立即待辦：藍圖內部功能整合
+### ✅ 已完成：藍圖內部功能整合（2025-12-04）
 
-根據 2025-12-04 分析，以下為藍圖功能的優先修復項目：
+以下項目已於 2025-12-04 完成：
 
-#### 第一優先：概覽頁面導航整合 (1-2 天)
+#### ✅ 第一優先：概覽頁面導航整合
 
-將任務管理、成員管理整合到概覽頁面的 Tab 導航中，並增加財務模組入口按鈕：
+已將任務管理、成員管理整合到概覽頁面的 Tab 導航中，並增加財務模組入口按鈕：
 
 ```typescript
-// 建議的 Tab 結構
-<nz-tabset>
-  <nz-tab nzTitle="概覽">...</nz-tab>        // 現有
-  <nz-tab nzTitle="任務管理">...</nz-tab>     // 嵌入 TasksComponent
-  <nz-tab nzTitle="成員管理">...</nz-tab>     // 嵌入 MembersComponent  
-  <nz-tab nzTitle="財務">...</nz-tab>         // 增加入口按鈕
-  <nz-tab nzTitle="活動">...</nz-tab>         // 需實作活動時間軸
+// 已實作的 Tab 結構
+<nz-tabset [(nzSelectedIndex)]="selectedTabIndex">
+  <nz-tab nzTitle="概覽">...</nz-tab>        // ✅ 快捷導航卡片
+  <nz-tab nzTitle="任務管理">...</nz-tab>     // ✅ 任務預覽 + 完整視圖入口
+  <nz-tab nzTitle="成員管理">...</nz-tab>     // ✅ 成員預覽 + 完整視圖入口  
+  <nz-tab nzTitle="財務">...</nz-tab>         // ✅ 操作按鈕 + 財務概覽
+  <nz-tab nzTitle="活動">...</nz-tab>         // 🔶 待實作審計日誌
 </nz-tabset>
 ```
 
-#### 第二優先：菜單配置修正 (0.5 天)
+#### ✅ 第二優先：菜單配置修正
 
-更新 `src/assets/tmp/app-data.json` 中的藍圖菜單配置：
+已更新 `src/assets/tmp/app-data.json` 中的藍圖菜單配置：
 
-```diff
-- "/blueprint/{blueprintId}/dashboard"     → 移除或建立頁面
-- "/blueprint/{blueprintId}/editor"        → 移除
-- "/blueprint/{blueprintId}/versions"      → 移除
-- "/blueprint/{blueprintId}/collaborators" → 改為 "/blueprint/{blueprintId}/members"
-- "/blueprint/{blueprintId}/settings"      → 建立藍圖設定頁面
-```
+| 修改前 | 修改後 | 狀態 |
+|-------|-------|------|
+| `/blueprint/{blueprintId}/dashboard` | 移除 | ✅ |
+| `/blueprint/{blueprintId}/editor` | 移除 | ✅ |
+| `/blueprint/{blueprintId}/versions` | 移除 | ✅ |
+| `/blueprint/{blueprintId}/collaborators` | `/blueprint/{blueprintId}/members` | ✅ |
+| `/blueprint/{blueprintId}/settings` | 移除（待建立） | ✅ |
+| 新增 `任務管理` | `/blueprint/{blueprintId}/tasks` | ✅ |
+| 新增 `財務管理` | `/blueprint/{blueprintId}/financial/overview` | ✅ |
+
+### 🔴 待實作項目
 
 #### 第三優先：活動時間軸 (3-5 天)
 
@@ -219,6 +221,7 @@
 
 | 模組 | 完成項目 | 狀態 |
 |------|---------|------|
+| **✨ 藍圖 UI 整合** | 概覽 Tabs + 菜單配置 + 財務入口按鈕 | ✅ 完成 |
 | **✨ 事件總線系統** | EventBusService + 事件類型系統 + 事件工廠 | ✅ 完成 |
 | **✨ 檔案管理基礎** | FileRepository + FileService + 類型定義 | ✅ 完成 |
 | **✨ 通知中心** | NotificationRepository + NotificationService + UI 元件 + Realtime | ✅ 完成 |
