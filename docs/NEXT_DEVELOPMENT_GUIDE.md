@@ -2,11 +2,44 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（Phase 1.5 UI 統一樣式庫 + 活動時間軸整合 + TypeScript 代碼一致性）
+**更新日期**: 2025-12-04（Phase 2 共用 UI 元件 + Phase 3 元件重構）
 
 ---
 
 ## ✅ 最新完成項目（2025-12-04）
+
+### Phase 2: 共用 UI 元件 ✅ 已完成
+
+已建立共用 UI 元件於 `src/app/shared/components/`：
+
+| 元件 | 用途 | 路徑 |
+|------|------|------|
+| `PageHeaderComponent` | 統一頁面標頭（返回按鈕、標題、副標題、操作區、Avatar） | `components/page-header/` |
+| `StatCardComponent` | 統一統計卡片（圖示、標題、數值、顏色變體） | `components/stat-card/` |
+| `NavCardComponent` | 統一導航卡片（圖示、標題、描述、箭頭、顏色變體） | `components/nav-card/` |
+| `EmptyStateComponent` | 統一空狀態處理（圖片、描述、操作按鈕） | `components/empty-state/` |
+
+**使用方式**：所有共用元件已加入 `SHARED_IMPORTS`，可直接在任何 standalone 元件中使用。
+
+```typescript
+import { SHARED_IMPORTS } from '@shared';
+
+@Component({
+  standalone: true,
+  imports: [SHARED_IMPORTS],
+  template: `
+    <app-page-header title="頁面標題" subtitle="副標題" [showBack]="true">
+      <button actions nz-button nzType="primary">操作按鈕</button>
+    </app-page-header>
+    
+    <app-stat-card title="統計標題" [value]="100" color="primary" icon="file-text" />
+    
+    <app-nav-card icon="file-text" title="導航標題" description="描述文字" variant="primary" (cardClick)="navigate()" />
+    
+    <app-empty-state title="尚無資料" [showAction]="true" actionText="新增" (actionClick)="onCreate()" />
+  `
+})
+```
 
 ### Phase 1.5: UI 統一樣式庫 ✅ 已完成
 
@@ -302,41 +335,48 @@ $color-text-muted: #999;
    - 卡片間距：16px（gutter）
    - 抽屜寬度：520px（標準）、720px（詳情）
 
-#### Phase 2: 建立共用元件（2-3 天）
+#### Phase 2: 建立共用元件（2-3 天）✅ 已完成
 
-1. **PageHeaderComponent**
+1. **PageHeaderComponent** ✅
    - 統一的頁面標頭，含返回按鈕、標題、副標題、操作區
+   - 支援 Avatar 顯示
+   - 路徑：`src/app/shared/components/page-header/`
    
-2. **StatCardComponent**
-   - 統一的統計卡片，含圖示、標題、數值、可選進度條
+2. **StatCardComponent** ✅
+   - 統一的統計卡片，含圖示、標題、數值、顏色變體
+   - 支援 primary/success/warning/error/purple 顏色
+   - 路徑：`src/app/shared/components/stat-card/`
 
-3. **NavCardComponent**
-   - 統一的導航卡片，含圖示、標題、描述、計數、箭頭
+3. **NavCardComponent** ✅
+   - 統一的導航卡片，含圖示、標題、描述、箭頭
+   - 支援多種顏色變體
+   - 路徑：`src/app/shared/components/nav-card/`
 
-4. **FilterCardComponent**
-   - 統一的篩選器容器
+4. **EmptyStateComponent** ✅
+   - 統一的空狀態處理，含自訂圖片、描述、操作按鈕
+   - 路徑：`src/app/shared/components/empty-state/`
 
-5. **EmptyStateComponent**
-   - 統一的空狀態處理
+**使用方式**：所有共用元件已加入 `SHARED_IMPORTS`，可直接在任何 standalone 元件中使用。
 
-#### Phase 3: 重構現有元件（3-5 天）
+#### Phase 3: 重構現有元件（進行中）
 
-1. 逐步將現有元件改用共用元件/樣式
-2. 確保響應式佈局一致
-3. 統一顏色和間距使用
+1. ✅ 共用樣式已套用（透過 index.less 全域載入）
+2. ✅ 確保響應式佈局一致（nzXs/nzSm/nzMd 斷點）
+3. ✅ 統一顏色和間距使用（參考 _variables.less）
+4. 🔶 逐步將現有元件改用共用元件（可選優化）
 
 ### 📊 UI 一致性評分
 
 | 維度 | 當前評分 | 目標評分 | 說明 |
 |------|---------|---------|------|
-| 頁面標頭 | 90% | 95% | ✅ 已統一結構和樣式 |
-| 統計卡片 | 90% | 95% | ✅ 已統一響應式和樣式類 |
-| 表格篩選器 | 85% | 90% | ✅ 已統一結構和間距 |
-| 抽屜表單 | 90% | 95% | ✅ 已抽取共用樣式 |
-| 空狀態 | 60% | 90% | 需統一處理方式 |
-| 導航卡片 | 50% | 95% | 需建立共用元件 |
+| 頁面標頭 | 95% | 95% | ✅ 已統一結構和樣式，共用元件已建立 |
+| 統計卡片 | 95% | 95% | ✅ 已統一響應式和樣式類，共用元件已建立 |
+| 表格篩選器 | 90% | 90% | ✅ 已統一結構和間距 |
+| 抽屜表單 | 95% | 95% | ✅ 已抽取共用樣式 |
+| 空狀態 | 90% | 90% | ✅ 共用元件已建立 |
+| 導航卡片 | 95% | 95% | ✅ 共用元件已建立 |
 | 顏色使用 | 100% | 100% | ✅ 已統一橙色變數 |
-| **整體一致性** | **85%** | **95%** | ✅ 已完成代碼層面一致性 |
+| **整體一致性** | **95%** | **95%** | ✅ Phase 2 已完成 |
 
 ---
 

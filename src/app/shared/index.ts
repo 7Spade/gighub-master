@@ -1,7 +1,8 @@
 // Base Components
 export * from './base/base-context-aware.component';
 
-// Components
+// Shared UI Components
+export * from './components/index';
 
 // Directives
 export * from './directives/index';

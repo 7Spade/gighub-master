@@ -26,23 +26,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   template: `
     <div class="page-container">
       <!-- Header -->
-      <div class="page-header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>財務概覽</h3>
-            <span class="subtitle">Financial Overview - 預算與成本追蹤</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="default" (click)="refreshData()">
-            <span nz-icon nzType="reload"></span>
-            刷新
-          </button>
-        </div>
-      </div>
+      <app-page-header title="財務概覽" subtitle="Financial Overview - 預算與成本追蹤" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="default" (click)="refreshData()">
+          <span nz-icon nzType="reload"></span>
+          刷新
+        </button>
+      </app-page-header>
 
       <nz-spin [nzSpinning]="financialService.loading()">
         <!-- Summary Cards -->
@@ -261,40 +250,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     `
       .page-container {
         padding: 24px;
-      }
-
-      .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .header-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .back-button {
-        padding: 4px 8px;
-        color: #666;
-      }
-
-      .title-section h3 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-      }
-
-      .subtitle {
-        color: #666;
-        font-size: 14px;
-      }
-
-      .header-actions {
-        display: flex;
-        gap: 12px;
       }
 
       .stats-section {

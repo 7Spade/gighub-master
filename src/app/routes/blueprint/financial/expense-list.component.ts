@@ -29,23 +29,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   template: `
     <div class="page-container">
       <!-- Header -->
-      <div class="page-header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>費用管理</h3>
-            <span class="subtitle">Expense Management - 追蹤專案支出與成本</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="primary" (click)="openCreateDrawer()">
-            <span nz-icon nzType="plus"></span>
-            新增費用
-          </button>
-        </div>
-      </div>
+      <app-page-header title="費用管理" subtitle="Expense Management - 追蹤專案支出與成本" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="primary" (click)="openCreateDrawer()">
+          <span nz-icon nzType="plus"></span>
+          新增費用
+        </button>
+      </app-page-header>
 
       <!-- Statistics Cards -->
       <div nz-row [nzGutter]="16" class="stats-section">
@@ -56,7 +45,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic nzTitle="總支出金額" [nzValue]="totalAmount()" [nzValueStyle]="{ color: '#fa8c16' }" nzPrefix="$"></nz-statistic>
+            <nz-statistic nzTitle="總支出金額" [nzValue]="totalAmount()" [nzValueStyle]="{ color: '#faad14' }" nzPrefix="$"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">

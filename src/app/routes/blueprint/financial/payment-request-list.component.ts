@@ -29,23 +29,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   template: `
     <div class="page-container">
       <!-- Header -->
-      <div class="page-header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>請款管理</h3>
-            <span class="subtitle">Payment Request Management - 管理請款與審核流程</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="primary" (click)="openCreateDrawer()">
-            <span nz-icon nzType="plus"></span>
-            新增請款
-          </button>
-        </div>
-      </div>
+      <app-page-header title="請款管理" subtitle="Payment Request Management - 管理請款與審核流程" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="primary" (click)="openCreateDrawer()">
+          <span nz-icon nzType="plus"></span>
+          新增請款
+        </button>
+      </app-page-header>
 
       <!-- Statistics Cards -->
       <div nz-row [nzGutter]="16" class="stats-section">

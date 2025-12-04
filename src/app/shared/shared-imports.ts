@@ -10,6 +10,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { DatePipe, I18nPipe } from '@delon/theme';
 
 // ============================================
+// 共用 UI 元件（Shared UI Components）
+// ============================================
+import { EmptyStateComponent } from './components/empty-state/empty-state.component';
+import { NavCardComponent } from './components/nav-card/nav-card.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { StatCardComponent } from './components/stat-card/stat-card.component';
+// ============================================
 // 共享模块（Shared Modules）
 // ============================================
 import { HasPermissionDirective, HasRoleDirective, IsOwnerDirective } from './directives/permission.directive';
@@ -45,6 +52,12 @@ export const SHARED_IMPORTS = [
   HasPermissionDirective,
   HasRoleDirective,
   IsOwnerDirective,
+
+  // 共用 UI 元件
+  PageHeaderComponent,
+  StatCardComponent,
+  NavCardComponent,
+  EmptyStateComponent,
 
   // Delon 业务组件
   ...SHARED_DELON_MODULES,
