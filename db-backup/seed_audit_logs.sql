@@ -1,18 +1,5 @@
 -- Migration: Create Audit Logs Table
 -- Description: 審計日誌表 - 企業級不可變審計記錄
---
--- Prerequisites:
---   先執行 seed.sql (建立基礎表：organizations, blueprints, accounts)
---
--- Run Order (執行順序):
---   1. seed.sql (必須先執行 - 建立基礎架構)
---   2. seed_diaries.sql
---   3. seed_qc_inspections.sql
---   4. seed_acceptances.sql
---   5. seed_problems.sql
---   6. seed_audit_logs.sql (本檔案)
---   7. seed_search_history.sql
---
 -- Features:
 --   - Append-only immutable records
 --   - Comprehensive operation tracking
@@ -24,7 +11,6 @@
 -- ============================================================================
 
 -- 審計動作類型
-DROP TYPE IF EXISTS audit_action CASCADE;
 CREATE TYPE audit_action AS ENUM (
   'create',
   'update',
@@ -51,7 +37,6 @@ CREATE TYPE audit_action AS ENUM (
 );
 
 -- 審計嚴重程度
-DROP TYPE IF EXISTS audit_severity CASCADE;
 CREATE TYPE audit_severity AS ENUM (
   'info',
   'warning',
@@ -60,7 +45,6 @@ CREATE TYPE audit_severity AS ENUM (
 );
 
 -- 審計實體類型
-DROP TYPE IF EXISTS audit_entity_type CASCADE;
 CREATE TYPE audit_entity_type AS ENUM (
   'account',
   'organization',
@@ -81,7 +65,6 @@ CREATE TYPE audit_entity_type AS ENUM (
 );
 
 -- 審計操作者類型
-DROP TYPE IF EXISTS audit_actor_type CASCADE;
 CREATE TYPE audit_actor_type AS ENUM (
   'user',
   'system',

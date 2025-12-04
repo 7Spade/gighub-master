@@ -7,6 +7,9 @@
  * Manages the current workspace context (user, organization, team)
  * and provides reactive state for context switching.
  *
+ * Note: Menu updates are handled by LayoutBasicComponent via effect.
+ * This service only manages context state, not menu state.
+ *
  * @module shared/services/account
  */
 
@@ -18,7 +21,6 @@ import { AccountService } from './account.service';
 import { OrganizationService } from './organization.service';
 import { TeamService } from './team.service';
 import { OrganizationBusinessModel } from '../../models/account';
-import { MenuManagementService, ContextParams } from '../menu/menu-management.service';
 
 const STORAGE_KEY = 'workspace_context';
 
@@ -30,7 +32,6 @@ export class WorkspaceContextService {
   private readonly accountService = inject(AccountService);
   private readonly organizationService = inject(OrganizationService);
   private readonly teamService = inject(TeamService);
-  private readonly menuManagementService = inject(MenuManagementService);
 
   // Convert Supabase auth user observable to a reactive signal
   private readonly supabaseUser = toSignal(this.supabaseAuth.currentUser$, { initialValue: null });
@@ -250,6 +251,9 @@ export class WorkspaceContextService {
   /**
    * 切換上下文
    * Switch context
+   *
+   * Note: Menu updates are handled reactively by LayoutBasicComponent via effect.
+   * This method only updates context state and persists it to localStorage.
    */
   switchContext(type: ContextType, id: string | null): void {
     console.log('[WorkspaceContextService] 🔀 Switching context:', { type, id });
@@ -257,34 +261,8 @@ export class WorkspaceContextService {
     this.contextTypeState.set(type);
     this.contextIdState.set(id);
     this.persistContext();
-    this.updateMenu(type, id);
     this.switchingState.set(false);
     console.log('[WorkspaceContextService] ✅ Context switched successfully');
-  }
-
-  /**
-   * 更新菜單
-   * Update menu based on context
-   */
-  private updateMenu(contextType: ContextType, contextId: string | null): void {
-    const params: ContextParams = {
-      userId: this.currentUser()?.id
-    };
-
-    // 根據上下文類型設置對應的 ID
-    switch (contextType) {
-      case ContextType.ORGANIZATION:
-        params.organizationId = contextId ?? undefined;
-        break;
-      case ContextType.TEAM:
-        params.teamId = contextId ?? undefined;
-        break;
-      case ContextType.BOT:
-        params.botId = contextId ?? undefined;
-        break;
-    }
-
-    this.menuManagementService.updateMenu(contextType, params);
   }
 
   // === 持久化 Persistence ===

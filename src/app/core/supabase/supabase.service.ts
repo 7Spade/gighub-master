@@ -24,10 +24,29 @@ export class SupabaseService {
       );
       // Create a placeholder client with empty values to prevent app crash
       // The app will show appropriate error messages when Supabase operations are attempted
-      this.supabase = createClient('https://placeholder.supabase.co', 'placeholder-key');
+      this.supabase = createClient('https://placeholder.supabase.co', 'placeholder-key', {
+        auth: {
+          persistSession: false
+        }
+      });
       this._isConfigured = false;
     } else {
-      this.supabase = createClient(url, anonKey);
+      // Configure Supabase client with optimized auth settings
+      // - storageKey: Use a unique key to avoid conflicts between tabs/windows
+      // - lock: Custom lock function to prevent NavigatorLockAcquireTimeoutError
+      this.supabase = createClient(url, anonKey, {
+        auth: {
+          storageKey: 'gighub-auth-token',
+          // Custom lock function that executes immediately without using Navigator Locks API
+          // This prevents NavigatorLockAcquireTimeoutError in multi-tab scenarios
+          lock: async <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
+            return await fn();
+          },
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
       this._isConfigured = true;
     }
 

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentProviders, Injectable, Provider, inject, provideAppInitializer } from '@angular/core';
 import { Router } from '@angular/router';
-import { ContextType } from '@core';
 import { ACLService } from '@delon/acl';
 import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { MenuManagementService } from '@shared';
@@ -77,17 +76,13 @@ export class StartupService {
         // ACL：设置权限为全量
         this.aclService.setFull(true);
 
-        // 載入菜單配置（MenuManagementService 會處理菜單更新）
-        this.menuManagementService
-          .loadConfig()
-          .then(() => {
-            // 初始化時載入預設菜單（USER 菜單）
-            // 注意：LayoutBasicComponent 的 effect 會監聽上下文變化並自動更新菜單
-            this.menuManagementService.updateMenu(ContextType.USER);
-          })
-          .catch(error => {
-            console.error('[StartupService] Failed to load menu config:', error);
-          });
+        // 載入菜單配置（僅載入配置，不觸發菜單更新）
+        // Load menu config only - menu updates are handled by LayoutBasicComponent effect
+        // 根據 docs/analysis-menu-infinite-loop-detailed.md 分析：
+        // 移除此處的 updateMenu 調用，避免與 LayoutBasicComponent 的 effect 形成重複更新
+        this.menuManagementService.loadConfig().catch(error => {
+          console.error('[StartupService] Failed to load menu config:', error);
+        });
 
         // 向後兼容：如果使用舊的 menu 配置
         if (appData.menu && !appData.menus) {

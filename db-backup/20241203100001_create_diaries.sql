@@ -1,84 +1,55 @@
--- Migration: Create Diaries Table (Extended)
--- Description: 施工日誌表擴展 - 現場證據紀錄系統
--- 
--- 此遷移腳本設計為完全冪等 (idempotent)，可以安全地在 Supabase SQL Editor 中直接執行。
--- 與 seed.sql 兼容 - 所有元素都使用 IF NOT EXISTS 或條件檢查。
---
+-- Migration: Create Diaries Table
+-- Description: 施工日誌表 - 現場證據紀錄系統
 -- Features:
---   - Daily work logging with approval workflow
+--   - Daily work logging
 --   - Weather and environment tracking
 --   - Worker attendance records
+--   - Approval workflow support
 --   - Attachment management
---   - Work item entries with task linking
---
--- Based on Context7 Supabase Documentation Best Practices:
---   - Use DO $$ blocks with pg_type/pg_class checks for conditional creation
---   - Use CREATE INDEX IF NOT EXISTS for idempotent index creation
---   - Drop and recreate policies to avoid conflicts
---   - Use (select auth.uid()) pattern for optimized RLS performance
---   - Use TO authenticated clause for all RLS policies
 
 -- ============================================================================
--- Enums (with conditional creation to avoid conflicts with seed.sql)
+-- Enums
 -- ============================================================================
 
--- 天氣類型 - Only create if not exists (may already exist in seed.sql)
--- Note: PostgreSQL doesn't support CREATE TYPE IF NOT EXISTS, so we use DO block
-DO $$
-BEGIN
-  -- Check if weather_type already exists in pg_type
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'weather_type') THEN
-    CREATE TYPE weather_type AS ENUM (
-      'sunny',
-      'cloudy',
-      'overcast',
-      'light_rain',
-      'heavy_rain',
-      'thunderstorm',
-      'foggy',
-      'windy',
-      'snow',
-      'other'
-    );
-  END IF;
-END $$;
+-- 天氣類型
+CREATE TYPE weather_type AS ENUM (
+  'sunny',
+  'cloudy',
+  'overcast',
+  'light_rain',
+  'heavy_rain',
+  'thunderstorm',
+  'foggy',
+  'windy',
+  'snow',
+  'other'
+);
 
 -- 日誌狀態
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'diary_status') THEN
-    CREATE TYPE diary_status AS ENUM (
-      'draft',
-      'submitted',
-      'approved',
-      'rejected',
-      'archived'
-    );
-  END IF;
-END $$;
+CREATE TYPE diary_status AS ENUM (
+  'draft',
+  'submitted',
+  'approved',
+  'rejected',
+  'archived'
+);
 
 -- 工項類型
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'work_item_type') THEN
-    CREATE TYPE work_item_type AS ENUM (
-      'construction',
-      'inspection',
-      'material',
-      'equipment',
-      'safety',
-      'quality',
-      'meeting',
-      'other'
-    );
-  END IF;
-END $$;
+CREATE TYPE work_item_type AS ENUM (
+  'construction',
+  'inspection',
+  'material',
+  'equipment',
+  'safety',
+  'quality',
+  'meeting',
+  'other'
+);
 
 -- ============================================================================
--- Table: diaries (Enhanced with new columns if migrating from seed.sql)
+-- Table: diaries
 -- ============================================================================
 
--- Create table if not exists
 CREATE TABLE IF NOT EXISTS diaries (
   -- 主鍵
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -96,7 +67,7 @@ CREATE TABLE IF NOT EXISTS diaries (
   summary TEXT,
   notes TEXT,
   
-  -- 狀態 (使用 diary_status enum，如果表已存在可能需要調整)
+  -- 狀態
   status diary_status DEFAULT 'draft' NOT NULL,
   
   -- 審核資訊
@@ -107,21 +78,11 @@ CREATE TABLE IF NOT EXISTS diaries (
   -- 時間戳
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  deleted_at TIMESTAMPTZ
+  deleted_at TIMESTAMPTZ,
+  
+  -- 唯一約束：每個藍圖每天只能有一個日誌
+  CONSTRAINT uq_diary_blueprint_date UNIQUE (blueprint_id, work_date)
 );
-
--- Add unique constraint if not exists (uses DO block to check)
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint 
-    WHERE conname = 'uq_diary_blueprint_date'
-  ) THEN
-    ALTER TABLE diaries ADD CONSTRAINT uq_diary_blueprint_date UNIQUE (blueprint_id, work_date);
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
 
 -- ============================================================================
 -- Table: diary_attachments
@@ -181,63 +142,36 @@ CREATE TABLE IF NOT EXISTS diary_entries (
 );
 
 -- ============================================================================
--- Indexes (all with IF NOT EXISTS for idempotency)
+-- Indexes
 -- ============================================================================
 
 -- 日誌查詢
-CREATE INDEX IF NOT EXISTS idx_diaries_blueprint_id ON diaries(blueprint_id);
-CREATE INDEX IF NOT EXISTS idx_diaries_work_date ON diaries(work_date DESC);
-CREATE INDEX IF NOT EXISTS idx_diaries_status ON diaries(status);
-CREATE INDEX IF NOT EXISTS idx_diaries_created_by ON diaries(created_by);
+CREATE INDEX idx_diaries_blueprint_id ON diaries(blueprint_id);
+CREATE INDEX idx_diaries_work_date ON diaries(work_date DESC);
+CREATE INDEX idx_diaries_status ON diaries(status);
+CREATE INDEX idx_diaries_created_by ON diaries(created_by);
 
 -- 複合索引
-CREATE INDEX IF NOT EXISTS idx_diaries_blueprint_date ON diaries(blueprint_id, work_date DESC);
-CREATE INDEX IF NOT EXISTS idx_diaries_blueprint_status ON diaries(blueprint_id, status);
+CREATE INDEX idx_diaries_blueprint_date ON diaries(blueprint_id, work_date DESC);
+CREATE INDEX idx_diaries_blueprint_status ON diaries(blueprint_id, status);
 
 -- 軟刪除過濾
-CREATE INDEX IF NOT EXISTS idx_diaries_not_deleted ON diaries(blueprint_id, work_date) WHERE deleted_at IS NULL;
+CREATE INDEX idx_diaries_not_deleted ON diaries(blueprint_id, work_date) WHERE deleted_at IS NULL;
 
 -- 附件查詢
-CREATE INDEX IF NOT EXISTS idx_diary_attachments_diary_id ON diary_attachments(diary_id);
+CREATE INDEX idx_diary_attachments_diary_id ON diary_attachments(diary_id);
 
 -- 工項查詢
-CREATE INDEX IF NOT EXISTS idx_diary_entries_diary_id ON diary_entries(diary_id);
-CREATE INDEX IF NOT EXISTS idx_diary_entries_task_id ON diary_entries(task_id) WHERE task_id IS NOT NULL;
+CREATE INDEX idx_diary_entries_diary_id ON diary_entries(diary_id);
+CREATE INDEX idx_diary_entries_task_id ON diary_entries(task_id) WHERE task_id IS NOT NULL;
 
 -- ============================================================================
--- RLS Policies (Drop and recreate pattern for idempotency)
--- 
--- Following Supabase best practices from Context7:
--- - Use TO authenticated clause for all policies
--- - Use (select auth.uid()) pattern for optimized performance
--- - Each policy handles single operation (SELECT, INSERT, UPDATE, DELETE)
+-- RLS Policies
 -- ============================================================================
 
 ALTER TABLE diaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE diary_attachments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE diary_entries ENABLE ROW LEVEL SECURITY;
-
--- Drop existing policies if they exist (for idempotency)
-DROP POLICY IF EXISTS diaries_select_policy ON diaries;
-DROP POLICY IF EXISTS diaries_insert_policy ON diaries;
-DROP POLICY IF EXISTS diaries_update_policy ON diaries;
-DROP POLICY IF EXISTS diaries_delete_policy ON diaries;
-DROP POLICY IF EXISTS diaries_select ON diaries;
-DROP POLICY IF EXISTS diaries_insert ON diaries;
-DROP POLICY IF EXISTS diaries_update ON diaries;
-DROP POLICY IF EXISTS diaries_delete ON diaries;
-
-DROP POLICY IF EXISTS diary_attachments_select_policy ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_insert_policy ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_delete_policy ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_select ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_insert ON diary_attachments;
-DROP POLICY IF EXISTS diary_attachments_delete ON diary_attachments;
-
-DROP POLICY IF EXISTS diary_entries_select_policy ON diary_entries;
-DROP POLICY IF EXISTS diary_entries_insert_policy ON diary_entries;
-DROP POLICY IF EXISTS diary_entries_update_policy ON diary_entries;
-DROP POLICY IF EXISTS diary_entries_delete_policy ON diary_entries;
 
 -- 日誌查看權限
 CREATE POLICY diaries_select_policy ON diaries
@@ -361,10 +295,10 @@ CREATE POLICY diary_entries_delete_policy ON diary_entries
   );
 
 -- ============================================================================
--- Triggers (Drop and recreate for idempotency)
+-- Triggers
 -- ============================================================================
 
--- 更新時間觸發器函數
+-- 更新時間觸發器
 CREATE OR REPLACE FUNCTION update_diary_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -377,11 +311,6 @@ BEGIN
 END;
 $$;
 
--- Drop existing triggers if they exist
-DROP TRIGGER IF EXISTS trg_diaries_updated_at ON diaries;
-DROP TRIGGER IF EXISTS trg_diary_entries_updated_at ON diary_entries;
-
--- Recreate triggers
 CREATE TRIGGER trg_diaries_updated_at
   BEFORE UPDATE ON diaries
   FOR EACH ROW

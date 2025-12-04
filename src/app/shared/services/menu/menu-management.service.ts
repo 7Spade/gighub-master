@@ -58,6 +58,10 @@ export class MenuManagementService {
   private readonly configState = signal<MenuConfig | null>(null);
   private readonly loadingState = signal<boolean>(false);
 
+  // 防重複更新機制 - 記錄上次更新的上下文
+  // Duplicate prevention - track last menu context
+  private lastMenuContext?: { type: ContextType; paramsHash: string };
+
   readonly config = this.configState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
 
@@ -81,15 +85,32 @@ export class MenuManagementService {
 
   /**
    * 更新菜單
+   * Update menu with duplicate prevention
+   *
+   * 根據 docs/analysis-menu-infinite-loop-detailed.md 方案2：
+   * 添加防重複更新機制，避免相同上下文重複觸發菜單更新
    */
   updateMenu(contextType: ContextType, params?: ContextParams): void {
     const config = this.configState();
     if (!config) return;
 
+    // 計算參數雜湊，用於比較是否相同
+    const paramsHash = params ? JSON.stringify(params) : '';
+
+    // 檢查是否與上次相同，避免重複更新
+    if (this.lastMenuContext?.type === contextType && this.lastMenuContext?.paramsHash === paramsHash) {
+      console.log('[MenuManagementService] Menu unchanged, skipping update:', { contextType });
+      return;
+    }
+
     const baseMenu = this.getBaseMenu(contextType, config);
     const menu = this.processParams(baseMenu, params);
 
     this.menuService.add(menu);
+
+    // 記錄本次更新的上下文
+    this.lastMenuContext = { type: contextType, paramsHash };
+    console.log('[MenuManagementService] Menu updated:', { contextType, hasParams: !!params });
   }
 
   /**

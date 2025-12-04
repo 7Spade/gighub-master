@@ -8,7 +8,15 @@ import {
   InfoOutline,
   LinkOutline,
   ProfileOutline,
-  ReloadOutline
+  ReloadOutline,
+  // 新增缺少的圖標
+  UnorderedListOutline,
+  LineChartOutline,
+  BarChartOutline,
+  FormOutline,
+  CameraOutline,
+  ProjectOutline,
+  UsergroupAddOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
@@ -19,5 +27,13 @@ export const ICONS = [
   InfoOutline,
   LinkOutline,
   ProfileOutline,
-  ReloadOutline // 刷新按鈕圖示 (header-task)
+  ReloadOutline, // 刷新按鈕圖示 (header-task)
+  // 新增缺少的圖標註冊
+  UnorderedListOutline, // 待辦列表圖示 (unordered-list)
+  LineChartOutline, // 折線圖圖示 (line-chart)
+  BarChartOutline, // 柱狀圖圖示 (bar-chart)
+  FormOutline, // 表單圖示 (form)
+  CameraOutline, // 相機圖示 (camera)
+  ProjectOutline, // 專案圖示 (project)
+  UsergroupAddOutline // 用戶組添加圖示 (usergroup-add)
 ];
