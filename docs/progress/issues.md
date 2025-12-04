@@ -1,26 +1,35 @@
 # ⚠️ 已知問題清單
 
 > 最後更新: 2025-12-04  
-> 總計問題數量: 28 項
+> 總計問題數量: 31 項  
+> 總預計修復工時: 524h
 
 ---
 
 ## 📊 問題總覽
 
-| 嚴重程度   | 數量 | 說明                       |
-| ---------- | ---- | -------------------------- |
-| 🔴 P0 阻塞 | 4    | 阻塞核心功能，必須立即修復 |
-| 🟠 P1 關鍵 | 5    | 影響核心功能，需儘快修復   |
-| 🟡 P2 重要 | 6    | 影響用戶體驗，需排程修復   |
-| 🟢 P3 輕微 | 8    | 可延後修復                 |
-| 🔧 技術債  | 5    | 需要重構                   |
+| 嚴重程度   | 數量 | 總工時 | 說明                       |
+| ---------- | ---- | ------ | -------------------------- |
+| 🔴 P0 阻塞 | 4    | 38h    | 阻塞核心功能，必須立即修復 |
+| 🟠 P1 關鍵 | 5    | 144h   | 影響核心功能，需儘快修復   |
+| 🟡 P2 重要 | 6    | 182h   | 影響用戶體驗，需排程修復   |
+| 🟢 P3 輕微 | 10   | 40h    | 可延後修復                 |
+| 🔧 技術債  | 6    | 120h   | 需要重構                   |
 
 ---
 
 ## 📋 關聯文件
 
 - `docs/2025-Issues.md` - 原始問題記錄（3 項核心問題）
-- `docs/architecture/INFRASTRUCTURE_STATUS.md` - 基礎設施狀態分析
+- `docs/architecture/INFRASTRUCTURE_STATUS.md` - 基礎設施狀態分析（12 項核心基礎設施）
+
+### 原始問題記錄 (`docs/2025-Issues.md`)
+
+```
+1.藍圖介面分類不完整,總預算 已支出 已付款 剩餘預算 都應該在財務不應該在總覽會導致權限規劃困難
+2.藍圖編輯功能缺失
+3.藍圖總覽目前未達生產標準
+```
 
 ---
 
@@ -548,6 +557,81 @@ const newTask = this.taskService.createMockTask(createData);
 
 ---
 
+### TD-006: Mock 資料未完全清理
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | 多處程式碼仍包含 Mock 資料和開發用後備機制                      |
+| 影響範圍 | 任務服務、認證回調、任務編輯抽屜                                |
+| 業務影響 | 開發/生產環境行為不一致                                         |
+| 狀態     | 🔧 待處理                                                       |
+| 預計工時 | 6h                                                              |
+
+**發現位置**:
+- `src/app/routes/passport/callback.component.ts:17,20` - mockModel()
+- `src/app/routes/blueprint/tasks/tasks.component.ts` - loadMockData()
+- `src/app/routes/blueprint/tasks/task-edit-drawer.component.ts:295,318` - mockTask fallback
+- `src/app/shared/services/task/task.service.ts` - Mock 資料生成函數
+
+---
+
+## 🟢 P3 - 輕微問題 (新增)
+
+### ISSUE-024: Account Service 有 TODO 未實現
+
+| 屬性     | 內容                                                |
+| -------- | --------------------------------------------------- |
+| 問題描述 | Account Service 中有 TODO 註解表示功能未實現        |
+| 影響範圍 | 帳戶服務                                            |
+| 業務影響 | 帳戶功能可能不完整                                  |
+| 相關檔案 | `src/app/shared/services/account.service.ts`        |
+| 狀態     | 🟢 待處理                                           |
+| 預計工時 | 2h                                                  |
+
+**程式碼證據**:
+```typescript
+// src/app/shared/services/account.service.ts
+// TODO: 實現實際的資料載入邏輯
+```
+
+---
+
+### ISSUE-025: Demo 頁面 TODO 未處理
+
+| 屬性     | 內容                                                            |
+| -------- | --------------------------------------------------------------- |
+| 問題描述 | Demo 頁面存在 TODO 註解未處理                                   |
+| 影響範圍 | Demo 頁面功能                                                   |
+| 業務影響 | 示範功能不完整                                                  |
+| 相關檔案 | `src/app/routes/demo/pro/list/articles/articles.component.ts`   |
+| 狀態     | 🟢 待處理                                                       |
+| 預計工時 | 1h                                                              |
+
+**程式碼證據**:
+```typescript
+// TODO: wait nz-dropdown OnPush mode
+```
+
+---
+
+### ISSUE-026: Refresh Token Mock 值
+
+| 屬性     | 內容                                        |
+| -------- | ------------------------------------------- |
+| 問題描述 | Token 刷新機制使用 Mock expired value       |
+| 影響範圍 | 認證流程                                    |
+| 業務影響 | 可能影響 Token 刷新的準確性                 |
+| 相關檔案 | `src/app/core/net/refresh-token.ts`         |
+| 狀態     | 🟢 待處理                                   |
+| 預計工時 | 2h                                          |
+
+**程式碼證據**:
+```typescript
+// TODO: Mock expired value
+```
+
+---
+
 ## 📝 問題追蹤表
 
 | 問題編號   | 嚴重程度 | 狀態   | 負責人 | 預計完成日期 | 預計工時 |
@@ -575,11 +659,15 @@ const newTask = this.taskService.createMockTask(createData);
 | ISSUE-021  | 🟢 P3    | 待處理 | -      | -            | 2h       |
 | ISSUE-022  | 🟢 P3    | 待處理 | -      | -            | 2h       |
 | ISSUE-023  | 🟢 P3    | 待處理 | -      | -            | 4h       |
+| ISSUE-024  | 🟢 P3    | 待處理 | -      | -            | 2h       |
+| ISSUE-025  | 🟢 P3    | 待處理 | -      | -            | 1h       |
+| ISSUE-026  | 🟢 P3    | 待處理 | -      | -            | 2h       |
 | TD-001     | 🔧 TD    | 待處理 | -      | -            | 16h      |
 | TD-002     | 🔧 TD    | 待處理 | -      | -            | 8h       |
 | TD-003     | 🔧 TD    | 待處理 | -      | -            | 54h      |
 | TD-004     | 🔧 TD    | 待處理 | -      | -            | 6h       |
 | TD-005     | 🔧 TD    | 待處理 | -      | -            | 8h       |
+| TD-006     | 🔧 TD    | 待處理 | -      | -            | 6h       |
 
 ---
 
@@ -590,30 +678,42 @@ const newTask = this.taskService.createMockTask(createData);
 | 🔴 P0 阻塞 | 4      | 38h        |
 | 🟠 P1 關鍵 | 5      | 144h       |
 | 🟡 P2 重要 | 6      | 182h       |
-| 🟢 P3 輕微 | 8      | 28h        |
-| 🔧 技術債  | 5      | 92h        |
-| **總計**   | **28** | **484h**   |
+| 🟢 P3 輕微 | 10     | 33h        |
+| 🔧 技術債  | 6      | 98h        |
+| **總計**   | **31** | **495h**   |
 
 ---
 
 ## 🎯 修復優先順序建議
 
-### Sprint 1 (Week 1-2): P0 阻塞問題
-1. ISSUE-001: 藍圖編輯功能
-2. ISSUE-002: 概覽頁面資訊架構
-3. ISSUE-004: Mock 資料移除
+### Sprint 1 (Week 1-2): P0 阻塞問題 - 38h
+1. ISSUE-001: 藍圖編輯功能 (11h)
+2. ISSUE-002: 概覽頁面資訊架構 (7h)
+3. ISSUE-003: 概覽未達生產標準 (16h)
+4. ISSUE-004: Mock 資料移除 (4h)
 
-### Sprint 2 (Week 3-4): P1 關鍵問題 (1/2)
-4. ISSUE-008: 時間軸 UI
-5. ISSUE-007: 通知中心 UI
+### Sprint 2 (Week 3-4): P1 關鍵問題 (1/2) - 62h
+5. ISSUE-008: 時間軸 UI (30h)
+6. ISSUE-007: 通知中心 UI (32h)
 
-### Sprint 3 (Week 5-6): P1 關鍵問題 (2/2)
-6. ISSUE-006: 搜尋功能整合
-7. ISSUE-009: 日誌管理 UI
+### Sprint 3 (Week 5-6): P1 關鍵問題 (2/2) - 82h
+7. ISSUE-006: 搜尋功能整合 (28h)
+8. ISSUE-009: 日誌管理 UI (28h)
+9. ISSUE-005: 權限系統完善 (26h)
 
-### Sprint 4 (Week 7-8): P2 重要問題 (1/2)
-8. ISSUE-010: 品質驗收 UI
-9. ISSUE-011: 檔案管理 UI
+### Sprint 4 (Week 7-8): P2 重要問題 (1/2) - 62h
+10. ISSUE-010: 品質驗收 UI (30h)
+11. ISSUE-011: 檔案管理 UI (32h)
+
+### Sprint 5 (Week 9-10): P2 重要問題 (2/2) - 120h
+12. ISSUE-012: 關聯管理完善 (30h)
+13. ISSUE-013: 配置中心 (30h)
+14. ISSUE-014: 元數據系統 (28h)
+15. ISSUE-015: API 閘道完善 (32h)
+
+### Sprint 6+ (持續): P3 + 技術債 - 131h
+16. 所有 P3 輕微問題 (33h)
+17. 所有技術債務 (98h)
 
 ### Sprint 5+ (Week 9+): 剩餘問題
 10. 其他 P2 問題
