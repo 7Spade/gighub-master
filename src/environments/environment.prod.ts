@@ -9,8 +9,7 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: 'https://hgjrqjhhwnaalbllojhj.supabase.co',
-    anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnanJxamhod25hYWxibGxvamhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3OTc3NjYsImV4cCI6MjA4MDM3Mzc2Nn0.fezsdIFzw2xvnkUY6EXmg1ru2FtqI7hskVlJTpaxQfA'
+    url: process.env['NG_APP_SUPABASE_URL'] || '',
+    anonKey: process.env['NG_APP_SUPABASE_ANON_KEY'] || ''
   }
 } as Environment;
