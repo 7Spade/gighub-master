@@ -1,7 +1,16 @@
 // ============================================
 // Angular 核心模块（Angular Core Modules）
 // ============================================
-import { AsyncPipe, CurrencyPipe, DatePipe as NgDatePipe, DecimalPipe, JsonPipe, NgTemplateOutlet, PercentPipe } from '@angular/common';
+import {
+  AsyncPipe,
+  CurrencyPipe,
+  DatePipe as NgDatePipe,
+  DecimalPipe,
+  JsonPipe,
+  NgTemplateOutlet,
+  PercentPipe,
+  SlicePipe
+} from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
 // ============================================
@@ -43,6 +52,7 @@ export const SHARED_IMPORTS = [
   DecimalPipe,
   PercentPipe,
   NgDatePipe,
+  SlicePipe,
 
   // Delon 主题
   DatePipe,
@@ -69,4 +79,5 @@ export const SHARED_IMPORTS = [
 // 注意：下列 providers 列表僅為參考，方便在 AppModule 或 bootstrap 時優先註冊
 // 建議在應用啟動階段（bootstrap）先註冊 SupabaseAuthService / 授權相關服務
 // 目前所有核心服務都使用 providedIn: 'root'，不需要手動註冊
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SHARED_PROVIDERS: any[] = [];

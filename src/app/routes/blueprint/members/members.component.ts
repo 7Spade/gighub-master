@@ -9,11 +9,24 @@
  * @module routes/blueprint
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit, computed } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BlueprintFacade, BlueprintRole } from '@core';
-import { SHARED_IMPORTS } from '@shared';
+import { AccountService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
+/** Extended member type with account details */
+interface MemberWithAccount {
+  id: string;
+  blueprint_id: string;
+  account_id: string;
+  role: string;
+  is_external: boolean;
+  created_at: string;
+  accountName?: string;
+  accountEmail?: string;
+}
 
 @Component({
   selector: 'app-blueprint-members',
@@ -33,9 +46,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           </div>
         </div>
         <div class="header-actions">
-          <button nz-button nzType="primary" (click)="refreshMembers()">
+          <button nz-button nzType="default" (click)="refreshMembers()">
             <span nz-icon nzType="reload"></span>
             刷新
+          </button>
+          <button nz-button nzType="primary" (click)="openInviteDrawer()">
+            <span nz-icon nzType="user-add"></span>
+            邀請成員
           </button>
         </div>
       </div>
@@ -83,7 +100,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                   <td>
                     <div class="member-info">
                       <nz-avatar [nzSize]="32" nzIcon="user"></nz-avatar>
-                      <span class="account-id">{{ member.account_id }}</span>
+                      <div class="member-details">
+                        <span class="member-name">{{ member.accountName || '未知用戶' }}</span>
+                        <span class="member-id">ID: {{ member.account_id | slice: 0 : 8 }}...</span>
+                      </div>
                     </div>
                   </td>
                   <td>
@@ -117,7 +137,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               } @empty {
                 <tr>
                   <td colspan="5">
-                    <nz-empty nzNotFoundContent="尚無成員，藍圖創建者將自動成為成員"></nz-empty>
+                    <nz-empty nzNotFoundContent="尚無成員，點擊「邀請成員」添加團隊成員"></nz-empty>
                   </td>
                 </tr>
               }
@@ -125,6 +145,45 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           </nz-table>
         </nz-spin>
       </nz-card>
+
+      <!-- Invite Member Drawer -->
+      <nz-drawer [nzVisible]="drawerVisible()" nzTitle="邀請成員" [nzWidth]="400" (nzOnClose)="closeInviteDrawer()">
+        <ng-container *nzDrawerContent>
+          <form nz-form [formGroup]="inviteForm" nzLayout="vertical">
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="account_id">帳戶 ID</nz-form-label>
+              <nz-form-control nzErrorTip="請輸入有效的帳戶 ID">
+                <input nz-input formControlName="account_id" id="account_id" placeholder="請輸入要邀請的帳戶 ID" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="role">角色</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="role" id="role" style="width: 100%">
+                  <nz-option nzValue="viewer" nzLabel="檢視者"></nz-option>
+                  <nz-option nzValue="contributor" nzLabel="貢獻者"></nz-option>
+                  <nz-option nzValue="maintainer" nzLabel="維護者"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzFor="is_external">成員類型</nz-form-label>
+              <nz-form-control>
+                <label nz-checkbox formControlName="is_external">外部成員</label>
+              </nz-form-control>
+            </nz-form-item>
+
+            <div class="drawer-footer">
+              <button nz-button nzType="default" (click)="closeInviteDrawer()">取消</button>
+              <button nz-button nzType="primary" [nzLoading]="inviting()" [disabled]="inviteForm.invalid" (click)="inviteMember()">
+                邀請
+              </button>
+            </div>
+          </form>
+        </ng-container>
+      </nz-drawer>
     </div>
   `,
   styles: [
@@ -186,13 +245,32 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       .member-info {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
       }
 
-      .account-id {
+      .member-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .member-name {
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .member-id {
         font-family: monospace;
-        font-size: 12px;
-        color: #666;
+        font-size: 11px;
+        color: #999;
+      }
+
+      .drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #f0f0f0;
       }
     `
   ],
@@ -200,18 +278,29 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class BlueprintMembersComponent implements OnInit {
   private readonly blueprintFacade = inject(BlueprintFacade);
+  private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
   private readonly msg = inject(NzMessageService);
+  private readonly fb = inject(FormBuilder);
 
   // Input from route param (using withComponentInputBinding)
   id = input.required<string>();
-  members = signal<any[]>([]);
+  members = signal<MemberWithAccount[]>([]);
   loading = signal(false);
+  drawerVisible = signal(false);
+  inviting = signal(false);
+
+  // Invite form
+  inviteForm: FormGroup = this.fb.group({
+    account_id: ['', [Validators.required]],
+    role: ['viewer', [Validators.required]],
+    is_external: [false]
+  });
 
   // Computed statistics
-  readonly internalMembersCount = () => this.members().filter(m => !m.is_external).length;
-  readonly externalMembersCount = () => this.members().filter(m => m.is_external).length;
-  readonly maintainersCount = () => this.members().filter(m => m.role === 'maintainer' || m.role === 'owner').length;
+  readonly internalMembersCount = computed(() => this.members().filter(m => !m.is_external).length);
+  readonly externalMembersCount = computed(() => this.members().filter(m => m.is_external).length);
+  readonly maintainersCount = computed(() => this.members().filter(m => m.role === 'maintainer' || m.role === 'owner').length);
 
   ngOnInit(): void {
     this.loadMembers();
@@ -221,7 +310,28 @@ export class BlueprintMembersComponent implements OnInit {
     this.loading.set(true);
     try {
       const members = await this.blueprintFacade.getBlueprintMembers(this.id());
-      this.members.set(members);
+
+      // Fetch account details for each member
+      const membersWithAccounts: MemberWithAccount[] = await Promise.all(
+        members.map(async (member: MemberWithAccount) => {
+          try {
+            const account = await this.accountService.findById(member.account_id);
+            return {
+              ...member,
+              accountName: account?.name || account?.email || '未知用戶',
+              accountEmail: account?.email ?? undefined
+            };
+          } catch {
+            return {
+              ...member,
+              accountName: '未知用戶',
+              accountEmail: undefined
+            };
+          }
+        })
+      );
+
+      this.members.set(membersWithAccounts);
     } catch (error) {
       console.error('[BlueprintMembersComponent] Failed to load members:', error);
       this.msg.error('載入成員失敗');
@@ -235,7 +345,7 @@ export class BlueprintMembersComponent implements OnInit {
     this.msg.success('成員列表已刷新');
   }
 
-  async updateMemberRole(member: any): Promise<void> {
+  async updateMemberRole(member: MemberWithAccount): Promise<void> {
     try {
       await this.blueprintFacade.updateBlueprintMemberRole(member.id, member.role as BlueprintRole);
       this.msg.success('角色更新成功');
@@ -246,7 +356,7 @@ export class BlueprintMembersComponent implements OnInit {
     }
   }
 
-  async removeMember(member: any): Promise<void> {
+  async removeMember(member: MemberWithAccount): Promise<void> {
     try {
       await this.blueprintFacade.removeBlueprintMember(this.id(), member.account_id);
       this.msg.success('成員已移除');
@@ -254,6 +364,37 @@ export class BlueprintMembersComponent implements OnInit {
     } catch (error) {
       console.error('[BlueprintMembersComponent] Failed to remove member:', error);
       this.msg.error('移除成員失敗');
+    }
+  }
+
+  openInviteDrawer(): void {
+    this.inviteForm.reset({
+      account_id: '',
+      role: 'viewer',
+      is_external: false
+    });
+    this.drawerVisible.set(true);
+  }
+
+  closeInviteDrawer(): void {
+    this.drawerVisible.set(false);
+  }
+
+  async inviteMember(): Promise<void> {
+    if (this.inviteForm.invalid) return;
+
+    this.inviting.set(true);
+    try {
+      const { account_id, role, is_external } = this.inviteForm.value;
+      await this.blueprintFacade.addBlueprintMember(this.id(), account_id, role as BlueprintRole, is_external);
+      this.msg.success('成員邀請成功');
+      this.closeInviteDrawer();
+      await this.loadMembers();
+    } catch (error) {
+      console.error('[BlueprintMembersComponent] Failed to invite member:', error);
+      this.msg.error('邀請成員失敗');
+    } finally {
+      this.inviting.set(false);
     }
   }
 
