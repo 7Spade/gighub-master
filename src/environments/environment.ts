@@ -2,6 +2,15 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+// Type definition for environment variables (injected at build time via @ngx-env/builder)
+declare interface ImportMeta {
+  readonly env: {
+    readonly NEXT_PUBLIC_SUPABASE_URL?: string;
+    readonly NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
+    [key: string]: string | undefined;
+  };
+}
+
 import * as MOCKDATA from '@_mock';
 import { mockInterceptor, provideMockConfig } from '@delon/mock';
 import { Environment } from '@delon/theme';
@@ -15,8 +24,10 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: process.env['NEXT_PUBLIC_SUPABASE_URL'] || '',
-    anonKey: process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || ''
+    url: import.meta.env['NEXT_PUBLIC_SUPABASE_URL'] || 'https://hgjrqjhhwnaalbllojhj.supabase.co',
+    anonKey:
+      import.meta.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] ||
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnanJxamhod25hYWxibGxvamhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3OTc3NjYsImV4cCI6MjA4MDM3Mzc2Nn0.fezsdIFzw2xvnkUY6EXmg1ru2FtqI7hskVlJTpaxQfA'
   },
   providers: [provideMockConfig({ data: MOCKDATA })],
   interceptorFns: [mockInterceptor]
