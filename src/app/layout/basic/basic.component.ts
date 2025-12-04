@@ -278,19 +278,26 @@ export class LayoutBasicComponent {
   /**
    * 構建菜單參數
    * Build menu params based on context type
+   *
+   * Always includes userId from currentUser for route parameter replacement.
    */
   private buildMenuParams(type: ContextType, id: string) {
+    const currentUser = this.workspaceContext.currentUser();
+    const baseParams = {
+      userId: currentUser?.id
+    };
+
     switch (type) {
       case ContextType.USER:
-        return { userId: id };
+        return { ...baseParams, userId: id };
       case ContextType.ORGANIZATION:
-        return { organizationId: id };
+        return { ...baseParams, organizationId: id };
       case ContextType.TEAM:
-        return { teamId: id };
+        return { ...baseParams, teamId: id };
       case ContextType.BOT:
-        return { botId: id };
+        return { ...baseParams, botId: id };
       default:
-        return {};
+        return baseParams;
     }
   }
 
