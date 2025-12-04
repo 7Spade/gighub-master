@@ -1,7 +1,9 @@
 # 12 Infrastructure Implementation Status Analysis
 # 12 項核心基礎設施實施狀態分析
 
-Last updated: 2025-12-02
+Last updated: 2025-12-04
+
+> **審查備註**: 本文件已於 2025-12-04 進行全面審查與更新，校正了 Timeline Service、Notification Hub、Event Bus 和 Search Engine 的實作狀態。
 
 ## Overview
 
@@ -13,10 +15,10 @@ Based on the system architecture defined in `docs/architecture/system-architectu
 |---|----------------|--------------|--------|----------|
 | 1 | Context Injection | 上下文注入系統 | ✅ Implemented | 90% |
 | 2 | Permission System | 權限系統 | ✅ Implemented | 75% |
-| 3 | Timeline Service | 時間軸服務 | 🔴 Not Started | 0% |
-| 4 | Notification Hub | 通知中心 | 🔴 Not Started | 0% |
-| 5 | Event Bus | 事件總線系統 | 🔴 Not Started | 0% |
-| 6 | Search Engine | 搜尋引擎系統 | 🔴 Not Started | 0% |
+| 3 | Timeline Service | 時間軸服務 | ✅ Implemented | 80% |
+| 4 | Notification Hub | 通知中心 | ✅ Implemented | 70% |
+| 5 | Event Bus | 事件總線系統 | ✅ Implemented | 85% |
+| 6 | Search Engine | 搜尋引擎系統 | 🟡 Partial | 20% |
 | 7 | Relation Manager | 關聯管理系統 | 🟡 Partial | 30% |
 | 8 | Data Isolation | 資料隔離系統 | ✅ Implemented | 85% |
 | 9 | Lifecycle Management | 生命週期管理 | 🟡 Partial | 40% |
@@ -68,53 +70,94 @@ Based on the system architecture defined in `docs/architecture/system-architectu
 
 ---
 
-### 3. Timeline Service (時間軸服務) - 🔴 0%
+### 3. Timeline Service (時間軸服務) - ✅ 80%
 
-**Status:** Not implemented
+**Status:** Implemented (Updated 2025-12-04)
 
-**Required Features:**
-- ⬜ Cross-module activity tracking
-- ⬜ Complete operation history
+**Location:**
+- `src/app/shared/services/timeline/timeline.service.ts`
+- `src/app/core/infra/repositories/timeline/timeline.repository.ts`
+- `src/app/core/infra/types/timeline/`
+
+**Implemented Features:**
+- ✅ Cross-module activity tracking
+- ✅ Complete operation history (logActivity, getEntityHistory)
+- ✅ Multiple timeline views (loadByBlueprint, getActorHistory)
+- ✅ Realtime subscription (subscribeToBlueprintActivities)
+- ✅ Activity statistics (getStats)
+- ✅ Signal-based state management
+
+**Missing Features:**
 - ⬜ Version control (before/after snapshots, diff)
-- ⬜ Audit trail (who, when, what, why, where, how)
-- ⬜ Multiple timeline views (global, module, user, resource)
+- ⬜ Advanced audit trail (why, where, how fields)
 
 ---
 
-### 4. Notification Hub (通知中心) - 🔴 0%
+### 4. Notification Hub (通知中心) - ✅ 70%
 
-**Status:** Not implemented
+**Status:** Implemented (Updated 2025-12-04)
 
-**Required Features:**
-- ⬜ Real-time notifications (task assignment, mentions, status changes)
+**Location:**
+- `src/app/shared/services/notification/notification.service.ts`
+- `src/app/core/infra/repositories/notification/notification.repository.ts`
+- `src/app/core/infra/types/notification/`
+
+**Implemented Features:**
+- ✅ Real-time notifications via Supabase Realtime
+- ✅ Notification CRUD operations
+- ✅ Mark as read / Mark all as read
+- ✅ Category-based notification grouping
+- ✅ Event Bus integration
+- ✅ Signal-based state management
+
+**Missing Features:**
 - ⬜ Scheduled notifications (due date reminders)
 - ⬜ Summary notifications (daily/weekly reports)
-- ⬜ Multi-channel routing (App push, Email, Webhook)
+- ⬜ Multi-channel routing (Email, Webhook)
 - ⬜ Subscription management
 - ⬜ Smart merging (prevent notification bombing)
 - ⬜ Do-not-disturb mode
 
 ---
 
-### 5. Event Bus System (事件總線系統) - 🔴 0%
+### 5. Event Bus System (事件總線系統) - ✅ 85%
 
-**Status:** Not implemented
+**Status:** Implemented (Updated 2025-12-04)
 
-**Required Features:**
-- ⬜ Publish/Subscribe mechanism
-- ⬜ System events (blueprint created, member joined, permission changed)
-- ⬜ Business events (task created, status changed, file uploaded)
-- ⬜ Integration events (Webhook triggers, API calls)
-- ⬜ Event filtering (by type, resource, user)
+**Location:**
+- `src/app/shared/services/event-bus/event-bus.service.ts`
+- `src/app/core/infra/types/event/`
+
+**Implemented Features:**
+- ✅ Publish/Subscribe mechanism (publish, on, onType, onTypes)
+- ✅ System events support
+- ✅ Business events support
+- ✅ Event filtering (by type, category, resource, actor)
+- ✅ Supabase Realtime integration (cross-client sync)
+- ✅ Signal-based state management
+- ✅ Recent events tracking
+
+**Missing Features:**
+- ⬜ Integration events (Webhook triggers)
 - ⬜ Event replay capability
+- ⬜ Event persistence strategy
 
 ---
 
-### 6. Search Engine System (搜尋引擎系統) - 🔴 0%
+### 6. Search Engine System (搜尋引擎系統) - 🟡 20%
 
-**Status:** Not implemented
+**Status:** Partial (Updated 2025-12-04)
 
-**Required Features:**
+**Location:**
+- `src/app/shared/services/search/search.service.ts`
+- `src/app/core/infra/repositories/search/search.repository.ts`
+- `supabase/migrations/20241203000000_create_search_history.sql`
+
+**Implemented Features:**
+- ✅ Basic search functionality
+- ✅ Search history tracking
+
+**Missing Features:**
 - ⬜ Full-text search across modules
 - ⬜ Structured search (creator, status, date range, priority, tags)
 - ⬜ Relation search (tasks related to logs, files to tasks)
@@ -221,69 +264,77 @@ Based on the system architecture defined in `docs/architecture/system-architectu
 
 ---
 
-## Recommended Implementation Order
+## Recommended Implementation Order (Updated 2025-12-04)
 
-Based on dependencies and business value, the recommended implementation order is:
+Based on dependencies and business value, the updated recommended implementation order is:
 
-### Phase 1: Core Infrastructure (High Priority)
-1. **Event Bus System** (事件總線) - Foundation for inter-module communication
-2. **Notification Hub** (通知中心) - Critical for user engagement
-3. **Timeline Service** (時間軸) - Essential for audit and history
+### Phase 1: Core Infrastructure - ✅ COMPLETED
+1. **Event Bus System** (事件總線) - ✅ 85% - Foundation for inter-module communication
+2. **Notification Hub** (通知中心) - ✅ 70% - Critical for user engagement
+3. **Timeline Service** (時間軸) - ✅ 80% - Essential for audit and history
 
-### Phase 2: Business Enablers (Medium Priority)
-4. **Search Engine** (搜尋引擎) - Improves user productivity
-5. **Configuration Center** (配置中心) - Enables customization
-6. **Relation Manager** (完善關聯管理) - Complete the relation system
+### Phase 2: Business Enablers (Current Focus)
+4. **Search Engine** (搜尋引擎) - 🟡 20% - Needs improvement
+5. **Configuration Center** (配置中心) - 🔴 0% - Enables customization
+6. **Relation Manager** (完善關聯管理) - 🟡 30% - Complete the relation system
 
 ### Phase 3: Advanced Features (Lower Priority)
-7. **Metadata System** (元數據系統) - Custom fields and classification
-8. **Lifecycle Management** (完善生命週期) - Complete status management
-9. **API Gateway** (完善API閘道) - External integrations
+7. **Metadata System** (元數據系統) - 🔴 0% - Custom fields and classification
+8. **Lifecycle Management** (完善生命週期) - 🟡 40% - Complete status management
+9. **API Gateway** (完善API閘道) - 🟡 30% - External integrations
 
 ---
 
 ## Technical Recommendations
 
-### Event Bus Implementation
+### Event Bus Implementation - ✅ IMPLEMENTED
 ```typescript
-// Recommended: Use RxJS Subject for in-app events + Supabase Realtime for cross-client
-interface EventBusService {
-  publish<T>(event: AppEvent<T>): void;
-  subscribe<T>(eventType: string): Observable<AppEvent<T>>;
+// Actual implementation at: src/app/shared/services/event-bus/event-bus.service.ts
+@Injectable({ providedIn: 'root' })
+export class EventBusService {
+  publish<T>(event: Omit<BaseEvent<T>, 'id' | 'timestamp'>, broadcast = true): BaseEvent<T>;
+  on<T>(options?: EventFilterOptions): Observable<BaseEvent<T>>;
+  onType<T>(type: string): Observable<BaseEvent<T>>;
 }
 ```
 
-### Notification Hub Implementation
+### Notification Hub Implementation - ✅ IMPLEMENTED
 ```typescript
-// Recommended: Use Supabase Realtime + Edge Functions for push notifications
-interface NotificationService {
-  send(notification: Notification): Promise<void>;
-  subscribe(userId: string): Observable<Notification[]>;
-  markAsRead(notificationId: string): Promise<void>;
+// Actual implementation at: src/app/shared/services/notification/notification.service.ts
+@Injectable({ providedIn: 'root' })
+export class NotificationService {
+  loadNotifications(options?: NotificationQueryOptions): Promise<Notification[]>;
+  markAsRead(id: string): Promise<void>;
+  subscribeToRealtime(accountId: string): void;
 }
 ```
 
-### Timeline Service Implementation
+### Timeline Service Implementation - ✅ IMPLEMENTED
 ```typescript
-// Recommended: Use database triggers + timeline table
-interface TimelineService {
-  record(event: TimelineEvent): Promise<void>;
-  getTimeline(options: TimelineQueryOptions): Observable<TimelineEvent[]>;
+// Actual implementation at: src/app/shared/services/timeline/timeline.service.ts
+@Injectable({ providedIn: 'root' })
+export class TimelineService {
+  logActivity(request: LogActivityRequest): Observable<Activity | null>;
+  loadByBlueprint(blueprintId: string, options?: object): void;
+  getEntityHistory(entityType: TimelineEntityType, entityId: string): Observable<TimelineItem[]>;
 }
 ```
 
 ---
 
-## Conclusion
+## Conclusion (Updated 2025-12-04)
 
 The current implementation has a solid foundation with:
-- ✅ Strong context injection system
-- ✅ Good permission system foundation
-- ✅ Proper data isolation via RLS
+- ✅ Strong context injection system (90%)
+- ✅ Good permission system foundation (75%)
+- ✅ Proper data isolation via RLS (85%)
+- ✅ **Event Bus System (85%)** - Newly documented
+- ✅ **Timeline Service (80%)** - Newly documented
+- ✅ **Notification Hub (70%)** - Newly documented
 
 The main gaps are in:
-- 🔴 Cross-cutting concerns (Event Bus, Notifications, Timeline)
-- 🔴 Search and discovery features
-- 🔴 Configuration and customization
+- 🟡 Search and discovery features (20%)
+- 🔴 Configuration and customization (0%)
+- 🔴 Metadata System (0%)
 
 The next immediate steps should focus on implementing the **Event Bus System** as it's the foundation for many other features, followed by the **Notification Hub** and **Timeline Service**.
