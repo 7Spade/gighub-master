@@ -283,7 +283,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                       <nz-card [nzBordered]="false" class="financial-card">
                         <nz-statistic
                           nzTitle="已支出"
-                          [nzValue]="financialSummary()!.total_expenses ?? 0"
+                          [nzValue]="financialSummary()!.total_expenses"
                           [nzPrefix]="'$'"
                           [nzValueStyle]="{ color: '#faad14' }"
                         >
@@ -298,7 +298,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                       <nz-card [nzBordered]="false" class="financial-card">
                         <nz-statistic
                           nzTitle="已付款"
-                          [nzValue]="financialSummary()!.total_paid ?? 0"
+                          [nzValue]="financialSummary()!.total_paid"
                           [nzPrefix]="'$'"
                           [nzValueStyle]="{ color: '#52c41a' }"
                         >
@@ -346,7 +346,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                   <!-- Financial Overview -->
                   <nz-card nzTitle="財務概覽" [nzBordered]="false" class="financial-overview-card">
                     <nz-descriptions nzBordered [nzColumn]="3">
-                      <nz-descriptions-item nzTitle="待審核請款">{{ financialSummary()!.pending_payment_count ?? 0 }}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="待審核請款">{{ financialSummary()!.pending_payment_count }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="總預算">{{
                         totalBudget() | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
@@ -356,13 +356,13 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                         </span>
                       </nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已支出">{{
-                        financialSummary()!.total_expenses ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_expenses | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已請款">{{
-                        financialSummary()!.total_requested ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_requested | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="已付款">{{
-                        financialSummary()!.total_paid ?? 0 | currency: 'TWD' : 'symbol' : '1.0-0'
+                        financialSummary()!.total_paid | currency: 'TWD' : 'symbol' : '1.0-0'
                       }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="支出率">
                         <nz-progress
