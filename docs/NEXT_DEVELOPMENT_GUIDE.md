@@ -2,7 +2,32 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（Phase 2 共用 UI 元件 + Phase 3 元件重構）
+**更新日期**: 2025-12-04（Bug 修復 + 模組隔離）
+
+---
+
+## 🔧 最新 Bug 修復（2025-12-04）
+
+### 財務模組修復 ✅
+- **問題 7-9**: 財務 CRUD 錯誤（TypeScript 類型與資料庫 schema 不匹配）
+  - Expense: 使用 `title`, `amount` 取代 `description`, `quantity`, `unit_price`
+  - PaymentRequest: 使用 `lifecycle` 取代 `status`
+  - Payment: 使用 `paid_amount`, `paid_at` 取代 `amount`, `payment_date`
+
+### 成員管理增強 ✅
+- **問題 3**: 成員現在顯示帳戶名稱而非 hash ID
+- **問題 4**: 新增「邀請成員」功能（帶有抽屜表單）
+
+### 模組隔離實作 ✅
+- **問題 6**: 實作模組隔離 - 任務管理 Tab 只在啟用 tasks 模組時顯示
+- 新增 `isTasksModuleEnabled` computed signal
+- 快捷導航改為直接連結而非 tab 切換
+
+### 備註
+- **問題 1**: 活動紀錄需要資料庫中的 audit_logs 資料才能顯示
+- **問題 2**: 任務資料需要資料庫整合才能持久化（非 UI 問題）
+- **問題 5**: 模組類型由資料庫 ENUM 定義，只有 8 種：tasks, diary, dashboard, bot_workflow, files, todos, checklists, issues
+- **問題 10**: 所有頁面已確認都有返回按鈕
 
 ---
 
