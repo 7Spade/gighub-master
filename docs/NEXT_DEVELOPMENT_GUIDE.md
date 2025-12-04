@@ -2,7 +2,284 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（藍圖 UI 統一標頭更新）
+**更新日期**: 2025-12-04（藍圖 UI 一致性分析）
+
+---
+
+## 🎨 藍圖 UI 一致性分析與改進方案（2025-12-04）
+
+> 基於 Context7 查詢 ng-zorro-antd 與 ng-alain 最佳實踐，以及對所有藍圖 Web UI 元件的全面分析。
+
+### 當前 UI 元件清單
+
+| 元件 | 路徑 | 用途 |
+|------|------|------|
+| BlueprintListComponent | `routes/blueprint/list/` | 藍圖列表頁面 |
+| CreateBlueprintComponent | `routes/blueprint/create-blueprint/` | 建立藍圖模態框 |
+| BlueprintOverviewComponent | `routes/blueprint/overview/` | 藍圖概覽（含 5 個 Tab） |
+| TasksComponent | `routes/blueprint/tasks/` | 任務管理 |
+| MembersComponent | `routes/blueprint/members/` | 成員管理 |
+| FinancialOverviewComponent | `routes/blueprint/financial/` | 財務概覽 |
+| ContractListComponent | `routes/blueprint/financial/` | 合約管理 |
+| ExpenseListComponent | `routes/blueprint/financial/` | 費用管理 |
+| PaymentRequestListComponent | `routes/blueprint/financial/` | 請款管理 |
+| PaymentListComponent | `routes/blueprint/financial/` | 付款紀錄 |
+
+### ❌ 發現的 UI 不一致性問題
+
+#### 1. 頁面標頭結構不一致
+
+| 元件 | 標頭結構 | 問題 |
+|------|---------|------|
+| BlueprintOverviewComponent | 自訂 `.blueprint-header` | ✅ 完整（Avatar + 名稱 + Tags + 操作按鈕） |
+| FinancialOverviewComponent | 自訂 `.header` | ⚠️ 缺少 Avatar，與概覽不一致 |
+| ContractListComponent | 自訂 `.header` | ⚠️ 缺少副標題樣式，返回按鈕樣式不同 |
+| ExpenseListComponent | 自訂 `.header` | ⚠️ 同上 |
+| TasksComponent | 無獨立標頭 | ⚠️ 依賴概覽頁 Tab 標頭 |
+
+**建議解決方案**：
+```html
+<!-- 統一頁面標頭元件 -->
+<app-page-header
+  [title]="'合約管理'"
+  [subtitle]="'Contract Management - 管理專案合約與預算'"
+  [backUrl]="['/blueprint', id(), 'financial', 'overview']"
+  [actions]="headerActions"
+></app-page-header>
+```
+
+#### 2. 統計卡片樣式不一致
+
+| 元件 | 統計卡片數量 | 佈局 | 樣式類 |
+|------|-------------|------|--------|
+| BlueprintOverviewComponent | 4 | `nzSpan="6"` | `.stats-row` |
+| FinancialOverviewComponent | 4 | `nzSpan="6"` (響應式) | `.summary-section` |
+| ContractListComponent | 4 | `nzSpan="6"` | `.stats-section` |
+| ExpenseListComponent | 4 | `nzSpan="6"` | `.stats-section` |
+
+**問題**：
+- 不同的響應式斷點處理（有些用 `nzXs/nzSm/nzMd`，有些沒有）
+- 統計卡片樣式類名不統一（`stat-card` vs 無樣式）
+- 卡片內對齊方式不一致
+
+**建議解決方案**：
+```scss
+// 統一統計卡片樣式 (shared/styles/_stat-cards.scss)
+.stat-card {
+  text-align: center;
+  
+  .ant-statistic-title {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .ant-statistic-content-value {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+// 統一響應式佈局
+.stats-row {
+  margin-bottom: 24px;
+  
+  > [nz-col] {
+    margin-bottom: 16px;
+  }
+}
+```
+
+#### 3. 表格/列表篩選器結構不一致
+
+| 元件 | 篩選器位置 | 篩選器類型 |
+|------|-----------|-----------|
+| ContractListComponent | 獨立 nz-card | 搜尋 + 下拉 + 清除按鈕 |
+| ExpenseListComponent | 獨立 nz-card | 搜尋 + 下拉 + 日期範圍 + 清除按鈕 |
+| BlueprintOverviewComponent 成員表 | 無篩選器 | - |
+
+**問題**：
+- 篩選器卡片的間距不一致（有些 `margin-bottom: 16px`）
+- 清除按鈕的樣式不一致
+
+**建議解決方案**：
+```html
+<!-- 統一篩選器結構 -->
+<nz-card [nzBordered]="false" class="filter-card">
+  <div nz-row [nzGutter]="[16, 16]" nzAlign="middle">
+    <!-- 搜尋框 -->
+    <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">...</div>
+    <!-- 篩選下拉 -->
+    <div nz-col [nzXs]="12" [nzSm]="6" [nzMd]="4">...</div>
+    <!-- 清除按鈕 -->
+    <div nz-col>
+      <button nz-button nzType="text">
+        <span nz-icon nzType="clear"></span>
+        清除篩選
+      </button>
+    </div>
+  </div>
+</nz-card>
+```
+
+#### 4. 抽屜 (Drawer) 表單結構不一致
+
+| 元件 | 抽屜寬度 | 表單佈局 | Footer 樣式 |
+|------|---------|---------|-------------|
+| ContractListComponent | 520px | `nzLayout="vertical"` | `.drawer-footer` |
+| ExpenseListComponent | 520px | `nzLayout="vertical"` | `.drawer-footer` |
+| TaskEditDrawerComponent | ? | ? | ? |
+
+**問題**：
+- 抽屜 Footer 按鈕間距樣式重複定義
+- 沒有統一的抽屜寬度規範
+
+**建議解決方案**：
+```scss
+// 統一抽屜樣式 (shared/styles/_drawer.scss)
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+// 抽屜寬度規範
+$drawer-width-sm: 400px;   // 簡單表單
+$drawer-width-md: 520px;   // 標準表單
+$drawer-width-lg: 720px;   // 複雜表單/詳情
+```
+
+#### 5. 空狀態 (Empty State) 處理不一致
+
+| 元件 | 空狀態類型 | 有無操作按鈕 |
+|------|-----------|-------------|
+| BlueprintOverviewComponent 任務 Tab | nz-empty + 自訂 Footer | ✅ 有 |
+| BlueprintOverviewComponent 活動 Tab | nz-empty + 自訂 Footer | ✅ 有（說明文字） |
+| ContractListComponent 表格 | ST 內建空狀態 | ❌ 無 |
+
+**建議解決方案**：
+```html
+<!-- 統一空狀態元件 -->
+<nz-empty
+  [nzNotFoundImage]="'simple'"
+  [nzNotFoundContent]="'尚無資料'"
+>
+  <ng-template #nzNotFoundFooter>
+    <p class="text-muted">{{ description }}</p>
+    <button nz-button nzType="primary" (click)="onCreate()">
+      <span nz-icon nzType="plus"></span>
+      {{ createButtonText }}
+    </button>
+  </ng-template>
+</nz-empty>
+```
+
+#### 6. 導航卡片樣式不一致
+
+| 元件 | 導航卡片位置 | 樣式 |
+|------|-------------|------|
+| BlueprintOverviewComponent 概覽 Tab | `.quick-nav-row` + `.nav-card` | Icon + 文字 + Hover 效果 |
+| FinancialOverviewComponent | `.navigation-section` + `.nav-card` | Icon + 文字 + 數量 + 箭頭 |
+
+**問題**：
+- 兩處導航卡片結構不同（一個有箭頭，一個沒有）
+- Icon 樣式處理方式不同（顏色 vs 背景色）
+
+**建議解決方案**：
+```html
+<!-- 統一導航卡片元件 -->
+<app-nav-card
+  [icon]="'file-text'"
+  [iconColor]="'#1890ff'"
+  [title]="'合約管理'"
+  [description]="'管理專案合約與預算'"
+  [count]="contractCount"
+  [showArrow]="true"
+  (click)="navigateTo('contracts')"
+></app-nav-card>
+```
+
+#### 7. 顏色使用不一致
+
+| 語意 | 使用的顏色 | 問題 |
+|------|-----------|------|
+| 主要/藍色 | `#1890ff` | ✅ 統一 |
+| 成功/綠色 | `#52c41a` | ✅ 統一 |
+| 警告/橙色 | `#faad14`, `#fa8c16` | ⚠️ 兩個橙色混用 |
+| 紫色 | `#722ed1` | ✅ 統一 |
+| 錯誤/紅色 | `#ff4d4f` | ✅ 統一 |
+
+**建議解決方案**：
+```scss
+// 統一顏色變數 (shared/styles/_colors.scss)
+$color-primary: #1890ff;
+$color-success: #52c41a;
+$color-warning: #faad14;  // 統一使用此橙色
+$color-purple: #722ed1;
+$color-error: #ff4d4f;
+$color-text-secondary: #666;
+$color-text-muted: #999;
+```
+
+### ✅ UI 一致性改進計畫
+
+#### Phase 1: 建立共用樣式庫（1-2 天）
+
+1. **建立共用樣式檔案**
+   ```
+   src/app/shared/styles/
+   ├── _variables.scss      # 顏色、間距、字體變數
+   ├── _stat-cards.scss     # 統計卡片樣式
+   ├── _page-header.scss    # 頁面標頭樣式
+   ├── _filter-card.scss    # 篩選器卡片樣式
+   ├── _drawer.scss         # 抽屜表單樣式
+   ├── _nav-card.scss       # 導航卡片樣式
+   └── _empty-state.scss    # 空狀態樣式
+   ```
+
+2. **定義設計規範**
+   - 頁面標頭高度：80px（含 padding）
+   - 統計卡片高度：固定 100px
+   - 卡片間距：16px（gutter）
+   - 抽屜寬度：520px（標準）、720px（詳情）
+
+#### Phase 2: 建立共用元件（2-3 天）
+
+1. **PageHeaderComponent**
+   - 統一的頁面標頭，含返回按鈕、標題、副標題、操作區
+   
+2. **StatCardComponent**
+   - 統一的統計卡片，含圖示、標題、數值、可選進度條
+
+3. **NavCardComponent**
+   - 統一的導航卡片，含圖示、標題、描述、計數、箭頭
+
+4. **FilterCardComponent**
+   - 統一的篩選器容器
+
+5. **EmptyStateComponent**
+   - 統一的空狀態處理
+
+#### Phase 3: 重構現有元件（3-5 天）
+
+1. 逐步將現有元件改用共用元件/樣式
+2. 確保響應式佈局一致
+3. 統一顏色和間距使用
+
+### 📊 UI 一致性評分
+
+| 維度 | 當前評分 | 目標評分 | 說明 |
+|------|---------|---------|------|
+| 頁面標頭 | 60% | 95% | 需統一結構和樣式 |
+| 統計卡片 | 70% | 95% | 需統一響應式和樣式類 |
+| 表格篩選器 | 65% | 90% | 需統一結構和間距 |
+| 抽屜表單 | 80% | 95% | 需抽取共用樣式 |
+| 空狀態 | 60% | 90% | 需統一處理方式 |
+| 導航卡片 | 50% | 95% | 需建立共用元件 |
+| 顏色使用 | 85% | 100% | 需統一橙色變數 |
+| **整體一致性** | **67%** | **95%** | - |
 
 ---
 
@@ -1121,6 +1398,37 @@ export class AuditLogRepository {
   - *hasRole Directive ✅
   - *isOwner Directive ✅
 
+### 🟡 Phase 1.5: UI 一致性優化（新增）
+
+#### 優先級 0: UI 一致性改進（1-2 週）
+
+- [ ] **建立共用樣式庫** - `src/app/shared/styles/`
+  ```bash
+  mkdir -p src/app/shared/styles
+  touch src/app/shared/styles/_variables.scss
+  touch src/app/shared/styles/_stat-cards.scss
+  touch src/app/shared/styles/_page-header.scss
+  touch src/app/shared/styles/_filter-card.scss
+  touch src/app/shared/styles/_drawer.scss
+  touch src/app/shared/styles/_nav-card.scss
+  touch src/app/shared/styles/_empty-state.scss
+  ```
+
+- [ ] **建立共用 UI 元件** - `src/app/shared/components/`
+  - [ ] PageHeaderComponent - 統一頁面標頭
+  - [ ] StatCardComponent - 統一統計卡片
+  - [ ] NavCardComponent - 統一導航卡片
+  - [ ] FilterCardComponent - 統一篩選器容器
+  - [ ] EmptyStateComponent - 統一空狀態處理
+
+- [ ] **重構現有元件** - 使用共用樣式和元件
+  - [ ] BlueprintOverviewComponent
+  - [ ] FinancialOverviewComponent
+  - [ ] ContractListComponent
+  - [ ] ExpenseListComponent
+  - [ ] PaymentRequestListComponent
+  - [ ] PaymentListComponent
+
 ### 🔴 Phase 2: 待開發項目
 
 #### 優先級 1: 審計日誌系統（1 週）
@@ -1231,6 +1539,14 @@ export class AuditLogRepository {
 
 基於專案最新分析，**骨架級別基礎設施已大部分完成**，現在建議的開發順序為：
 
+### 🎨 零階段：UI 一致性優化（1-2 週）⭐⭐⭐⭐⭐ (新增)
+
+0. **📌 UI 一致性改進** ⭐⭐⭐⭐⭐ (最高優先)
+   - 建立共用樣式庫（_variables.scss, _stat-cards.scss 等）
+   - 建立共用 UI 元件（PageHeader, StatCard, NavCard 等）
+   - 重構現有元件使用共用樣式
+   - 當前 UI 一致性評分：67%，目標：95%
+
 ### 🏗️ 第一階段：剩餘骨架級別基礎設施（1 週）
 
 1. **📌 操作審計日誌系統** ⭐⭐⭐⭐ (最高優先)
@@ -1257,7 +1573,17 @@ export class AuditLogRepository {
 ### 🚀 立即開始的第一步
 
 ```bash
-# 建議從審計日誌系統開始，因為它是主要剩餘的骨架級別功能
+# 建議從 UI 一致性優化開始（提升使用者體驗），然後進行審計日誌系統
+
+# 0. 建立共用樣式庫（UI 一致性）
+mkdir -p src/app/shared/styles
+touch src/app/shared/styles/_variables.scss
+touch src/app/shared/styles/_stat-cards.scss
+touch src/app/shared/styles/_page-header.scss
+touch src/app/shared/styles/_filter-card.scss
+touch src/app/shared/styles/_drawer.scss
+touch src/app/shared/styles/_nav-card.scss
+touch src/app/shared/styles/_empty-state.scss
 
 # 1. 建立審計日誌類型定義
 mkdir -p src/app/core/infra/types/audit-log
@@ -1657,5 +1983,5 @@ src/app/shared/components/comment/
 
 ---
 
-**最後更新**: 2025-12-03
-**分析基準**: 專案最新程式碼狀態 + Context7 MCP 查詢結果
+**最後更新**: 2025-12-04
+**分析基準**: 專案最新程式碼狀態 + Context7 MCP 查詢結果（ng-zorro-antd + ng-alain UI 最佳實踐）
