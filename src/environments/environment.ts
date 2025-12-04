@@ -26,10 +26,10 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: import.meta.env['NEXT_PUBLIC_SUPABASE_URL'] || 'https://niecyjsekaxalnbnuxeq.supabase.co',
+    url: import.meta.env['NEXT_PUBLIC_SUPABASE_URL'] || 'https://imxksfepdxphpyvilnfg.supabase.co',
     anonKey:
       import.meta.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] ||
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pZWN5anNla2F4YWxuYm51eGVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjE5NjMsImV4cCI6MjA4MDM5Nzk2M30.ipTGBTJHmbsIi-XkkRQmPy4gwpnQwZPwqGFmF11w1fk'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlteGtzZmVwZHhwaHB5dmlsbmZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MDQ2NjEsImV4cCI6MjA4MDM4MDY2MX0.yIfuRT8KvM6vJ7J3HgzkoxnsaDk7cHN2zpGvWmgW8LI'
   },
   providers: [provideMockConfig({ data: MOCKDATA })],
   interceptorFns: [mockInterceptor]
