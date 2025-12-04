@@ -1,0 +1,134 @@
+/**
+ * Page Header Styles
+ * 頁面標頭樣式
+ * 
+ * Unified page header styling for consistent UI across all pages
+ * 
+ * @version 1.0.0
+ */
+
+@import './_variables.less';
+
+// =============================================================================
+// Page Header Container
+// =============================================================================
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: @spacing-lg;
+  padding: @page-header-padding-vertical @page-padding;
+  border-radius: @border-radius-lg;
+  background: @color-background-white;
+
+  &-left {
+    display: flex;
+    gap: @spacing-md;
+    align-items: center;
+  }
+
+  &-right,
+  &-actions {
+    display: flex;
+    gap: @spacing-sm;
+    align-items: center;
+  }
+}
+
+// =============================================================================
+// Back Button
+// =============================================================================
+
+.back-button {
+  padding: @spacing-xs @spacing-sm;
+  color: @color-text-secondary;
+  transition: @transition-base;
+
+  &:hover {
+    color: @color-primary;
+  }
+}
+
+// =============================================================================
+// Title Section
+// =============================================================================
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+
+  h3,
+  .page-title {
+    margin: 0;
+    font-size: @page-header-title-size;
+    font-weight: @font-weight-semibold;
+    color: @color-text-primary;
+  }
+
+  .subtitle,
+  .page-subtitle {
+    font-size: @page-header-subtitle-size;
+    color: @color-text-secondary;
+  }
+}
+
+// =============================================================================
+// Header with Avatar (Blueprint Overview Style)
+// =============================================================================
+
+.blueprint-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: @spacing-lg;
+  padding: @spacing-lg;
+  border-radius: @border-radius-lg;
+  background: @color-background-white;
+}
+
+.header-left {
+  display: flex;
+  gap: @spacing-base;
+  align-items: flex-start;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-sm;
+}
+
+.blueprint-name {
+  margin: 0;
+  font-size: @font-size-xxl;
+  font-weight: @font-weight-semibold;
+}
+
+.blueprint-tags {
+  display: flex;
+  gap: @spacing-sm;
+}
+
+.header-actions {
+  display: flex;
+  gap: @spacing-sm;
+}
+
+// =============================================================================
+// Tab Header (Inside Tabs)
+// =============================================================================
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: @spacing-base;
+
+  h3 {
+    margin: 0;
+    font-size: @font-size-lg;
+    font-weight: @font-weight-semibold;
+  }
+}

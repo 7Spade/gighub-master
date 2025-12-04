@@ -16,7 +16,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Payment, PaymentMethod, PaymentRequestStatus } from '@core';
+import { Payment } from '@core';
 import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -26,25 +26,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="payment-list-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>付款紀錄</h3>
-            <span class="subtitle">Payment Records - 追蹤付款流水與紀錄</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="primary" (click)="openCreateDrawer()">
-            <span nz-icon nzType="plus"></span>
-            新增付款
-          </button>
-        </div>
-      </div>
+      <app-page-header title="付款紀錄" subtitle="Payment Records - 追蹤付款流水與紀錄" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="primary" (click)="openCreateDrawer()">
+          <span nz-icon nzType="plus"></span>
+          新增付款
+        </button>
+      </app-page-header>
 
       <!-- Statistics Cards -->
       <div nz-row [nzGutter]="16" class="stats-section">
@@ -135,7 +124,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-tag>
           </ng-template>
           <ng-template st-row="amount" let-item>
-            {{ item.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+            {{ item.paid_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
           </ng-template>
           <ng-template st-row="actions" let-item>
             <button nz-button nzType="link" nzSize="small" (click)="viewPayment(item)">
@@ -164,20 +153,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="paymentForm" nzLayout="vertical">
             <nz-form-item>
-              <nz-form-label nzFor="payment_request_id">關聯請款單</nz-form-label>
-              <nz-form-control>
+              <nz-form-label nzRequired nzFor="payment_request_id">關聯請款單</nz-form-label>
+              <nz-form-control nzErrorTip="請選擇關聯請款單">
                 <nz-select
                   formControlName="payment_request_id"
                   id="payment_request_id"
-                  nzPlaceHolder="選擇關聯請款單（選填）"
-                  nzAllowClear
+                  nzPlaceHolder="選擇關聯請款單"
                   style="width: 100%"
                   (ngModelChange)="onPaymentRequestChange($event)"
                 >
                   @for (request of approvedRequests(); track request.id) {
                     <nz-option
                       [nzValue]="request.id"
-                      [nzLabel]="request.request_number + ' - ' + (request.requested_amount | number)"
+                      [nzLabel]="(request.title || request.request_number || '請款單') + ' - ' + (request.requested_amount | number)"
                     ></nz-option>
                   }
                 </nz-select>
@@ -185,11 +173,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="amount">付款金額</nz-form-label>
+              <nz-form-label nzRequired nzFor="paid_amount">付款金額</nz-form-label>
               <nz-form-control nzErrorTip="請輸入付款金額">
                 <nz-input-number
-                  formControlName="amount"
-                  id="amount"
+                  formControlName="paid_amount"
+                  id="paid_amount"
                   [nzMin]="0"
                   [nzStep]="1000"
                   [nzFormatter]="currencyFormatter"
@@ -213,9 +201,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="payment_date">付款日期</nz-form-label>
+              <nz-form-label nzRequired nzFor="paid_at">付款日期</nz-form-label>
               <nz-form-control nzErrorTip="請選擇付款日期">
-                <nz-date-picker formControlName="payment_date" id="payment_date" style="width: 100%"></nz-date-picker>
+                <nz-date-picker formControlName="paid_at" id="paid_at" style="width: 100%"></nz-date-picker>
               </nz-form-control>
             </nz-form-item>
 
@@ -256,7 +244,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <nz-descriptions nzTitle="付款資訊" nzBordered [nzColumn]="1">
               <nz-descriptions-item nzTitle="付款金額">
                 <span style="font-size: 18px; font-weight: 600; color: #52c41a">
-                  {{ payment.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                  {{ payment.paid_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
                 </span>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="付款方式">
@@ -265,7 +253,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                 </nz-tag>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="付款日期">
-                {{ payment.payment_date | date: 'yyyy-MM-dd' }}
+                {{ payment.paid_at | date: 'yyyy-MM-dd' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="參考編號">{{ payment.reference_number || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="備註">{{ payment.notes || '-' }}</nz-descriptions-item>
@@ -286,11 +274,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `,
   styles: [
     `
-      .payment-list-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -317,6 +305,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       .subtitle {
         color: #666;
         font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
       }
 
       .stats-section {
@@ -384,25 +377,25 @@ export class PaymentListComponent implements OnInit {
 
   /** Form */
   paymentForm: FormGroup = this.fb.group({
-    payment_request_id: [null],
-    amount: [0, [Validators.required, Validators.min(1)]],
-    payment_method: [PaymentMethod.TRANSFER, [Validators.required]],
-    payment_date: [new Date(), [Validators.required]],
+    payment_request_id: [null, [Validators.required]],
+    paid_amount: [0, [Validators.required, Validators.min(1)]],
+    payment_method: [null],
+    paid_at: [new Date(), [Validators.required]],
     reference_number: [''],
     notes: ['']
   });
 
   /** Computed values */
   readonly totalPayments = computed(() => this.financialService.payments().length);
-  readonly totalAmount = computed(() => this.financialService.payments().reduce((sum, p) => sum + (p.amount || 0), 0));
+  readonly totalAmount = computed(() => this.financialService.payments().reduce((sum, p) => sum + (p.paid_amount || 0), 0));
 
   readonly thisMonthAmount = computed(() => {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     return this.financialService
       .payments()
-      .filter(p => new Date(p.payment_date) >= startOfMonth)
-      .reduce((sum, p) => sum + (p.amount || 0), 0);
+      .filter(p => new Date(p.paid_at) >= startOfMonth)
+      .reduce((sum, p) => sum + (p.paid_amount || 0), 0);
   });
 
   readonly transferPercentage = computed(() => {
@@ -410,14 +403,14 @@ export class PaymentListComponent implements OnInit {
     if (total === 0) return 0;
     const transferAmount = this.financialService
       .payments()
-      .filter(p => p.payment_method === PaymentMethod.TRANSFER)
-      .reduce((sum, p) => sum + (p.amount || 0), 0);
+      .filter(p => p.payment_method === 'transfer')
+      .reduce((sum, p) => sum + (p.paid_amount || 0), 0);
     return Math.round((transferAmount / total) * 100);
   });
 
-  /** Approved payment requests */
+  /** Approved payment requests (lifecycle = archived) */
   readonly approvedRequests = computed(() =>
-    this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.APPROVED)
+    this.financialService.paymentRequests().filter(r => r.lifecycle === 'archived' || r.lifecycle === 'active')
   );
 
   /** Filtered payments */
@@ -440,8 +433,8 @@ export class PaymentListComponent implements OnInit {
       const startDate = this.dateRange[0];
       const endDate = this.dateRange[1];
       payments = payments.filter(p => {
-        const paymentDate = new Date(p.payment_date);
-        return paymentDate >= startDate && paymentDate <= endDate;
+        const paidAt = new Date(p.paid_at);
+        return paidAt >= startDate && paidAt <= endDate;
       });
     }
 
@@ -455,7 +448,7 @@ export class PaymentListComponent implements OnInit {
   columns: STColumn[] = [
     { title: '付款金額', render: 'amount', width: 150 },
     { title: '付款方式', render: 'method', width: 100 },
-    { title: '付款日期', index: 'payment_date', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
+    { title: '付款日期', index: 'paid_at', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
     { title: '參考編號', index: 'reference_number', width: 150 },
     { title: '備註', index: 'notes', width: 200 },
     { title: '操作', render: 'actions', fixed: 'right', width: 120 }
@@ -521,7 +514,7 @@ export class PaymentListComponent implements OnInit {
     if (requestId) {
       const request = this.approvedRequests().find(r => r.id === requestId);
       if (request) {
-        this.paymentForm.patchValue({ amount: request.requested_amount });
+        this.paymentForm.patchValue({ paid_amount: request.requested_amount });
       }
     }
   }
@@ -530,9 +523,9 @@ export class PaymentListComponent implements OnInit {
   openCreateDrawer(): void {
     this.editingPayment.set(null);
     this.paymentForm.reset({
-      payment_method: PaymentMethod.TRANSFER,
-      amount: 0,
-      payment_date: new Date()
+      payment_method: null,
+      paid_amount: 0,
+      paid_at: new Date()
     });
     this.drawerVisible.set(true);
   }
@@ -561,9 +554,9 @@ export class PaymentListComponent implements OnInit {
     this.editingPayment.set(payment);
     this.paymentForm.patchValue({
       payment_request_id: payment.payment_request_id,
-      amount: payment.amount,
+      paid_amount: payment.paid_amount,
       payment_method: payment.payment_method,
-      payment_date: payment.payment_date,
+      paid_at: payment.paid_at,
       reference_number: payment.reference_number,
       notes: payment.notes
     });
@@ -580,7 +573,7 @@ export class PaymentListComponent implements OnInit {
       const data = {
         ...formValue,
         blueprint_id: this.id(),
-        payment_date: formValue.payment_date instanceof Date ? formValue.payment_date.toISOString().split('T')[0] : formValue.payment_date
+        paid_at: formValue.paid_at instanceof Date ? formValue.paid_at.toISOString().split('T')[0] : formValue.paid_at
       };
 
       if (this.editingPayment()) {
@@ -609,17 +602,17 @@ export class PaymentListComponent implements OnInit {
   }
 
   /** Get method color */
-  getMethodColor(method: string): string {
+  getMethodColor(method: string | null | undefined): string {
     switch (method) {
-      case PaymentMethod.CASH:
+      case 'cash':
         return 'green';
-      case PaymentMethod.TRANSFER:
+      case 'transfer':
         return 'blue';
-      case PaymentMethod.CHECK:
+      case 'check':
         return 'orange';
-      case PaymentMethod.CREDIT_CARD:
+      case 'credit_card':
         return 'purple';
-      case PaymentMethod.OTHER:
+      case 'other':
         return 'default';
       default:
         return 'default';
@@ -627,20 +620,20 @@ export class PaymentListComponent implements OnInit {
   }
 
   /** Get method label */
-  getMethodLabel(method: string): string {
+  getMethodLabel(method: string | null | undefined): string {
     switch (method) {
-      case PaymentMethod.CASH:
+      case 'cash':
         return '現金';
-      case PaymentMethod.TRANSFER:
+      case 'transfer':
         return '轉帳';
-      case PaymentMethod.CHECK:
+      case 'check':
         return '支票';
-      case PaymentMethod.CREDIT_CARD:
+      case 'credit_card':
         return '信用卡';
-      case PaymentMethod.OTHER:
+      case 'other':
         return '其他';
       default:
-        return method;
+        return method || '-';
     }
   }
 

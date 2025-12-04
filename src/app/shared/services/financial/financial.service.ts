@@ -571,23 +571,24 @@ export class FinancialService {
 
   /**
    * 核准請款
-   * Approve payment request
+   * Approve payment request - use lifecycle instead of status
    */
   async approvePaymentRequest(id: string): Promise<PaymentRequest | null> {
     return this.updatePaymentRequest(id, {
-      status: 'approved' as unknown as import('@core').PaymentRequestStatus,
+      lifecycle: 'archived',
       approved_at: new Date().toISOString()
     });
   }
 
   /**
    * 拒絕請款
-   * Reject payment request
+   * Reject payment request - use lifecycle instead of status
+   * Store rejection reason in metadata since rejected_reason column doesn't exist
    */
   async rejectPaymentRequest(id: string, reason: string): Promise<PaymentRequest | null> {
     return this.updatePaymentRequest(id, {
-      status: 'rejected' as unknown as import('@core').PaymentRequestStatus,
-      rejected_reason: reason
+      lifecycle: 'deleted',
+      metadata: { rejected_reason: reason, rejected_at: new Date().toISOString() }
     });
   }
 
@@ -637,10 +638,10 @@ export class FinancialService {
       const payment = await firstValueFrom(this.financialRepository.createPayment(data));
       if (payment) {
         this.payments.update(list => [payment, ...list]);
-        // 如果有關聯請款單，更新其狀態為已付款
+        // 如果有關聯請款單，更新其狀態為已完成（archived）
         if (data.payment_request_id) {
           await this.updatePaymentRequest(data.payment_request_id, {
-            status: 'paid' as unknown as import('@core').PaymentRequestStatus
+            lifecycle: 'archived'
           });
         }
       }

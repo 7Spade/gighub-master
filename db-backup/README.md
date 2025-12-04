@@ -2,6 +2,53 @@
 
 此目錄包含原始 SQL 備份檔案，用於參考和歷史記錄。
 
+---
+
+## 🗂️ 2024-12-04 遷移結構重整備份
+
+### 備份目錄
+
+| 目錄 | 說明 | 建立日期 |
+|------|------|---------|
+| `original-migrations-20241204/` | 重整前的所有遷移檔案完整備份 | 2024-12-04 |
+
+### 重整說明
+
+遷移文件已重新組織為 18 分類結構，詳細說明請參閱：
+- **結構文檔**: [`../supabase/MIGRATION_STRUCTURE.md`](../supabase/MIGRATION_STRUCTURE.md)
+- **企業架構**: [`ENTERPRISE_STRUCTURE.md`](../supabase/ENTERPRISE_STRUCTURE.md)
+
+### 18 分類概覽
+
+| 前綴 | 分類名稱 | 說明 |
+|------|---------|------|
+| 01 | Extensions | PostgreSQL 擴展 |
+| 02 | Schemas | 命名空間 |
+| 03 | Custom Types | ENUM 和複合類型 |
+| 04 | Foundation Tables | 基礎層表 (accounts) |
+| 05 | Organization Tables | 組織層表 |
+| 06 | Blueprint Tables | 藍圖層表 |
+| 07 | Module Tables | 模組層表 |
+| 08 | Private Functions | RLS 輔助函數 |
+| 09 | Triggers | 觸發器 |
+| 10 | RLS Policies | 行級安全政策 |
+| 11 | Auth Integration | 認證整合 |
+| 12 | API Functions | 公開 RPC 函數 |
+| 13 | RBAC Configuration | 角色權限配置 |
+| 14 | Container Infrastructure | 容器層基礎設施 |
+| 15 | Storage Configuration | Supabase 儲存配置 |
+| 16 | Realtime Configuration | 即時功能配置 |
+| 17 | Business Extensions | 業務擴展模組 |
+| 18 | Documentation | 文檔註解 |
+
+### 重要變更
+
+1. **跨類別依賴處理**：使用前綴號 + 編號控制順序
+2. **RLS 政策安全**：確保政策只參照已存在的欄位
+3. **同步更新機制**：新增欄位時同步更新相關 RLS 政策
+
+---
+
 ## 檔案狀態
 
 ### 已整合至 migrations 目錄

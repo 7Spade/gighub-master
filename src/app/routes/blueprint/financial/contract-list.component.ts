@@ -27,25 +27,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="contract-list-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>合約管理</h3>
-            <span class="subtitle">Contract Management - 管理專案合約與預算</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="primary" (click)="openCreateDrawer()">
-            <span nz-icon nzType="plus"></span>
-            新增合約
-          </button>
-        </div>
-      </div>
+      <app-page-header title="合約管理" subtitle="Contract Management - 管理專案合約與預算" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="primary" (click)="openCreateDrawer()">
+          <span nz-icon nzType="plus"></span>
+          新增合約
+        </button>
+      </app-page-header>
 
       <!-- Statistics Cards -->
       <div nz-row [nzGutter]="16" class="stats-section">
@@ -277,11 +266,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   `,
   styles: [
     `
-      .contract-list-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -308,6 +297,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
       .subtitle {
         color: #666;
         font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
       }
 
       .stats-section {

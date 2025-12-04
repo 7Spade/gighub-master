@@ -15,7 +15,6 @@
 
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaymentRequestStatus } from '@core';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -24,29 +23,18 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="financial-overview-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>財務概覽</h3>
-            <span class="subtitle">Financial Overview - 預算與成本追蹤</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="default" (click)="refreshData()">
-            <span nz-icon nzType="reload"></span>
-            刷新
-          </button>
-        </div>
-      </div>
+      <app-page-header title="財務概覽" subtitle="Financial Overview - 預算與成本追蹤" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="default" (click)="refreshData()">
+          <span nz-icon nzType="reload"></span>
+          刷新
+        </button>
+      </app-page-header>
 
       <nz-spin [nzSpinning]="financialService.loading()">
         <!-- Summary Cards -->
-        <div nz-row [nzGutter]="[16, 16]" class="summary-section">
+        <div nz-row [nzGutter]="[16, 16]" class="stats-section">
           <!-- Total Contract Amount -->
           <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="6">
             <nz-card [nzBordered]="false" class="stat-card">
@@ -70,7 +58,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                 nzTitle="累計支出"
                 [nzValue]="summary()?.total_expenses ?? 0"
                 [nzPrefix]="expenseIcon"
-                [nzValueStyle]="{ color: '#fa8c16' }"
+                [nzValueStyle]="{ color: '#faad14' }"
                 nzSuffix="元"
               ></nz-statistic>
               <ng-template #expenseIcon>
@@ -233,15 +221,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <nz-list nzItemLayout="horizontal" [nzLoading]="financialService.loading()">
             @for (request of recentPaymentRequests(); track request.id) {
               <nz-list-item>
-                <nz-list-item-meta nzAvatar="audit" [nzTitle]="request.request_number" [nzDescription]="request.description || '無描述'">
+                <nz-list-item-meta
+                  nzAvatar="audit"
+                  [nzTitle]="request.title || request.request_number || '請款單'"
+                  [nzDescription]="request.description || '無描述'"
+                >
                   <nz-list-item-meta-avatar>
                     <nz-avatar nzIcon="audit"></nz-avatar>
                   </nz-list-item-meta-avatar>
                 </nz-list-item-meta>
                 <ul nz-list-item-actions>
                   <nz-list-item-action>
-                    <nz-tag [nzColor]="getStatusColor(request.status)">
-                      {{ getStatusLabel(request.status) }}
+                    <nz-tag [nzColor]="getStatusColor(request.lifecycle)">
+                      {{ getStatusLabel(request.lifecycle) }}
                     </nz-tag>
                   </nz-list-item-action>
                   <nz-list-item-action>
@@ -259,40 +251,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `,
   styles: [
     `
-      .financial-overview-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .header-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .back-button {
-        padding: 4px 8px;
-        color: #666;
-      }
-
-      .title-section h3 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-      }
-
-      .subtitle {
-        color: #666;
-        font-size: 14px;
-      }
-
-      .summary-section {
+      .stats-section {
         margin-bottom: 24px;
       }
 
@@ -371,7 +334,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
       .nav-icon.expenses {
         background: #fff7e6;
-        color: #fa8c16;
+        color: #faad14;
       }
 
       .nav-icon.requests {
@@ -451,9 +414,9 @@ export class FinancialOverviewComponent implements OnInit {
     return s.total_requested - s.total_paid;
   });
 
-  /** Pending payment request count */
+  /** Pending payment request count - use lifecycle */
   readonly pendingRequestCount = computed(() => {
-    return this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.PENDING).length;
+    return this.financialService.paymentRequests().filter(r => r.lifecycle === 'active').length;
   });
 
   /** Recent payment requests */
@@ -490,39 +453,39 @@ export class FinancialOverviewComponent implements OnInit {
     return '#52c41a';
   }
 
-  /** Get status color */
-  getStatusColor(status: PaymentRequestStatus): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status color - use lifecycle */
+  getStatusColor(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return 'default';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return 'processing';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return 'success';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return 'warning';
+      case 'deleted':
         return 'error';
-      case PaymentRequestStatus.PAID:
-        return 'green';
       default:
         return 'default';
     }
   }
 
-  /** Get status label */
-  getStatusLabel(status: PaymentRequestStatus): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status label - use lifecycle */
+  getStatusLabel(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return '草稿';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return '待審核';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return '已核准';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return '暫緩';
+      case 'deleted':
         return '已拒絕';
-      case PaymentRequestStatus.PAID:
-        return '已付款';
       default:
-        return status;
+        return lifecycle;
     }
   }
 

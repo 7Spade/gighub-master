@@ -1,0 +1,135 @@
+/**
+ * Stat Card Styles
+ * 統計卡片樣式
+ * 
+ * Unified statistics card styling for dashboard displays
+ * 
+ * @version 1.0.0
+ */
+
+@import './_variables.less';
+
+// =============================================================================
+// Stats Row Container
+// =============================================================================
+
+.stats-row,
+.stats-section,
+.summary-section,
+.financial-stats-row {
+  margin-bottom: @spacing-lg;
+
+  > [nz-col] {
+    margin-bottom: @spacing-base;
+  }
+}
+
+// =============================================================================
+// Stat Card
+// =============================================================================
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: @stat-card-height;
+  text-align: center;
+
+  .ant-statistic-title {
+    font-size: @stat-card-title-size;
+    color: @color-text-secondary;
+  }
+
+  .ant-statistic-content-value {
+    font-size: @stat-card-value-size;
+    font-weight: @font-weight-semibold;
+  }
+
+  .ant-statistic-content-prefix {
+    margin-right: @spacing-xs;
+  }
+}
+
+// =============================================================================
+// Financial Card (with progress bar)
+// =============================================================================
+
+.financial-card {
+  text-align: center;
+
+  .progress-bar {
+    margin-top: @spacing-sm;
+  }
+}
+
+// =============================================================================
+// Progress Card (with details)
+// =============================================================================
+
+.progress-card {
+  height: 100%;
+}
+
+.progress-content {
+  display: flex;
+  gap: @spacing-xl;
+  align-items: center;
+  padding: @spacing-base 0;
+}
+
+.progress-details {
+  flex: 1;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: @spacing-sm 0;
+  border-bottom: 1px solid @color-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    color: @color-text-secondary;
+  }
+
+  .value {
+    font-weight: @font-weight-medium;
+  }
+}
+
+// =============================================================================
+// Stat Card Colors
+// =============================================================================
+
+.stat-card-primary {
+  .ant-statistic-content-value {
+    color: @color-primary;
+  }
+}
+
+.stat-card-success {
+  .ant-statistic-content-value {
+    color: @color-success;
+  }
+}
+
+.stat-card-warning {
+  .ant-statistic-content-value {
+    color: @color-warning;
+  }
+}
+
+.stat-card-error {
+  .ant-statistic-content-value {
+    color: @color-error;
+  }
+}
+
+.stat-card-purple {
+  .ant-statistic-content-value {
+    color: @color-purple;
+  }
+}

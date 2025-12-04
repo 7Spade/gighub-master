@@ -1,0 +1,43 @@
+/**
+ * Drawer Styles
+ * 抽屜樣式
+ * 
+ * Unified drawer and form styling
+ * 
+ * @version 1.0.0
+ */
+
+@import './_variables.less';
+
+// =============================================================================
+// Drawer Footer
+// =============================================================================
+
+.drawer-footer {
+  display: flex;
+  gap: @spacing-md;
+  justify-content: flex-end;
+  margin-top: @spacing-lg;
+  padding-top: @spacing-lg;
+  border-top: 1px solid @color-border-light;
+}
+
+// =============================================================================
+// Detail Actions
+// =============================================================================
+
+.detail-actions {
+  display: flex;
+  gap: @spacing-md;
+  justify-content: flex-end;
+  margin-top: @spacing-lg;
+}
+
+// =============================================================================
+// Drawer Width Variables (for reference in components)
+// =============================================================================
+
+// Use these values in component styles:
+// Small drawer: @drawer-width-sm (400px)
+// Medium drawer: @drawer-width-md (520px) - Standard forms
+// Large drawer: @drawer-width-lg (720px) - Complex forms/details

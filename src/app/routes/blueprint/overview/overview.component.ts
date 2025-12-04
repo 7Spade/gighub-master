@@ -4,16 +4,21 @@
  * 藍圖概覽組件
  * Blueprint overview component
  *
- * Displays the overview/detail page for a specific blueprint.
+ * Displays the overview/detail page for a specific blueprint with integrated tabs:
+ * - 概覽: Blueprint details and statistics
+ * - 任務管理: Task management (embedded TasksComponent)
+ * - 成員管理: Member management (embedded MembersComponent)
+ * - 財務: Financial overview with quick access buttons
+ * - 活動: Activity timeline with audit logs
  *
  * @module routes/blueprint
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade } from '@core';
-import { BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
+import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade, ModuleType } from '@core';
+import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -30,6 +35,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
@@ -65,8 +71,6 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
               </div>
             </div>
             <div class="header-actions">
-              <button nz-button nzType="default" (click)="goToTasks()"> <span nz-icon nzType="ordered-list"></span>任務管理 </button>
-              <button nz-button nzType="default" (click)="goToMembers()"> <span nz-icon nzType="team"></span>成員管理 </button>
               <button nz-button nzType="primary" (click)="editBlueprint()"> <span nz-icon nzType="edit"></span>編輯 </button>
             </div>
           </div>
@@ -102,61 +106,17 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
             </div>
           </div>
 
-          <!-- Financial Summary Cards -->
-          @if (financialSummary()) {
-            <div nz-row [nzGutter]="16" class="financial-stats-row">
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
-                  </nz-statistic>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="已支出"
-                    [nzValue]="financialSummary()!.total_expenses ?? 0"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: '#faad14' }"
-                  >
-                  </nz-statistic>
-                  <div class="progress-bar">
-                    <nz-progress [nzPercent]="expenseRate()" nzSize="small" [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'">
-                    </nz-progress>
-                  </div>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="已付款"
-                    [nzValue]="financialSummary()!.total_paid ?? 0"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: '#52c41a' }"
-                  >
-                  </nz-statistic>
-                  <div class="progress-bar">
-                    <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success"> </nz-progress>
-                  </div>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="剩餘預算"
-                    [nzValue]="remainingBudget()"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
-                  >
-                  </nz-statistic>
-                </nz-card>
-              </div>
-            </div>
-          }
-
           <!-- Tabs for different sections -->
-          <nz-tabset class="content-tabs">
+          <nz-tabset class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
+            <!-- 概覽 Tab -->
             <nz-tab nzTitle="概覽">
+              <div class="tab-header">
+                <h3>藍圖概覽</h3>
+                <button nz-button nzType="primary" (click)="refreshBlueprint()">
+                  <span nz-icon nzType="reload"></span>
+                  重新整理
+                </button>
+              </div>
               <nz-card [nzBordered]="false">
                 <nz-descriptions nzTitle="藍圖詳情" nzBordered [nzColumn]="2">
                   <nz-descriptions-item nzTitle="名稱">{{ blueprint()!.name }}</nz-descriptions-item>
@@ -175,11 +135,213 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                   <nz-descriptions-item nzTitle="更新時間">{{ blueprint()!.updated_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
                 </nz-descriptions>
               </nz-card>
+
+              <!-- Quick Navigation Cards -->
+              <div nz-row [nzGutter]="16" class="quick-nav-row">
+                @if (isTasksModuleEnabled()) {
+                  <div nz-col [nzSpan]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToTasks()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="ordered-list" class="nav-icon" style="color: #1890ff;"></span>
+                        <div class="nav-text">
+                          <h4>任務管理</h4>
+                          <p>管理施工任務與進度追蹤</p>
+                        </div>
+                      </div>
+                    </nz-card>
+                  </div>
+                }
+                <div nz-col [nzSpan]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToMembers()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="team" class="nav-icon" style="color: #52c41a;"></span>
+                      <div class="nav-text">
+                        <h4>成員管理</h4>
+                        <p>管理藍圖成員與權限</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzSpan]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFinancialOverview()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="dollar" class="nav-icon" style="color: #faad14;"></span>
+                      <div class="nav-text">
+                        <h4>財務管理</h4>
+                        <p>合約、費用與請款管理</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+              </div>
             </nz-tab>
 
-            <!-- Financial Tab -->
+            <!-- 任務管理 Tab - only show if tasks module is enabled -->
+            @if (isTasksModuleEnabled()) {
+              <nz-tab nzTitle="任務管理">
+                <div class="tab-header">
+                  <h3>任務管理</h3>
+                  <button nz-button nzType="primary" (click)="goToTasks()">
+                    <span nz-icon nzType="fullscreen"></span>
+                    開啟完整視圖
+                  </button>
+                </div>
+                <nz-card [nzBordered]="false">
+                  <nz-empty nzNotFoundContent="請點擊上方按鈕進入完整任務管理視圖">
+                    <ng-template #nzNotFoundFooter>
+                      <p class="text-muted">完整任務管理包含樹狀圖、表格、看板視圖</p>
+                      <button nz-button nzType="primary" (click)="goToTasks()">
+                        <span nz-icon nzType="ordered-list"></span>
+                        進入任務管理
+                      </button>
+                    </ng-template>
+                  </nz-empty>
+                </nz-card>
+              </nz-tab>
+            }
+
+            <!-- 成員管理 Tab -->
+            <nz-tab nzTitle="成員管理">
+              <div class="tab-header">
+                <h3>成員管理</h3>
+                <button nz-button nzType="primary" (click)="goToMembers()">
+                  <span nz-icon nzType="fullscreen"></span>
+                  開啟完整視圖
+                </button>
+              </div>
+              <nz-card [nzBordered]="false">
+                <div class="members-preview">
+                  <nz-table #memberTable [nzData]="members()" [nzShowPagination]="false" nzSize="small" [nzFrontPagination]="false">
+                    <thead>
+                      <tr>
+                        <th>成員</th>
+                        <th>角色</th>
+                        <th>類型</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (member of members().slice(0, 5); track member.id) {
+                        <tr>
+                          <td>
+                            <div class="member-info">
+                              <nz-avatar [nzSize]="24" nzIcon="user"></nz-avatar>
+                              <span>{{ member.account_id }}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <nz-tag>{{ getRoleLabel(member.role) }}</nz-tag>
+                          </td>
+                          <td>
+                            @if (member.is_external) {
+                              <nz-tag nzColor="orange">外部</nz-tag>
+                            } @else {
+                              <nz-tag nzColor="blue">內部</nz-tag>
+                            }
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="3">
+                            <nz-empty nzNotFoundContent="尚無成員"></nz-empty>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </nz-table>
+                  @if (members().length > 5) {
+                    <div class="view-more">
+                      <button nz-button nzType="link" (click)="goToMembers()">
+                        查看全部 {{ members().length }} 位成員
+                        <span nz-icon nzType="right"></span>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </nz-card>
+            </nz-tab>
+
+            <!-- 財務 Tab -->
             <nz-tab nzTitle="財務">
+              <div class="tab-header">
+                <h3>財務管理</h3>
+                <button nz-button nzType="primary" (click)="goToFinancialPage('overview')">
+                  <span nz-icon nzType="fullscreen"></span>
+                  開啟完整視圖
+                </button>
+              </div>
               <nz-spin [nzSpinning]="financialLoading()">
+                <!-- Financial Statistics Cards -->
+                @if (financialSummary()) {
+                  <div nz-row [nzGutter]="16" class="financial-stats-row">
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
+                        </nz-statistic>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="已支出"
+                          [nzValue]="financialSummary()!.total_expenses ?? 0"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: '#faad14' }"
+                        >
+                        </nz-statistic>
+                        <div class="progress-bar">
+                          <nz-progress [nzPercent]="expenseRate()" nzSize="small" [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'">
+                          </nz-progress>
+                        </div>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="已付款"
+                          [nzValue]="financialSummary()!.total_paid ?? 0"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: '#52c41a' }"
+                        >
+                        </nz-statistic>
+                        <div class="progress-bar">
+                          <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success"> </nz-progress>
+                        </div>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="剩餘預算"
+                          [nzValue]="remainingBudget()"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
+                        >
+                        </nz-statistic>
+                      </nz-card>
+                    </div>
+                  </div>
+                }
+
+                <!-- Quick Action Buttons -->
+                <div class="financial-actions">
+                  <button nz-button nzType="primary" (click)="goToFinancialPage('contracts')">
+                    <span nz-icon nzType="file-text"></span>
+                    合約管理
+                  </button>
+                  <button nz-button (click)="goToFinancialPage('expenses')">
+                    <span nz-icon nzType="dollar"></span>
+                    費用管理
+                  </button>
+                  <button nz-button (click)="goToFinancialPage('payment-requests')">
+                    <span nz-icon nzType="audit"></span>
+                    請款管理
+                  </button>
+                  <button nz-button (click)="goToFinancialPage('payments')">
+                    <span nz-icon nzType="transaction"></span>
+                    付款紀錄
+                  </button>
+                </div>
+
                 @if (financialSummary()) {
                   <!-- Financial Overview -->
                   <nz-card nzTitle="財務概覽" [nzBordered]="false" class="financial-overview-card">
@@ -219,7 +381,13 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
                   <!-- Contracts Table -->
                   @if (contracts().length > 0) {
-                    <nz-card nzTitle="合約列表" [nzBordered]="false" class="contracts-card">
+                    <nz-card nzTitle="合約列表" [nzBordered]="false" class="contracts-card" [nzExtra]="contractsExtra">
+                      <ng-template #contractsExtra>
+                        <button nz-button nzType="link" (click)="goToFinancialPage('contracts')">
+                          查看全部
+                          <span nz-icon nzType="right"></span>
+                        </button>
+                      </ng-template>
                       <nz-table
                         #contractsTable
                         [nzData]="contracts()"
@@ -264,14 +432,28 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
                   <nz-empty nzNotFoundContent="尚無財務資料" nzNotFoundImage="simple">
                     <ng-template #nzNotFoundFooter>
                       <p class="text-muted">建立合約後可在此查看財務資訊</p>
+                      <button nz-button nzType="primary" (click)="goToFinancialPage('contracts')">
+                        <span nz-icon nzType="plus"></span>
+                        新增合約
+                      </button>
                     </ng-template>
                   </nz-empty>
                 }
               </nz-spin>
             </nz-tab>
 
+            <!-- 活動 Tab -->
             <nz-tab nzTitle="活動">
-              <nz-empty nzNotFoundContent="暫無活動記錄"></nz-empty>
+              <div class="tab-header">
+                <h3>活動記錄</h3>
+                <button nz-button nzType="primary" (click)="refreshActivity()">
+                  <span nz-icon nzType="reload"></span>
+                  重新整理
+                </button>
+              </div>
+              <nz-card [nzBordered]="false">
+                <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
+              </nz-card>
             </nz-tab>
           </nz-tabset>
         } @else if (!loading()) {
@@ -355,6 +537,71 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
       .contracts-card {
         margin-top: 16px;
       }
+      /* Quick Navigation Cards */
+      .quick-nav-row {
+        margin-top: 24px;
+      }
+      .nav-card {
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .nav-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .nav-card-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .nav-icon {
+        font-size: 32px;
+      }
+      .nav-text h4 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .nav-text p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+      }
+      /* Tab Headers */
+      .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .tab-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      /* Members Preview */
+      .members-preview {
+        padding: 0;
+      }
+      .member-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .view-more {
+        text-align: center;
+        margin-top: 16px;
+      }
+      /* Financial Actions */
+      .financial-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding: 16px;
+        background: #fafafa;
+        border-radius: 8px;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -377,7 +624,9 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
     NzTableModule,
     NzTagModule,
     NzTabsModule,
-    NzTooltipModule
+    NzTimelineModule,
+    NzTooltipModule,
+    ActivityTimelineComponent
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
@@ -388,10 +637,15 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
 
+  @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
+
   blueprint = signal<BlueprintBusinessModel | null>(null);
   members = signal<BlueprintMemberDetail[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+
+  // Tab state
+  selectedTabIndex = 0;
 
   // Financial state
   financialSummary = signal<BlueprintFinancialSummary | null>(null);
@@ -402,6 +656,12 @@ export class BlueprintOverviewComponent implements OnInit {
 
   readonly enabledModulesCount = computed(() => {
     return this.blueprint()?.enabled_modules?.length || 0;
+  });
+
+  /** Check if tasks module is enabled */
+  readonly isTasksModuleEnabled = computed(() => {
+    const modules = this.blueprint()?.enabled_modules || [];
+    return modules.includes(ModuleType.TASKS);
   });
 
   readonly membersCount = computed(() => {
@@ -525,12 +785,15 @@ export class BlueprintOverviewComponent implements OnInit {
     const labelMap: Record<string, string> = {
       tasks: '任務管理',
       diary: '施工日誌',
+      checklists: '檢查清單',
+      issues: '問題追蹤',
+      files: '檔案管理',
+      financial: '財務管理',
+      acceptance: '品質驗收',
+      // Deprecated but kept for backward compatibility
       dashboard: '儀表板',
       bot_workflow: '自動化流程',
-      files: '檔案管理',
-      todos: '待辦事項',
-      checklists: '檢查清單',
-      issues: '問題追蹤'
+      todos: '待辦事項'
     };
     return labelMap[module] || module;
   }
@@ -575,7 +838,45 @@ export class BlueprintOverviewComponent implements OnInit {
     }
   }
 
+  goToFinancialOverview(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'financial', 'overview']);
+    }
+  }
+
   editBlueprint(): void {
     this.msg.info('編輯功能開發中');
+  }
+
+  refreshBlueprint(): void {
+    this.loadBlueprint();
+  }
+
+  refreshActivity(): void {
+    if (this.activityTimeline) {
+      this.activityTimeline.loadLogs();
+    }
+  }
+
+  switchToTab(index: number): void {
+    this.selectedTabIndex = index;
+  }
+
+  goToFinancialPage(page: string): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'financial', page]);
+    }
+  }
+
+  getRoleLabel(role: string): string {
+    const labelMap: Record<string, string> = {
+      owner: '擁有者',
+      maintainer: '維護者',
+      contributor: '貢獻者',
+      viewer: '檢視者'
+    };
+    return labelMap[role] || role;
   }
 }

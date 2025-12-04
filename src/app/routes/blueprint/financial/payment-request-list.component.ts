@@ -16,7 +16,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PaymentRequest, PaymentRequestStatus } from '@core';
+import { PaymentRequest } from '@core';
 import { STColumn, STComponent, STPage } from '@delon/abc/st';
 import { FinancialService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -27,25 +27,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="payment-request-list-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
-        <div class="header-left">
-          <button nz-button nzType="text" (click)="goBack()" class="back-button">
-            <span nz-icon nzType="arrow-left"></span>
-          </button>
-          <div class="title-section">
-            <h3>請款管理</h3>
-            <span class="subtitle">Payment Request Management - 管理請款與審核流程</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button nz-button nzType="primary" (click)="openCreateDrawer()">
-            <span nz-icon nzType="plus"></span>
-            新增請款
-          </button>
-        </div>
-      </div>
+      <app-page-header title="請款管理" subtitle="Payment Request Management - 管理請款與審核流程" [showBack]="true" (backClick)="goBack()">
+        <button actions nz-button nzType="primary" (click)="openCreateDrawer()">
+          <span nz-icon nzType="plus"></span>
+          新增請款
+        </button>
+      </app-page-header>
 
       <!-- Statistics Cards -->
       <div nz-row [nzGutter]="16" class="stats-section">
@@ -56,7 +45,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic nzTitle="待審核" [nzValue]="pendingRequests()" [nzValueStyle]="{ color: '#fa8c16' }"></nz-statistic>
+            <nz-statistic nzTitle="待審核" [nzValue]="pendingRequests()" [nzValueStyle]="{ color: '#faad14' }"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
@@ -128,8 +117,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
           [scroll]="{ x: '1100px' }"
         >
           <ng-template st-row="status" let-item>
-            <nz-tag [nzColor]="getStatusColor(item.status)">
-              {{ getStatusLabel(item.status) }}
+            <nz-tag [nzColor]="getStatusColor(item.lifecycle)">
+              {{ getStatusLabel(item.lifecycle) }}
             </nz-tag>
           </ng-template>
           <ng-template st-row="amount" let-item>
@@ -139,12 +128,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
             <button nz-button nzType="link" nzSize="small" (click)="viewRequest(item)">
               <span nz-icon nzType="eye"></span>
             </button>
-            @if (item.status === 'draft' || item.status === 'pending') {
+            @if (item.lifecycle === 'draft' || item.lifecycle === 'active') {
               <button nz-button nzType="link" nzSize="small" (click)="editRequest(item)">
                 <span nz-icon nzType="edit"></span>
               </button>
             }
-            @if (item.status === 'pending') {
+            @if (item.lifecycle === 'active') {
               <button nz-button nzType="link" nzSize="small" style="color: #52c41a" (click)="approveRequest(item)">
                 <span nz-icon nzType="check"></span>
               </button>
@@ -152,7 +141,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                 <span nz-icon nzType="close"></span>
               </button>
             }
-            @if (item.status === 'draft') {
+            @if (item.lifecycle === 'draft') {
               <button
                 nz-button
                 nzType="link"
@@ -177,6 +166,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
               <nz-form-label nzFor="request_number">請款編號</nz-form-label>
               <nz-form-control>
                 <input nz-input formControlName="request_number" id="request_number" placeholder="自動生成" [disabled]="true" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="title">請款名稱</nz-form-label>
+              <nz-form-control nzErrorTip="請輸入請款名稱">
+                <input nz-input formControlName="title" id="title" placeholder="請輸入請款名稱" />
               </nz-form-control>
             </nz-form-item>
 
@@ -227,7 +223,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
             <div class="drawer-footer">
               <button nz-button nzType="default" (click)="closeDrawer()">取消</button>
-              @if (!editingRequest() || editingRequest()?.status === 'draft') {
+              @if (!editingRequest() || editingRequest()?.lifecycle === 'draft') {
                 <button nz-button nzType="default" [nzLoading]="saving()" [disabled]="requestForm.invalid" (click)="saveAsDraft()">
                   儲存草稿
                 </button>
@@ -245,24 +241,20 @@ import { NzModalService } from 'ng-zorro-antd/modal';
         <ng-container *nzDrawerContent>
           @if (viewingRequest(); as request) {
             <nz-descriptions nzTitle="基本資訊" nzBordered [nzColumn]="1">
-              <nz-descriptions-item nzTitle="請款編號">{{ request.request_number }}</nz-descriptions-item>
+              <nz-descriptions-item nzTitle="請款編號">{{ request.request_number || '-' }}</nz-descriptions-item>
+              <nz-descriptions-item nzTitle="請款名稱">{{ request.title }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="請款金額">
                 {{ request.requested_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="狀態">
-                <nz-tag [nzColor]="getStatusColor(request.status)">
-                  {{ getStatusLabel(request.status) }}
+                <nz-tag [nzColor]="getStatusColor(request.lifecycle)">
+                  {{ getStatusLabel(request.lifecycle) }}
                 </nz-tag>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="說明">{{ request.description || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="建立時間">{{ request.created_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
               @if (request.approved_at) {
                 <nz-descriptions-item nzTitle="核准時間">{{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
-              }
-              @if (request.rejected_reason) {
-                <nz-descriptions-item nzTitle="拒絕原因">
-                  <span style="color: #ff4d4f">{{ request.rejected_reason }}</span>
-                </nz-descriptions-item>
               }
             </nz-descriptions>
 
@@ -272,21 +264,18 @@ import { NzModalService } from 'ng-zorro-antd/modal';
             <h4>審核流程</h4>
             <nz-timeline>
               <nz-timeline-item nzColor="blue"> 建立請款 - {{ request.created_at | date: 'yyyy-MM-dd HH:mm' }} </nz-timeline-item>
-              @if (request.status !== 'draft') {
+              @if (request.lifecycle !== 'draft') {
                 <nz-timeline-item nzColor="orange"> 提交審核 </nz-timeline-item>
               }
-              @if (request.status === 'approved' || request.status === 'paid') {
+              @if (request.lifecycle === 'archived') {
                 <nz-timeline-item nzColor="green"> 審核通過 - {{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }} </nz-timeline-item>
               }
-              @if (request.status === 'rejected') {
+              @if (request.lifecycle === 'deleted') {
                 <nz-timeline-item nzColor="red"> 審核拒絕 </nz-timeline-item>
-              }
-              @if (request.status === 'paid') {
-                <nz-timeline-item nzColor="green"> 已完成付款 </nz-timeline-item>
               }
             </nz-timeline>
 
-            @if (request.status === 'pending') {
+            @if (request.lifecycle === 'active') {
               <div class="detail-actions">
                 <button nz-button nzType="primary" (click)="approveRequest(request)">
                   <span nz-icon nzType="check"></span>
@@ -322,11 +311,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   `,
   styles: [
     `
-      .payment-request-list-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -353,6 +342,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
       .subtitle {
         color: #666;
         font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
       }
 
       .stats-section {
@@ -426,26 +420,26 @@ export class PaymentRequestListComponent implements OnInit {
   /** Form */
   requestForm: FormGroup = this.fb.group({
     request_number: [{ value: '', disabled: true }],
+    title: ['', [Validators.required]],
     requested_amount: [0, [Validators.required, Validators.min(1)]],
     contract_id: [null],
-    description: ['']
+    description: [''],
+    due_date: [null]
   });
 
-  /** Computed values */
+  /** Computed values - use lifecycle instead of status */
   readonly totalRequests = computed(() => this.financialService.paymentRequests().length);
-  readonly pendingRequests = computed(
-    () => this.financialService.paymentRequests().filter(r => r.status === PaymentRequestStatus.PENDING).length
-  );
+  readonly pendingRequests = computed(() => this.financialService.paymentRequests().filter(r => r.lifecycle === 'active').length);
   readonly approvedAmount = computed(() =>
     this.financialService
       .paymentRequests()
-      .filter(r => r.status === PaymentRequestStatus.APPROVED || r.status === PaymentRequestStatus.PAID)
+      .filter(r => r.lifecycle === 'archived')
       .reduce((sum, r) => sum + (r.requested_amount || 0), 0)
   );
   readonly pendingAmount = computed(() =>
     this.financialService
       .paymentRequests()
-      .filter(r => r.status === PaymentRequestStatus.APPROVED)
+      .filter(r => r.lifecycle === 'active')
       .reduce((sum, r) => sum + (r.requested_amount || 0), 0)
   );
 
@@ -456,12 +450,15 @@ export class PaymentRequestListComponent implements OnInit {
     if (this.searchText) {
       const search = this.searchText.toLowerCase();
       requests = requests.filter(
-        r => r.request_number.toLowerCase().includes(search) || (r.description && r.description.toLowerCase().includes(search))
+        r =>
+          r.request_number?.toLowerCase().includes(search) ||
+          r.title?.toLowerCase().includes(search) ||
+          (r.description && r.description.toLowerCase().includes(search))
       );
     }
 
     if (this.selectedStatus) {
-      requests = requests.filter(r => r.status === this.selectedStatus);
+      requests = requests.filter(r => r.lifecycle === this.selectedStatus);
     }
 
     return requests;
@@ -473,9 +470,9 @@ export class PaymentRequestListComponent implements OnInit {
   /** Table columns */
   columns: STColumn[] = [
     { title: '請款編號', index: 'request_number', width: 150 },
+    { title: '請款名稱', index: 'title', width: 150 },
     { title: '請款金額', render: 'amount', width: 150 },
     { title: '狀態', render: 'status', width: 100 },
-    { title: '說明', index: 'description', width: 200 },
     { title: '建立時間', index: 'created_at', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm', width: 150 },
     { title: '操作', render: 'actions', fixed: 'right', width: 180 }
   ];
@@ -574,34 +571,37 @@ export class PaymentRequestListComponent implements OnInit {
     this.editingRequest.set(request);
     this.requestForm.patchValue({
       request_number: request.request_number,
+      title: request.title,
       requested_amount: request.requested_amount,
       contract_id: request.contract_id,
-      description: request.description
+      description: request.description,
+      due_date: request.due_date
     });
     this.drawerVisible.set(true);
   }
 
-  /** Save as draft */
+  /** Save as draft - use lifecycle 'draft' */
   async saveAsDraft(): Promise<void> {
     if (this.requestForm.invalid) return;
-    await this.saveRequest(PaymentRequestStatus.DRAFT);
+    await this.saveRequest('draft');
   }
 
-  /** Submit for approval */
+  /** Submit for approval - use lifecycle 'active' */
   async submitForApproval(): Promise<void> {
     if (this.requestForm.invalid) return;
-    await this.saveRequest(PaymentRequestStatus.PENDING);
+    await this.saveRequest('active');
   }
 
-  /** Save request with status */
-  private async saveRequest(status: PaymentRequestStatus): Promise<void> {
+  /** Save request with lifecycle */
+  private async saveRequest(lifecycle: string): Promise<void> {
     this.saving.set(true);
     try {
       const formValue = this.requestForm.getRawValue();
       const data = {
         ...formValue,
         blueprint_id: this.id(),
-        status
+        lifecycle,
+        request_date: new Date().toISOString().split('T')[0]
       };
 
       if (this.editingRequest()) {
@@ -609,7 +609,7 @@ export class PaymentRequestListComponent implements OnInit {
         this.msg.success('請款更新成功');
       } else {
         await this.financialService.createPaymentRequest(data);
-        this.msg.success(status === PaymentRequestStatus.DRAFT ? '請款已儲存為草稿' : '請款已提交審核');
+        this.msg.success(lifecycle === 'draft' ? '請款已儲存為草稿' : '請款已提交審核');
       }
       this.closeDrawer();
     } catch {
@@ -623,7 +623,7 @@ export class PaymentRequestListComponent implements OnInit {
   async approveRequest(request: PaymentRequest): Promise<void> {
     this.modal.confirm({
       nzTitle: '確認核准',
-      nzContent: `確定要核准請款編號 ${request.request_number}，金額 ${request.requested_amount.toLocaleString()} 元嗎？`,
+      nzContent: `確定要核准請款 ${request.title || request.request_number}，金額 ${request.requested_amount.toLocaleString()} 元嗎？`,
       nzOnOk: async () => {
         try {
           await this.financialService.approvePaymentRequest(request.id);
@@ -677,39 +677,39 @@ export class PaymentRequestListComponent implements OnInit {
     }
   }
 
-  /** Get status color */
-  getStatusColor(status: string): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status color - use lifecycle values */
+  getStatusColor(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return 'default';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return 'processing';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return 'success';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return 'warning';
+      case 'deleted':
         return 'error';
-      case PaymentRequestStatus.PAID:
-        return 'green';
       default:
         return 'default';
     }
   }
 
-  /** Get status label */
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case PaymentRequestStatus.DRAFT:
+  /** Get status label - use lifecycle values */
+  getStatusLabel(lifecycle: string): string {
+    switch (lifecycle) {
+      case 'draft':
         return '草稿';
-      case PaymentRequestStatus.PENDING:
+      case 'active':
         return '待審核';
-      case PaymentRequestStatus.APPROVED:
+      case 'archived':
         return '已核准';
-      case PaymentRequestStatus.REJECTED:
+      case 'on_hold':
+        return '暫緩';
+      case 'deleted':
         return '已拒絕';
-      case PaymentRequestStatus.PAID:
-        return '已付款';
       default:
-        return status;
+        return lifecycle;
     }
   }
 
