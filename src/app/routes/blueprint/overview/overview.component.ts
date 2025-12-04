@@ -9,16 +9,16 @@
  * - 任務管理: Task management (embedded TasksComponent)
  * - 成員管理: Member management (embedded MembersComponent)
  * - 財務: Financial overview with quick access buttons
- * - 活動: Activity timeline (placeholder for audit logs)
+ * - 活動: Activity timeline with audit logs
  *
  * @module routes/blueprint
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade } from '@core';
-import { BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
+import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -35,8 +35,8 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-blueprint-overview',
@@ -442,18 +442,13 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
             <nz-tab nzTitle="活動">
               <div class="tab-header">
                 <h3>活動記錄</h3>
-                <button nz-button nzType="primary" disabled nz-tooltip nzTooltipTitle="活動時間軸功能即將推出">
-                  <span nz-icon nzType="fullscreen"></span>
-                  開啟完整視圖
+                <button nz-button nzType="primary" (click)="refreshActivity()">
+                  <span nz-icon nzType="reload"></span>
+                  重新整理
                 </button>
               </div>
               <nz-card [nzBordered]="false">
-                <nz-empty nzNotFoundContent="暫無活動記錄" nzNotFoundImage="simple">
-                  <ng-template #nzNotFoundFooter>
-                    <p class="text-muted">活動時間軸功能即將推出</p>
-                    <p class="text-muted">將記錄藍圖的所有操作歷史</p>
-                  </ng-template>
-                </nz-empty>
+                <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
               </nz-card>
             </nz-tab>
           </nz-tabset>
@@ -626,7 +621,8 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
     NzTagModule,
     NzTabsModule,
     NzTimelineModule,
-    NzTooltipModule
+    NzTooltipModule,
+    ActivityTimelineComponent
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
@@ -636,6 +632,8 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly financialFacade = inject(FinancialFacade);
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
+
+  @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
 
   blueprint = signal<BlueprintBusinessModel | null>(null);
   members = signal<BlueprintMemberDetail[]>([]);
@@ -833,6 +831,12 @@ export class BlueprintOverviewComponent implements OnInit {
 
   refreshBlueprint(): void {
     this.loadBlueprint();
+  }
+
+  refreshActivity(): void {
+    if (this.activityTimeline) {
+      this.activityTimeline.loadLogs();
+    }
   }
 
   switchToTab(index: number): void {

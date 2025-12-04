@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+/**
+ * GigHub Global Styles
+ * 
+ * Unified design system styles for consistent UI across all modules
+ * 
+ * @version 1.0.0
+ */
+
+// =============================================================================
+// Design System - Core Variables
+// =============================================================================
+@import './_variables.less';
+
+// =============================================================================
+// Component Styles
+// =============================================================================
+@import './_page-header.less';
+@import './_stat-cards.less';
+@import './_nav-cards.less';
+@import './_filter-card.less';
+@import './_drawer.less';
+@import './_empty-state.less';
+@import './_actions.less';
+
+// =============================================================================
+// Base Styles
+// =============================================================================
+
+// Page container padding
+.page-container,
+.blueprint-overview-container,
+.financial-overview-container,
+.contract-list-container,
+.expense-list-container {
+  padding: @page-padding;
+}

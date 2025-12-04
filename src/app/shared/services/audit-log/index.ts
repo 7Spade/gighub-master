@@ -5,3 +5,4 @@
  */
 
 export * from './audit-log.service';
+export * from './activity-timeline.component';

@@ -1,0 +1,131 @@
+/**
+ * Navigation Card Styles
+ * 導航卡片樣式
+ * 
+ * Unified navigation card styling for quick access links
+ * 
+ * @version 1.0.0
+ */
+
+@import './_variables.less';
+
+// =============================================================================
+// Navigation Row Container
+// =============================================================================
+
+.quick-nav-row,
+.navigation-section {
+  margin-top: @spacing-lg;
+}
+
+// =============================================================================
+// Navigation Card
+// =============================================================================
+
+.nav-card {
+  cursor: pointer;
+  transition: @transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: @shadow-hover;
+  }
+}
+
+.nav-card-content,
+.nav-content {
+  display: flex;
+  gap: @spacing-base;
+  align-items: center;
+}
+
+// =============================================================================
+// Navigation Icon
+// =============================================================================
+
+.nav-icon {
+  padding: @nav-card-icon-padding;
+  border-radius: @border-radius-lg;
+  font-size: @nav-card-icon-size;
+
+  // Icon Color Variants
+  &.contracts,
+  &.primary {
+    color: @color-primary;
+    background: @color-primary-light;
+  }
+
+  &.expenses,
+  &.warning {
+    color: @color-warning;
+    background: @color-warning-light;
+  }
+
+  &.requests,
+  &.purple {
+    color: @color-purple;
+    background: @color-purple-light;
+  }
+
+  &.payments,
+  &.success {
+    color: @color-success;
+    background: @color-success-light;
+  }
+
+  &.members {
+    color: @color-success;
+    background: @color-success-light;
+  }
+
+  &.tasks {
+    color: @color-primary;
+    background: @color-primary-light;
+  }
+
+  &.financial {
+    color: @color-warning;
+    background: @color-warning-light;
+  }
+}
+
+// Simple icon variant (without background)
+.nav-icon-simple {
+  font-size: @nav-card-icon-size;
+}
+
+// =============================================================================
+// Navigation Info
+// =============================================================================
+
+.nav-text,
+.nav-info {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 @spacing-xs;
+    font-size: @font-size-md;
+    font-weight: @font-weight-semibold;
+  }
+
+  p {
+    margin: 0;
+    font-size: @font-size-sm;
+    color: @color-text-secondary;
+  }
+}
+
+// =============================================================================
+// Navigation Arrow
+// =============================================================================
+
+.nav-arrow {
+  font-size: @font-size-md;
+  color: @color-text-muted;
+  transition: @transition-base;
+
+  .nav-card:hover & {
+    transform: translateX(4px);
+    color: @color-primary;
+  }
+}
