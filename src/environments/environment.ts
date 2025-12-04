@@ -15,8 +15,8 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: import.meta.env['NEXT_PUBLIC_SUPABASE_URL'],
-    anonKey: import.meta.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
+    url: process.env['NEXT_PUBLIC_SUPABASE_URL'] || '',
+    anonKey: process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || ''
   },
   providers: [provideMockConfig({ data: MOCKDATA })],
   interceptorFns: [mockInterceptor]
