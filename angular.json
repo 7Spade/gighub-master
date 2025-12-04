@@ -18,7 +18,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:application",
+          "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
             "polyfills": [
@@ -49,6 +49,10 @@
               "includePaths": [
                 "node_modules/"
               ]
+            },
+            "define": {
+              "process.env.NEXT_PUBLIC_SUPABASE_URL": "\"\"",
+              "process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": "\"\""
             }
           },
           "configurations": {
@@ -82,7 +86,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ngx-env/builder:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "proxyConfig": "proxy.conf.js"
           },
