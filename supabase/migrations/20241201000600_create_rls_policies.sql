@@ -68,10 +68,6 @@ CREATE POLICY "organization_members_delete" ON organization_members
 -- ============================================================================
 -- RLS Policies: teams
 -- ============================================================================
--- NOTE: teams_insert 政策在 20241204000000_fix_blueprint_creation.sql 中定義
--- 原因：初始設計僅允許通過 create_team RPC 函數創建團隊
--- 修復後添加 INSERT 政策作為備選方案
--- ============================================================================
 CREATE POLICY "teams_select" ON teams 
   FOR SELECT TO authenticated 
   USING ((SELECT private.is_organization_member(organization_id)));
@@ -84,6 +80,11 @@ CREATE POLICY "teams_update" ON teams
 CREATE POLICY "teams_delete" ON teams 
   FOR DELETE TO authenticated 
   USING ((SELECT private.is_organization_admin(organization_id)));
+
+-- 組織 owner/admin 可以建立團隊
+CREATE POLICY "teams_insert" ON teams 
+  FOR INSERT TO authenticated 
+  WITH CHECK ((SELECT private.is_organization_admin(organization_id)));
 
 -- ============================================================================
 -- RLS Policies: team_members
@@ -107,10 +108,6 @@ CREATE POLICY "team_members_delete" ON team_members
 -- ============================================================================
 -- RLS Policies: blueprints
 -- ============================================================================
--- NOTE: blueprints_insert 政策在 20241204000000_fix_blueprint_creation.sql 中定義
--- 原因：初始設計僅允許通過 create_blueprint RPC 函數創建藍圖
--- 修復後添加 INSERT 政策作為備選方案
--- ============================================================================
 CREATE POLICY "blueprints_select" ON blueprints 
   FOR SELECT TO authenticated 
   USING ((SELECT private.has_blueprint_access(id)));
@@ -127,6 +124,29 @@ CREATE POLICY "blueprints_update" ON blueprints
 CREATE POLICY "blueprints_delete" ON blueprints 
   FOR DELETE TO authenticated 
   USING ((SELECT private.is_blueprint_owner(id)));
+
+-- 用戶可以建立個人藍圖 (owner_id = 自己的 account_id)，或組織 owner/admin 可以建立組織藍圖
+CREATE POLICY "blueprints_insert" ON blueprints 
+  FOR INSERT TO authenticated 
+  WITH CHECK (
+    -- 個人藍圖: owner_id 是用戶自己的 account
+    EXISTS (
+      SELECT 1 FROM accounts a 
+      WHERE a.id = blueprints.owner_id 
+      AND a.auth_user_id = (SELECT auth.uid()) 
+      AND a.type = 'user'
+    )
+    OR
+    -- 組織藍圖: 用戶是組織的 owner 或 admin
+    EXISTS (
+      SELECT 1 FROM organizations o
+      JOIN organization_members om ON om.organization_id = o.id
+      JOIN accounts a ON a.id = om.account_id
+      WHERE o.account_id = blueprints.owner_id
+      AND a.auth_user_id = (SELECT auth.uid())
+      AND om.role IN ('owner', 'admin')
+    )
+  );
 
 -- ============================================================================
 -- RLS Policies: blueprint_members
