@@ -10,10 +10,26 @@ export class SupabaseService {
   private supabase: SupabaseClient;
   private _currentUser = new BehaviorSubject<User | null>(null);
   private _session = new BehaviorSubject<Session | null>(null);
+  private _isConfigured = false;
 
   constructor() {
-    const supabaseConfig = environment['supabase'] as { url: string; anonKey: string };
-    this.supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    const supabaseConfig = environment['supabase'] as { url?: string; anonKey?: string } | undefined;
+    const url = supabaseConfig?.url;
+    const anonKey = supabaseConfig?.anonKey;
+
+    if (!url || !anonKey) {
+      console.error(
+        '[SupabaseService] Supabase configuration is missing. ' +
+          'Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your .env file.'
+      );
+      // Create a placeholder client with empty values to prevent app crash
+      // The app will show appropriate error messages when Supabase operations are attempted
+      this.supabase = createClient('https://placeholder.supabase.co', 'placeholder-key');
+      this._isConfigured = false;
+    } else {
+      this.supabase = createClient(url, anonKey);
+      this._isConfigured = true;
+    }
 
     // Listen to auth state changes
     this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
@@ -66,6 +82,13 @@ export class SupabaseService {
    */
   get session(): Session | null {
     return this._session.value;
+  }
+
+  /**
+   * Check if Supabase is properly configured
+   */
+  get isConfigured(): boolean {
+    return this._isConfigured;
   }
 
   /**
