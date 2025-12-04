@@ -10,10 +10,14 @@
 -- 
 -- Solution:
 -- 使用 ALTER TYPE ... ADD VALUE IF NOT EXISTS 來添加可能缺失的 enum 值
+-- 
+-- Note: PostgreSQL 9.1+ 支持 ADD VALUE IF NOT EXISTS 語法
+-- 這些語句必須在 autocommit 模式下執行（不能在交易塊內）
+-- Supabase migrations 會自動處理這一點
 -- ============================================================================
 
 -- ############################################################################
--- PART 1: 添加可能缺失的 enum 值到 blueprint_business_role
+-- PART 1: 確保 enum 存在
 -- ############################################################################
 
 -- 先檢查 enum 是否存在，如果不存在則創建
@@ -33,123 +37,39 @@ BEGIN
   END IF;
 END $$;
 
--- 添加可能缺失的 enum 值（使用 IF NOT EXISTS 避免重複添加錯誤）
--- 注意：ALTER TYPE ... ADD VALUE 不能在交易塊內執行，所以需要分開
+-- ############################################################################
+-- PART 2: 添加可能缺失的 enum 值
+-- ############################################################################
 
-DO $$
-BEGIN
-  -- 檢查並添加 project_manager
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'project_manager'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'project_manager';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 使用 ADD VALUE IF NOT EXISTS 語法（PostgreSQL 9.1+ 支持）
+-- 這些語句會安全地添加缺失的值，如果值已存在則不做任何操作
 
-DO $$
-BEGIN
-  -- 檢查並添加 site_director
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'site_director'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'site_director';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 project_manager
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'project_manager';
 
-DO $$
-BEGIN
-  -- 檢查並添加 site_supervisor
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'site_supervisor'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'site_supervisor';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 site_director
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'site_director';
 
-DO $$
-BEGIN
-  -- 檢查並添加 worker
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'worker'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'worker';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 site_supervisor (這是錯誤訊息中報告缺失的值)
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'site_supervisor';
 
-DO $$
-BEGIN
-  -- 檢查並添加 qa_staff
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'qa_staff'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'qa_staff';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 worker
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'worker';
 
-DO $$
-BEGIN
-  -- 檢查並添加 safety_health
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'safety_health'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'safety_health';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 qa_staff
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'qa_staff';
 
-DO $$
-BEGIN
-  -- 檢查並添加 finance
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'finance'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'finance';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 safety_health
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'safety_health';
 
-DO $$
-BEGIN
-  -- 檢查並添加 observer
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum 
-    WHERE enumtypid = 'blueprint_business_role'::regtype 
-    AND enumlabel = 'observer'
-  ) THEN
-    ALTER TYPE blueprint_business_role ADD VALUE 'observer';
-  END IF;
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+-- 添加 finance
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'finance';
+
+-- 添加 observer
+ALTER TYPE blueprint_business_role ADD VALUE IF NOT EXISTS 'observer';
 
 -- ############################################################################
--- PART 2: 驗證 enum 值
+-- PART 3: 驗證 enum 值
 -- ############################################################################
 
 -- 驗證所有必要的 enum 值都存在
