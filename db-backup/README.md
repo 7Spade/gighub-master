@@ -166,7 +166,26 @@
 - 搜尋歷史 → `migrations/20241203000000_create_search_history.sql`
 - 審計日誌 → `migrations/20241203100000_create_audit_logs.sql`
 - QC/驗收/問題 → `migrations/20241203100002_create_qc_acceptance_problem.sql`
+- 藍圖創建修復 → `migrations/20241204000000_fix_blueprint_creation.sql`
+
+## 2024-12-04 修復：藍圖創建問題
+
+### 問題描述
+藍圖無法建立，但使用 `db-backup/migrations.sql` 時可以建立。
+
+### 根本原因分析
+1. **缺失的 RLS 政策**: `blueprints` 表缺少 INSERT RLS 政策
+2. **函數差異**: `create_blueprint` RPC 函數與 `db-backup/migrations.sql` 版本有差異
+   - 狀態檢查：`status = 'active'` vs `status != 'deleted'`
+   - slug 唯一性檢查：缺少 `AND deleted_at IS NULL`
+   - `blueprint_members` 插入欄位差異
+
+### 解決方案
+新增遷移文件 `20241204000000_fix_blueprint_creation.sql`：
+1. 添加 `blueprints_insert` RLS 政策
+2. 添加 `teams_insert` RLS 政策
+3. 更新 `create_blueprint` 函數以合併兩個版本的優點
 
 ---
 
-**最後更新：** 2024-12-03
+**最後更新：** 2024-12-04
