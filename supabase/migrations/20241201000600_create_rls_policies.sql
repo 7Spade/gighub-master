@@ -81,6 +81,11 @@ CREATE POLICY "teams_delete" ON teams
   FOR DELETE TO authenticated 
   USING ((SELECT private.is_organization_admin(organization_id)));
 
+-- 組織 owner/admin 可以建立團隊
+CREATE POLICY "teams_insert" ON teams 
+  FOR INSERT TO authenticated 
+  WITH CHECK ((SELECT private.is_organization_admin(organization_id)));
+
 -- ============================================================================
 -- RLS Policies: team_members
 -- ============================================================================
@@ -119,6 +124,29 @@ CREATE POLICY "blueprints_update" ON blueprints
 CREATE POLICY "blueprints_delete" ON blueprints 
   FOR DELETE TO authenticated 
   USING ((SELECT private.is_blueprint_owner(id)));
+
+-- 用戶可以建立個人藍圖 (owner_id = 自己的 account_id)，或組織 owner/admin 可以建立組織藍圖
+CREATE POLICY "blueprints_insert" ON blueprints 
+  FOR INSERT TO authenticated 
+  WITH CHECK (
+    -- 個人藍圖: owner_id 是用戶自己的 account
+    EXISTS (
+      SELECT 1 FROM accounts a 
+      WHERE a.id = blueprints.owner_id 
+      AND a.auth_user_id = (SELECT auth.uid()) 
+      AND a.type = 'user'
+    )
+    OR
+    -- 組織藍圖: 用戶是組織的 owner 或 admin
+    EXISTS (
+      SELECT 1 FROM organizations o
+      JOIN organization_members om ON om.organization_id = o.id
+      JOIN accounts a ON a.id = om.account_id
+      WHERE o.account_id = blueprints.owner_id
+      AND a.auth_user_id = (SELECT auth.uid())
+      AND om.role IN ('owner', 'admin')
+    )
+  );
 
 -- ============================================================================
 -- RLS Policies: blueprint_members
