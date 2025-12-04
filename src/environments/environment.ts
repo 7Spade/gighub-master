@@ -15,9 +15,9 @@ export const environment = {
     refreshTokenType: 'auth-refresh'
   },
   supabase: {
-    url: 'https://dqdskmsnndsoppftplnt.supabase.co',
+    url: 'https://hgjrqjhhwnaalbllojhj.supabase.co',
     anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxZHNrbXNubmRzb3BwZnRwbG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2OTU3MTEsImV4cCI6MjA4MDI3MTcxMX0.3ozoSl4xTmXqlRJdj4nu8g0VlLJ7FBgrqkWRSpeo8gE'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnanJxamhod25hYWxibGxvamhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3OTc3NjYsImV4cCI6MjA4MDM3Mzc2Nn0.fezsdIFzw2xvnkUY6EXmg1ru2FtqI7hskVlJTpaxQfA'
   },
   providers: [provideMockConfig({ data: MOCKDATA })],
   interceptorFns: [mockInterceptor]
