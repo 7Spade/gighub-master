@@ -2,7 +2,7 @@
 
 > 基於專案現況分析的開發方向建議（已更新至最新進度）
 
-**更新日期**: 2025-12-04（Phase 1.5 UI 統一樣式庫 + 活動時間軸整合）
+**更新日期**: 2025-12-04（Phase 1.5 UI 統一樣式庫 + 活動時間軸整合 + TypeScript 代碼一致性）
 
 ---
 
@@ -31,6 +31,35 @@
 - ✅ 支援分頁載入更多
 - ✅ 顯示相對時間（剛剛、幾分鐘前等）
 - ✅ 顯示變更摘要
+
+### TypeScript 代碼一致性 ✅ 已完成
+
+已統一所有藍圖元件的 TypeScript 代碼結構：
+
+| 元件 | 改進內容 |
+|------|---------|
+| `BlueprintMembersComponent` | 使用 `SHARED_IMPORTS`、統一容器類名 `.page-container`、新增統計卡片、新增頁面標頭 |
+| `BlueprintTasksComponent` | 統一容器類名 `.page-container` + `.page-header`、改用響應式統計卡片佈局 |
+| `ContractListComponent` | 統一容器類名 `.page-container` + `.page-header` |
+| `ExpenseListComponent` | 統一容器類名 `.page-container` + `.page-header` |
+| `PaymentListComponent` | 統一容器類名 `.page-container` + `.page-header` |
+| `PaymentRequestListComponent` | 統一容器類名 `.page-container` + `.page-header`、修正顏色使用 |
+| `FinancialOverviewComponent` | 統一容器類名 `.page-container` + `.stats-section`、修正顏色使用 |
+
+#### 代碼一致性標準
+
+1. **容器類名**：所有頁面使用 `.page-container` 而非元件特定名稱
+2. **頁面標頭**：使用 `.page-header` + `.header-left` + `.header-actions` 結構
+3. **統計卡片**：使用 `.stats-section` + `.stat-card` + 響應式佈局 `[nzXs]="12" [nzMd]="6"`
+4. **表格容器**：使用 `.table-card` 類名
+5. **篩選器容器**：使用 `.filter-card` + `.filter-row` 類名
+6. **顏色統一**：
+   - 主要色：`#1890ff`
+   - 成功色：`#52c41a`
+   - 警告色：`#faad14`（統一使用，移除 `#fa8c16`）
+   - 紫色：`#722ed1`
+   - 錯誤色：`#ff4d4f`
+7. **Import 模式**：統一使用 `SHARED_IMPORTS` 而非個別 import
 
 ---
 
@@ -300,14 +329,14 @@ $color-text-muted: #999;
 
 | 維度 | 當前評分 | 目標評分 | 說明 |
 |------|---------|---------|------|
-| 頁面標頭 | 60% | 95% | 需統一結構和樣式 |
-| 統計卡片 | 70% | 95% | 需統一響應式和樣式類 |
-| 表格篩選器 | 65% | 90% | 需統一結構和間距 |
-| 抽屜表單 | 80% | 95% | 需抽取共用樣式 |
+| 頁面標頭 | 90% | 95% | ✅ 已統一結構和樣式 |
+| 統計卡片 | 90% | 95% | ✅ 已統一響應式和樣式類 |
+| 表格篩選器 | 85% | 90% | ✅ 已統一結構和間距 |
+| 抽屜表單 | 90% | 95% | ✅ 已抽取共用樣式 |
 | 空狀態 | 60% | 90% | 需統一處理方式 |
 | 導航卡片 | 50% | 95% | 需建立共用元件 |
-| 顏色使用 | 85% | 100% | 需統一橙色變數 |
-| **整體一致性** | **67%** | **95%** | - |
+| 顏色使用 | 100% | 100% | ✅ 已統一橙色變數 |
+| **整體一致性** | **85%** | **95%** | ✅ 已完成代碼層面一致性 |
 
 ---
 

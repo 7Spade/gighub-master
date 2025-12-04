@@ -27,9 +27,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="expense-list-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
+      <div class="page-header">
         <div class="header-left">
           <button nz-button nzType="text" (click)="goBack()" class="back-button">
             <span nz-icon nzType="arrow-left"></span>
@@ -265,11 +265,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `,
   styles: [
     `
-      .expense-list-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -296,6 +296,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       .subtitle {
         color: #666;
         font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
       }
 
       .stats-section {

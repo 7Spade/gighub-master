@@ -27,15 +27,17 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
 @Component({
   selector: 'app-blueprint-tasks',
   template: `
-    <div class="tasks-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
+      <div class="page-header">
         <div class="header-left">
           <button nz-button nzType="text" (click)="goBack()" class="back-button">
             <span nz-icon nzType="arrow-left"></span>
           </button>
-          <h3>任務管理 (Tasks)</h3>
-          <span class="subtitle">施工進度追蹤與工項管理</span>
+          <div class="title-section">
+            <h3>任務管理</h3>
+            <span class="subtitle">Task Management - 施工進度追蹤與工項管理</span>
+          </div>
         </div>
         <div class="header-actions">
           <nz-segmented [nzOptions]="viewOptions" [(ngModel)]="currentView" (ngModelChange)="onViewChange($event)"></nz-segmented>
@@ -47,34 +49,40 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
       </div>
 
       <!-- Progress Overview -->
-      <nz-card [nzBordered]="false" class="progress-card">
-        <div nz-row [nzGutter]="16">
-          <div nz-col [nzSpan]="6">
+      <div nz-row [nzGutter]="16" class="stats-section">
+        <div nz-col [nzXs]="12" [nzMd]="6">
+          <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic nzTitle="總進度" [nzValue]="overallProgress()" nzSuffix="%">
               <ng-template #nzPrefix>
                 <nz-progress [nzPercent]="overallProgress()" nzType="circle" [nzWidth]="40" [nzFormat]="progressFormat"></nz-progress>
               </ng-template>
             </nz-statistic>
-          </div>
-          <div nz-col [nzSpan]="6">
+          </nz-card>
+        </div>
+        <div nz-col [nzXs]="12" [nzMd]="6">
+          <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic nzTitle="總任務數" [nzValue]="taskService.tasks().length"></nz-statistic>
-          </div>
-          <div nz-col [nzSpan]="6">
+          </nz-card>
+        </div>
+        <div nz-col [nzXs]="12" [nzMd]="6">
+          <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic
               nzTitle="進行中"
               [nzValue]="tasksByStatus()[TaskStatus.IN_PROGRESS]?.length || 0"
               [nzValueStyle]="{ color: '#1890ff' }"
             ></nz-statistic>
-          </div>
-          <div nz-col [nzSpan]="6">
+          </nz-card>
+        </div>
+        <div nz-col [nzXs]="12" [nzMd]="6">
+          <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic
               nzTitle="已完成"
               [nzValue]="tasksByStatus()[TaskStatus.COMPLETED]?.length || 0"
               [nzValueStyle]="{ color: '#52c41a' }"
             ></nz-statistic>
-          </div>
+          </nz-card>
         </div>
-      </nz-card>
+      </div>
 
       <!-- Filter Bar -->
       <div class="filter-bar">
@@ -251,7 +259,7 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
       [blueprintId]="id()"
       [parentTaskId]="parentTaskId()"
       (closed)="onDrawerClose()"
-      (saved)="onTaskSaved($event)"
+      (saved)="onTaskSaved()"
     ></app-task-edit-drawer>
 
     <!-- Node Template for Tree View -->
@@ -296,44 +304,57 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
   `,
   styles: [
     `
-      .tasks-container {
+      .page-container {
         padding: 24px;
       }
-      .header {
+
+      .page-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
         margin-bottom: 24px;
       }
+
       .header-left {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
       }
-      .header-left h3 {
-        margin: 0 0 4px 0;
+
+      .title-section h3 {
+        margin: 0;
         font-size: 20px;
         font-weight: 600;
       }
+
       .back-button {
         padding: 4px 8px;
         color: #666;
       }
+
       .back-button:hover {
         color: #1890ff;
       }
+
       .subtitle {
         color: #666;
         font-size: 14px;
       }
+
       .header-actions {
         display: flex;
         gap: 16px;
         align-items: center;
       }
-      .progress-card {
+
+      .stats-section {
         margin-bottom: 16px;
       }
+
+      .stat-card {
+        text-align: center;
+      }
+
       .filter-bar {
         display: flex;
         gap: 12px;
@@ -343,9 +364,11 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         background: #fafafa;
         border-radius: 8px;
       }
+
       .search-input {
         width: 240px;
       }
+
       .view-card {
         min-height: 400px;
       }
@@ -358,25 +381,31 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         padding: 8px 0;
         flex: 1;
       }
+
       .tree-node-content.completed .node-title {
         text-decoration: line-through;
         color: #999;
       }
+
       .node-title {
         flex: 1;
         font-weight: 500;
       }
+
       .node-tags {
         display: flex;
         gap: 4px;
       }
+
       .node-progress {
         width: 120px;
       }
+
       .node-actions {
         display: flex;
         gap: 4px;
       }
+
       .task-icon {
         margin-right: 8px;
         color: #666;
@@ -389,38 +418,46 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         overflow-x: auto;
         padding-bottom: 16px;
       }
+
       .kanban-column {
         flex: 0 0 280px;
         min-height: 500px;
         background: #fafafa;
       }
+
       .kanban-column-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
+
       .kanban-cards {
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
+
       .kanban-card {
         cursor: pointer;
       }
+
       .kanban-card-title {
         font-weight: 500;
         margin-bottom: 8px;
       }
+
       .kanban-card-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 8px;
       }
+
       .due-date {
         font-size: 12px;
         color: #666;
       }
+
       .kanban-empty {
         text-align: center;
         padding: 40px 0;
@@ -661,7 +698,7 @@ export class BlueprintTasksComponent implements OnInit {
     this.parentTaskId.set(null);
   }
 
-  onTaskSaved(_task: Task): void {
+  onTaskSaved(): void {
     this.updateDataSource();
   }
 

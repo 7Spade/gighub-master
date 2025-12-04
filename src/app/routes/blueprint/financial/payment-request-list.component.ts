@@ -27,9 +27,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="payment-request-list-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
+      <div class="page-header">
         <div class="header-left">
           <button nz-button nzType="text" (click)="goBack()" class="back-button">
             <span nz-icon nzType="arrow-left"></span>
@@ -56,7 +56,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
-            <nz-statistic nzTitle="待審核" [nzValue]="pendingRequests()" [nzValueStyle]="{ color: '#fa8c16' }"></nz-statistic>
+            <nz-statistic nzTitle="待審核" [nzValue]="pendingRequests()" [nzValueStyle]="{ color: '#faad14' }"></nz-statistic>
           </nz-card>
         </div>
         <div nz-col [nzXs]="12" [nzMd]="6">
@@ -322,11 +322,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   `,
   styles: [
     `
-      .payment-request-list-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -353,6 +353,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
       .subtitle {
         color: #666;
         font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
       }
 
       .stats-section {

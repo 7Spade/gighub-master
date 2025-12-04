@@ -24,9 +24,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   standalone: true,
   imports: [SHARED_IMPORTS],
   template: `
-    <div class="financial-overview-container">
+    <div class="page-container">
       <!-- Header -->
-      <div class="header">
+      <div class="page-header">
         <div class="header-left">
           <button nz-button nzType="text" (click)="goBack()" class="back-button">
             <span nz-icon nzType="arrow-left"></span>
@@ -46,7 +46,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
       <nz-spin [nzSpinning]="financialService.loading()">
         <!-- Summary Cards -->
-        <div nz-row [nzGutter]="[16, 16]" class="summary-section">
+        <div nz-row [nzGutter]="[16, 16]" class="stats-section">
           <!-- Total Contract Amount -->
           <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="6">
             <nz-card [nzBordered]="false" class="stat-card">
@@ -70,7 +70,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                 nzTitle="累計支出"
                 [nzValue]="summary()?.total_expenses ?? 0"
                 [nzPrefix]="expenseIcon"
-                [nzValueStyle]="{ color: '#fa8c16' }"
+                [nzValueStyle]="{ color: '#faad14' }"
                 nzSuffix="元"
               ></nz-statistic>
               <ng-template #expenseIcon>
@@ -259,11 +259,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `,
   styles: [
     `
-      .financial-overview-container {
+      .page-container {
         padding: 24px;
       }
 
-      .header {
+      .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -292,7 +292,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         font-size: 14px;
       }
 
-      .summary-section {
+      .header-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .stats-section {
         margin-bottom: 24px;
       }
 
@@ -371,7 +376,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
       .nav-icon.expenses {
         background: #fff7e6;
-        color: #fa8c16;
+        color: #faad14;
       }
 
       .nav-icon.requests {
