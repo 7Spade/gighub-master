@@ -243,11 +243,29 @@ export class LayoutBasicComponent {
   });
 
   constructor() {
+    // 追蹤上次的上下文狀態，避免重複觸發
+    // Track last context state to prevent duplicate triggers
+    // 根據 docs/analysis-menu-infinite-loop-detailed.md 方案3：
+    // 添加 effect 條件檢查，避免重複執行
+    let lastContextType: ContextType | null = null;
+    let lastContextId: string | null = null;
+
     // 監聽上下文變化並更新菜單
     // Listen to context changes and update menu
     effect(() => {
       const contextType = this.workspaceContext.contextType();
       const contextId = this.workspaceContext.contextId();
+
+      // 檢查是否真的變化，避免重複執行
+      // Check if values actually changed to prevent duplicate execution
+      if (contextType === lastContextType && contextId === lastContextId) {
+        console.log('[LayoutBasicComponent] Context unchanged, skipping sync');
+        return;
+      }
+
+      // 更新追蹤狀態
+      lastContextType = contextType;
+      lastContextId = contextId;
 
       // 日誌記錄上下文變化
       console.log('[LayoutBasicComponent] Context changed:', { contextType, contextId });
