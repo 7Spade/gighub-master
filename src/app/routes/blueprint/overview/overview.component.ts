@@ -71,8 +71,6 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
               </div>
             </div>
             <div class="header-actions">
-              <button nz-button nzType="default" (click)="goToTasks()"> <span nz-icon nzType="ordered-list"></span>任務管理 </button>
-              <button nz-button nzType="default" (click)="goToMembers()"> <span nz-icon nzType="team"></span>成員管理 </button>
               <button nz-button nzType="primary" (click)="editBlueprint()"> <span nz-icon nzType="edit"></span>編輯 </button>
             </div>
           </div>
@@ -164,6 +162,13 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
           <nz-tabset class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
             <!-- 概覽 Tab -->
             <nz-tab nzTitle="概覽">
+              <div class="tab-header">
+                <h3>藍圖概覽</h3>
+                <button nz-button nzType="primary" (click)="refreshBlueprint()">
+                  <span nz-icon nzType="reload"></span>
+                  重新整理
+                </button>
+              </div>
               <nz-card [nzBordered]="false">
                 <nz-descriptions nzTitle="藍圖詳情" nzBordered [nzColumn]="2">
                   <nz-descriptions-item nzTitle="名稱">{{ blueprint()!.name }}</nz-descriptions-item>
@@ -305,6 +310,13 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 
             <!-- 財務 Tab -->
             <nz-tab nzTitle="財務">
+              <div class="tab-header">
+                <h3>財務管理</h3>
+                <button nz-button nzType="primary" (click)="goToFinancialPage('overview')">
+                  <span nz-icon nzType="fullscreen"></span>
+                  開啟完整視圖
+                </button>
+              </div>
               <nz-spin [nzSpinning]="financialLoading()">
                 <!-- Quick Action Buttons -->
                 <div class="financial-actions">
@@ -323,10 +335,6 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
                   <button nz-button (click)="goToFinancialPage('payments')">
                     <span nz-icon nzType="transaction"></span>
                     付款紀錄
-                  </button>
-                  <button nz-button nzType="default" (click)="goToFinancialPage('overview')">
-                    <span nz-icon nzType="fullscreen"></span>
-                    財務總覽
                   </button>
                 </div>
 
@@ -432,6 +440,13 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 
             <!-- 活動 Tab -->
             <nz-tab nzTitle="活動">
+              <div class="tab-header">
+                <h3>活動記錄</h3>
+                <button nz-button nzType="primary" disabled nz-tooltip nzTooltipTitle="活動時間軸功能即將推出">
+                  <span nz-icon nzType="fullscreen"></span>
+                  開啟完整視圖
+                </button>
+              </div>
               <nz-card [nzBordered]="false">
                 <nz-empty nzNotFoundContent="暫無活動記錄" nzNotFoundImage="simple">
                   <ng-template #nzNotFoundFooter>
@@ -814,6 +829,10 @@ export class BlueprintOverviewComponent implements OnInit {
 
   editBlueprint(): void {
     this.msg.info('編輯功能開發中');
+  }
+
+  refreshBlueprint(): void {
+    this.loadBlueprint();
   }
 
   switchToTab(index: number): void {
