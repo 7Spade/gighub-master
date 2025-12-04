@@ -688,9 +688,42 @@ YYYYMMDD_CC_NNNN_description.sql
 | `20241204100002_simplify_module_types.sql` | 03 | 0002 |
 | `20241205000000_fix_blueprint_business_role_enum.sql` | 03 | 0003 |
 
+### Placeholder 遷移（未來開發）
+
+以下為預留的空白 SQL 遷移檔案，標記為 `PLACEHOLDER`，用於未來開發時實作。
+
+| 原檔案 | 分類 | 說明 |
+|--------|------|------|
+| `20241206_06_0005_placeholder_blueprint_branches.sql` | 06 | Git-like 藍圖分支系統 (Phase 2) |
+| `20241206_06_0006_placeholder_blueprint_pull_requests.sql` | 06 | PR 合併請求系統 (Phase 2) |
+| `20241206_07_0013_placeholder_task_comments.sql` | 07 | 任務評論討論系統 |
+| `20241206_07_0014_placeholder_task_budget.sql` | 07 | 任務預算金額管理 |
+| `20241206_07_0015_placeholder_task_time_logs.sql` | 07 | 任務工時記錄系統 |
+| `20241206_07_0016_placeholder_discussions.sql` | 07 | 通用討論區系統 |
+| `20241206_07_0017_placeholder_reports.sql` | 07 | 報表生成與管理系統 |
+| `20241206_07_0018_placeholder_analytics_cache.sql` | 07 | 分析資料快取系統 |
+| `20241206_17_0005_placeholder_milestone_management.sql` | 17 | 里程碑管理系統 |
+| `20241206_17_0006_placeholder_weather_management.sql` | 17 | 天氣資料管理系統 |
+| `20241206_17_0007_placeholder_labor_management.sql` | 17 | 人力資源出工記錄 |
+| `20241206_17_0008_placeholder_equipment_management.sql` | 17 | 機具設備使用記錄 |
+| `20241206_17_0009_placeholder_material_management.sql` | 17 | 材料進出場管理 |
+
+#### Placeholder 遷移使用說明
+
+1. **識別方式**：檔案名稱包含 `placeholder` 關鍵字
+2. **狀態標記**：檔案開頭標記 `Status: PLACEHOLDER - 尚未實現`
+3. **優先級標記**：
+   - 🔵 Phase 2 - 未來規劃
+   - 🟡 高 - 近期需求
+   - 🟢 中 - 一般需求
+4. **實作方式**：
+   - 取消 SQL 註解區塊 (`/* ... */`)
+   - 移除最後的 `SELECT 'xxx - Placeholder Migration' AS status;`
+   - 更新檔案開頭的狀態標記
+
 ---
 
-**版本**：1.0  
+**版本**：1.1  
 **建立日期**：2024-12-04  
 **最後更新**：2024-12-04  
 **維護者**：開發團隊
