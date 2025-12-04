@@ -68,6 +68,10 @@ CREATE POLICY "organization_members_delete" ON organization_members
 -- ============================================================================
 -- RLS Policies: teams
 -- ============================================================================
+-- NOTE: teams_insert 政策在 20241204000000_fix_blueprint_creation.sql 中定義
+-- 原因：初始設計僅允許通過 create_team RPC 函數創建團隊
+-- 修復後添加 INSERT 政策作為備選方案
+-- ============================================================================
 CREATE POLICY "teams_select" ON teams 
   FOR SELECT TO authenticated 
   USING ((SELECT private.is_organization_member(organization_id)));
@@ -102,6 +106,10 @@ CREATE POLICY "team_members_delete" ON team_members
 
 -- ============================================================================
 -- RLS Policies: blueprints
+-- ============================================================================
+-- NOTE: blueprints_insert 政策在 20241204000000_fix_blueprint_creation.sql 中定義
+-- 原因：初始設計僅允許通過 create_blueprint RPC 函數創建藍圖
+-- 修復後添加 INSERT 政策作為備選方案
 -- ============================================================================
 CREATE POLICY "blueprints_select" ON blueprints 
   FOR SELECT TO authenticated 
