@@ -106,58 +106,6 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
             </div>
           </div>
 
-          <!-- Financial Summary Cards -->
-          @if (financialSummary()) {
-            <div nz-row [nzGutter]="16" class="financial-stats-row">
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
-                  </nz-statistic>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="已支出"
-                    [nzValue]="financialSummary()!.total_expenses ?? 0"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: '#faad14' }"
-                  >
-                  </nz-statistic>
-                  <div class="progress-bar">
-                    <nz-progress [nzPercent]="expenseRate()" nzSize="small" [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'">
-                    </nz-progress>
-                  </div>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="已付款"
-                    [nzValue]="financialSummary()!.total_paid ?? 0"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: '#52c41a' }"
-                  >
-                  </nz-statistic>
-                  <div class="progress-bar">
-                    <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success"> </nz-progress>
-                  </div>
-                </nz-card>
-              </div>
-              <div nz-col [nzSpan]="6">
-                <nz-card [nzBordered]="false" class="financial-card">
-                  <nz-statistic
-                    nzTitle="剩餘預算"
-                    [nzValue]="remainingBudget()"
-                    [nzPrefix]="'$'"
-                    [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
-                  >
-                  </nz-statistic>
-                </nz-card>
-              </div>
-            </div>
-          }
-
           <!-- Tabs for different sections -->
           <nz-tabset class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
             <!-- 概覽 Tab -->
@@ -318,6 +266,58 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
                 </button>
               </div>
               <nz-spin [nzSpinning]="financialLoading()">
+                <!-- Financial Statistics Cards -->
+                @if (financialSummary()) {
+                  <div nz-row [nzGutter]="16" class="financial-stats-row">
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
+                        </nz-statistic>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="已支出"
+                          [nzValue]="financialSummary()!.total_expenses ?? 0"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: '#faad14' }"
+                        >
+                        </nz-statistic>
+                        <div class="progress-bar">
+                          <nz-progress [nzPercent]="expenseRate()" nzSize="small" [nzStatus]="expenseRate() > 90 ? 'exception' : 'active'">
+                          </nz-progress>
+                        </div>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="已付款"
+                          [nzValue]="financialSummary()!.total_paid ?? 0"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: '#52c41a' }"
+                        >
+                        </nz-statistic>
+                        <div class="progress-bar">
+                          <nz-progress [nzPercent]="paymentRate()" nzSize="small" nzStatus="success"> </nz-progress>
+                        </div>
+                      </nz-card>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <nz-card [nzBordered]="false" class="financial-card">
+                        <nz-statistic
+                          nzTitle="剩餘預算"
+                          [nzValue]="remainingBudget()"
+                          [nzPrefix]="'$'"
+                          [nzValueStyle]="{ color: remainingBudget() >= 0 ? '#52c41a' : '#ff4d4f' }"
+                        >
+                        </nz-statistic>
+                      </nz-card>
+                    </div>
+                  </div>
+                }
+
                 <!-- Quick Action Buttons -->
                 <div class="financial-actions">
                   <button nz-button nzType="primary" (click)="goToFinancialPage('contracts')">
