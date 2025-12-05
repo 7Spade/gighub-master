@@ -1,8 +1,8 @@
 # ⚠️ 已知問題清單 (按處理順序排列)
 
 > 最後更新: 2025-12-05  
-> 總計問題數量: 32 項 (已修復 4 項)  
-> 總預計修復工時: 506h (已節省 26h)  
+> 總計問題數量: 33 項 (已修復 5 項)  
+> 總預計修復工時: 508h (已節省 28h)  
 > 排列原則: 按優先級 P0 → P1 → P2 → P3 → 技術債順序處理
 
 ---
@@ -166,6 +166,36 @@ async retryLoad(): Promise<void> {
 - [x] 添加適當的錯誤處理 UI - 已完成 (nz-result 組件)
 - [x] 添加重試機制 - 已完成 (retryLoad 方法)
 - [x] 添加空狀態 UI - 已有 (nz-empty 組件)
+
+---
+
+### 5. ISSUE-028: 任務建立失敗 - 資料庫欄位缺失
+
+| 屬性     | 內容                                        |
+| -------- | ------------------------------------------- |
+| 問題描述 | 任務建立時出現「任務建立失敗」錯誤，原因是資料庫缺少 `sort_order` 欄位 |
+| 影響範圍 | 任務管理模組 - 所有任務建立操作             |
+| 業務影響 | 用戶無法建立新任務                          |
+| 相關檔案 | `src/app/core/infra/repositories/task/task.repository.ts` |
+| 狀態     | ✅ 已修復                                   |
+| 負責人   | Copilot                                     |
+| 預計工時 | 2h                                          |
+| 完成日期 | 2025-12-05                                  |
+
+**根本原因**:
+PostgreSQL 錯誤日誌顯示：
+```
+ERROR: column tasks.sort_order does not exist
+```
+
+TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該欄位不存在。
+
+**修復方案**:
+- [x] 使用 Context7 查詢 Supabase ALTER TABLE 最佳實踐
+- [x] 建立資料庫遷移 `20251205191500_add_sort_order_to_tasks.sql`
+- [x] 添加 `sort_order INTEGER DEFAULT 0 NOT NULL` 欄位
+- [x] 建立索引 `idx_tasks_sort_order` 優化查詢性能
+- [x] 使用 Supabase MCP apply_migration 應用遷移
 
 ---
 

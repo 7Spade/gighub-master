@@ -1,9 +1,9 @@
 # ✅ 已完成項目清單 (按實現順序排列)
 
 > 最後更新: 2025-12-05  
-> 總計完成項目: 430 項  
+> 總計完成項目: 431 項  
 > 總計 TypeScript 檔案: 272 個  
-> 總計 SQL 遷移檔案: 64 個  
+> 總計 SQL 遷移檔案: 65 個  
 > 總計文檔檔案: 52 個  
 > 排列原則: 按架構層級 基礎層 → 容器層 → 業務層 → 基礎設施 順序
 
@@ -33,7 +33,7 @@
 | Model | 5 | 業務模型 |
 | Route Config | 13 | 路由配置 |
 | Index | 73 | 模組索引 |
-| Migration | 64 | 資料庫遷移 |
+| Migration | 65 | 資料庫遷移 |
 | Documentation | 52 | 文檔檔案 |
 | GitHub Prompt | 27 | Copilot 提示 |
 | GitHub Instructions | 28 | Copilot 指令 |
