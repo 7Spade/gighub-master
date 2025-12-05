@@ -117,33 +117,49 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
         }
       </div>
 
-      <nz-spin [nzSpinning]="taskService.loading()">
-        <!-- Tree View -->
-        @if (currentView === TaskViewType.TREE) {
-          <nz-card [nzBordered]="false" class="view-card">
-            @if (taskService.tasks().length === 0) {
-              <nz-empty nzNotFoundContent="尚無任務">
-                <ng-template #nzNotFoundFooter>
-                  <button nz-button nzType="primary" (click)="createTask()">建立第一個任務</button>
-                </ng-template>
-              </nz-empty>
-            } @else {
-              <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" nzBlockNode>
-                <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
-                  <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
-                  <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
-                </nz-tree-node>
+      <!-- Error State with Retry -->
+      @if (taskService.hasError()) {
+        <nz-result
+          nzStatus="error"
+          nzTitle="載入失敗"
+          [nzSubTitle]="taskService.error() || '無法載入任務資料，請稍後重試'"
+        >
+          <div nz-result-extra>
+            <button nz-button nzType="primary" (click)="retryLoad()">
+              <span nz-icon nzType="reload"></span>
+              重新載入
+            </button>
+            <button nz-button (click)="goBack()">返回</button>
+          </div>
+        </nz-result>
+      } @else {
+        <nz-spin [nzSpinning]="taskService.loading()" nzTip="載入中...">
+          <!-- Tree View -->
+          @if (currentView === TaskViewType.TREE) {
+            <nz-card [nzBordered]="false" class="view-card">
+              @if (taskService.tasks().length === 0 && !taskService.loading()) {
+                <nz-empty nzNotFoundContent="尚無任務">
+                  <ng-template #nzNotFoundFooter>
+                    <button nz-button nzType="primary" (click)="createTask()">建立第一個任務</button>
+                  </ng-template>
+                </nz-empty>
+              } @else {
+                <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" nzBlockNode>
+                  <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
+                    <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
+                    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
+                  </nz-tree-node>
 
-                <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
-                  <nz-tree-node-toggle>
-                    <span nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></span>
-                  </nz-tree-node-toggle>
-                  <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
-                </nz-tree-node>
-              </nz-tree-view>
-            }
-          </nz-card>
-        }
+                  <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
+                    <nz-tree-node-toggle>
+                      <span nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></span>
+                    </nz-tree-node-toggle>
+                    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: node }"></ng-container>
+                  </nz-tree-node>
+                </nz-tree-view>
+              }
+            </nz-card>
+          }
 
         <!-- Table View -->
         @if (currentView === TaskViewType.TABLE) {
@@ -250,6 +266,7 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
           </div>
         }
       </nz-spin>
+      }
     </div>
 
     <!-- Task Edit Drawer -->
@@ -633,6 +650,16 @@ export class BlueprintTasksComponent implements OnInit {
     await this.taskService.loadTasksByBlueprint(this.id());
     // Update tree data source
     this.updateDataSource();
+  }
+
+  /** 重新載入任務 (用於錯誤後重試) */
+  async retryLoad(): Promise<void> {
+    this.msg.loading('正在重新載入...', { nzDuration: 0 });
+    await this.loadTasks();
+    this.msg.remove();
+    if (!this.taskService.hasError()) {
+      this.msg.success('載入成功');
+    }
   }
 
   private updateDataSource(): void {
