@@ -144,8 +144,10 @@ export interface Expense {
   expense_date: string;
   /** 費用類別 (database: category) */
   category?: string | null;
-  /** 收據/發票編號 (database: receipt_number) */
-  receipt_number?: string | null;
+  /** 收據/發票網址 (database: receipt_url) */
+  receipt_url?: string | null;
+  /** 生命週期狀態 (database: lifecycle) */
+  lifecycle?: string;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;
