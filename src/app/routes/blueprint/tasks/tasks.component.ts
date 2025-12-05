@@ -119,11 +119,7 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
 
       <!-- Error State with Retry -->
       @if (taskService.hasError()) {
-        <nz-result
-          nzStatus="error"
-          nzTitle="載入失敗"
-          [nzSubTitle]="taskService.error() || '無法載入任務資料，請稍後重試'"
-        >
+        <nz-result nzStatus="error" nzTitle="載入失敗" [nzSubTitle]="taskService.error() || '無法載入任務資料，請稍後重試'">
           <div nz-result-extra>
             <button nz-button nzType="primary" (click)="retryLoad()">
               <span nz-icon nzType="reload"></span>
@@ -161,111 +157,111 @@ import { TaskEditDrawerComponent } from './task-edit-drawer.component';
             </nz-card>
           }
 
-        <!-- Table View -->
-        @if (currentView === TaskViewType.TABLE) {
-          <nz-card [nzBordered]="false" class="view-card">
-            <nz-table #taskTable [nzData]="taskService.tasks()" [nzShowPagination]="taskService.tasks().length > 10">
-              <thead>
-                <tr>
-                  <th nzWidth="40%">任務名稱</th>
-                  <th nzWidth="12%">狀態</th>
-                  <th nzWidth="12%">優先級</th>
-                  <th nzWidth="12%">進度</th>
-                  <th nzWidth="12%">截止日期</th>
-                  <th nzWidth="12%">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (task of taskTable.data; track task.id) {
+          <!-- Table View -->
+          @if (currentView === TaskViewType.TABLE) {
+            <nz-card [nzBordered]="false" class="view-card">
+              <nz-table #taskTable [nzData]="taskService.tasks()" [nzShowPagination]="taskService.tasks().length > 10">
+                <thead>
                   <tr>
-                    <td>
-                      <span [style.padding-left.px]="getTaskLevel(task.id) * 24">
-                        @if (hasChildren(task.id)) {
-                          <span nz-icon nzType="folder" nzTheme="outline" class="task-icon"></span>
-                        } @else {
-                          <span nz-icon nzType="file" nzTheme="outline" class="task-icon"></span>
-                        }
-                        {{ task.title }}
-                      </span>
-                    </td>
-                    <td>
-                      <nz-tag [nzColor]="TASK_STATUS_CONFIG[task.status].color">
-                        <span nz-icon [nzType]="TASK_STATUS_CONFIG[task.status].icon"></span>
-                        {{ TASK_STATUS_CONFIG[task.status].label }}
-                      </nz-tag>
-                    </td>
-                    <td>
-                      <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color">
-                        {{ TASK_PRIORITY_CONFIG[task.priority].label }}
-                      </nz-tag>
-                    </td>
-                    <td>
-                      <nz-progress [nzPercent]="task.completion_rate" [nzShowInfo]="true" [nzStrokeWidth]="6"></nz-progress>
-                    </td>
-                    <td>{{ task.due_date || '-' }}</td>
-                    <td>
-                      <a nz-dropdown [nzDropdownMenu]="taskMenu">
-                        操作
-                        <span nz-icon nzType="down"></span>
-                      </a>
-                      <nz-dropdown-menu #taskMenu="nzDropdownMenu">
-                        <ul nz-menu>
-                          <li nz-menu-item (click)="editTask(task)">編輯</li>
-                          <li nz-menu-item (click)="addSubTask(task)">新增子任務</li>
-                          <li nz-menu-divider></li>
-                          @for (status of getAllowedTransitions(task.status); track status) {
-                            <li nz-menu-item (click)="changeStatus(task, status)"> 轉為: {{ TASK_STATUS_CONFIG[status].label }} </li>
-                          }
-                        </ul>
-                      </nz-dropdown-menu>
-                    </td>
+                    <th nzWidth="40%">任務名稱</th>
+                    <th nzWidth="12%">狀態</th>
+                    <th nzWidth="12%">優先級</th>
+                    <th nzWidth="12%">進度</th>
+                    <th nzWidth="12%">截止日期</th>
+                    <th nzWidth="12%">操作</th>
                   </tr>
-                }
-              </tbody>
-            </nz-table>
-          </nz-card>
-        }
-
-        <!-- Kanban View -->
-        @if (currentView === TaskViewType.KANBAN) {
-          <div class="kanban-container">
-            @for (column of taskService.kanbanColumns(); track column.status) {
-              <nz-card class="kanban-column" [nzTitle]="columnTitle" [nzBordered]="true">
-                <ng-template #columnTitle>
-                  <div class="kanban-column-header">
-                    <nz-tag [nzColor]="column.color">{{ column.title }}</nz-tag>
-                    <nz-badge [nzCount]="column.tasks.length" [nzStyle]="{ backgroundColor: '#f0f0f0', color: '#666' }"></nz-badge>
-                  </div>
-                </ng-template>
-                <div class="kanban-cards">
-                  @for (task of column.tasks; track task.id) {
-                    <nz-card class="kanban-card" [nzHoverable]="true" (click)="editTask(task)">
-                      <div class="kanban-card-title">{{ task.title }}</div>
-                      <div class="kanban-card-meta">
-                        <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color" nzBorderless>
+                </thead>
+                <tbody>
+                  @for (task of taskTable.data; track task.id) {
+                    <tr>
+                      <td>
+                        <span [style.padding-left.px]="getTaskLevel(task.id) * 24">
+                          @if (hasChildren(task.id)) {
+                            <span nz-icon nzType="folder" nzTheme="outline" class="task-icon"></span>
+                          } @else {
+                            <span nz-icon nzType="file" nzTheme="outline" class="task-icon"></span>
+                          }
+                          {{ task.title }}
+                        </span>
+                      </td>
+                      <td>
+                        <nz-tag [nzColor]="TASK_STATUS_CONFIG[task.status].color">
+                          <span nz-icon [nzType]="TASK_STATUS_CONFIG[task.status].icon"></span>
+                          {{ TASK_STATUS_CONFIG[task.status].label }}
+                        </nz-tag>
+                      </td>
+                      <td>
+                        <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color">
                           {{ TASK_PRIORITY_CONFIG[task.priority].label }}
                         </nz-tag>
-                        @if (task.due_date) {
-                          <span class="due-date">
-                            <span nz-icon nzType="calendar"></span>
-                            {{ task.due_date }}
-                          </span>
+                      </td>
+                      <td>
+                        <nz-progress [nzPercent]="task.completion_rate" [nzShowInfo]="true" [nzStrokeWidth]="6"></nz-progress>
+                      </td>
+                      <td>{{ task.due_date || '-' }}</td>
+                      <td>
+                        <a nz-dropdown [nzDropdownMenu]="taskMenu">
+                          操作
+                          <span nz-icon nzType="down"></span>
+                        </a>
+                        <nz-dropdown-menu #taskMenu="nzDropdownMenu">
+                          <ul nz-menu>
+                            <li nz-menu-item (click)="editTask(task)">編輯</li>
+                            <li nz-menu-item (click)="addSubTask(task)">新增子任務</li>
+                            <li nz-menu-divider></li>
+                            @for (status of getAllowedTransitions(task.status); track status) {
+                              <li nz-menu-item (click)="changeStatus(task, status)"> 轉為: {{ TASK_STATUS_CONFIG[status].label }} </li>
+                            }
+                          </ul>
+                        </nz-dropdown-menu>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </nz-table>
+            </nz-card>
+          }
+
+          <!-- Kanban View -->
+          @if (currentView === TaskViewType.KANBAN) {
+            <div class="kanban-container">
+              @for (column of taskService.kanbanColumns(); track column.status) {
+                <nz-card class="kanban-column" [nzTitle]="columnTitle" [nzBordered]="true">
+                  <ng-template #columnTitle>
+                    <div class="kanban-column-header">
+                      <nz-tag [nzColor]="column.color">{{ column.title }}</nz-tag>
+                      <nz-badge [nzCount]="column.tasks.length" [nzStyle]="{ backgroundColor: '#f0f0f0', color: '#666' }"></nz-badge>
+                    </div>
+                  </ng-template>
+                  <div class="kanban-cards">
+                    @for (task of column.tasks; track task.id) {
+                      <nz-card class="kanban-card" [nzHoverable]="true" (click)="editTask(task)">
+                        <div class="kanban-card-title">{{ task.title }}</div>
+                        <div class="kanban-card-meta">
+                          <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color" nzBorderless>
+                            {{ TASK_PRIORITY_CONFIG[task.priority].label }}
+                          </nz-tag>
+                          @if (task.due_date) {
+                            <span class="due-date">
+                              <span nz-icon nzType="calendar"></span>
+                              {{ task.due_date }}
+                            </span>
+                          }
+                        </div>
+                        @if (task.completion_rate > 0) {
+                          <nz-progress [nzPercent]="task.completion_rate" [nzShowInfo]="false" [nzStrokeWidth]="4"></nz-progress>
                         }
-                      </div>
-                      @if (task.completion_rate > 0) {
-                        <nz-progress [nzPercent]="task.completion_rate" [nzShowInfo]="false" [nzStrokeWidth]="4"></nz-progress>
-                      }
-                    </nz-card>
-                  }
-                  @if (column.tasks.length === 0) {
-                    <div class="kanban-empty">無任務</div>
-                  }
-                </div>
-              </nz-card>
-            }
-          </div>
-        }
-      </nz-spin>
+                      </nz-card>
+                    }
+                    @if (column.tasks.length === 0) {
+                      <div class="kanban-empty">無任務</div>
+                    }
+                  </div>
+                </nz-card>
+              }
+            </div>
+          }
+        </nz-spin>
       }
     </div>
 

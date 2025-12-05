@@ -16,10 +16,10 @@ import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SocialService } from '@delon/auth';
 import { SettingsService } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzResultModule } from 'ng-zorro-antd/result';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 import { SupabaseService } from '../../core/supabase/supabase.service';
 
@@ -31,25 +31,23 @@ import { SupabaseService } from '../../core/supabase/supabase.service';
         <nz-spin nzSize="large" nzTip="正在驗證登入..."></nz-spin>
       </div>
     } @else if (error()) {
-      <nz-result
-        nzStatus="error"
-        nzTitle="認證失敗"
-        [nzSubTitle]="error() ?? ''"
-      >
+      <nz-result nzStatus="error" nzTitle="認證失敗" [nzSubTitle]="error() ?? ''">
         <div nz-result-extra>
           <button nz-button nzType="primary" (click)="goToLogin()">返回登入</button>
         </div>
       </nz-result>
     }
   `,
-  styles: [`
-    .callback-loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-  `],
+  styles: [
+    `
+      .callback-loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+    `
+  ],
   providers: [SocialService],
   standalone: true,
   imports: [NzSpinModule, NzResultModule, NzButtonModule]
