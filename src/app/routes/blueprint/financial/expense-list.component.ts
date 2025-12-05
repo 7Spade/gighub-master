@@ -206,6 +206,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
 
             <nz-form-item>
+              <nz-form-label nzFor="receipt_number">收據/發票編號</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="receipt_number" id="receipt_number" placeholder="請輸入收據或發票編號（選填）" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
               <nz-form-label nzFor="contract_id">關聯合約</nz-form-label>
               <nz-form-control>
                 <nz-select
@@ -334,6 +341,7 @@ export class ExpenseListComponent implements OnInit {
     category: [null],
     amount: [0, [Validators.required, Validators.min(0)]],
     expense_date: [new Date(), [Validators.required]],
+    receipt_number: [''],
     contract_id: [null]
   });
 
@@ -394,6 +402,7 @@ export class ExpenseListComponent implements OnInit {
     { title: '類別', render: 'category', width: 100 },
     { title: '金額', render: 'amount', width: 120 },
     { title: '費用日期', index: 'expense_date', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
+    { title: '收據編號', index: 'receipt_number', width: 130 },
     { title: '操作', render: 'actions', fixed: 'right', width: 100 }
   ];
 
@@ -464,6 +473,7 @@ export class ExpenseListComponent implements OnInit {
       category: null,
       amount: 0,
       expense_date: new Date(),
+      receipt_number: '',
       contract_id: null
     });
     this.drawerVisible.set(true);
@@ -484,6 +494,7 @@ export class ExpenseListComponent implements OnInit {
       category: expense.category,
       amount: expense.amount,
       expense_date: expense.expense_date,
+      receipt_number: expense.receipt_number || '',
       contract_id: expense.contract_id
     });
     this.drawerVisible.set(true);

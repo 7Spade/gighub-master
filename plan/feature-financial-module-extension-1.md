@@ -423,31 +423,35 @@ ALTER PUBLICATION supabase_realtime ADD TABLE payments;
 | TASK-011 | Create `get_blueprint_financial_summary` function | ✅ Done |
 | TASK-012 | Enable realtime for financial tables | ✅ Done |
 
-## 8.1 未實現功能清單 (Pending Features)
+## 8.1 已實現功能清單 (Implemented Features)
 
-> **⚠️ 以下功能在原始設計中存在但尚未實現到資料庫中：**
+> **✅ 以下功能已於 2025-12-05 實現到資料庫中：**
 
-| Feature | 設計欄位 | 實際狀態 | 替代方案 |
-|---------|----------|----------|----------|
-| 請款人追蹤 | `payment_requests.requester_id` | ❌ 未實現 | 使用 `metadata.requester_id` 或 `created_by` |
-| 審核人追蹤 | `payment_requests.approver_id` | ❌ 未實現 | 使用 `metadata.approver_id` |
-| 審核時間 | `payment_requests.approved_at` | ❌ 未實現 | 使用 `metadata.approved_at` |
-| 收據編號 | `expenses.receipt_number` | ❌ 未實現 | 資料庫使用 `receipt_url` |
+| Feature | 設計欄位 | 實際狀態 | 說明 |
+|---------|----------|----------|------|
+| 請款人追蹤 | `payment_requests.requester_id` | ✅ 已實現 | 參照 `accounts(id)` |
+| 審核人追蹤 | `payment_requests.approver_id` | ✅ 已實現 | 參照 `accounts(id)` |
+| 審核時間 | `payment_requests.approved_at` | ✅ 已實現 | `TIMESTAMPTZ` 類型 |
+| 拒絕時間 | `payment_requests.rejected_at` | ✅ 已實現 | `TIMESTAMPTZ` 類型 |
+| 拒絕原因 | `payment_requests.rejection_reason` | ✅ 已實現 | `TEXT` 類型 |
+| 收據編號 | `expenses.receipt_number` | ✅ 已實現 | `VARCHAR(100)` 類型 |
 
-### 建議的未來遷移 (Recommended Future Migrations)
-
-如需完整實現設計規格，可考慮以下遷移：
+### 遷移檔案 (Migration Files)
 
 ```sql
--- 1. 新增請款人/審核人欄位（可選）
-ALTER TABLE payment_requests ADD COLUMN requester_id UUID REFERENCES accounts(id);
-ALTER TABLE payment_requests ADD COLUMN approver_id UUID REFERENCES accounts(id);
-ALTER TABLE payment_requests ADD COLUMN approved_at TIMESTAMPTZ;
+-- 20251205170000_17_0005_add_payment_request_approval_fields.sql
+-- 新增請款單審核流程欄位
+ALTER TABLE payment_requests
+ADD COLUMN IF NOT EXISTS requester_id UUID REFERENCES accounts(id),
+ADD COLUMN IF NOT EXISTS approver_id UUID REFERENCES accounts(id),
+ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS rejected_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
 
--- 2. 從 metadata 遷移現有資料（如果已使用 metadata）
-UPDATE payment_requests 
-SET approved_at = (metadata->>'approved_at')::timestamptz
-WHERE metadata->>'approved_at' IS NOT NULL;
+-- 20251205170001_17_0006_add_expense_receipt_number.sql
+-- 新增費用收據編號欄位
+ALTER TABLE expenses
+ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(100);
 ```
 
 ## 9. Future Extensibility

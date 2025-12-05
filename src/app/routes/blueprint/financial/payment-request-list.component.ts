@@ -718,12 +718,49 @@ export class PaymentRequestListComponent implements OnInit {
     }
   }
 
-  /** Get approved_at from metadata */
+  /** Get approved_at - now uses the direct column, fallback to metadata for backward compatibility */
   getApprovedAt(request: PaymentRequest): string | null {
+    // First check the direct column
+    if (request.approved_at) {
+      return request.approved_at;
+    }
+    // Fallback to metadata for backward compatibility
     if (request.metadata && typeof request.metadata === 'object') {
       const metadata = request.metadata as Record<string, unknown>;
       if (metadata['approved_at'] && typeof metadata['approved_at'] === 'string') {
         return metadata['approved_at'];
+      }
+    }
+    return null;
+  }
+
+  /** Get rejected_at - uses the direct column, fallback to metadata for backward compatibility */
+  getRejectedAt(request: PaymentRequest): string | null {
+    // First check the direct column
+    if (request.rejected_at) {
+      return request.rejected_at;
+    }
+    // Fallback to metadata for backward compatibility
+    if (request.metadata && typeof request.metadata === 'object') {
+      const metadata = request.metadata as Record<string, unknown>;
+      if (metadata['rejected_at'] && typeof metadata['rejected_at'] === 'string') {
+        return metadata['rejected_at'];
+      }
+    }
+    return null;
+  }
+
+  /** Get rejection_reason - uses the direct column, fallback to metadata for backward compatibility */
+  getRejectionReason(request: PaymentRequest): string | null {
+    // First check the direct column
+    if (request.rejection_reason) {
+      return request.rejection_reason;
+    }
+    // Fallback to metadata for backward compatibility
+    if (request.metadata && typeof request.metadata === 'object') {
+      const metadata = request.metadata as Record<string, unknown>;
+      if (metadata['rejected_reason'] && typeof metadata['rejected_reason'] === 'string') {
+        return metadata['rejected_reason'];
       }
     }
     return null;
