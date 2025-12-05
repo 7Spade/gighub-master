@@ -170,8 +170,8 @@ export interface PaymentRequest {
   title: string;
   /** 請款說明 (database: description) */
   description?: string | null;
-  /** 請款金額 (database: requested_amount) */
-  requested_amount: number;
+  /** 請款金額 (database: amount) */
+  amount: number;
   /** 幣別 (database: currency, default: TWD) */
   currency?: string;
   /** 生命週期狀態 (database: lifecycle) - maps to draft, active, on_hold, archived, deleted */
@@ -180,12 +180,6 @@ export interface PaymentRequest {
   request_date?: string;
   /** 預計付款日期 (database: due_date) */
   due_date?: string | null;
-  /** 請款人 (database: requester_id) */
-  requester_id?: string | null;
-  /** 核准人 (database: approver_id) */
-  approver_id?: string | null;
-  /** 核准時間 (database: approved_at) */
-  approved_at?: string | null;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;
@@ -198,31 +192,35 @@ export interface PaymentRequest {
  * 付款實體介面
  *
  * Corresponds to database payments table
- * Note: Database uses 'paid_amount' instead of 'amount', 'paid_at' instead of 'payment_date'
  */
 export interface Payment {
   id: string;
   blueprint_id: string;
-  /** 關聯請款單 ID (database: payment_request_id) - required in database */
-  payment_request_id: string;
+  /** 關聯請款單 ID (database: payment_request_id) */
+  payment_request_id?: string | null;
+  /** 關聯合約 ID (database: contract_id) */
+  contract_id?: string | null;
   /** 付款編號 (database: payment_number) */
   payment_number?: string | null;
-  /** 付款金額 (database: paid_amount) */
-  paid_amount: number;
+  /** 付款金額 (database: amount) */
+  amount: number;
   /** 幣別 (database: currency, default: TWD) */
   currency?: string;
-  /** 付款日期 (database: paid_at) */
-  paid_at: string;
+  /** 付款日期 (database: payment_date) */
+  payment_date: string;
   /** 付款方式 (database: payment_method) */
   payment_method?: string | null;
   /** 銀行參考編號 (database: reference_number) */
   reference_number?: string | null;
   /** 備註 (database: notes) */
   notes?: string | null;
+  /** 生命週期狀態 (database: lifecycle) */
+  lifecycle?: string;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }
 
 // ============================================================================
