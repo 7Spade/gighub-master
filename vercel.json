@@ -1,3 +1,5 @@
 {
-  "installCommand": "yarn install"
+  "installCommand": "yarn install",
+  "buildCommand": "yarn build",
+  "outputDirectory": "dist/ng-alain/browser"
 }

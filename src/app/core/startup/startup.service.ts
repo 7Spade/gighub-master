@@ -5,7 +5,7 @@ import { ACLService } from '@delon/acl';
 import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { MenuManagementService } from '@shared';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
-import { Observable, zip, catchError, map } from 'rxjs';
+import { Observable, of, zip, catchError, map } from 'rxjs';
 
 import { I18NService } from '../i18n/i18n.service';
 import { SupabaseAuthService } from '../supabase/supabase-auth.service';
@@ -48,14 +48,20 @@ export class StartupService {
       catchError(res => {
         console.warn(`StartupService.load: Network request failed`, res);
         setTimeout(() => this.router.navigateByUrl(`/exception/500`));
-        return [];
+        // Return a proper tuple with default values to allow the Observable to complete
+        // This ensures the app can still start and navigate even if data loading fails
+        return of([{}, { app: { name: 'NG-ALAIN' } }] as [Record<string, string>, NzSafeAny]);
       }),
       map(([langData, appData]: [Record<string, string>, NzSafeAny]) => {
         // setting language data
-        this.i18n.use(defaultLang, langData);
+        if (langData && Object.keys(langData).length > 0) {
+          this.i18n.use(defaultLang, langData);
+        }
 
         // 应用信息：包括站点名、描述、年份
-        this.settingService.setApp(appData.app);
+        if (appData?.app) {
+          this.settingService.setApp(appData.app);
+        }
 
         // 從 Supabase 獲取用戶信息
         const supabaseUser = this.supabaseAuth.getCurrentUser();
@@ -85,13 +91,13 @@ export class StartupService {
         });
 
         // 向後兼容：如果使用舊的 menu 配置
-        if (appData.menu && !appData.menus) {
+        if (appData?.menu && !appData?.menus) {
           this.menuService.add(appData.menu);
         }
 
         // 设置页面标题的后缀
         this.titleService.default = '';
-        this.titleService.suffix = appData.app.name;
+        this.titleService.suffix = appData?.app?.name || '';
       })
     );
   }

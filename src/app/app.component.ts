@@ -22,14 +22,29 @@ export class AppComponent implements OnInit {
   ngZorroVersion = VERSION_ZORRO.full;
 
   private donePreloader = stepPreloader();
+  private preloaderTimeout: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
     let configLoad = false;
+
+    // Fallback: Remove preloader after 10 seconds if navigation doesn't complete
+    // This prevents the app from being stuck on the loading animation indefinitely
+    this.preloaderTimeout = setTimeout(() => {
+      console.warn('[AppComponent] Preloader timeout - forcing preloader removal');
+      this.donePreloader();
+    }, 10000);
+
     this.router.events.subscribe(ev => {
       if (ev instanceof RouteConfigLoadStart) {
         configLoad = true;
       }
       if (configLoad && ev instanceof NavigationError) {
+        // Clear timeout since we're handling the error
+        if (this.preloaderTimeout) {
+          clearTimeout(this.preloaderTimeout);
+          this.preloaderTimeout = null;
+        }
+        this.donePreloader();
         this.modalSrv.confirm({
           nzTitle: `提醒`,
           nzContent: environment.production ? `应用可能已发布新版本，请点击刷新才能生效。` : `无法加载路由：${ev.url}`,
@@ -40,6 +55,11 @@ export class AppComponent implements OnInit {
         });
       }
       if (ev instanceof NavigationEnd) {
+        // Clear timeout since navigation completed successfully
+        if (this.preloaderTimeout) {
+          clearTimeout(this.preloaderTimeout);
+          this.preloaderTimeout = null;
+        }
         this.donePreloader();
         this.titleSrv.setTitle();
         this.modalSrv.closeAll();
