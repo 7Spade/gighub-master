@@ -122,7 +122,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
             </nz-tag>
           </ng-template>
           <ng-template st-row="amount" let-item>
-            {{ item.requested_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+            {{ item.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
           </ng-template>
           <ng-template st-row="actions" let-item>
             <button nz-button nzType="link" nzSize="small" (click)="viewRequest(item)">
@@ -177,11 +177,11 @@ import { NzModalService } from 'ng-zorro-antd/modal';
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="requested_amount">請款金額</nz-form-label>
+              <nz-form-label nzRequired nzFor="amount">請款金額</nz-form-label>
               <nz-form-control nzErrorTip="請輸入請款金額">
                 <nz-input-number
-                  formControlName="requested_amount"
-                  id="requested_amount"
+                  formControlName="amount"
+                  id="amount"
                   [nzMin]="0"
                   [nzStep]="1000"
                   [nzFormatter]="currencyFormatter"
@@ -244,7 +244,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
               <nz-descriptions-item nzTitle="請款編號">{{ request.request_number || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="請款名稱">{{ request.title }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="請款金額">
-                {{ request.requested_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                {{ request.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="狀態">
                 <nz-tag [nzColor]="getStatusColor(request.lifecycle)">
@@ -253,8 +253,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="說明">{{ request.description || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="建立時間">{{ request.created_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
-              @if (request.approved_at) {
-                <nz-descriptions-item nzTitle="核准時間">{{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
+              @if (getApprovedAt(request)) {
+                <nz-descriptions-item nzTitle="核准時間">{{ getApprovedAt(request) | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
               }
             </nz-descriptions>
 
@@ -268,7 +268,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                 <nz-timeline-item nzColor="orange"> 提交審核 </nz-timeline-item>
               }
               @if (request.lifecycle === 'archived') {
-                <nz-timeline-item nzColor="green"> 審核通過 - {{ request.approved_at | date: 'yyyy-MM-dd HH:mm' }} </nz-timeline-item>
+                <nz-timeline-item nzColor="green">
+                  審核通過
+                  @if (getApprovedAt(request)) {
+                    - {{ getApprovedAt(request) | date: 'yyyy-MM-dd HH:mm' }}
+                  }
+                </nz-timeline-item>
               }
               @if (request.lifecycle === 'deleted') {
                 <nz-timeline-item nzColor="red"> 審核拒絕 </nz-timeline-item>
@@ -421,7 +426,7 @@ export class PaymentRequestListComponent implements OnInit {
   requestForm: FormGroup = this.fb.group({
     request_number: [{ value: '', disabled: true }],
     title: ['', [Validators.required]],
-    requested_amount: [0, [Validators.required, Validators.min(1)]],
+    amount: [0, [Validators.required, Validators.min(1)]],
     contract_id: [null],
     description: [''],
     due_date: [null]
@@ -434,13 +439,13 @@ export class PaymentRequestListComponent implements OnInit {
     this.financialService
       .paymentRequests()
       .filter(r => r.lifecycle === 'archived')
-      .reduce((sum, r) => sum + (r.requested_amount || 0), 0)
+      .reduce((sum, r) => sum + (r.amount || 0), 0)
   );
   readonly pendingAmount = computed(() =>
     this.financialService
       .paymentRequests()
       .filter(r => r.lifecycle === 'active')
-      .reduce((sum, r) => sum + (r.requested_amount || 0), 0)
+      .reduce((sum, r) => sum + (r.amount || 0), 0)
   );
 
   /** Filtered requests */
@@ -531,7 +536,7 @@ export class PaymentRequestListComponent implements OnInit {
     const requestNumber = this.generateRequestNumber();
     this.requestForm.reset({
       request_number: requestNumber,
-      requested_amount: 0
+      amount: 0
     });
     this.drawerVisible.set(true);
   }
@@ -572,7 +577,7 @@ export class PaymentRequestListComponent implements OnInit {
     this.requestForm.patchValue({
       request_number: request.request_number,
       title: request.title,
-      requested_amount: request.requested_amount,
+      amount: request.amount,
       contract_id: request.contract_id,
       description: request.description,
       due_date: request.due_date
@@ -623,7 +628,7 @@ export class PaymentRequestListComponent implements OnInit {
   async approveRequest(request: PaymentRequest): Promise<void> {
     this.modal.confirm({
       nzTitle: '確認核准',
-      nzContent: `確定要核准請款 ${request.title || request.request_number}，金額 ${request.requested_amount.toLocaleString()} 元嗎？`,
+      nzContent: `確定要核准請款 ${request.title || request.request_number}，金額 ${request.amount.toLocaleString()} 元嗎？`,
       nzOnOk: async () => {
         try {
           await this.financialService.approvePaymentRequest(request.id);
@@ -711,6 +716,17 @@ export class PaymentRequestListComponent implements OnInit {
       default:
         return lifecycle;
     }
+  }
+
+  /** Get approved_at from metadata */
+  getApprovedAt(request: PaymentRequest): string | null {
+    if (request.metadata && typeof request.metadata === 'object') {
+      const metadata = request.metadata as Record<string, unknown>;
+      if (metadata['approved_at'] && typeof metadata['approved_at'] === 'string') {
+        return metadata['approved_at'];
+      }
+    }
+    return null;
   }
 
   /** Go back */

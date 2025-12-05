@@ -572,11 +572,12 @@ export class FinancialService {
   /**
    * 核准請款
    * Approve payment request - use lifecycle instead of status
+   * Store approved_at in metadata since the column doesn't exist
    */
   async approvePaymentRequest(id: string): Promise<PaymentRequest | null> {
     return this.updatePaymentRequest(id, {
       lifecycle: 'archived',
-      approved_at: new Date().toISOString()
+      metadata: { approved_at: new Date().toISOString() }
     });
   }
 

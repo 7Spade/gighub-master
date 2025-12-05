@@ -124,7 +124,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-tag>
           </ng-template>
           <ng-template st-row="amount" let-item>
-            {{ item.paid_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+            {{ item.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
           </ng-template>
           <ng-template st-row="actions" let-item>
             <button nz-button nzType="link" nzSize="small" (click)="viewPayment(item)">
@@ -165,7 +165,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                   @for (request of approvedRequests(); track request.id) {
                     <nz-option
                       [nzValue]="request.id"
-                      [nzLabel]="(request.title || request.request_number || '請款單') + ' - ' + (request.requested_amount | number)"
+                      [nzLabel]="(request.title || request.request_number || '請款單') + ' - ' + (request.amount | number)"
                     ></nz-option>
                   }
                 </nz-select>
@@ -173,11 +173,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="paid_amount">付款金額</nz-form-label>
+              <nz-form-label nzRequired nzFor="amount">付款金額</nz-form-label>
               <nz-form-control nzErrorTip="請輸入付款金額">
                 <nz-input-number
-                  formControlName="paid_amount"
-                  id="paid_amount"
+                  formControlName="amount"
+                  id="amount"
                   [nzMin]="0"
                   [nzStep]="1000"
                   [nzFormatter]="currencyFormatter"
@@ -201,9 +201,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="paid_at">付款日期</nz-form-label>
+              <nz-form-label nzRequired nzFor="payment_date">付款日期</nz-form-label>
               <nz-form-control nzErrorTip="請選擇付款日期">
-                <nz-date-picker formControlName="paid_at" id="paid_at" style="width: 100%"></nz-date-picker>
+                <nz-date-picker formControlName="payment_date" id="payment_date" style="width: 100%"></nz-date-picker>
               </nz-form-control>
             </nz-form-item>
 
@@ -244,7 +244,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <nz-descriptions nzTitle="付款資訊" nzBordered [nzColumn]="1">
               <nz-descriptions-item nzTitle="付款金額">
                 <span style="font-size: 18px; font-weight: 600; color: #52c41a">
-                  {{ payment.paid_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                  {{ payment.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
                 </span>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="付款方式">
@@ -253,7 +253,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                 </nz-tag>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="付款日期">
-                {{ payment.paid_at | date: 'yyyy-MM-dd' }}
+                {{ payment.payment_date | date: 'yyyy-MM-dd' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="參考編號">{{ payment.reference_number || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="備註">{{ payment.notes || '-' }}</nz-descriptions-item>
@@ -378,24 +378,24 @@ export class PaymentListComponent implements OnInit {
   /** Form */
   paymentForm: FormGroup = this.fb.group({
     payment_request_id: [null, [Validators.required]],
-    paid_amount: [0, [Validators.required, Validators.min(1)]],
+    amount: [0, [Validators.required, Validators.min(1)]],
     payment_method: [null],
-    paid_at: [new Date(), [Validators.required]],
+    payment_date: [new Date(), [Validators.required]],
     reference_number: [''],
     notes: ['']
   });
 
   /** Computed values */
   readonly totalPayments = computed(() => this.financialService.payments().length);
-  readonly totalAmount = computed(() => this.financialService.payments().reduce((sum, p) => sum + (p.paid_amount || 0), 0));
+  readonly totalAmount = computed(() => this.financialService.payments().reduce((sum, p) => sum + (p.amount || 0), 0));
 
   readonly thisMonthAmount = computed(() => {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     return this.financialService
       .payments()
-      .filter(p => new Date(p.paid_at) >= startOfMonth)
-      .reduce((sum, p) => sum + (p.paid_amount || 0), 0);
+      .filter(p => new Date(p.payment_date) >= startOfMonth)
+      .reduce((sum, p) => sum + (p.amount || 0), 0);
   });
 
   readonly transferPercentage = computed(() => {
@@ -404,7 +404,7 @@ export class PaymentListComponent implements OnInit {
     const transferAmount = this.financialService
       .payments()
       .filter(p => p.payment_method === 'transfer')
-      .reduce((sum, p) => sum + (p.paid_amount || 0), 0);
+      .reduce((sum, p) => sum + (p.amount || 0), 0);
     return Math.round((transferAmount / total) * 100);
   });
 
@@ -433,8 +433,8 @@ export class PaymentListComponent implements OnInit {
       const startDate = this.dateRange[0];
       const endDate = this.dateRange[1];
       payments = payments.filter(p => {
-        const paidAt = new Date(p.paid_at);
-        return paidAt >= startDate && paidAt <= endDate;
+        const paymentDate = new Date(p.payment_date);
+        return paymentDate >= startDate && paymentDate <= endDate;
       });
     }
 
@@ -448,7 +448,7 @@ export class PaymentListComponent implements OnInit {
   columns: STColumn[] = [
     { title: '付款金額', render: 'amount', width: 150 },
     { title: '付款方式', render: 'method', width: 100 },
-    { title: '付款日期', index: 'paid_at', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
+    { title: '付款日期', index: 'payment_date', type: 'date', dateFormat: 'yyyy-MM-dd', width: 120 },
     { title: '參考編號', index: 'reference_number', width: 150 },
     { title: '備註', index: 'notes', width: 200 },
     { title: '操作', render: 'actions', fixed: 'right', width: 120 }
@@ -514,7 +514,7 @@ export class PaymentListComponent implements OnInit {
     if (requestId) {
       const request = this.approvedRequests().find(r => r.id === requestId);
       if (request) {
-        this.paymentForm.patchValue({ paid_amount: request.requested_amount });
+        this.paymentForm.patchValue({ amount: request.amount });
       }
     }
   }
@@ -524,8 +524,8 @@ export class PaymentListComponent implements OnInit {
     this.editingPayment.set(null);
     this.paymentForm.reset({
       payment_method: null,
-      paid_amount: 0,
-      paid_at: new Date()
+      amount: 0,
+      payment_date: new Date()
     });
     this.drawerVisible.set(true);
   }
@@ -554,9 +554,9 @@ export class PaymentListComponent implements OnInit {
     this.editingPayment.set(payment);
     this.paymentForm.patchValue({
       payment_request_id: payment.payment_request_id,
-      paid_amount: payment.paid_amount,
+      amount: payment.amount,
       payment_method: payment.payment_method,
-      paid_at: payment.paid_at,
+      payment_date: payment.payment_date,
       reference_number: payment.reference_number,
       notes: payment.notes
     });
@@ -573,7 +573,7 @@ export class PaymentListComponent implements OnInit {
       const data = {
         ...formValue,
         blueprint_id: this.id(),
-        paid_at: formValue.paid_at instanceof Date ? formValue.paid_at.toISOString().split('T')[0] : formValue.paid_at
+        payment_date: formValue.payment_date instanceof Date ? formValue.payment_date.toISOString().split('T')[0] : formValue.payment_date
       };
 
       if (this.editingPayment()) {

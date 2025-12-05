@@ -237,7 +237,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                     </nz-tag>
                   </nz-list-item-action>
                   <nz-list-item-action>
-                    {{ request.requested_amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
+                    {{ request.amount | currency: 'TWD' : 'symbol' : '1.0-0' }}
                   </nz-list-item-action>
                 </ul>
               </nz-list-item>

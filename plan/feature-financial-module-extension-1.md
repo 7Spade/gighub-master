@@ -192,7 +192,12 @@ CREATE INDEX idx_expenses_category ON expenses(category);
 
 **Purpose**: Manage payment request workflow with lifecycle states.
 
+> **⚠️ 實際實現與設計差異說明**:
+> - 實際資料庫使用 `amount` 而非 `requested_amount`
+> - `requester_id`, `approver_id`, `approved_at` 欄位未實現，改用 `metadata` JSONB 欄位存儲
+
 ```sql
+-- 設計規格（未完全實現）
 CREATE TABLE payment_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
@@ -200,19 +205,20 @@ CREATE TABLE payment_requests (
   request_number VARCHAR(100),                     -- 請款單編號
   title TEXT NOT NULL,                             -- 請款說明
   description TEXT,                                -- 詳細說明
-  requested_amount NUMERIC(18,2) NOT NULL,         -- 請款金額
+  amount NUMERIC(18,2) NOT NULL,                   -- 請款金額 (實際: amount)
   currency VARCHAR(3) DEFAULT 'TWD',               -- 幣別
   request_date DATE NOT NULL DEFAULT CURRENT_DATE, -- 請款日期
   due_date DATE,                                   -- 預計付款日
   lifecycle blueprint_lifecycle NOT NULL DEFAULT 'draft',
-  requester_id UUID REFERENCES accounts(id),       -- 請款人
-  approver_id UUID REFERENCES accounts(id),        -- 審核人
-  approved_at TIMESTAMPTZ,                         -- 審核時間
+  -- 以下欄位未實現，使用 metadata 替代:
+  -- requester_id UUID REFERENCES accounts(id),    -- 請款人 (未實現)
+  -- approver_id UUID REFERENCES accounts(id),     -- 審核人 (未實現)
+  -- approved_at TIMESTAMPTZ,                      -- 審核時間 (未實現, 使用 metadata.approved_at)
+  metadata JSONB DEFAULT '{}'::jsonb,              -- 擴展欄位 (存儲 approved_at, requester_id 等)
   created_by UUID REFERENCES accounts(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  deleted_at TIMESTAMPTZ,
-  metadata JSONB DEFAULT '{}'::jsonb
+  deleted_at TIMESTAMPTZ
 );
 
 -- Indexes
@@ -227,22 +233,31 @@ CREATE INDEX idx_payment_requests_due_date ON payment_requests(due_date);
 
 **Purpose**: Record individual payments against payment requests.
 
+> **⚠️ 實際實現與設計差異說明**:
+> - 實際資料庫使用 `amount` 而非 `paid_amount`
+> - 實際資料庫使用 `payment_date` 而非 `paid_at`
+> - 實際資料庫包含 `lifecycle` 和 `deleted_at` 欄位
+
 ```sql
+-- 實際實現版本
 CREATE TABLE payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  payment_request_id UUID NOT NULL REFERENCES payment_requests(id) ON DELETE CASCADE,
   blueprint_id UUID NOT NULL REFERENCES blueprints(id) ON DELETE CASCADE,
+  payment_request_id UUID REFERENCES payment_requests(id) ON DELETE CASCADE, -- 可選
+  contract_id UUID REFERENCES contracts(id) ON DELETE SET NULL,              -- 新增: 關聯合約
   payment_number VARCHAR(100),                     -- 付款編號
-  paid_amount NUMERIC(18,2) NOT NULL,              -- 付款金額
+  amount NUMERIC(18,2) NOT NULL,                   -- 付款金額 (實際: amount)
   currency VARCHAR(3) DEFAULT 'TWD',               -- 幣別
-  paid_at DATE NOT NULL,                           -- 付款日期
+  payment_date DATE NOT NULL,                      -- 付款日期 (實際: payment_date)
   payment_method VARCHAR(50),                      -- 付款方式
   reference_number VARCHAR(100),                   -- 參考編號
   notes TEXT,                                      -- 備註
+  lifecycle blueprint_lifecycle NOT NULL DEFAULT 'active', -- 新增: 生命週期
+  metadata JSONB DEFAULT '{}'::jsonb,
   created_by UUID REFERENCES accounts(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  metadata JSONB DEFAULT '{}'::jsonb
+  deleted_at TIMESTAMPTZ                           -- 新增: 軟刪除
 );
 
 -- Indexes
@@ -407,6 +422,33 @@ ALTER PUBLICATION supabase_realtime ADD TABLE payments;
 | TASK-010 | Create `get_contract_summary` function | ✅ Done |
 | TASK-011 | Create `get_blueprint_financial_summary` function | ✅ Done |
 | TASK-012 | Enable realtime for financial tables | ✅ Done |
+
+## 8.1 未實現功能清單 (Pending Features)
+
+> **⚠️ 以下功能在原始設計中存在但尚未實現到資料庫中：**
+
+| Feature | 設計欄位 | 實際狀態 | 替代方案 |
+|---------|----------|----------|----------|
+| 請款人追蹤 | `payment_requests.requester_id` | ❌ 未實現 | 使用 `metadata.requester_id` 或 `created_by` |
+| 審核人追蹤 | `payment_requests.approver_id` | ❌ 未實現 | 使用 `metadata.approver_id` |
+| 審核時間 | `payment_requests.approved_at` | ❌ 未實現 | 使用 `metadata.approved_at` |
+| 收據編號 | `expenses.receipt_number` | ❌ 未實現 | 資料庫使用 `receipt_url` |
+
+### 建議的未來遷移 (Recommended Future Migrations)
+
+如需完整實現設計規格，可考慮以下遷移：
+
+```sql
+-- 1. 新增請款人/審核人欄位（可選）
+ALTER TABLE payment_requests ADD COLUMN requester_id UUID REFERENCES accounts(id);
+ALTER TABLE payment_requests ADD COLUMN approver_id UUID REFERENCES accounts(id);
+ALTER TABLE payment_requests ADD COLUMN approved_at TIMESTAMPTZ;
+
+-- 2. 從 metadata 遷移現有資料（如果已使用 metadata）
+UPDATE payment_requests 
+SET approved_at = (metadata->>'approved_at')::timestamptz
+WHERE metadata->>'approved_at' IS NOT NULL;
+```
 
 ## 9. Future Extensibility
 
