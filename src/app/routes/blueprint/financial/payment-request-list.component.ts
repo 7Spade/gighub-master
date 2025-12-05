@@ -90,10 +90,10 @@ import { NzModalService } from 'ng-zorro-antd/modal';
               style="width: 100%"
             >
               <nz-option nzValue="draft" nzLabel="草稿"></nz-option>
-              <nz-option nzValue="pending" nzLabel="待審核"></nz-option>
-              <nz-option nzValue="approved" nzLabel="已核准"></nz-option>
-              <nz-option nzValue="rejected" nzLabel="已拒絕"></nz-option>
-              <nz-option nzValue="paid" nzLabel="已付款"></nz-option>
+              <nz-option nzValue="active" nzLabel="待審核"></nz-option>
+              <nz-option nzValue="archived" nzLabel="已核准"></nz-option>
+              <nz-option nzValue="on_hold" nzLabel="暫緩"></nz-option>
+              <nz-option nzValue="deleted" nzLabel="已拒絕"></nz-option>
             </nz-select>
           </div>
           <div nz-col [nzXs]="12" [nzSm]="6" [nzMd]="4">
@@ -252,9 +252,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                 </nz-tag>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="說明">{{ request.description || '-' }}</nz-descriptions-item>
+              <nz-descriptions-item nzTitle="請款日期">{{ request.request_date || '-' }}</nz-descriptions-item>
+              <nz-descriptions-item nzTitle="預計付款日">{{ request.due_date || '-' }}</nz-descriptions-item>
               <nz-descriptions-item nzTitle="建立時間">{{ request.created_at | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
               @if (getApprovedAt(request)) {
                 <nz-descriptions-item nzTitle="核准時間">{{ getApprovedAt(request) | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
+              }
+              @if (getRejectedAt(request)) {
+                <nz-descriptions-item nzTitle="拒絕時間">{{ getRejectedAt(request) | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
               }
             </nz-descriptions>
 
@@ -276,9 +281,23 @@ import { NzModalService } from 'ng-zorro-antd/modal';
                 </nz-timeline-item>
               }
               @if (request.lifecycle === 'deleted') {
-                <nz-timeline-item nzColor="red"> 審核拒絕 </nz-timeline-item>
+                <nz-timeline-item nzColor="red">
+                  審核拒絕
+                  @if (getRejectedAt(request)) {
+                    - {{ getRejectedAt(request) | date: 'yyyy-MM-dd HH:mm' }}
+                  }
+                </nz-timeline-item>
               }
             </nz-timeline>
+
+            @if (request.lifecycle === 'deleted' && getRejectionReason(request)) {
+              <nz-alert
+                nzType="error"
+                nzShowIcon
+                [nzMessage]="'拒絕原因：' + getRejectionReason(request)"
+                style="margin-bottom: 16px"
+              ></nz-alert>
+            }
 
             @if (request.lifecycle === 'active') {
               <div class="detail-actions">
