@@ -20,7 +20,7 @@ export class SupabaseService {
     if (!url || !anonKey) {
       console.error(
         '[SupabaseService] Supabase configuration is missing. ' +
-          'Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your .env file.'
+          'Please check src/environments/environment.ts or environment.prod.ts for proper configuration.'
       );
       // Create a placeholder client with empty values to prevent app crash
       // The app will show appropriate error messages when Supabase operations are attempted
