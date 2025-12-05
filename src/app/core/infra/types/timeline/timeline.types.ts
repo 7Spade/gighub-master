@@ -71,6 +71,10 @@ export interface Activity {
   readonly activity_type: ActivityType;
   /** 操作者 ID */
   readonly actor_id: string | null;
+  /** 摘要 */
+  readonly summary?: string | null;
+  /** 詳細資訊 */
+  readonly details?: Record<string, unknown> | null;
   /** 元數據 */
   readonly metadata: ActivityMetadata;
   /** 舊值 */

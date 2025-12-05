@@ -39,36 +39,33 @@ export class AuditLogRepository {
   /**
    * 建立審計日誌記錄 (不可變)
    * Create audit log entry (immutable append-only)
+   * Uses RPC function to properly map auth.uid() to account_id
    */
   create(request: CreateAuditLogRequest): Observable<AuditLog | null> {
-    const entry = {
-      blueprint_id: request.blueprint_id ?? null,
-      organization_id: request.organization_id ?? null,
-      entity_type: request.entity_type,
-      entity_id: request.entity_id,
-      entity_name: request.entity_name ?? null,
-      action: request.action,
-      actor_id: request.actor_id,
-      actor_name: request.actor_name ?? null,
-      actor_type: request.actor_type ?? 'user',
-      severity: request.severity ?? 'info',
-      old_value: request.old_value ?? null,
-      new_value: request.new_value ?? null,
-      changes: request.changes ?? null,
-      metadata: request.metadata ?? null,
-      context: request.context ?? null,
-      ip_address: request.ip_address ?? null,
-      user_agent: request.user_agent ?? null,
-      request_id: request.request_id ?? null
-    };
-
-    return from(this.supabase.client.from('audit_logs').insert(entry).select().single()).pipe(
+    return from(
+      this.supabase.client.rpc('log_audit', {
+        p_entity_type: request.entity_type,
+        p_entity_id: request.entity_id,
+        p_action: request.action,
+        p_entity_name: request.entity_name ?? null,
+        p_blueprint_id: request.blueprint_id ?? null,
+        p_organization_id: request.organization_id ?? null,
+        p_old_value: request.old_value ?? null,
+        p_new_value: request.new_value ?? null,
+        p_metadata: request.metadata ?? {},
+        p_severity: request.severity ?? 'info'
+      })
+    ).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[AuditLogRepository] create error:', error);
           return null;
         }
-        return data as AuditLog;
+        // RPC returns the audit log ID
+        if (data) {
+          return { id: data as string } as AuditLog;
+        }
+        return null;
       })
     );
   }
@@ -76,38 +73,30 @@ export class AuditLogRepository {
   /**
    * 批次建立審計日誌
    * Batch create audit log entries
+   * Uses multiple RPC calls to ensure proper auth.uid() to account_id mapping
    */
   createBatch(requests: CreateAuditLogRequest[]): Observable<AuditLog[]> {
     if (requests.length === 0) return of([]);
 
-    const entries = requests.map(req => ({
-      blueprint_id: req.blueprint_id ?? null,
-      organization_id: req.organization_id ?? null,
-      entity_type: req.entity_type,
-      entity_id: req.entity_id,
-      entity_name: req.entity_name ?? null,
-      action: req.action,
-      actor_id: req.actor_id,
-      actor_name: req.actor_name ?? null,
-      actor_type: req.actor_type ?? 'user',
-      severity: req.severity ?? 'info',
-      old_value: req.old_value ?? null,
-      new_value: req.new_value ?? null,
-      changes: req.changes ?? null,
-      metadata: req.metadata ?? null,
-      context: req.context ?? null,
-      ip_address: req.ip_address ?? null,
-      user_agent: req.user_agent ?? null,
-      request_id: req.request_id ?? null
-    }));
+    // Use Promise.all to execute all RPC calls in parallel
+    const rpcCalls = requests.map(req =>
+      this.supabase.client.rpc('log_audit', {
+        p_entity_type: req.entity_type,
+        p_entity_id: req.entity_id,
+        p_action: req.action,
+        p_entity_name: req.entity_name ?? null,
+        p_blueprint_id: req.blueprint_id ?? null,
+        p_organization_id: req.organization_id ?? null,
+        p_old_value: req.old_value ?? null,
+        p_new_value: req.new_value ?? null,
+        p_metadata: req.metadata ?? {},
+        p_severity: req.severity ?? 'info'
+      })
+    );
 
-    return from(this.supabase.client.from('audit_logs').insert(entries).select()).pipe(
-      map(({ data, error }) => {
-        if (error) {
-          console.error('[AuditLogRepository] createBatch error:', error);
-          return [];
-        }
-        return (data || []) as AuditLog[];
+    return from(Promise.all(rpcCalls)).pipe(
+      map(results => {
+        return results.filter(result => !result.error && result.data).map(result => ({ id: result.data as string }) as AuditLog);
       })
     );
   }

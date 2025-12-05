@@ -42,26 +42,30 @@ export class TimelineRepository {
   /**
    * 記錄活動
    * Log an activity to the timeline
+   * Uses RPC function to properly map auth.uid() to account_id
    */
   logActivity(request: LogActivityRequest): Observable<Activity | null> {
-    const entry = {
-      blueprint_id: request.blueprint_id,
-      entity_type: request.entity_type,
-      entity_id: request.entity_id,
-      activity_type: request.activity_type,
-      actor_id: this.supabase.currentUser?.id ?? null,
-      metadata: request.metadata ?? {},
-      old_value: request.old_value ?? null,
-      new_value: request.new_value ?? null
-    };
-
-    return from(this.supabase.client.from('activities').insert(entry).select().single()).pipe(
+    return from(
+      this.supabase.client.rpc('log_activity', {
+        p_blueprint_id: request.blueprint_id,
+        p_entity_type: request.entity_type,
+        p_entity_id: request.entity_id,
+        p_activity_type: request.activity_type,
+        p_metadata: request.metadata ?? {},
+        p_old_value: request.old_value ?? null,
+        p_new_value: request.new_value ?? null
+      })
+    ).pipe(
       map(({ data, error }) => {
         if (error) {
           console.error('[TimelineRepository] logActivity error:', error);
           return null;
         }
-        return data as Activity;
+        // RPC returns the activity ID, fetch the full activity record
+        if (data) {
+          return { id: data as string } as Activity;
+        }
+        return null;
       })
     );
   }
