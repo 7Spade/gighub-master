@@ -144,6 +144,8 @@ export interface Expense {
   expense_date: string;
   /** 費用類別 (database: category) */
   category?: string | null;
+  /** 收據/發票編號 (database: receipt_number) */
+  receipt_number?: string | null;
   /** 收據/發票網址 (database: receipt_url) */
   receipt_url?: string | null;
   /** 生命週期狀態 (database: lifecycle) */
@@ -182,6 +184,16 @@ export interface PaymentRequest {
   request_date?: string;
   /** 預計付款日期 (database: due_date) */
   due_date?: string | null;
+  /** 請款人 ID (database: requester_id) */
+  requester_id?: string | null;
+  /** 審核人 ID (database: approver_id) */
+  approver_id?: string | null;
+  /** 審核時間 (database: approved_at) */
+  approved_at?: string | null;
+  /** 拒絕時間 (database: rejected_at) */
+  rejected_at?: string | null;
+  /** 拒絕原因 (database: rejection_reason) */
+  rejection_reason?: string | null;
   metadata?: Record<string, unknown>;
   created_by?: string | null;
   created_at?: string;

@@ -571,25 +571,35 @@ export class FinancialService {
 
   /**
    * 核准請款
-   * Approve payment request - use lifecycle instead of status
-   * Store approved_at in metadata since the column doesn't exist
+   * Approve payment request - updates lifecycle to archived and sets approval timestamp
+   * Now uses the dedicated approved_at column instead of metadata
+   *
+   * @param id - Payment request ID
+   * @param approverId - Optional approver ID (defaults to current user from auth context)
    */
-  async approvePaymentRequest(id: string): Promise<PaymentRequest | null> {
+  async approvePaymentRequest(id: string, approverId?: string): Promise<PaymentRequest | null> {
     return this.updatePaymentRequest(id, {
       lifecycle: 'archived',
-      metadata: { approved_at: new Date().toISOString() }
+      approved_at: new Date().toISOString(),
+      approver_id: approverId || undefined
     });
   }
 
   /**
    * 拒絕請款
-   * Reject payment request - use lifecycle instead of status
-   * Store rejection reason in metadata since rejected_reason column doesn't exist
+   * Reject payment request - updates lifecycle to deleted and records rejection details
+   * Now uses the dedicated rejected_at and rejection_reason columns instead of metadata
+   *
+   * @param id - Payment request ID
+   * @param reason - Rejection reason
+   * @param approverId - Optional approver ID (defaults to current user from auth context)
    */
-  async rejectPaymentRequest(id: string, reason: string): Promise<PaymentRequest | null> {
+  async rejectPaymentRequest(id: string, reason: string, approverId?: string): Promise<PaymentRequest | null> {
     return this.updatePaymentRequest(id, {
       lifecycle: 'deleted',
-      metadata: { rejected_reason: reason, rejected_at: new Date().toISOString() }
+      rejected_at: new Date().toISOString(),
+      rejection_reason: reason,
+      approver_id: approverId || undefined
     });
   }
 
