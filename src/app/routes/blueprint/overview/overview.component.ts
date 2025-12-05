@@ -38,6 +38,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
+import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component';
+
 @Component({
   selector: 'app-blueprint-overview',
   template: `
@@ -464,6 +466,14 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
           </nz-result>
         }
       </nz-spin>
+
+      <!-- Blueprint Edit Drawer -->
+      <app-blueprint-edit-drawer
+        [blueprint]="blueprint()"
+        [visible]="editDrawerVisible()"
+        (closed)="onEditDrawerClosed()"
+        (saved)="onBlueprintSaved($event)"
+      ></app-blueprint-edit-drawer>
     </div>
   `,
   styles: [
@@ -626,7 +636,8 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
     NzTabsModule,
     NzTimelineModule,
     NzTooltipModule,
-    ActivityTimelineComponent
+    ActivityTimelineComponent,
+    BlueprintEditDrawerComponent
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
@@ -643,6 +654,9 @@ export class BlueprintOverviewComponent implements OnInit {
   members = signal<BlueprintMemberDetail[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+
+  // Edit drawer state
+  editDrawerVisible = signal(false);
 
   // Tab state
   selectedTabIndex = 0;
@@ -846,7 +860,16 @@ export class BlueprintOverviewComponent implements OnInit {
   }
 
   editBlueprint(): void {
-    this.msg.info('編輯功能開發中');
+    this.editDrawerVisible.set(true);
+  }
+
+  onEditDrawerClosed(): void {
+    this.editDrawerVisible.set(false);
+  }
+
+  onBlueprintSaved(updated: BlueprintBusinessModel): void {
+    this.blueprint.set(updated);
+    this.editDrawerVisible.set(false);
   }
 
   refreshBlueprint(): void {

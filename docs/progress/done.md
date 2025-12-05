@@ -1,8 +1,8 @@
 # ✅ 已完成項目清單 (按實現順序排列)
 
 > 最後更新: 2025-12-05  
-> 總計完成項目: 427 項  
-> 總計 TypeScript 檔案: 270 個  
+> 總計完成項目: 428 項  
+> 總計 TypeScript 檔案: 271 個  
 > 總計 SQL 遷移檔案: 64 個  
 > 總計文檔檔案: 52 個  
 > 排列原則: 按架構層級 基礎層 → 容器層 → 業務層 → 基礎設施 順序
@@ -815,15 +815,15 @@
 | ------------ | ---------- | ------ | ------- | --------- | --------- | ----- | ----------- | ---- |
 | 基礎層       | 4          | 3      | 7       | 12        | 14        | 2     | 11          | 53   |
 | 容器層       | 2          | 2      | 2       | 15        | 10        | 3     | 24          | 58   |
-| 業務層       | 11         | 1      | 13      | 14        | 42        | 21    | 25          | 127  |
+| 業務層       | 11         | 1      | 13      | 15        | 42        | 21    | 25          | 128  |
 | 基礎設施     | -          | -      | 5       | 61        | -         | -     | 117         | 183  |
-| **總計**     | **17**     | **6**  | **27**  | **102**   | **64**    | **26**| **177**     | **427** |
+| **總計**     | **17**     | **6**  | **27**  | **103**   | **64**    | **26**| **177**     | **428** |
 
 ### 按類型詳細統計
 
 | 類型 | 數量 | 說明 |
 | ---- | ---- | ---- |
-| **Component** | 102 | 50 業務組件 + 52 Demo 組件 |
+| **Component** | 103 | 51 業務組件 + 52 Demo 組件 |
 | **Service** | 27 | 20 業務服務 + 5 核心服務 + 2 Demo 服務 |
 | **Repository** | 17 | 資料存取層 |
 | **Facade** | 6 | 業務邏輯封裝層 |
@@ -855,7 +855,7 @@
 | layout/passport | 1 | `src/app/layout/passport/passport.component.ts` |
 | passport | 5 | `src/app/routes/passport/**/*.component.ts` |
 | account | 10 | `src/app/routes/account/**/*.component.ts` |
-| blueprint | 11 | `src/app/routes/blueprint/**/*.component.ts` |
+| blueprint | 12 | `src/app/routes/blueprint/**/*.component.ts` (含 blueprint-edit-drawer) |
 | shared/base | 1 | `src/app/shared/base/base-context-aware.component.ts` |
 
 #### Demo 組件 (52 個)
@@ -1000,4 +1000,4 @@
 
 ---
 
-**總計完成項目**: 427 項
+**總計完成項目**: 428 項
