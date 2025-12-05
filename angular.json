@@ -51,8 +51,8 @@
               ]
             },
             "define": {
-              "process.env.NEXT_PUBLIC_SUPABASE_URL": "\"\"",
-              "process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": "\"\""
+              "import.meta.env.NEXT_PUBLIC_SUPABASE_URL": "undefined",
+              "import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": "undefined"
             }
           },
           "configurations": {
