@@ -17,7 +17,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BlueprintFacade, ModuleType, ESSENTIAL_MODULES, AccountStatus } from '@core';
 import { BlueprintBusinessModel, UpdateBlueprintRequest } from '@shared';
@@ -164,13 +164,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
               <!-- Form Actions -->
               <div class="drawer-actions">
                 <button nz-button nzType="default" (click)="onClose()" [disabled]="saving()">取消</button>
-                <button
-                  nz-button
-                  nzType="primary"
-                  (click)="onSave()"
-                  [nzLoading]="saving()"
-                  [disabled]="form.invalid || !hasChanges()"
-                >
+                <button nz-button nzType="primary" (click)="onSave()" [nzLoading]="saving()" [disabled]="form.invalid || !hasChanges()">
                   儲存變更
                 </button>
               </div>
@@ -283,7 +277,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
     `
   ]
 })
-export class BlueprintEditDrawerComponent {
+export class BlueprintEditDrawerComponent implements OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly blueprintFacade = inject(BlueprintFacade);
   private readonly msg = inject(NzMessageService);

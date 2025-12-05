@@ -24,6 +24,7 @@ import { Injectable, inject, signal, computed, linkedSignal } from '@angular/cor
 import {
   SupabaseService,
   TaskRepository,
+  AccountRepository,
   Task,
   TaskNode,
   FlatTaskNode,
@@ -43,6 +44,7 @@ export class TaskService {
   // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly supabaseService = inject(SupabaseService);
   private readonly taskRepository = inject(TaskRepository);
+  private readonly accountRepository = inject(AccountRepository);
 
   // ============================================================================
   // State Signals (狀態信號)
@@ -195,12 +197,17 @@ export class TaskService {
     const currentUser = this.supabaseService.currentUser;
     if (!currentUser) throw new Error('未登入');
 
+    // Get the account_id from accounts table using auth_user_id
+    // created_by references accounts(id), not auth.uid()
+    const account = await firstValueFrom(this.accountRepository.findByAuthUserId(currentUser.id));
+    if (!account) throw new Error('找不到對應的帳戶');
+
     // Get next sort_order using repository
     const nextOrder = await firstValueFrom(this.taskRepository.getNextSortOrder(request.blueprint_id, request.parent_id ?? null));
 
-    // Create task with sort_order
+    // Create task with sort_order using account.id as created_by
     const taskWithOrder = { ...request };
-    const newTask = await firstValueFrom(this.taskRepository.create(taskWithOrder, currentUser.id));
+    const newTask = await firstValueFrom(this.taskRepository.create(taskWithOrder, account.id));
 
     if (!newTask) throw new Error('建立任務失敗');
 

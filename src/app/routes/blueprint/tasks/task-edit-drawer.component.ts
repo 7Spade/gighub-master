@@ -220,7 +220,11 @@ export class TaskEditDrawerComponent implements OnChanges {
   });
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['task'] || changes['parentTaskId']) {
+    // Reset form when drawer opens (visible changes from false to true)
+    // or when task/parentTaskId changes
+    if (changes['visible']?.currentValue === true && !changes['visible']?.previousValue) {
+      this.resetForm();
+    } else if (changes['task'] || changes['parentTaskId']) {
       this.resetForm();
     }
   }
