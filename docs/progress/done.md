@@ -50,6 +50,16 @@
 | OAuth Callback 修復 | 移除 mockModel()，改用 Supabase PKCE 流程 exchangeCodeForSession() | ISSUE-021, TD-006 |
 | Mock 資料完全清理 | 所有 Mock 資料後備機制已移除 | TD-006 |
 | Supabase Auth 整合完善 | OAuth 回調現在正確處理授權碼交換和 session 同步 | ISSUE-021 |
+| P1 功能驗證 | 驗證搜尋、通知、時間軸、權限 UI 已部分實現 | ISSUE-005/6/7/8 |
+
+### P1 核心功能狀態
+
+| 功能 | 狀態 | 核心元件 | 說明 |
+| ---- | ---- | -------- | ---- |
+| 權限系統 | 75% | PermissionService, Directives, Guard | 缺少 Admin UI |
+| 全域搜尋 | 80% | HeaderSearchComponent, SearchService | 缺少進階搜尋 |
+| 通知中心 | 70% | HeaderNotifyComponent, NotificationService | 缺少排程通知 |
+| 時間軸 | 60% | ActivityTimelineComponent, AuditLogService | 缺少版本控制 |
 
 ---
 
