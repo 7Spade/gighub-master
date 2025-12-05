@@ -630,14 +630,7 @@ export class BlueprintTasksComponent implements OnInit {
   }
 
   async loadTasks(): Promise<void> {
-    try {
-      // Try to load real data first
-      await this.taskService.loadTasksByBlueprint(this.id());
-    } catch {
-      // If no real data, load mock data for development
-      this.taskService.loadMockData(this.id());
-    }
-
+    await this.taskService.loadTasksByBlueprint(this.id());
     // Update tree data source
     this.updateDataSource();
   }
