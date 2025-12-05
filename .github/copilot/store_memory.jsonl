@@ -1,0 +1,6 @@
+{
+  "key": "gighub-financial-schema-mapping",
+  "value": "Financial module database-to-code mapping:\n- payment_requests table: uses `amount` column (NOT `requested_amount`)\n- payments table: uses `amount` column (NOT `paid_amount`), `payment_date` column (NOT `paid_at`)\n- payment_requests table does NOT have `approved_at` or `approver_id` columns - store in `metadata` JSONB field\n- payment_requests table does NOT have `requester_id` column - store in `metadata` JSONB field\n- Both tables use `lifecycle` (blueprint_lifecycle enum) for status instead of separate status fields",
+  "reason": "Critical schema-to-code mapping that caused payment request failures and could cause issues in future development",
+  "source": "Analysis of database schema vs TypeScript interfaces during payment request failure investigation"
+}
