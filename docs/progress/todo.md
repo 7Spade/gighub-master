@@ -1,6 +1,6 @@
 # 📋 待完成項目清單 (按處理順序排列)
 
-> 最後更新: 2025-12-04  
+> 最後更新: 2025-12-05  
 > 總計待完成項目: 105+ 項  
 > 總預計工時: ~672h+  
 > 排列原則: 按優先級 P0 → P1 → P2 → P3 → P4 順序處理
@@ -448,4 +448,131 @@
 
 ---
 
-**最後更新**: 2025-12-04
+## 📚 實施準備 - Context7 文檔查詢結果
+
+> 為後續實施收集的最新技術文檔參考
+
+### Angular Signals 狀態管理
+
+**來源**: Context7 - `/angular/angular`
+
+**關鍵模式**:
+- 使用 `signal()` 創建可寫入訊號狀態
+- 使用 `computed()` 創建派生計算訊號
+- 使用 `effect()` 處理副作用（如 localStorage 持久化）
+- Signal Input: 使用 `input()` 和 `input.required<T>()` 
+- Signal Output: 使用 `output<T>()` 發送事件
+- Signal Queries: 使用 `viewChild()`, `contentChild()` 替代裝飾器
+
+**最佳實踐**:
+```typescript
+// 可寫入訊號
+currentUser = signal<User>({ id: 1, name: 'John' });
+
+// 派生計算訊號
+displayName = computed(() => `${this.currentUser().name}`);
+
+// 副作用
+effect(() => {
+  localStorage.setItem('user', JSON.stringify(this.currentUser()));
+});
+
+// Signal Input (Angular 19+)
+user = input.required<User>();
+
+// Signal Output
+userEdit = output<User>();
+```
+
+### Supabase Row Level Security (RLS)
+
+**來源**: Context7 - `/supabase/supabase`
+
+**關鍵模式**:
+- 使用 `(SELECT auth.uid())` 獲取當前用戶 ID
+- 使用 `USING` 子句控制行可見性
+- 使用 `WITH CHECK` 子句驗證行修改
+- 區分 `authenticated` 和 `anon` 角色
+
+**最佳實踐**:
+```sql
+-- 啟用 RLS
+ALTER TABLE your_table ENABLE ROW LEVEL SECURITY;
+
+-- 用戶只能訪問自己的資料
+CREATE POLICY "Users can only access their own data" ON your_table
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
+
+-- 認證用戶可查看公開資料
+CREATE POLICY "Authenticated users can view public data" ON profiles
+  FOR SELECT TO authenticated USING (true);
+
+-- 使用子查詢實現複雜權限
+CREATE POLICY "Users can view documents they own" ON document_sections
+  FOR SELECT TO authenticated USING (
+    document_id IN (
+      SELECT id FROM documents WHERE owner_id = (SELECT auth.uid())
+    )
+  );
+```
+
+### NG-ZORRO Table 和 Form 元件
+
+**來源**: Context7 - `/ng-zorro/ng-zorro-antd`
+
+**Table 元件**:
+- `[nzData]` - 資料綁定
+- `[nzFrontPagination]` - 前端分頁
+- `[nzTotal]` - 總資料數（伺服器端分頁）
+- `[(nzPageIndex)]` - 當前頁碼（雙向綁定）
+- `[(nzPageSize)]` - 每頁大小（雙向綁定）
+- `[nzBordered]` - 顯示邊框
+- `[nzSize]` - 表格大小 ('middle' | 'small' | 'default')
+
+**Form 元件**:
+- `nz-form` - 表單容器
+- `nz-form-item` - 表單項目
+- `nz-form-label` - 標籤
+- `nz-form-control` - 控制項
+- `[nzLayout]` - 佈局方式 ('horizontal' | 'vertical' | 'inline')
+- `[nzErrorTip]` - 錯誤提示
+
+**使用範例**:
+```html
+<nz-table #table [nzData]="dataSet" [nzBordered]="true" [nzSize]="'middle'">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (data of table.data; track data.id) {
+      <tr>
+        <td>{{ data.name }}</td>
+        <td>{{ data.age }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>
+
+<form nz-form [nzLayout]="'vertical'">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor="email">E-mail</nz-form-label>
+    <nz-form-control [nzSpan]="14" [nzErrorTip]="'Please enter email'">
+      <input nz-input name="email" type="email" id="email" />
+    </nz-form-control>
+  </nz-form-item>
+</form>
+```
+
+### 實施建議
+
+1. **藍圖編輯功能 (P0)**: 使用 Signal 管理表單狀態，nz-drawer 實現抽屜組件
+2. **時間軸 UI (P1)**: 使用 nz-timeline 元件配合 Signal 狀態管理
+3. **通知中心 (P1)**: 使用 nz-dropdown + nz-list 配合 Supabase Realtime
+4. **RLS 政策**: 確保所有新表都啟用 RLS 並使用 `(SELECT auth.uid())` 模式
+
+---
+
+**最後更新**: 2025-12-05

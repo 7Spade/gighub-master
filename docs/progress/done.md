@@ -1,10 +1,10 @@
 # ✅ 已完成項目清單 (按實現順序排列)
 
-> 最後更新: 2025-12-04  
-> 總計完成項目: 391 項  
-> 總計 TypeScript 檔案: 252 個  
-> 總計 SQL 遷移檔案: 41 個  
-> 總計文檔檔案: 51 個  
+> 最後更新: 2025-12-05  
+> 總計完成項目: 427 項  
+> 總計 TypeScript 檔案: 270 個  
+> 總計 SQL 遷移檔案: 64 個  
+> 總計文檔檔案: 52 個  
 > 排列原則: 按架構層級 基礎層 → 容器層 → 業務層 → 基礎設施 順序
 
 ---
@@ -22,22 +22,22 @@
 
 | 類型 | 數量 | 說明 |
 | ---- | ---- | ---- |
-| Component | 97 | 包含 52 個 Demo 組件 |
+| Component | 102 | 包含 52 個 Demo 組件 |
 | Service | 27 | 核心業務服務 |
 | Repository | 17 | 資料存取層 |
 | Facade | 6 | 業務邏輯封裝 |
 | Guard | 2 | 路由守衛 |
 | Interceptor | 1 | HTTP 攔截器 |
 | Directive | 1 | 自定義指令 |
-| Type Definition | 26 | 類型定義檔案 |
-| Model | 2 | 業務模型 |
+| Type Definition | 25 | 類型定義檔案 |
+| Model | 5 | 業務模型 |
 | Route Config | 13 | 路由配置 |
-| Index | 68 | 模組索引 |
-| Migration | 41 | 資料庫遷移 |
-| Documentation | 51 | 文檔檔案 |
-| GitHub Prompt | 26 | Copilot 提示 |
-| GitHub Instructions | 21 | Copilot 指令 |
-| GitHub Agent | 30 | Copilot Agent |
+| Index | 73 | 模組索引 |
+| Migration | 64 | 資料庫遷移 |
+| Documentation | 52 | 文檔檔案 |
+| GitHub Prompt | 27 | Copilot 提示 |
+| GitHub Instructions | 28 | Copilot 指令 |
+| GitHub Agent | 28 | Copilot Agent |
 | Workflow | 4 | CI/CD 工作流 |
 | Spec | 1 | 單元測試 |
 
@@ -139,19 +139,20 @@
 
 | 遷移檔案                                             | 說明            | 狀態 |
 | ---------------------------------------------------- | --------------- | ---- |
-| `20241201000001_create_extensions.sql`               | PostgreSQL 擴展 | ✅   |
-| `20241201000002_create_schemas.sql`                  | Schema 創建     | ✅   |
-| `20241201000003_create_custom_types.sql`             | 自定義類型      | ✅   |
-| `20241201000100_create_table_accounts.sql`           | 帳戶表          | ✅   |
-| `20241201000101_create_table_organizations.sql`      | 組織表          | ✅   |
-| `20241201000102_create_table_organization_members.sql` | 組織成員表    | ✅   |
-| `20241201000103_create_table_teams.sql`              | 團隊表          | ✅   |
-| `20241201000104_create_table_team_members.sql`       | 團隊成員表      | ✅   |
-| `20241201000400_create_private_functions.sql`        | 私有函數        | ✅   |
-| `20241201000500_create_triggers.sql`                 | 觸發器          | ✅   |
-| `20241201000700_create_auth_integration.sql`         | Auth 整合       | ✅   |
-| `20241201000800_create_api_functions.sql`            | API 函數        | ✅   |
-| `20241201000900_create_documentation_comments.sql`   | 文檔註釋        | ✅   |
+| `20251205000001_01_extensions.sql`                   | PostgreSQL 擴展 | ✅   |
+| `20251205000002_02_schemas.sql`                      | Schema 創建     | ✅   |
+| `20251205000003_03_types.sql`                        | 自定義類型      | ✅   |
+| `20251205000004_04_0001_table_accounts.sql`          | 帳戶表          | ✅   |
+| `20251205000005_05_0001_table_organizations.sql`     | 組織表          | ✅   |
+| `20251205000006_05_0002_table_organization_members.sql` | 組織成員表   | ✅   |
+| `20251205000007_05_0003_table_teams.sql`             | 團隊表          | ✅   |
+| `20251205000008_05_0004_table_team_members.sql`      | 團隊成員表      | ✅   |
+| `20251205000053_08_private_functions.sql`            | 私有函數        | ✅   |
+| `20251205000054_09_triggers.sql`                     | 觸發器          | ✅   |
+| `20251205000055_10_rls_policies.sql`                 | RLS 政策        | ✅   |
+| `20251205000056_11_auth_integration.sql`             | Auth 整合       | ✅   |
+| `20251205000057_12_api_functions.sql`                | API 函數        | ✅   |
+| `20251205000058_13_rbac_default_roles.sql`           | RBAC 預設角色   | ✅   |
 
 ---
 
@@ -281,16 +282,16 @@
 
 | 遷移檔案                                                 | 說明             | 狀態 |
 | -------------------------------------------------------- | ---------------- | ---- |
-| `20241201000200_create_table_blueprints.sql`             | 藍圖表           | ✅   |
-| `20241201000201_create_table_blueprint_roles.sql`        | 藍圖角色表       | ✅   |
-| `20241201000202_create_table_blueprint_members.sql`      | 藍圖成員表       | ✅   |
-| `20241201000203_create_table_blueprint_team_roles.sql`   | 藍圖團隊角色表   | ✅   |
-| `20241201000600_create_rls_policies.sql`                 | RLS 政策         | ✅   |
-| `20241201001000_create_rbac_default_roles.sql`           | RBAC 預設角色    | ✅   |
-| `20241201001100_create_container_infrastructure.sql`     | 容器基礎設施     | ✅   |
-| `20241201001200_create_infrastructure_documentation.sql` | 基礎設施文檔     | ✅   |
-| `20241204000000_fix_blueprint_creation.sql`              | 藍圖建立修復     | ✅   |
-| `20241205000000_fix_blueprint_business_role_enum.sql`    | 業務角色枚舉修復 | ✅   |
+| `20251205000009_06_0001_table_blueprints.sql`            | 藍圖表           | ✅   |
+| `20251205000010_06_0002_table_blueprint_roles.sql`       | 藍圖角色表       | ✅   |
+| `20251205000011_06_0003_table_blueprint_members.sql`     | 藍圖成員表       | ✅   |
+| `20251205000012_06_0004_table_blueprint_team_roles.sql`  | 藍圖團隊角色表   | ✅   |
+| `20251205000055_10_rls_policies.sql`                     | RLS 政策         | ✅   |
+| `20251205000058_13_rbac_default_roles.sql`               | RBAC 預設角色    | ✅   |
+| `20251205000025_14_0001_table_blueprint_configs.sql`     | 藍圖配置表       | ✅   |
+| `20251205000026_14_0002_table_activities.sql`            | 活動表           | ✅   |
+| `20251205000027_14_0003_table_events.sql`                | 事件表           | ✅   |
+| `20251205000028_14_0004_table_event_subscriptions.sql`   | 事件訂閱表       | ✅   |
 
 ---
 
@@ -468,24 +469,50 @@
 
 ### 11. 業務層資料庫遷移 ✅ 100%
 
-| 遷移檔案                                             | 說明            | 狀態 |
-| ---------------------------------------------------- | --------------- | ---- |
-| `20241201000300_create_table_tasks.sql`              | 任務表          | ✅   |
-| `20241201000301_create_table_task_attachments.sql`   | 任務附件表      | ✅   |
-| `20241201000302_create_table_diaries.sql`            | 日誌表          | ✅   |
-| `20241201000303_create_table_diary_attachments.sql`  | 日誌附件表      | ✅   |
-| `20241201000304_create_table_checklists.sql`         | 檢查清單表      | ✅   |
-| `20241201000305_create_table_checklist_items.sql`    | 檢查清單項目表  | ✅   |
-| `20241201000306_create_table_task_acceptances.sql`   | 任務驗收表      | ✅   |
-| `20241201000307_create_table_todos.sql`              | 待辦事項表      | ✅   |
-| `20241201000308_create_table_issues.sql`             | 問題追蹤表      | ✅   |
-| `20241201000309_create_table_issue_comments.sql`     | 問題評論表      | ✅   |
-| `20241201000310_create_table_notifications.sql`      | 通知表          | ✅   |
-| `20241201000311_create_table_diary_entries.sql`      | 日誌條目表      | ✅   |
-| `20241202104900_add_financial_extension.sql`         | 財務擴展        | ✅   |
-| `20241203000000_create_search_history.sql`           | 搜尋歷史表      | ✅   |
-| `20241203100000_create_audit_logs.sql`               | 稽核日誌表      | ✅   |
-| `20241203100002_create_qc_acceptance_problem.sql`    | 品質驗收問題表  | ✅   |
+| 遷移檔案                                                 | 說明            | 狀態 |
+| -------------------------------------------------------- | --------------- | ---- |
+| `20251205000013_07_0001_table_tasks.sql`                 | 任務表          | ✅   |
+| `20251205000014_07_0002_table_task_attachments.sql`      | 任務附件表      | ✅   |
+| `20251205000015_07_0003_table_task_acceptances.sql`      | 任務驗收表      | ✅   |
+| `20251205000016_07_0004_table_diaries.sql`               | 日誌表          | ✅   |
+| `20251205000017_07_0005_table_diary_attachments.sql`     | 日誌附件表      | ✅   |
+| `20251205000018_07_0006_table_diary_entries.sql`         | 日誌條目表      | ✅   |
+| `20251205000019_07_0007_table_checklists.sql`            | 檢查清單表      | ✅   |
+| `20251205000020_07_0008_table_checklist_items.sql`       | 檢查清單項目表  | ✅   |
+| `20251205000021_07_0009_table_todos.sql`                 | 待辦事項表      | ✅   |
+| `20251205000022_07_0010_table_issues.sql`                | 問題追蹤表      | ✅   |
+| `20251205000023_07_0011_table_issue_comments.sql`        | 問題評論表      | ✅   |
+| `20251205000024_07_0012_table_notifications.sql`         | 通知表          | ✅   |
+| `20251205000029_14_0005_table_entity_references.sql`     | 實體參照表      | ✅   |
+| `20251205000030_14_0006_table_custom_field_definitions.sql` | 自訂欄位定義表 | ✅  |
+| `20251205000031_14_0007_table_custom_field_values.sql`   | 自訂欄位值表    | ✅   |
+| `20251205000032_14_0008_table_lifecycle_transitions.sql` | 生命週期轉換表  | ✅   |
+| `20251205000033_14_0009_table_search_index.sql`          | 搜尋索引表      | ✅   |
+| `20251205000034_14_0010_table_files.sql`                 | 檔案表          | ✅   |
+| `20251205000035_14_0011_table_file_shares.sql`           | 檔案分享表      | ✅   |
+| `20251205000036_14_0012_table_notification_preferences.sql` | 通知偏好表   | ✅   |
+| `20251205000037_17_0001_table_contracts.sql`             | 合約表          | ✅   |
+| `20251205000038_17_0002_table_expenses.sql`              | 費用表          | ✅   |
+| `20251205000039_17_0003_table_payment_requests.sql`      | 請款表          | ✅   |
+| `20251205000040_17_0004_table_payments.sql`              | 付款表          | ✅   |
+| `20251205000041_17_0005_table_qc_inspections.sql`        | QC 檢查表       | ✅   |
+| `20251205000042_17_0006_table_qc_inspection_items.sql`   | QC 檢查項目表   | ✅   |
+| `20251205000043_17_0007_table_qc_inspection_attachments.sql` | QC 檢查附件表 | ✅  |
+| `20251205000044_17_0008_table_acceptances.sql`           | 驗收表          | ✅   |
+| `20251205000045_17_0009_table_acceptance_approvals.sql`  | 驗收審批表      | ✅   |
+| `20251205000046_17_0010_table_acceptance_attachments.sql`| 驗收附件表      | ✅   |
+| `20251205000047_17_0011_table_problems.sql`              | 問題表          | ✅   |
+| `20251205000048_17_0012_table_problem_actions.sql`       | 問題動作表      | ✅   |
+| `20251205000049_17_0013_table_problem_comments.sql`      | 問題評論表      | ✅   |
+| `20251205000050_17_0014_table_problem_attachments.sql`   | 問題附件表      | ✅   |
+| `20251205000051_17_0015_table_audit_logs.sql`            | 稽核日誌表      | ✅   |
+| `20251205000052_17_0016_table_search_history.sql`        | 搜尋歷史表      | ✅   |
+| `20251205162921_fix_activities_schema.sql`               | 活動架構修復    | ✅   |
+| `20251205162922_add_log_activity_function.sql`           | 日誌活動函數    | ✅   |
+| `20251205162923_fix_audit_logs_and_add_function.sql`     | 稽核日誌函數    | ✅   |
+| `20251205170000_17_0005_add_payment_request_approval_fields.sql` | 請款審批欄位 | ✅ |
+| `20251205170001_17_0006_add_expense_receipt_number.sql`  | 費用收據編號    | ✅   |
+| `20251205170002_17_0007_migrate_metadata_to_columns.sql` | 元資料遷移      | ✅   |
 
 ---
 
@@ -786,32 +813,32 @@
 
 | 層級         | Repository | Facade | Service | Component | Migration | Types | Config/Docs | 小計 |
 | ------------ | ---------- | ------ | ------- | --------- | --------- | ----- | ----------- | ---- |
-| 基礎層       | 4          | 3      | 7       | 12        | 13        | 2     | 11          | 52   |
+| 基礎層       | 4          | 3      | 7       | 12        | 14        | 2     | 11          | 53   |
 | 容器層       | 2          | 2      | 2       | 15        | 10        | 3     | 24          | 58   |
-| 業務層       | 11         | 1      | 13      | 9         | 18        | 21    | 25          | 98   |
+| 業務層       | 11         | 1      | 13      | 14        | 42        | 21    | 25          | 127  |
 | 基礎設施     | -          | -      | 5       | 61        | -         | -     | 117         | 183  |
-| **總計**     | **17**     | **6**  | **27**  | **97**    | **41**    | **26**| **177**     | **391** |
+| **總計**     | **17**     | **6**  | **27**  | **102**   | **64**    | **26**| **177**     | **427** |
 
 ### 按類型詳細統計
 
 | 類型 | 數量 | 說明 |
 | ---- | ---- | ---- |
-| **Component** | 97 | 45 業務組件 + 52 Demo 組件 |
+| **Component** | 102 | 50 業務組件 + 52 Demo 組件 |
 | **Service** | 27 | 20 業務服務 + 5 核心服務 + 2 Demo 服務 |
 | **Repository** | 17 | 資料存取層 |
 | **Facade** | 6 | 業務邏輯封裝層 |
 | **Guard** | 2 | 路由守衛 (permission, start-page) |
 | **Interceptor** | 1 | HTTP 攔截器 (default) |
 | **Directive** | 1 | 自定義指令 (permission) |
-| **Type Definition** | 26 | 類型定義檔案 (含 index) |
-| **Model** | 2 | 業務模型 (organization, blueprint) |
+| **Type Definition** | 25 | 類型定義檔案 (含 index) |
+| **Model** | 5 | 業務模型 |
 | **Route Config** | 13 | 路由配置檔案 |
-| **Index** | 68 | 模組匯出索引 |
-| **Migration** | 41 | 資料庫遷移檔案 |
-| **Documentation** | 51 | Markdown 文檔 |
-| **GitHub Prompt** | 26 | Copilot 提示檔案 |
-| **GitHub Instructions** | 21 | Copilot 指令檔案 |
-| **GitHub Agent** | 30 | Copilot Agent 定義 |
+| **Index** | 73 | 模組匯出索引 |
+| **Migration** | 64 | 資料庫遷移檔案 |
+| **Documentation** | 52 | Markdown 文檔 |
+| **GitHub Prompt** | 27 | Copilot 提示檔案 |
+| **GitHub Instructions** | 28 | Copilot 指令檔案 |
+| **GitHub Agent** | 28 | Copilot Agent 定義 |
 | **Workflow** | 4 | CI/CD 工作流 |
 | **Spec** | 1 | 單元測試檔案 |
 
@@ -902,52 +929,75 @@
 | task | `src/app/core/infra/repositories/task/task.repository.ts` |
 | timeline | `src/app/core/infra/repositories/timeline/timeline.repository.ts` |
 
-### 完整資料庫遷移清單 (41 個)
+### 完整資料庫遷移清單 (64 個)
 
 | 遷移檔案 | 說明 |
 | -------- | ---- |
-| `20241201000001_create_extensions.sql` | PostgreSQL 擴展 |
-| `20241201000002_create_schemas.sql` | Schema 創建 |
-| `20241201000003_create_custom_types.sql` | 自定義類型 |
-| `20241201000100_create_table_accounts.sql` | 帳戶表 |
-| `20241201000101_create_table_organizations.sql` | 組織表 |
-| `20241201000102_create_table_organization_members.sql` | 組織成員表 |
-| `20241201000103_create_table_teams.sql` | 團隊表 |
-| `20241201000104_create_table_team_members.sql` | 團隊成員表 |
-| `20241201000200_create_table_blueprints.sql` | 藍圖表 |
-| `20241201000201_create_table_blueprint_roles.sql` | 藍圖角色表 |
-| `20241201000202_create_table_blueprint_members.sql` | 藍圖成員表 |
-| `20241201000203_create_table_blueprint_team_roles.sql` | 藍圖團隊角色表 |
-| `20241201000300_create_table_tasks.sql` | 任務表 |
-| `20241201000301_create_table_task_attachments.sql` | 任務附件表 |
-| `20241201000302_create_table_diaries.sql` | 日誌表 |
-| `20241201000303_create_table_diary_attachments.sql` | 日誌附件表 |
-| `20241201000304_create_table_checklists.sql` | 檢查清單表 |
-| `20241201000305_create_table_checklist_items.sql` | 檢查清單項目表 |
-| `20241201000306_create_table_task_acceptances.sql` | 任務驗收表 |
-| `20241201000307_create_table_todos.sql` | 待辦事項表 |
-| `20241201000308_create_table_issues.sql` | 問題追蹤表 |
-| `20241201000309_create_table_issue_comments.sql` | 問題評論表 |
-| `20241201000310_create_table_notifications.sql` | 通知表 |
-| `20241201000311_create_table_diary_entries.sql` | 日誌條目表 |
-| `20241201000400_create_private_functions.sql` | 私有函數 |
-| `20241201000500_create_triggers.sql` | 觸發器 |
-| `20241201000600_create_rls_policies.sql` | RLS 政策 |
-| `20241201000700_create_auth_integration.sql` | Auth 整合 |
-| `20241201000800_create_api_functions.sql` | API 函數 |
-| `20241201000900_create_documentation_comments.sql` | 文檔註釋 |
-| `20241201001000_create_rbac_default_roles.sql` | RBAC 預設角色 |
-| `20241201001100_create_container_infrastructure.sql` | 容器基礎設施 |
-| `20241201001200_create_infrastructure_documentation.sql` | 基礎設施文檔 |
-| `20241201001300_create_storage_configuration.sql` | 儲存配置 |
-| `20241201001400_create_realtime_configuration.sql` | Realtime 配置 |
-| `20241202104900_add_financial_extension.sql` | 財務擴展 |
-| `20241203000000_create_search_history.sql` | 搜尋歷史表 |
-| `20241203100000_create_audit_logs.sql` | 稽核日誌表 |
-| `20241203100002_create_qc_acceptance_problem.sql` | 品質驗收問題表 |
-| `20241204000000_fix_blueprint_creation.sql` | 藍圖建立修復 |
-| `20241205000000_fix_blueprint_business_role_enum.sql` | 業務角色枚舉修復 |
+| `20251205000001_01_extensions.sql` | PostgreSQL 擴展 |
+| `20251205000002_02_schemas.sql` | Schema 創建 |
+| `20251205000003_03_types.sql` | 自定義類型 |
+| `20251205000004_04_0001_table_accounts.sql` | 帳戶表 |
+| `20251205000005_05_0001_table_organizations.sql` | 組織表 |
+| `20251205000006_05_0002_table_organization_members.sql` | 組織成員表 |
+| `20251205000007_05_0003_table_teams.sql` | 團隊表 |
+| `20251205000008_05_0004_table_team_members.sql` | 團隊成員表 |
+| `20251205000009_06_0001_table_blueprints.sql` | 藍圖表 |
+| `20251205000010_06_0002_table_blueprint_roles.sql` | 藍圖角色表 |
+| `20251205000011_06_0003_table_blueprint_members.sql` | 藍圖成員表 |
+| `20251205000012_06_0004_table_blueprint_team_roles.sql` | 藍圖團隊角色表 |
+| `20251205000013_07_0001_table_tasks.sql` | 任務表 |
+| `20251205000014_07_0002_table_task_attachments.sql` | 任務附件表 |
+| `20251205000015_07_0003_table_task_acceptances.sql` | 任務驗收表 |
+| `20251205000016_07_0004_table_diaries.sql` | 日誌表 |
+| `20251205000017_07_0005_table_diary_attachments.sql` | 日誌附件表 |
+| `20251205000018_07_0006_table_diary_entries.sql` | 日誌條目表 |
+| `20251205000019_07_0007_table_checklists.sql` | 檢查清單表 |
+| `20251205000020_07_0008_table_checklist_items.sql` | 檢查清單項目表 |
+| `20251205000021_07_0009_table_todos.sql` | 待辦事項表 |
+| `20251205000022_07_0010_table_issues.sql` | 問題追蹤表 |
+| `20251205000023_07_0011_table_issue_comments.sql` | 問題評論表 |
+| `20251205000024_07_0012_table_notifications.sql` | 通知表 |
+| `20251205000025_14_0001_table_blueprint_configs.sql` | 藍圖配置表 |
+| `20251205000026_14_0002_table_activities.sql` | 活動表 |
+| `20251205000027_14_0003_table_events.sql` | 事件表 |
+| `20251205000028_14_0004_table_event_subscriptions.sql` | 事件訂閱表 |
+| `20251205000029_14_0005_table_entity_references.sql` | 實體參照表 |
+| `20251205000030_14_0006_table_custom_field_definitions.sql` | 自訂欄位定義表 |
+| `20251205000031_14_0007_table_custom_field_values.sql` | 自訂欄位值表 |
+| `20251205000032_14_0008_table_lifecycle_transitions.sql` | 生命週期轉換表 |
+| `20251205000033_14_0009_table_search_index.sql` | 搜尋索引表 |
+| `20251205000034_14_0010_table_files.sql` | 檔案表 |
+| `20251205000035_14_0011_table_file_shares.sql` | 檔案分享表 |
+| `20251205000036_14_0012_table_notification_preferences.sql` | 通知偏好表 |
+| `20251205000037_17_0001_table_contracts.sql` | 合約表 |
+| `20251205000038_17_0002_table_expenses.sql` | 費用表 |
+| `20251205000039_17_0003_table_payment_requests.sql` | 請款表 |
+| `20251205000040_17_0004_table_payments.sql` | 付款表 |
+| `20251205000041_17_0005_table_qc_inspections.sql` | QC 檢查表 |
+| `20251205000042_17_0006_table_qc_inspection_items.sql` | QC 檢查項目表 |
+| `20251205000043_17_0007_table_qc_inspection_attachments.sql` | QC 檢查附件表 |
+| `20251205000044_17_0008_table_acceptances.sql` | 驗收表 |
+| `20251205000045_17_0009_table_acceptance_approvals.sql` | 驗收審批表 |
+| `20251205000046_17_0010_table_acceptance_attachments.sql` | 驗收附件表 |
+| `20251205000047_17_0011_table_problems.sql` | 問題表 |
+| `20251205000048_17_0012_table_problem_actions.sql` | 問題動作表 |
+| `20251205000049_17_0013_table_problem_comments.sql` | 問題評論表 |
+| `20251205000050_17_0014_table_problem_attachments.sql` | 問題附件表 |
+| `20251205000051_17_0015_table_audit_logs.sql` | 稽核日誌表 |
+| `20251205000052_17_0016_table_search_history.sql` | 搜尋歷史表 |
+| `20251205000053_08_private_functions.sql` | 私有函數 |
+| `20251205000054_09_triggers.sql` | 觸發器 |
+| `20251205000055_10_rls_policies.sql` | RLS 政策 |
+| `20251205000056_11_auth_integration.sql` | Auth 整合 |
+| `20251205000057_12_api_functions.sql` | API 函數 |
+| `20251205000058_13_rbac_default_roles.sql` | RBAC 預設角色 |
+| `20251205162921_fix_activities_schema.sql` | 活動架構修復 |
+| `20251205162922_add_log_activity_function.sql` | 日誌活動函數 |
+| `20251205162923_fix_audit_logs_and_add_function.sql` | 稽核日誌函數修復 |
+| `20251205170000_17_0005_add_payment_request_approval_fields.sql` | 請款審批欄位 |
+| `20251205170001_17_0006_add_expense_receipt_number.sql` | 費用收據編號 |
+| `20251205170002_17_0007_migrate_metadata_to_columns.sql` | 元資料遷移 |
 
 ---
 
-**總計完成項目**: 391 項
+**總計完成項目**: 427 項
