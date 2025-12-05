@@ -226,8 +226,12 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                         <tr>
                           <td>
                             <div class="member-info">
-                              <nz-avatar [nzSize]="24" nzIcon="user"></nz-avatar>
-                              <span>{{ member.account_id }}</span>
+                              @if (member.accountAvatar) {
+                                <nz-avatar [nzSize]="24" [nzSrc]="member.accountAvatar"></nz-avatar>
+                              } @else {
+                                <nz-avatar [nzSize]="24" nzIcon="user"></nz-avatar>
+                              }
+                              <span>{{ member.accountName || member.account_id }}</span>
                             </div>
                           </td>
                           <td>
