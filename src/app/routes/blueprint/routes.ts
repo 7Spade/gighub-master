@@ -105,6 +105,11 @@ export const routes: Routes = [
             path: 'acceptances',
             loadComponent: () => import('./acceptances/acceptances.component').then(m => m.BlueprintAcceptancesComponent),
             data: { title: '驗收管理' }
+          },
+          {
+            path: 'reports',
+            loadComponent: () => import('./reports/reports.component').then(m => m.BlueprintReportsComponent),
+            data: { title: '報表分析' }
           }
         ]
       }

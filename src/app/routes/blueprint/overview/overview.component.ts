@@ -296,6 +296,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToReports()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="bar-chart" class="nav-icon reports"></span>
+                      <div class="nav-text">
+                        <h4>報表分析</h4>
+                        <p>進度、品質與財務統計</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -704,6 +715,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon.permissions {
         color: #13c2c2;
       }
+      .nav-icon.reports {
+        color: #2f54eb;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -1070,6 +1084,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'acceptances']);
+    }
+  }
+
+  goToReports(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'reports']);
     }
   }
 
