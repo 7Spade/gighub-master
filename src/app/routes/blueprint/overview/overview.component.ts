@@ -15,8 +15,9 @@
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   BlueprintFacade,
   BlueprintFinancialSummary,
@@ -982,7 +983,9 @@ export class BlueprintOverviewComponent implements OnInit {
   readonly TASK_STATUS_CONFIG = TASK_STATUS_CONFIG;
   readonly TASK_PRIORITY_CONFIG = TASK_PRIORITY_CONFIG;
 
-  readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
+  // Convert route params observable to signal for reactive updates
+  private readonly routeParams = toSignal(this.route.paramMap);
+  readonly blueprintId = computed(() => this.routeParams()?.get('id') ?? null);
 
   readonly enabledModulesCount = computed(() => {
     return this.blueprint()?.enabled_modules?.length || 0;
@@ -1055,8 +1058,18 @@ export class BlueprintOverviewComponent implements OnInit {
     };
   });
 
+  constructor() {
+    // Watch for blueprint ID changes and reload
+    effect(() => {
+      const id = this.blueprintId();
+      if (id) {
+        this.loadBlueprint();
+      }
+    });
+  }
+
   ngOnInit(): void {
-    this.loadBlueprint();
+    // Blueprint loading is handled by the effect watching blueprintId
   }
 
   async loadBlueprint(): Promise<void> {
