@@ -83,18 +83,20 @@ test.describe('Blueprint Functionality Test Suite', () => {
     console.log('Submitting login form...');
     await page.click('button[type="submit"], button:has-text("登入"), button:has-text("登录"), button:has-text("Login")');
     
-    // Wait for navigation after login
-    await page.waitForURL('**/account/**', { timeout: 30000 }).catch(async () => {
-      console.log('Did not navigate to account page, checking current URL');
+    // Wait for navigation after login (can be either /account or /blueprint)
+    await page.waitForURL(url => url.includes('/account') || url.includes('/blueprint'), { timeout: 30000 }).catch(async () => {
+      console.log('Did not navigate to expected page, checking current URL');
       await takeScreenshot(page, '03-login-error');
-      throw new Error('Login failed - did not navigate to account page');
+      throw new Error('Login failed - did not navigate to expected page');
     });
     
     await waitForNavigation(page);
     await takeScreenshot(page, '04-login-success');
     
     console.log('✓ Login successful');
-    expect(page.url()).toContain('/account');
+    const loggedInUrl = page.url();
+    console.log(`Logged in, redirected to: ${loggedInUrl}`);
+    expect(loggedInUrl).toMatch(/\/(account|blueprint)/);
   });
 
   test('Step 2: Navigate to blueprint list', async ({ page }) => {
@@ -105,13 +107,17 @@ test.describe('Blueprint Functionality Test Suite', () => {
     await page.fill('input[type="email"], input[name="email"], input[placeholder*="email"], input[placeholder*="郵箱"]', TEST_EMAIL);
     await page.fill('input[type="password"], input[name="password"]', TEST_PASSWORD);
     await page.click('button[type="submit"], button:has-text("登入"), button:has-text("登录"), button:has-text("Login")');
-    await page.waitForURL('**/account/**', { timeout: 30000 });
+    await page.waitForURL(url => url.includes('/account') || url.includes('/blueprint'), { timeout: 30000 });
     await waitForNavigation(page);
     
-    // Navigate to blueprint list
-    console.log('Navigating to blueprint list...');
-    await page.goto('/blueprint/list');
-    await waitForNavigation(page);
+    // Navigate to blueprint list (if not already there)
+    if (!page.url().includes('/blueprint/list')) {
+      console.log('Navigating to blueprint list...');
+      await page.goto('/blueprint/list');
+      await waitForNavigation(page);
+    } else {
+      console.log('Already on blueprint list page');
+    }
     await takeScreenshot(page, '05-blueprint-list');
     
     console.log('✓ Blueprint list page loaded');
@@ -126,8 +132,12 @@ test.describe('Blueprint Functionality Test Suite', () => {
     await page.fill('input[type="email"], input[name="email"], input[placeholder*="email"], input[placeholder*="郵箱"]', TEST_EMAIL);
     await page.fill('input[type="password"], input[name="password"]', TEST_PASSWORD);
     await page.click('button[type="submit"], button:has-text("登入"), button:has-text("登录"), button:has-text("Login")');
-    await page.waitForURL('**/account/**', { timeout: 30000 });
-    await page.goto('/blueprint/list');
+    await page.waitForURL(url => url.includes('/account') || url.includes('/blueprint'), { timeout: 30000 });
+    
+    // Navigate to blueprint list if not already there
+    if (!page.url().includes('/blueprint/list')) {
+      await page.goto('/blueprint/list');
+    }
     await waitForNavigation(page);
     
     // Look for create button
@@ -187,8 +197,12 @@ test.describe('Blueprint Functionality Test Suite', () => {
     await page.fill('input[type="email"], input[name="email"], input[placeholder*="email"], input[placeholder*="郵箱"]', TEST_EMAIL);
     await page.fill('input[type="password"], input[name="password"]', TEST_PASSWORD);
     await page.click('button[type="submit"], button:has-text("登入"), button:has-text("登录"), button:has-text("Login")');
-    await page.waitForURL('**/account/**', { timeout: 30000 });
-    await page.goto('/blueprint/list');
+    await page.waitForURL(url => url.includes('/account') || url.includes('/blueprint'), { timeout: 30000 });
+    
+    // Navigate to blueprint list if not already there
+    if (!page.url().includes('/blueprint/list')) {
+      await page.goto('/blueprint/list');
+    }
     await waitForNavigation(page);
     
     // Get first blueprint or create one
@@ -249,10 +263,12 @@ test.describe('Blueprint Functionality Test Suite', () => {
       await page.fill('input[type="email"], input[name="email"], input[placeholder*="email"], input[placeholder*="郵箱"]', TEST_EMAIL);
       await page.fill('input[type="password"], input[name="password"]', TEST_PASSWORD);
       await page.click('button[type="submit"], button:has-text("登入"), button:has-text("登录"), button:has-text("Login")');
-      await page.waitForURL('**/account/**', { timeout: 30000 });
+      await page.waitForURL(url => url.includes('/account') || url.includes('/blueprint'), { timeout: 30000 });
       
-      // Navigate to blueprint list
-      await page.goto('/blueprint/list');
+      // Navigate to blueprint list if not already there
+      if (!page.url().includes('/blueprint/list')) {
+        await page.goto('/blueprint/list');
+      }
       await waitForNavigation(page);
       
       // Get first blueprint
