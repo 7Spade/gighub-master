@@ -60,6 +60,11 @@ export const routes: Routes = [
             path: 'qc-inspections',
             loadComponent: () => import('./qc-inspections/qc-inspections.component').then(m => m.BlueprintQcInspectionsComponent),
             data: { title: '品質管控' }
+          },
+          {
+            path: 'files',
+            loadComponent: () => import('./files/files.component').then(m => m.BlueprintFilesComponent),
+            data: { title: '檔案管理' }
           }
         ]
       }

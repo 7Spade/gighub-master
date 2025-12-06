@@ -197,6 +197,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFiles()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="folder-open" class="nav-icon files"></span>
+                      <div class="nav-text">
+                        <h4>檔案管理</h4>
+                        <p>文件上傳與管理</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -896,6 +907,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'qc-inspections']);
+    }
+  }
+
+  goToFiles(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'files']);
     }
   }
 
