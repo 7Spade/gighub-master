@@ -242,9 +242,9 @@ TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該
 | 影響範圍 | 搜尋功能用戶                                |
 | 業務影響 | 用戶無法有效搜尋內容                        |
 | 相關檔案 | `src/app/shared/services/search/search.service.ts`, `src/app/layout/basic/widgets/search.component.ts` |
-| 狀態     | 🟡 部分完成 (搜尋 UI 已整合)                |
-| 負責人   | -                                           |
-| 預計工時 | 28h (已完成 18h)                            |
+| 狀態     | 🟡 部分完成 (搜尋 UI 和進階搜尋已整合)      |
+| 負責人   | Copilot                                     |
+| 預計工時 | 28h (已完成 24h)                            |
 
 **已完成功能**:
 - [x] 全域搜尋面板 - HeaderSearchComponent 已整合
@@ -254,12 +254,14 @@ TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該
 - [x] 類別過濾
 - [x] 載入狀態和骨架屏
 - [x] 搜尋自動完成
+- [x] 進階搜尋頁面 UI
+- [x] 多維度篩選 (類型、狀態、優先級、日期範圍)
+- [x] 搜尋結果高亮和相關度排序
+- [x] 搜尋歷史管理 (localStorage)
 
 **待完成功能**:
 - [ ] 關聯搜尋 (任務關聯日誌、檔案關聯任務)
 - [ ] 權限感知過濾
-- [ ] 進階搜尋 UI (建立者、狀態、日期、標籤)
-- [ ] 搜尋結果頁面
 
 ---
 

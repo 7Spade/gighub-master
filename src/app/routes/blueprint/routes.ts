@@ -91,6 +91,11 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./notifications/notifications.component').then(m => m.BlueprintNotificationSettingsComponent),
             data: { title: '通知設定' }
+          },
+          {
+            path: 'search',
+            loadComponent: () => import('./search/search.component').then(m => m.BlueprintAdvancedSearchComponent),
+            data: { title: '進階搜尋' }
           }
         ]
       }

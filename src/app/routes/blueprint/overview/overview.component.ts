@@ -263,6 +263,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToSearch()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="search" class="nav-icon search"></span>
+                      <div class="nav-text">
+                        <h4>進階搜尋</h4>
+                        <p>搜尋任務、日誌、檔案</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -665,6 +676,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon.notifications {
         color: #fa8c16;
       }
+      .nav-icon.search {
+        color: #eb2f96;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -1010,6 +1024,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'notifications']);
+    }
+  }
+
+  goToSearch(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'search']);
     }
   }
 
