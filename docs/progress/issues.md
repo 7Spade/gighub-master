@@ -473,8 +473,26 @@ TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該
 | 問題描述 | 元數據系統完全未實現                        |
 | 影響範圍 | 自訂欄位、分類系統                          |
 | 業務影響 | 無法自訂資料欄位                            |
-| 狀態     | 🟡 待處理                                   |
+| 相關檔案 | `src/app/routes/blueprint/metadata/metadata.component.ts` |
+| 狀態     | ✅ 部分完成 (自訂欄位管理 UI 已實現)        |
+| 負責人   | Copilot                                     |
 | 預計工時 | 28h                                         |
+| 完成日期 | 2025-12-06                                  |
+
+**已完成功能**:
+- [x] 自訂欄位定義管理 UI (CRUD)
+- [x] 支援 12 種欄位類型 (text, number, date, datetime, select, multiselect, checkbox, url, email, phone, user, file)
+- [x] 實體類型分類 (任務、日誌、問題、品質檢查、驗收、檔案)
+- [x] 欄位屬性設定 (必填、可見、排序)
+- [x] 選項列表管理 (單選/多選欄位)
+- [x] 統計卡片 (總欄位數、必填欄位、可見欄位、實體類型數)
+- [x] 藍圖概覽導航卡片
+
+**待完成功能**:
+- [ ] 自訂欄位值儲存和顯示
+- [ ] Schema 版本控制
+- [ ] 欄位遷移腳本
+- [ ] 分類系統整合
 
 ---
 
@@ -937,9 +955,9 @@ if (!error && data.session) {
 | ISSUE-009  | 🟠 P1    | ✅ 已修復 | Copilot | 2025-12-06   | 28h      |
 | ISSUE-010  | 🟡 P2    | ✅ 已修復 | Copilot | 2025-12-06   | 30h      |
 | ISSUE-011  | 🟡 P2    | ✅ 已修復 | Copilot | 2025-12-06   | 32h      |
-| ISSUE-012  | 🟡 P2    | 待處理 | -      | -            | 30h      |
-| ISSUE-013  | 🟡 P2    | 待處理 | -      | -            | 30h      |
-| ISSUE-014  | 🟡 P2    | 待處理 | -      | -            | 28h      |
+| ISSUE-012  | 🟡 P2    | ✅ 已修復 | Copilot | 2025-12-06   | 30h      |
+| ISSUE-013  | 🟡 P2    | ✅ 已修復 | Copilot | 2025-12-06   | 30h      |
+| ISSUE-014  | 🟡 P2    | 🟡 部分完成 | Copilot | 2025-12-06   | 28h (16h剩餘) |
 | ISSUE-015  | 🟡 P2    | 待處理 | -      | -            | 32h      |
 | ISSUE-016  | 🟢 P3    | ✅ 已修復 | -      | 2025-12-05   | 2h       |
 | ISSUE-017  | 🟢 P3    | 待處理 | -      | -            | 2h       |
