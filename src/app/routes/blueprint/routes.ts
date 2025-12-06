@@ -55,6 +55,11 @@ export const routes: Routes = [
             path: 'diaries',
             loadComponent: () => import('./diaries/diaries.component').then(m => m.BlueprintDiariesComponent),
             data: { title: '施工日誌' }
+          },
+          {
+            path: 'qc-inspections',
+            loadComponent: () => import('./qc-inspections/qc-inspections.component').then(m => m.BlueprintQcInspectionsComponent),
+            data: { title: '品質管控' }
           }
         ]
       }
