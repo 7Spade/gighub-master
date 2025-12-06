@@ -85,6 +85,12 @@ export const routes: Routes = [
             path: 'activities',
             loadComponent: () => import('./activities/activities.component').then(m => m.BlueprintActivitiesComponent),
             data: { title: '活動歷史' }
+          },
+          {
+            path: 'notifications',
+            loadComponent: () =>
+              import('./notifications/notifications.component').then(m => m.BlueprintNotificationSettingsComponent),
+            data: { title: '通知設定' }
           }
         ]
       }

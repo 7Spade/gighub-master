@@ -271,9 +271,9 @@ TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該
 | 影響範圍 | 通知功能用戶                                |
 | 業務影響 | 用戶無法接收和管理通知                      |
 | 相關檔案 | `src/app/shared/services/notification/notification.service.ts`, `src/app/layout/basic/widgets/notify.component.ts` |
-| 狀態     | 🟡 部分完成 (通知中心 UI 已整合)            |
-| 負責人   | -                                           |
-| 預計工時 | 32h (已完成 16h)                            |
+| 狀態     | 🟡 部分完成 (通知中心 UI 和偏好設定已整合)  |
+| 負責人   | Copilot                                     |
+| 預計工時 | 32h (已完成 22h)                            |
 
 **已完成功能**:
 - [x] 通知中心 UI - HeaderNotifyComponent 已整合
@@ -282,13 +282,16 @@ TaskRepository 使用 `sort_order` 欄位進行任務排序，但資料庫中該
 - [x] 標記為已讀 / 清空分類
 - [x] 導航到相關實體
 - [x] 通知 Repository 和 Service 完整實現
+- [x] 通知偏好設定頁面 UI
+- [x] 8 種通知類別設定 (任務、日誌、品質檢查、問題、檔案、成員、財務、系統)
+- [x] 勿擾時段設定
+- [x] 每日摘要設定
+- [x] 智慧合併設定
 
 **待完成功能**:
 - [ ] 排程通知
-- [ ] 多頻道路由 (App push, Email, Webhook)
-- [ ] 訂閱管理 UI
-- [ ] 智慧合併 (防止通知轟炸)
-- [ ] 勿擾模式
+- [ ] 多頻道路由後端整合 (App push, Email, Webhook)
+- [ ] 訂閱管理整合
 
 ---
 

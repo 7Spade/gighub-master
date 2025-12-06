@@ -252,6 +252,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToNotifications()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="bell" class="nav-icon notifications"></span>
+                      <div class="nav-text">
+                        <h4>通知設定</h4>
+                        <p>通知偏好和勿擾設定</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -651,6 +662,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon.activities {
         color: #722ed1;
       }
+      .nav-icon.notifications {
+        color: #fa8c16;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -989,6 +1003,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'activities']);
+    }
+  }
+
+  goToNotifications(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'notifications']);
     }
   }
 
