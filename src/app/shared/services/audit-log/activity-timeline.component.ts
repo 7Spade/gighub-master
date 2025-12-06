@@ -27,8 +27,14 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
-import { AuditLogService } from './audit-log.service';
-import { AuditLog, AuditAction, AuditEntityType, AUDIT_ACTION_CONFIG, AUDIT_ENTITY_TYPE_CONFIG } from '../../../core/infra/types/audit-log';
+import { TimelineRepository } from '../../../core/infra/repositories/timeline';
+import {
+  Activity,
+  ActivityType,
+  TimelineEntityType,
+  ACTIVITY_TYPE_CONFIG,
+  TIMELINE_ENTITY_TYPE_CONFIG
+} from '../../../core/infra/types/timeline';
 
 @Component({
   selector: 'app-activity-timeline',
@@ -89,16 +95,16 @@ import { AuditLog, AuditAction, AuditEntityType, AUDIT_ACTION_CONFIG, AUDIT_ENTI
         @if (filteredLogs().length > 0) {
           <nz-timeline [nzMode]="mode()">
             @for (log of filteredLogs(); track log.id) {
-              <nz-timeline-item [nzColor]="getActionColor(log.action)" [nzDot]="actionDotTemplate">
+              <nz-timeline-item [nzColor]="getActionColor(log.activity_type)" [nzDot]="actionDotTemplate">
                 <ng-template #actionDotTemplate>
-                  <span nz-icon [nzType]="getActionIcon(log.action)" [style.color]="getActionColorHex(log.action)"></span>
+                  <span nz-icon [nzType]="getActionIcon(log.activity_type)" [style.color]="getActionColorHex(log.activity_type)"></span>
                 </ng-template>
 
                 <div class="timeline-item">
                   <div class="timeline-header">
                     <div class="actor-info">
                       <nz-avatar [nzSize]="24" nzIcon="user"></nz-avatar>
-                      <span class="actor-name">{{ log.actor_name || '系統' }}</span>
+                      <span class="actor-name">{{ log.metadata?.actor_name || '系統' }}</span>
                     </div>
                     <span class="timestamp" nz-tooltip [nzTooltipTitle]="log.created_at | date: 'yyyy-MM-dd HH:mm:ss'">
                       {{ getRelativeTime(log.created_at) }}
@@ -106,12 +112,12 @@ import { AuditLog, AuditAction, AuditEntityType, AUDIT_ACTION_CONFIG, AUDIT_ENTI
                   </div>
 
                   <div class="timeline-content">
-                    <nz-tag [nzColor]="getActionColor(log.action)">
-                      {{ getActionLabel(log.action) }}
+                    <nz-tag [nzColor]="getActionColor(log.activity_type)">
+                      {{ getActionLabel(log.activity_type) }}
                     </nz-tag>
                     <nz-tag>{{ getEntityTypeLabel(log.entity_type) }}</nz-tag>
-                    @if (log.entity_name) {
-                      <span class="entity-name">{{ log.entity_name }}</span>
+                    @if (log.metadata?.entity_name || log.summary) {
+                      <span class="entity-name">{{ log.metadata?.entity_name || log.summary }}</span>
                     }
                   </div>
 
@@ -234,7 +240,7 @@ import { AuditLog, AuditAction, AuditEntityType, AUDIT_ACTION_CONFIG, AUDIT_ENTI
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityTimelineComponent implements OnInit {
-  private readonly auditLogService = inject(AuditLogService);
+  private readonly timelineRepository = inject(TimelineRepository);
 
   /** Blueprint ID to filter logs */
   blueprintId = input.required<string>();
@@ -243,7 +249,7 @@ export class ActivityTimelineComponent implements OnInit {
   entityId = input<string>();
 
   /** Entity type to filter logs (optional) */
-  entityType = input<AuditEntityType>();
+  entityType = input<TimelineEntityType>();
 
   /** Maximum number of logs to display */
   limit = input<number>(20);
@@ -255,21 +261,21 @@ export class ActivityTimelineComponent implements OnInit {
   mode = input<'left' | 'right' | 'alternate' | 'custom'>('left');
 
   /** Local state */
-  logs = signal<AuditLog[]>([]);
+  logs = signal<Activity[]>([]);
   loading = signal(false);
   hasMore = signal(false);
-  selectedAction: AuditAction | null = null;
-  selectedEntityType: AuditEntityType | null = null;
+  selectedAction: ActivityType | null = null;
+  selectedEntityType: TimelineEntityType | null = null;
 
   /** Action filter options */
-  readonly actionOptions = Object.entries(AUDIT_ACTION_CONFIG).map(([value, config]) => ({
-    value: value as AuditAction,
+  readonly actionOptions = Object.entries(ACTIVITY_TYPE_CONFIG).map(([value, config]) => ({
+    value: value as ActivityType,
     label: config.label
   }));
 
   /** Entity type filter options */
-  readonly entityTypeOptions = Object.entries(AUDIT_ENTITY_TYPE_CONFIG).map(([value, config]) => ({
-    value: value as AuditEntityType,
+  readonly entityTypeOptions = Object.entries(TIMELINE_ENTITY_TYPE_CONFIG).map(([value, config]) => ({
+    value: value as TimelineEntityType,
     label: config.label
   }));
 
@@ -278,7 +284,7 @@ export class ActivityTimelineComponent implements OnInit {
     let result = this.logs();
 
     if (this.selectedAction) {
-      result = result.filter(log => log.action === this.selectedAction);
+      result = result.filter(log => log.activity_type === this.selectedAction);
     }
 
     if (this.selectedEntityType) {
@@ -292,45 +298,41 @@ export class ActivityTimelineComponent implements OnInit {
     this.loadLogs();
   }
 
-  /** Load audit logs for the blueprint */
-  async loadLogs(): Promise<void> {
+  /** Load activity logs for the blueprint */
+  loadLogs(): void {
     this.loading.set(true);
 
-    try {
-      this.auditLogService.getByBlueprint(this.blueprintId(), this.limit()).subscribe({
-        next: logs => {
-          this.logs.set(logs);
-          this.hasMore.set(logs.length >= this.limit());
-          this.loading.set(false);
-        },
-        error: err => {
-          console.error('[ActivityTimeline] Failed to load logs:', err);
-          this.loading.set(false);
-        }
-      });
-    } catch (err) {
-      console.error('[ActivityTimeline] Error:', err);
-      this.loading.set(false);
-    }
+    this.timelineRepository.findByBlueprint(this.blueprintId(), { limit: this.limit(), includeActor: true }).subscribe({
+      next: logs => {
+        this.logs.set(logs as Activity[]);
+        this.hasMore.set(logs.length >= this.limit());
+        this.loading.set(false);
+      },
+      error: err => {
+        console.error('[ActivityTimeline] Failed to load logs:', err);
+        this.loading.set(false);
+      }
+    });
   }
 
   /** Load more logs */
   loadMore(): void {
-    const currentLimit = this.logs().length;
-    const newLimit = currentLimit + this.limit();
+    const currentOffset = this.logs().length;
 
     this.loading.set(true);
 
-    this.auditLogService.getByBlueprint(this.blueprintId(), newLimit).subscribe({
-      next: logs => {
-        this.logs.set(logs);
-        this.hasMore.set(logs.length >= newLimit);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      }
-    });
+    this.timelineRepository
+      .findByBlueprint(this.blueprintId(), { limit: this.limit(), offset: currentOffset, includeActor: true })
+      .subscribe({
+        next: logs => {
+          this.logs.set([...this.logs(), ...(logs as Activity[])]);
+          this.hasMore.set(logs.length >= this.limit());
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+        }
+      });
   }
 
   /** Handle filter change */
@@ -345,12 +347,12 @@ export class ActivityTimelineComponent implements OnInit {
   }
 
   /** Get action color for timeline dot */
-  getActionColor(action: AuditAction): string {
-    return AUDIT_ACTION_CONFIG[action]?.color || 'default';
+  getActionColor(action: ActivityType): string {
+    return ACTIVITY_TYPE_CONFIG[action]?.color || 'default';
   }
 
   /** Get action color hex value */
-  getActionColorHex(action: AuditAction): string {
+  getActionColorHex(action: ActivityType): string {
     const colorMap: Record<string, string> = {
       green: '#52c41a',
       blue: '#1890ff',
@@ -360,23 +362,23 @@ export class ActivityTimelineComponent implements OnInit {
       purple: '#722ed1',
       default: '#666'
     };
-    const color = AUDIT_ACTION_CONFIG[action]?.color || 'default';
+    const color = ACTIVITY_TYPE_CONFIG[action]?.color || 'default';
     return colorMap[color] || colorMap['default'];
   }
 
   /** Get action icon */
-  getActionIcon(action: AuditAction): string {
-    return AUDIT_ACTION_CONFIG[action]?.icon || 'question-circle';
+  getActionIcon(action: ActivityType): string {
+    return ACTIVITY_TYPE_CONFIG[action]?.icon || 'question-circle';
   }
 
   /** Get action label */
-  getActionLabel(action: AuditAction): string {
-    return AUDIT_ACTION_CONFIG[action]?.label || action;
+  getActionLabel(action: ActivityType): string {
+    return ACTIVITY_TYPE_CONFIG[action]?.label || action;
   }
 
   /** Get entity type label */
-  getEntityTypeLabel(entityType: AuditEntityType): string {
-    return AUDIT_ENTITY_TYPE_CONFIG[entityType]?.label || entityType;
+  getEntityTypeLabel(entityType: TimelineEntityType): string {
+    return TIMELINE_ENTITY_TYPE_CONFIG[entityType]?.label || entityType;
   }
 
   /** Get relative time string */
