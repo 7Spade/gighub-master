@@ -175,6 +175,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToDiaries()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="calendar" class="nav-icon diaries"></span>
+                      <div class="nav-text">
+                        <h4>施工日誌</h4>
+                        <p>每日施工紀錄與審核</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -860,6 +871,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'financial', 'overview']);
+    }
+  }
+
+  goToDiaries(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'diaries']);
     }
   }
 
