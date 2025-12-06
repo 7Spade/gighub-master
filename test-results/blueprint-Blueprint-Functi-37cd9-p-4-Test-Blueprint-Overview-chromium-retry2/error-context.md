@@ -1,0 +1,94 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "NG-ALAIN" [ref=e7] [cursor=pointer]:
+          - /url: "#/"
+          - img "NG-ALAIN" [ref=e8]
+        - generic [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11]:
+              - img "menu-fold" [ref=e13] [cursor=pointer]:
+                - img [ref=e14]
+            - listitem [ref=e16]:
+              - link "github" [ref=e17] [cursor=pointer]:
+                - /url: //github.com/ng-alain/ng-alain
+                - img "github" [ref=e18]:
+                  - img [ref=e19]
+            - listitem [ref=e21]:
+              - link "lock" [ref=e22] [cursor=pointer]:
+                - /url: "#/passport/lock"
+                - img "lock" [ref=e23]:
+                  - img [ref=e24]
+          - generic [ref=e28]:
+            - img "search" [ref=e30]:
+              - img [ref=e31]
+            - searchbox "搜尋" [ref=e33]
+          - list [ref=e34]:
+            - listitem [ref=e35]:
+              - img "bell" [ref=e40] [cursor=pointer]:
+                - img [ref=e41]
+            - listitem [ref=e43]:
+              - img "carry-out" [ref=e47] [cursor=pointer]:
+                - img [ref=e48]
+            - listitem [ref=e50]:
+              - img "appstore" [ref=e54] [cursor=pointer]:
+                - img [ref=e55]
+            - listitem [ref=e57]:
+              - img "setting" [ref=e59] [cursor=pointer]:
+                - img [ref=e60]
+            - listitem [ref=e62]:
+              - generic [ref=e64] [cursor=pointer]:
+                - img [ref=e66]
+                - text: ac7x
+      - generic [ref=e69]:
+        - generic [ref=e70] [cursor=pointer]:
+          - img [ref=e72]
+          - generic [ref=e73]:
+            - strong [ref=e74]: ac7x
+            - paragraph [ref=e75]: ac7x@pm.me
+        - list [ref=e77]:
+          - listitem [ref=e78]:
+            - generic [ref=e79]: Personal Workspace
+          - listitem [ref=e80]:
+            - generic [ref=e81] [cursor=pointer]:
+              - img "dashboard" [ref=e82]:
+                - img [ref=e83]
+              - text: Dashboard
+          - listitem [ref=e85]:
+            - generic [ref=e86] [cursor=pointer]:
+              - img "check-square" [ref=e87]:
+                - img [ref=e88]
+              - text: My Todos
+          - listitem [ref=e91]:
+            - generic [ref=e92] [cursor=pointer]:
+              - img "file-text" [ref=e93]:
+                - img [ref=e94]
+              - text: My Blueprints
+          - listitem [ref=e96]:
+            - generic [ref=e97] [cursor=pointer]:
+              - img "setting" [ref=e98]:
+                - img [ref=e99]
+              - text: Personal Settings
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - heading "我的藍圖" [level=2] [ref=e105]
+          - button "plus 建立藍圖" [ref=e106] [cursor=pointer]:
+            - img "plus" [ref=e107]:
+              - img [ref=e108]
+            - generic [ref=e111]: 建立藍圖
+        - generic [ref=e114]:
+          - img [ref=e117]
+          - paragraph [ref=e129]: 暫無藍圖
+          - button "建立第一個藍圖" [ref=e131] [cursor=pointer]:
+            - generic [ref=e132]: 建立第一個藍圖
+    - img "setting" [ref=e134] [cursor=pointer]:
+      - img [ref=e135]
+    - img [ref=e139] [cursor=pointer]
+  - button "Close" [ref=e147] [cursor=pointer]:
+    - img "close" [ref=e148]:
+      - img [ref=e149]
+```
