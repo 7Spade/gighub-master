@@ -17,8 +17,19 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade, ModuleType } from '@core';
-import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
+import {
+  BlueprintFacade,
+  BlueprintFinancialSummary,
+  Contract,
+  FinancialFacade,
+  ModuleType,
+  Task,
+  TaskStatus,
+  TASK_STATUS_CONFIG,
+  TaskPriority,
+  TASK_PRIORITY_CONFIG
+} from '@core';
+import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -309,17 +320,117 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     開啟完整視圖
                   </button>
                 </div>
-                <nz-card [nzBordered]="false">
-                  <nz-empty nzNotFoundContent="請點擊上方按鈕進入完整任務管理視圖">
-                    <ng-template #nzNotFoundFooter>
-                      <p class="text-muted">完整任務管理包含樹狀圖、表格、看板視圖</p>
-                      <button nz-button nzType="primary" (click)="goToTasks()">
-                        <span nz-icon nzType="ordered-list"></span>
-                        進入任務管理
-                      </button>
-                    </ng-template>
-                  </nz-empty>
-                </nz-card>
+                <nz-spin [nzSpinning]="taskService.loading()">
+                  @if (taskService.hasError()) {
+                    <nz-card [nzBordered]="false">
+                      <nz-result nzStatus="error" nzTitle="載入任務失敗" [nzSubTitle]="taskService.error() || '無法載入任務資料'">
+                        <div nz-result-extra>
+                          <button nz-button nzType="primary" (click)="loadTasks(blueprintId() || '')">
+                            <span nz-icon nzType="reload"></span>
+                            重試
+                          </button>
+                        </div>
+                      </nz-result>
+                    </nz-card>
+                  } @else if (taskService.tasks().length === 0 && !taskService.loading()) {
+                    <nz-card [nzBordered]="false">
+                      <nz-empty nzNotFoundContent="尚無任務">
+                        <ng-template #nzNotFoundFooter>
+                          <button nz-button nzType="primary" (click)="goToTasks()">
+                            <span nz-icon nzType="plus"></span>
+                            建立第一個任務
+                          </button>
+                        </ng-template>
+                      </nz-empty>
+                    </nz-card>
+                  } @else {
+                    <!-- Task Statistics -->
+                    <div nz-row [nzGutter]="[16, 16]" class="task-stats-row">
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic nzTitle="總任務數" [nzValue]="taskStatsByStatus().total"></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="進行中"
+                            [nzValue]="taskStatsByStatus().inProgress"
+                            [nzValueStyle]="{ color: '#1890ff' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="已完成"
+                            [nzValue]="taskStatsByStatus().completed"
+                            [nzValueStyle]="{ color: '#52c41a' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="待處理"
+                            [nzValue]="taskStatsByStatus().pending"
+                            [nzValueStyle]="{ color: '#faad14' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                    </div>
+
+                    <!-- Task Preview Table -->
+                    <nz-card [nzBordered]="false" class="task-preview-card">
+                      <nz-table #taskTable [nzData]="previewTasks()" [nzShowPagination]="false" nzSize="small">
+                        <thead>
+                          <tr>
+                            <th nzWidth="45%">任務名稱</th>
+                            <th nzWidth="15%">狀態</th>
+                            <th nzWidth="15%">優先級</th>
+                            <th nzWidth="25%">進度</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (task of taskTable.data; track task.id) {
+                            <tr>
+                              <td>
+                                <span class="task-title">{{ task.title }}</span>
+                              </td>
+                              <td>
+                                <nz-tag [nzColor]="TASK_STATUS_CONFIG[task.status].color" nzBorderless>
+                                  {{ TASK_STATUS_CONFIG[task.status].label }}
+                                </nz-tag>
+                              </td>
+                              <td>
+                                <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color" nzBorderless>
+                                  {{ TASK_PRIORITY_CONFIG[task.priority].label }}
+                                </nz-tag>
+                              </td>
+                              <td>
+                                <nz-progress
+                                  [nzPercent]="task.completion_rate"
+                                  [nzShowInfo]="true"
+                                  [nzStrokeWidth]="6"
+                                  nzSize="small"
+                                ></nz-progress>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </nz-table>
+                      @if (taskService.tasks().length > 10) {
+                        <div class="task-preview-footer">
+                          <p class="text-muted">顯示前 10 個任務，共 {{ taskService.tasks().length }} 個任務</p>
+                          <button nz-button nzType="link" (click)="goToTasks()">
+                            查看全部任務
+                            <span nz-icon nzType="arrow-right"></span>
+                          </button>
+                        </div>
+                      }
+                    </nz-card>
+                  }
+                </nz-spin>
               </nz-tab>
             }
 
@@ -672,6 +783,27 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .contracts-card {
         margin-top: 16px;
       }
+      /* Task Preview Styles */
+      .task-stats-row {
+        margin-bottom: 16px;
+      }
+      .task-preview-card {
+        margin-top: 16px;
+      }
+      .task-title {
+        font-weight: 500;
+      }
+      .task-preview-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
+      }
+      .task-preview-footer p {
+        margin: 0;
+      }
       /* Quick Navigation Cards */
       .quick-nav-row {
         margin-top: 24px;
@@ -784,6 +916,7 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly financialFacade = inject(FinancialFacade);
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
+  readonly taskService = inject(TaskService);
 
   @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
 
@@ -802,6 +935,11 @@ export class BlueprintOverviewComponent implements OnInit {
   financialSummary = signal<BlueprintFinancialSummary | null>(null);
   contracts = signal<Contract[]>([]);
   financialLoading = signal(false);
+
+  // Task configuration constants
+  readonly TaskStatus = TaskStatus;
+  readonly TASK_STATUS_CONFIG = TASK_STATUS_CONFIG;
+  readonly TASK_PRIORITY_CONFIG = TASK_PRIORITY_CONFIG;
 
   readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
 
@@ -857,6 +995,23 @@ export class BlueprintOverviewComponent implements OnInit {
     return Math.round(((summary.total_paid ?? 0) / requested) * 100);
   });
 
+  /** Get preview tasks (limit to 10 for overview) */
+  readonly previewTasks = computed(() => {
+    return this.taskService.tasks().slice(0, 10);
+  });
+
+  /** Get task statistics for overview */
+  readonly taskStatsByStatus = computed(() => {
+    const tasks = this.taskService.tasks();
+    return {
+      total: tasks.length,
+      pending: tasks.filter(t => t.status === TaskStatus.PENDING).length,
+      inProgress: tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length,
+      completed: tasks.filter(t => t.status === TaskStatus.COMPLETED).length,
+      blocked: tasks.filter(t => t.status === TaskStatus.BLOCKED).length
+    };
+  });
+
   ngOnInit(): void {
     this.loadBlueprint();
   }
@@ -881,6 +1036,11 @@ export class BlueprintOverviewComponent implements OnInit {
 
         // Load financial data
         this.loadFinancialData(id);
+
+        // Load tasks if tasks module is enabled
+        if (blueprint.enabled_modules?.includes(ModuleType.TASKS)) {
+          this.loadTasks(id);
+        }
       } else {
         this.error.set('找不到藍圖');
       }
@@ -889,6 +1049,15 @@ export class BlueprintOverviewComponent implements OnInit {
       this.error.set(err instanceof Error ? err.message : '載入藍圖失敗');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async loadTasks(blueprintId: string): Promise<void> {
+    try {
+      await this.taskService.loadTasksByBlueprint(blueprintId);
+    } catch (err) {
+      console.error('[BlueprintOverviewComponent] Failed to load tasks:', err);
+      // Don't set global error, just log it
     }
   }
 
