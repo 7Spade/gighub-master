@@ -241,6 +241,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToActivities()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="history" class="nav-icon activities"></span>
+                      <div class="nav-text">
+                        <h4>活動歷史</h4>
+                        <p>操作記錄和變更歷史</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -637,6 +648,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon {
         font-size: 32px;
       }
+      .nav-icon.activities {
+        color: #722ed1;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -968,6 +982,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'metadata']);
+    }
+  }
+
+  goToActivities(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'activities']);
     }
   }
 

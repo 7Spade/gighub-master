@@ -80,6 +80,11 @@ export const routes: Routes = [
             path: 'metadata',
             loadComponent: () => import('./metadata/metadata.component').then(m => m.BlueprintMetadataComponent),
             data: { title: '自訂欄位' }
+          },
+          {
+            path: 'activities',
+            loadComponent: () => import('./activities/activities.component').then(m => m.BlueprintActivitiesComponent),
+            data: { title: '活動歷史' }
           }
         ]
       }
