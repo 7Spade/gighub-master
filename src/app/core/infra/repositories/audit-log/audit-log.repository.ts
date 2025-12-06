@@ -17,6 +17,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, of } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   AuditLog,
   CreateAuditLogRequest,
@@ -31,6 +32,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AuditLogRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Write Operations (Append-only)
@@ -58,7 +60,7 @@ export class AuditLogRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] create error:', error);
+          this.logger.error('[AuditLogRepository] create error:', error);
           return null;
         }
         // RPC returns the audit log ID
@@ -172,7 +174,7 @@ export class AuditLogRepository {
     return from(query).pipe(
       map(({ data, count, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] query error:', error);
+          this.logger.error('[AuditLogRepository] query error:', error);
           return {
             data: [],
             total: 0,
@@ -202,7 +204,7 @@ export class AuditLogRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[AuditLogRepository] findById error:', error);
+          this.logger.error('[AuditLogRepository] findById error:', error);
           return null;
         }
         return data as AuditLog;
@@ -226,7 +228,7 @@ export class AuditLogRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] getEntityHistory error:', error);
+          this.logger.error('[AuditLogRepository] getEntityHistory error:', error);
           return [];
         }
         return (data || []) as AuditLog[];
@@ -244,7 +246,7 @@ export class AuditLogRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] getActorHistory error:', error);
+          this.logger.error('[AuditLogRepository] getActorHistory error:', error);
           return [];
         }
         return (data || []) as AuditLog[];
@@ -267,7 +269,7 @@ export class AuditLogRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] findByBlueprint error:', error);
+          this.logger.error('[AuditLogRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as AuditLog[];
@@ -304,7 +306,7 @@ export class AuditLogRepository {
     return from(query.limit(10000)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AuditLogRepository] getStats error:', error);
+          this.logger.error('[AuditLogRepository] getStats error:', error);
           return this.emptyStats();
         }
 

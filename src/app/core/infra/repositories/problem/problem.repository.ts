@@ -14,6 +14,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, of, switchMap } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   Problem,
   ProblemAction,
@@ -39,6 +40,7 @@ import {
 })
 export class ProblemRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Problem Query Methods
@@ -53,7 +55,7 @@ export class ProblemRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[ProblemRepository] findById error:', error);
+          this.logger.error('[ProblemRepository] findById error:', error);
           return null;
         }
         return data as Problem;
@@ -87,7 +89,7 @@ export class ProblemRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[ProblemRepository] findByIdWithDetails error:', error);
+          this.logger.error('[ProblemRepository] findByIdWithDetails error:', error);
           return null;
         }
         return data as ProblemWithDetails;
@@ -110,7 +112,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findByBlueprint error:', error);
+          this.logger.error('[ProblemRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -133,7 +135,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findByTask error:', error);
+          this.logger.error('[ProblemRepository] findByTask error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -156,7 +158,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findByQcInspection error:', error);
+          this.logger.error('[ProblemRepository] findByQcInspection error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -179,7 +181,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findByAcceptance error:', error);
+          this.logger.error('[ProblemRepository] findByAcceptance error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -204,7 +206,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findByAssignee error:', error);
+          this.logger.error('[ProblemRepository] findByAssignee error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -229,7 +231,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findHighRisk error:', error);
+          this.logger.error('[ProblemRepository] findHighRisk error:', error);
           return [];
         }
         return (data || []) as Problem[];
@@ -347,7 +349,7 @@ export class ProblemRepository {
     return from(query).pipe(
       map(({ data, error, count }) => {
         if (error) {
-          console.error('[ProblemRepository] query error:', error);
+          this.logger.error('[ProblemRepository] query error:', error);
           return { data: [], total: 0, hasMore: false };
         }
         const total = count || 0;
@@ -406,7 +408,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] create error:', error);
+          this.logger.error('[ProblemRepository] create error:', error);
           return null;
         }
         return data as Problem;
@@ -432,7 +434,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] update error:', error);
+          this.logger.error('[ProblemRepository] update error:', error);
           return null;
         }
         return data as Problem;
@@ -449,7 +451,7 @@ export class ProblemRepository {
     return from(this.supabase.client.from('problems').select('status').eq('id', id).single()).pipe(
       switchMap(({ data: currentData, error: currentError }) => {
         if (currentError || !currentData) {
-          console.error('[ProblemRepository] changeStatus - get current error:', currentError);
+          this.logger.error('[ProblemRepository] changeStatus - get current error:', currentError);
           return of(null);
         }
 
@@ -458,7 +460,7 @@ export class ProblemRepository {
 
         // Validate transition
         if (!isValidStatusTransition(fromStatus, toStatus)) {
-          console.error(`[ProblemRepository] Invalid status transition: ${fromStatus} -> ${toStatus}`);
+          this.logger.error(`[ProblemRepository] Invalid status transition: ${fromStatus} -> ${toStatus}`);
           return of(null);
         }
 
@@ -504,7 +506,7 @@ export class ProblemRepository {
         ).pipe(
           map(([updateResult]) => {
             if (updateResult.error) {
-              console.error('[ProblemRepository] changeStatus - update error:', updateResult.error);
+              this.logger.error('[ProblemRepository] changeStatus - update error:', updateResult.error);
               return null;
             }
             return updateResult.data as Problem;
@@ -532,7 +534,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] softDelete error:', error);
+          this.logger.error('[ProblemRepository] softDelete error:', error);
           return null;
         }
         return data as Problem;
@@ -554,7 +556,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findActionsByProblem error:', error);
+          this.logger.error('[ProblemRepository] findActionsByProblem error:', error);
           return [];
         }
         return (data || []) as ProblemAction[];
@@ -590,7 +592,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] createAction error:', error);
+          this.logger.error('[ProblemRepository] createAction error:', error);
           return null;
         }
         return data as ProblemAction;
@@ -617,7 +619,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findCommentsByProblem error:', error);
+          this.logger.error('[ProblemRepository] findCommentsByProblem error:', error);
           return [];
         }
         return (data || []) as ProblemComment[];
@@ -644,7 +646,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] createComment error:', error);
+          this.logger.error('[ProblemRepository] createComment error:', error);
           return null;
         }
         return data as ProblemComment;
@@ -670,7 +672,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] updateComment error:', error);
+          this.logger.error('[ProblemRepository] updateComment error:', error);
           return null;
         }
         return data as ProblemComment;
@@ -694,7 +696,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[ProblemRepository] softDeleteComment error:', error);
+          this.logger.error('[ProblemRepository] softDeleteComment error:', error);
           return false;
         }
         return true;
@@ -716,7 +718,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findAttachmentsByProblem error:', error);
+          this.logger.error('[ProblemRepository] findAttachmentsByProblem error:', error);
           return [];
         }
         return (data || []) as ProblemAttachment[];
@@ -753,7 +755,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] createAttachment error:', error);
+          this.logger.error('[ProblemRepository] createAttachment error:', error);
           return null;
         }
         return data as ProblemAttachment;
@@ -769,7 +771,7 @@ export class ProblemRepository {
     return from(this.supabase.client.from('problem_attachments').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[ProblemRepository] deleteAttachment error:', error);
+          this.logger.error('[ProblemRepository] deleteAttachment error:', error);
           return false;
         }
         return true;
@@ -795,7 +797,7 @@ export class ProblemRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) {
-          console.error('[ProblemRepository] getStatsByBlueprint error:', error);
+          this.logger.error('[ProblemRepository] getStatsByBlueprint error:', error);
           return {
             total: 0,
             byStatus: {} as Record<ProblemStatus, number>,
@@ -900,7 +902,7 @@ export class ProblemRepository {
     return from(query.order('created_at', { ascending: false })).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[ProblemRepository] findKnowledgeBase error:', error);
+          this.logger.error('[ProblemRepository] findKnowledgeBase error:', error);
           return [];
         }
         return (data || []) as Problem[];

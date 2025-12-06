@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { Blueprint, BlueprintQueryOptions } from '../../types/blueprint';
 
 @Injectable({
@@ -20,6 +21,7 @@ import { Blueprint, BlueprintQueryOptions } from '../../types/blueprint';
 })
 export class BlueprintRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * 根據 ID 查詢藍圖
@@ -29,7 +31,7 @@ export class BlueprintRepository {
     return from(this.supabase.client.from('blueprints').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findById error:', error);
+          this.logger.error('[BlueprintRepository] findById error:', error);
           return null;
         }
         return data as Blueprint;
@@ -47,7 +49,7 @@ export class BlueprintRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findBySlug error:', error);
+          this.logger.error('[BlueprintRepository] findBySlug error:', error);
           return null;
         }
         return data as Blueprint;
@@ -63,7 +65,7 @@ export class BlueprintRepository {
     return from(this.supabase.client.from('blueprints').select('*').eq('owner_id', ownerId).is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findByOwner error:', error);
+          this.logger.error('[BlueprintRepository] findByOwner error:', error);
           return [];
         }
         return (data || []) as Blueprint[];
@@ -83,7 +85,7 @@ export class BlueprintRepository {
     return from(this.supabase.client.from('blueprints').select('*').in('id', ids).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findByIds error:', error);
+          this.logger.error('[BlueprintRepository] findByIds error:', error);
           return [];
         }
         return (data || []) as Blueprint[];
@@ -119,7 +121,7 @@ export class BlueprintRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findWithOptions error:', error);
+          this.logger.error('[BlueprintRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as Blueprint[];
@@ -135,7 +137,7 @@ export class BlueprintRepository {
     return from(this.supabase.client.from('blueprints').select('*').eq('is_public', true).is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] findPublic error:', error);
+          this.logger.error('[BlueprintRepository] findPublic error:', error);
           return [];
         }
         return (data || []) as Blueprint[];
@@ -151,7 +153,7 @@ export class BlueprintRepository {
     return from(this.supabase.client.from('blueprints').insert(blueprint).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] create error:', error);
+          this.logger.error('[BlueprintRepository] create error:', error);
           return null;
         }
         return data as Blueprint;
@@ -174,7 +176,7 @@ export class BlueprintRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] update error:', error);
+          this.logger.error('[BlueprintRepository] update error:', error);
           return null;
         }
         return data as Blueprint;
@@ -200,7 +202,7 @@ export class BlueprintRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] softDelete error:', error);
+          this.logger.error('[BlueprintRepository] softDelete error:', error);
           return null;
         }
         return data as Blueprint;
@@ -226,7 +228,7 @@ export class BlueprintRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintRepository] restore error:', error);
+          this.logger.error('[BlueprintRepository] restore error:', error);
           return null;
         }
         return data as Blueprint;

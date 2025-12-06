@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   BlueprintFinancialSummary,
   Contract,
@@ -31,6 +32,7 @@ import {
 })
 export class FinancialRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Blueprint Financial Summary (藍圖財務摘要)
@@ -46,7 +48,7 @@ export class FinancialRepository {
     return from(this.supabase.client.rpc('get_blueprint_financial_summary', { p_blueprint_id: blueprintId })).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] getBlueprintFinancialSummary error:', error);
+          this.logger.error('[FinancialRepository] getBlueprintFinancialSummary error:', error);
           return null;
         }
         // The RPC returns a single row as an array
@@ -70,7 +72,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('contracts').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findContractById error:', error);
+          this.logger.error('[FinancialRepository] findContractById error:', error);
           return null;
         }
         return data as Contract;
@@ -88,7 +90,7 @@ export class FinancialRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findContractsByBlueprint error:', error);
+          this.logger.error('[FinancialRepository] findContractsByBlueprint error:', error);
           return [];
         }
         return (data || []) as Contract[];
@@ -116,7 +118,7 @@ export class FinancialRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findContractsWithOptions error:', error);
+          this.logger.error('[FinancialRepository] findContractsWithOptions error:', error);
           return [];
         }
         return (data || []) as Contract[];
@@ -134,7 +136,7 @@ export class FinancialRepository {
     return from(this.supabase.client.rpc('get_contract_summary', { p_contract_id: contractId })).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] getContractSummary error:', error);
+          this.logger.error('[FinancialRepository] getContractSummary error:', error);
           return null;
         }
         // The RPC returns a single row as an array
@@ -160,7 +162,7 @@ export class FinancialRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findExpensesByBlueprint error:', error);
+          this.logger.error('[FinancialRepository] findExpensesByBlueprint error:', error);
           return [];
         }
         return (data || []) as Expense[];
@@ -200,7 +202,7 @@ export class FinancialRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findExpensesWithOptions error:', error);
+          this.logger.error('[FinancialRepository] findExpensesWithOptions error:', error);
           return [];
         }
         return (data || []) as Expense[];
@@ -222,7 +224,7 @@ export class FinancialRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findPaymentRequestsByBlueprint error:', error);
+          this.logger.error('[FinancialRepository] findPaymentRequestsByBlueprint error:', error);
           return [];
         }
         return (data || []) as PaymentRequest[];
@@ -254,7 +256,7 @@ export class FinancialRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findPaymentRequestsWithOptions error:', error);
+          this.logger.error('[FinancialRepository] findPaymentRequestsWithOptions error:', error);
           return [];
         }
         return (data || []) as PaymentRequest[];
@@ -276,7 +278,7 @@ export class FinancialRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findPaymentsByBlueprint error:', error);
+          this.logger.error('[FinancialRepository] findPaymentsByBlueprint error:', error);
           return [];
         }
         return (data || []) as Payment[];
@@ -312,7 +314,7 @@ export class FinancialRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FinancialRepository] findPaymentsWithOptions error:', error);
+          this.logger.error('[FinancialRepository] findPaymentsWithOptions error:', error);
           return [];
         }
         return (data || []) as Payment[];
@@ -332,7 +334,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('contracts').insert(data).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] createContract error:', error);
+          this.logger.error('[FinancialRepository] createContract error:', error);
           throw error;
         }
         return result as Contract;
@@ -348,7 +350,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('contracts').update(data).eq('id', id).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] updateContract error:', error);
+          this.logger.error('[FinancialRepository] updateContract error:', error);
           throw error;
         }
         return result as Contract;
@@ -364,7 +366,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('contracts').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FinancialRepository] deleteContract error:', error);
+          this.logger.error('[FinancialRepository] deleteContract error:', error);
           throw error;
         }
         return true;
@@ -384,7 +386,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('expenses').insert(data).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] createExpense error:', error);
+          this.logger.error('[FinancialRepository] createExpense error:', error);
           throw error;
         }
         return result as Expense;
@@ -400,7 +402,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('expenses').update(data).eq('id', id).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] updateExpense error:', error);
+          this.logger.error('[FinancialRepository] updateExpense error:', error);
           throw error;
         }
         return result as Expense;
@@ -416,7 +418,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('expenses').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FinancialRepository] deleteExpense error:', error);
+          this.logger.error('[FinancialRepository] deleteExpense error:', error);
           throw error;
         }
         return true;
@@ -436,7 +438,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payment_requests').insert(data).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] createPaymentRequest error:', error);
+          this.logger.error('[FinancialRepository] createPaymentRequest error:', error);
           throw error;
         }
         return result as PaymentRequest;
@@ -452,7 +454,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payment_requests').update(data).eq('id', id).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] updatePaymentRequest error:', error);
+          this.logger.error('[FinancialRepository] updatePaymentRequest error:', error);
           throw error;
         }
         return result as PaymentRequest;
@@ -468,7 +470,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payment_requests').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FinancialRepository] deletePaymentRequest error:', error);
+          this.logger.error('[FinancialRepository] deletePaymentRequest error:', error);
           throw error;
         }
         return true;
@@ -488,7 +490,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payments').insert(data).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] createPayment error:', error);
+          this.logger.error('[FinancialRepository] createPayment error:', error);
           throw error;
         }
         return result as Payment;
@@ -504,7 +506,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payments').update(data).eq('id', id).select().single()).pipe(
       map(({ data: result, error }) => {
         if (error) {
-          console.error('[FinancialRepository] updatePayment error:', error);
+          this.logger.error('[FinancialRepository] updatePayment error:', error);
           throw error;
         }
         return result as Payment;
@@ -520,7 +522,7 @@ export class FinancialRepository {
     return from(this.supabase.client.from('payments').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FinancialRepository] deletePayment error:', error);
+          this.logger.error('[FinancialRepository] deletePayment error:', error);
           throw error;
         }
         return true;
