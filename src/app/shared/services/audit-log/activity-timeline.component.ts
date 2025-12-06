@@ -302,19 +302,17 @@ export class ActivityTimelineComponent implements OnInit {
   loadLogs(): void {
     this.loading.set(true);
 
-    this.timelineRepository
-      .findByBlueprint(this.blueprintId(), { limit: this.limit(), includeActor: true })
-      .subscribe({
-        next: logs => {
-          this.logs.set(logs as Activity[]);
-          this.hasMore.set(logs.length >= this.limit());
-          this.loading.set(false);
-        },
-        error: err => {
-          console.error('[ActivityTimeline] Failed to load logs:', err);
-          this.loading.set(false);
-        }
-      });
+    this.timelineRepository.findByBlueprint(this.blueprintId(), { limit: this.limit(), includeActor: true }).subscribe({
+      next: logs => {
+        this.logs.set(logs as Activity[]);
+        this.hasMore.set(logs.length >= this.limit());
+        this.loading.set(false);
+      },
+      error: err => {
+        console.error('[ActivityTimeline] Failed to load logs:', err);
+        this.loading.set(false);
+      }
+    });
   }
 
   /** Load more logs */
