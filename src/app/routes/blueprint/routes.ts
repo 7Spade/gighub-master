@@ -70,6 +70,11 @@ export const routes: Routes = [
             path: 'settings',
             loadComponent: () => import('./settings/settings.component').then(m => m.BlueprintSettingsComponent),
             data: { title: '藍圖設定' }
+          },
+          {
+            path: 'problems',
+            loadComponent: () => import('./problems/problems.component').then(m => m.BlueprintProblemsComponent),
+            data: { title: '問題追蹤' }
           }
         ]
       }
