@@ -17,6 +17,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -41,8 +42,6 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-
-import { format } from 'date-fns';
 import { firstValueFrom } from 'rxjs';
 
 import {
@@ -404,14 +403,24 @@ import { DiaryService } from '../../../shared/services/diary/diary.service';
             <nz-form-item>
               <nz-form-label>摘要</nz-form-label>
               <nz-form-control>
-                <textarea nz-input formControlName="summary" [nzAutosize]="{ minRows: 3, maxRows: 6 }" placeholder="輸入今日工作摘要..."></textarea>
+                <textarea
+                  nz-input
+                  formControlName="summary"
+                  [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                  placeholder="輸入今日工作摘要..."
+                ></textarea>
               </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
               <nz-form-label>備註</nz-form-label>
               <nz-form-control>
-                <textarea nz-input formControlName="notes" [nzAutosize]="{ minRows: 2, maxRows: 4 }" placeholder="其他備註事項..."></textarea>
+                <textarea
+                  nz-input
+                  formControlName="notes"
+                  [nzAutosize]="{ minRows: 2, maxRows: 4 }"
+                  placeholder="其他備註事項..."
+                ></textarea>
               </nz-form-control>
             </nz-form-item>
           </form>
@@ -427,12 +436,7 @@ import { DiaryService } from '../../../shared/services/diary/diary.service';
       </nz-drawer>
 
       <!-- Diary Detail Drawer -->
-      <nz-drawer
-        [nzVisible]="detailDrawerVisible()"
-        [nzWidth]="700"
-        nzTitle="日誌詳情"
-        (nzOnClose)="closeDetailDrawer()"
-      >
+      <nz-drawer [nzVisible]="detailDrawerVisible()" [nzWidth]="700" nzTitle="日誌詳情" (nzOnClose)="closeDetailDrawer()">
         <ng-container *nzDrawerContent>
           @if (selectedDiary()) {
             <nz-descriptions nzTitle="基本資訊" nzBordered [nzColumn]="2">
@@ -526,114 +530,116 @@ import { DiaryService } from '../../../shared/services/diary/diary.service';
       </nz-drawer>
     </div>
   `,
-  styles: [`
-    .diaries-container {
-      padding: 24px;
-    }
+  styles: [
+    `
+      .diaries-container {
+        padding: 24px;
+      }
 
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
 
-    .header-left h2 {
-      margin: 0;
-    }
+      .header-left h2 {
+        margin: 0;
+      }
 
-    .stats-row {
-      margin-bottom: 24px;
-    }
+      .stats-row {
+        margin-bottom: 24px;
+      }
 
-    .stat-card {
-      text-align: center;
-    }
+      .stat-card {
+        text-align: center;
+      }
 
-    .stat-card.draft ::ng-deep .ant-statistic-content {
-      color: #8c8c8c;
-    }
+      .stat-card.draft ::ng-deep .ant-statistic-content {
+        color: #8c8c8c;
+      }
 
-    .stat-card.submitted ::ng-deep .ant-statistic-content {
-      color: #1890ff;
-    }
+      .stat-card.submitted ::ng-deep .ant-statistic-content {
+        color: #1890ff;
+      }
 
-    .stat-card.approved ::ng-deep .ant-statistic-content {
-      color: #52c41a;
-    }
+      .stat-card.approved ::ng-deep .ant-statistic-content {
+        color: #52c41a;
+      }
 
-    .filter-card {
-      margin-bottom: 16px;
-    }
+      .filter-card {
+        margin-bottom: 16px;
+      }
 
-    .filters {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+      .filters {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
 
-    .filter-item {
-      flex-shrink: 0;
-    }
+      .filter-item {
+        flex-shrink: 0;
+      }
 
-    .table-card {
-      margin-bottom: 24px;
-    }
+      .table-card {
+        margin-bottom: 24px;
+      }
 
-    .clickable-row {
-      cursor: pointer;
-    }
+      .clickable-row {
+        cursor: pointer;
+      }
 
-    .clickable-row:hover {
-      background-color: #fafafa;
-    }
+      .clickable-row:hover {
+        background-color: #fafafa;
+      }
 
-    .summary-text {
-      display: inline-block;
-      max-width: 300px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+      .summary-text {
+        display: inline-block;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
-    .creator-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+      .creator-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .action-buttons {
-      display: flex;
-      gap: 4px;
-    }
+      .action-buttons {
+        display: flex;
+        gap: 4px;
+      }
 
-    .text-muted {
-      color: #8c8c8c;
-    }
+      .text-muted {
+        color: #8c8c8c;
+      }
 
-    .drawer-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
+      .drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
 
-    .section-margin {
-      margin-top: 24px;
-    }
+      .section-margin {
+        margin-top: 24px;
+      }
 
-    .detail-actions {
-      margin-top: 24px;
-      display: flex;
-      gap: 8px;
-    }
-  `]
+      .detail-actions {
+        margin-top: 24px;
+        display: flex;
+        gap: 8px;
+      }
+    `
+  ]
 })
 export class BlueprintDiariesComponent implements OnInit {
   readonly diaryService = inject(DiaryService);
@@ -654,7 +660,7 @@ export class BlueprintDiariesComponent implements OnInit {
   // Computed
   readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
   readonly stats = computed(() => this.diaryService.stats());
-  readonly drawerTitle = computed(() => this.isEditing() ? '編輯日誌' : '新增日誌');
+  readonly drawerTitle = computed(() => (this.isEditing() ? '編輯日誌' : '新增日誌'));
 
   // Filters
   filterDateRange: Date | null = null;
@@ -815,9 +821,7 @@ export class BlueprintDiariesComponent implements OnInit {
         notes: formValue.notes || null
       };
 
-      const result = await firstValueFrom(
-        this.diaryService.update(this.editingDiaryId()!, updateRequest)
-      );
+      const result = await firstValueFrom(this.diaryService.update(this.editingDiaryId()!, updateRequest));
 
       if (result) {
         this.msg.success('日誌更新成功');
