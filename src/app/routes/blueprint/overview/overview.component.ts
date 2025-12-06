@@ -208,6 +208,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToSettings()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="setting" class="nav-icon settings"></span>
+                      <div class="nav-text">
+                        <h4>藍圖設定</h4>
+                        <p>配置模組和偏好</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -914,6 +925,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'files']);
+    }
+  }
+
+  goToSettings(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'settings']);
     }
   }
 
