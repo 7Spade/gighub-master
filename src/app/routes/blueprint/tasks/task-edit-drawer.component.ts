@@ -55,7 +55,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           </nz-form-item>
 
           <!-- 狀態和優先級 -->
-          <div nz-row [nzGutter]="16">
+          <div nz-row [nzGutter]="[16, 16]">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
                 <nz-form-label>狀態</nz-form-label>
@@ -83,7 +83,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           </div>
 
           <!-- 日期選擇 -->
-          <div nz-row [nzGutter]="16">
+          <div nz-row [nzGutter]="[16, 16]">
             <div nz-col [nzSpan]="12">
               <nz-form-item>
                 <nz-form-label>開始日期</nz-form-label>

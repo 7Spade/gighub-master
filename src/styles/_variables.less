@@ -147,3 +147,40 @@
 @z-index-modal: 1050;
 @z-index-popover: 1060;
 @z-index-tooltip: 1070;
+
+// =============================================================================
+// Responsive Breakpoints - 響應式斷點
+// Following ng-zorro-antd / Ant Design breakpoint system
+// =============================================================================
+
+@screen-xs: 480px;
+@screen-xs-max: 575px;
+@screen-sm: 576px;
+@screen-sm-max: 767px;
+@screen-md: 768px;
+@screen-md-max: 991px;
+@screen-lg: 992px;
+@screen-lg-max: 1199px;
+@screen-xl: 1200px;
+@screen-xl-max: 1599px;
+@screen-xxl: 1600px;
+
+// Mobile-first media query helpers
+// Usage: @media @mobile { ... }
+@mobile: ~"only screen and (max-width: @{screen-xs-max})";
+@tablet: ~"only screen and (min-width: @{screen-sm}) and (max-width: @{screen-md-max})";
+@desktop: ~"only screen and (min-width: @{screen-lg})";
+@mobile-and-tablet: ~"only screen and (max-width: @{screen-md-max})";
+@tablet-and-up: ~"only screen and (min-width: @{screen-sm})";
+
+// =============================================================================
+// Responsive Layout - 響應式佈局
+// =============================================================================
+
+@page-padding-mobile: 12px;
+@page-padding-tablet: 16px;
+@page-padding-desktop: 24px;
+
+@gutter-mobile: 8px;
+@gutter-tablet: 12px;
+@gutter-desktop: 16px;

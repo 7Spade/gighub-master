@@ -58,7 +58,7 @@ interface MemberWithAccount {
       </div>
 
       <!-- Statistics Cards -->
-      <div nz-row [nzGutter]="16" class="stats-section">
+      <div nz-row [nzGutter]="[16, 16]" class="stats-section">
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic nzTitle="總成員數" [nzValue]="members().length"></nz-statistic>

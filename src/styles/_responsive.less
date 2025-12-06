@@ -1,0 +1,659 @@
+/**
+ * Responsive Styles
+ * 響應式樣式
+ * 
+ * Mobile-first responsive styles for GigHub blueprint modules
+ * Follows ng-zorro-antd breakpoint system
+ * 
+ * @version 1.0.0
+ */
+
+@import './_variables.less';
+
+// =============================================================================
+// Base Container Responsive Padding
+// =============================================================================
+
+.page-container,
+.blueprint-overview-container,
+.financial-overview-container,
+.contract-list-container,
+.expense-list-container {
+  @media @mobile {
+    padding: @page-padding-mobile;
+  }
+
+  @media @tablet {
+    padding: @page-padding-tablet;
+  }
+}
+
+// =============================================================================
+// Page Header Responsive
+// =============================================================================
+
+.page-header {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-md;
+    align-items: stretch;
+    padding: @spacing-base;
+  }
+
+  @media @tablet {
+    padding: @spacing-base;
+  }
+}
+
+.page-header-left,
+.header-left {
+  @media @mobile {
+    flex-wrap: wrap;
+  }
+}
+
+.page-header-right,
+.page-header-actions,
+.header-actions {
+  @media @mobile {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+
+    button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+.title-section {
+  @media @mobile {
+    .page-title,
+    h3 {
+      font-size: @font-size-lg;
+    }
+
+    .subtitle,
+    .page-subtitle {
+      font-size: @font-size-xs;
+    }
+  }
+}
+
+// Blueprint Header (Overview Style)
+.blueprint-header {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-base;
+    padding: @spacing-base;
+  }
+}
+
+.blueprint-name {
+  @media @mobile {
+    font-size: @font-size-lg;
+  }
+}
+
+.blueprint-tags {
+  @media @mobile {
+    flex-wrap: wrap;
+  }
+}
+
+// =============================================================================
+// Stats Row/Section Responsive
+// =============================================================================
+
+.stats-row,
+.stats-section,
+.summary-section,
+.financial-stats-row {
+  @media @mobile {
+    margin-bottom: @spacing-base;
+
+    > [nz-col] {
+      margin-bottom: @spacing-sm;
+    }
+  }
+}
+
+.stat-card {
+  @media @mobile {
+    height: auto;
+    min-height: 80px;
+    padding: @spacing-sm 0;
+
+    .ant-statistic-title {
+      font-size: @font-size-xs;
+    }
+
+    .ant-statistic-content-value {
+      font-size: @font-size-lg;
+    }
+  }
+}
+
+.financial-card {
+  @media @mobile {
+    .progress-bar {
+      margin-top: @spacing-xs;
+    }
+  }
+}
+
+// =============================================================================
+// Progress Card Responsive
+// =============================================================================
+
+.progress-content {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-base;
+    text-align: center;
+  }
+
+  @media @tablet {
+    gap: @spacing-base;
+  }
+}
+
+.progress-details {
+  @media @mobile {
+    width: 100%;
+  }
+}
+
+.detail-item {
+  @media @mobile {
+    padding: @spacing-xs 0;
+    font-size: @font-size-xs;
+  }
+}
+
+// =============================================================================
+// Navigation Cards Responsive
+// =============================================================================
+
+.quick-nav-row,
+.navigation-section {
+  @media @mobile {
+    margin-top: @spacing-base;
+  }
+}
+
+.nav-card-content,
+.nav-content {
+  @media @mobile {
+    gap: @spacing-sm;
+  }
+}
+
+.nav-icon {
+  @media @mobile {
+    font-size: 24px;
+    padding: @spacing-sm;
+  }
+}
+
+.nav-text,
+.nav-info {
+  @media @mobile {
+    h4 {
+      font-size: @font-size-base;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-size: @font-size-xs;
+    }
+  }
+}
+
+// =============================================================================
+// Filter Bar Responsive
+// =============================================================================
+
+.filter-bar {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-sm;
+    padding: @spacing-sm;
+
+    .search-input {
+      width: 100%;
+    }
+
+    nz-select {
+      width: 100% !important;
+    }
+  }
+
+  @media @tablet {
+    flex-wrap: wrap;
+
+    .search-input {
+      width: 200px;
+    }
+  }
+}
+
+// =============================================================================
+// Table Responsive
+// =============================================================================
+
+.table-card {
+  @media @mobile {
+    margin-bottom: @spacing-base;
+
+    // Make table horizontally scrollable on mobile
+    .ant-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .ant-table {
+      min-width: 600px;
+    }
+  }
+}
+
+// Member info in table
+.member-info {
+  @media @mobile {
+    gap: @spacing-sm;
+  }
+}
+
+.member-details {
+  @media @mobile {
+    .member-name {
+      font-size: @font-size-sm;
+    }
+
+    .member-id {
+      font-size: 10px;
+    }
+  }
+}
+
+// =============================================================================
+// Tab Header Responsive
+// =============================================================================
+
+.tab-header {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-sm;
+    align-items: flex-start;
+
+    h3 {
+      font-size: @font-size-md;
+    }
+  }
+}
+
+// Content Tabs
+.content-tabs {
+  @media @mobile {
+    padding: @spacing-sm;
+
+    // Make tabs scrollable
+    .ant-tabs-nav-list {
+      flex-wrap: nowrap;
+    }
+  }
+}
+
+// =============================================================================
+// Kanban View Responsive
+// =============================================================================
+
+.kanban-container {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-sm;
+  }
+
+  @media @tablet {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.kanban-column {
+  @media @mobile {
+    flex: 0 0 100%;
+    min-height: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  @media @tablet {
+    flex: 0 0 260px;
+    min-height: 400px;
+  }
+}
+
+.kanban-card-title {
+  @media @mobile {
+    font-size: @font-size-sm;
+  }
+}
+
+.kanban-card-meta {
+  @media @mobile {
+    flex-wrap: wrap;
+    gap: @spacing-xs;
+  }
+}
+
+// =============================================================================
+// Tree View Responsive
+// =============================================================================
+
+.tree-node-content {
+  @media @mobile {
+    flex-wrap: wrap;
+    gap: @spacing-xs;
+    padding: @spacing-xs 0;
+  }
+}
+
+.node-title {
+  @media @mobile {
+    width: 100%;
+    font-size: @font-size-sm;
+  }
+}
+
+.node-tags {
+  @media @mobile {
+    order: 2;
+  }
+}
+
+.node-progress {
+  @media @mobile {
+    width: 100%;
+    order: 3;
+  }
+}
+
+.node-actions {
+  @media @mobile {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+// =============================================================================
+// Drawer Responsive
+// =============================================================================
+
+.drawer-footer {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-sm;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Override nz-drawer width on mobile
+@media @mobile {
+  .ant-drawer-content-wrapper {
+    max-width: 100vw !important;
+  }
+
+  .ant-drawer-body {
+    padding: @spacing-base;
+  }
+}
+
+// =============================================================================
+// Financial Actions Responsive
+// =============================================================================
+
+.financial-actions {
+  @media @mobile {
+    flex-direction: column;
+    gap: @spacing-sm;
+    padding: @spacing-sm;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  @media @tablet {
+    flex-wrap: wrap;
+  }
+}
+
+// =============================================================================
+// Description Card Responsive
+// =============================================================================
+
+.description-card {
+  @media @mobile {
+    margin-bottom: @spacing-base;
+  }
+}
+
+.description {
+  @media @mobile {
+    font-size: @font-size-sm;
+  }
+}
+
+// =============================================================================
+// View More Button
+// =============================================================================
+
+.view-more {
+  @media @mobile {
+    margin-top: @spacing-sm;
+  }
+}
+
+// =============================================================================
+// Financial Overview Card
+// =============================================================================
+
+.financial-overview-card,
+.contracts-card,
+.activity-card {
+  @media @mobile {
+    margin-bottom: @spacing-base;
+
+    // Make descriptions responsive
+    .ant-descriptions-item-label,
+    .ant-descriptions-item-content {
+      padding: @spacing-xs !important;
+      font-size: @font-size-xs;
+    }
+
+    // Stack descriptions on mobile
+    .ant-descriptions-row {
+      flex-direction: column;
+    }
+  }
+}
+
+// =============================================================================
+// Empty State Responsive
+// =============================================================================
+
+nz-empty {
+  @media @mobile {
+    .ant-empty-description {
+      font-size: @font-size-sm;
+    }
+  }
+}
+
+// =============================================================================
+// List Responsive
+// =============================================================================
+
+.ant-list-item {
+  @media @mobile {
+    flex-wrap: wrap;
+    padding: @spacing-sm 0;
+  }
+}
+
+.ant-list-item-meta {
+  @media @mobile {
+    width: 100%;
+    margin-bottom: @spacing-xs;
+  }
+}
+
+.ant-list-item-action {
+  @media @mobile {
+    margin-left: 0;
+    flex-wrap: wrap;
+    gap: @spacing-xs;
+  }
+}
+
+// =============================================================================
+// Blueprint List Card Responsive
+// =============================================================================
+
+.blueprint-list-container {
+  @media @mobile {
+    padding: @page-padding-mobile;
+
+    .header {
+      flex-direction: column;
+      gap: @spacing-sm;
+      align-items: stretch;
+      margin-bottom: @spacing-base;
+
+      h2 {
+        font-size: @font-size-lg;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  @media @tablet {
+    padding: @page-padding-tablet;
+  }
+}
+
+.blueprint-card {
+  @media @mobile {
+    .cover {
+      height: 100px;
+    }
+
+    .name {
+      font-size: @font-size-base;
+    }
+
+    .description {
+      font-size: 11px;
+    }
+
+    .tags {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+// =============================================================================
+// Segmented Control (View Switcher) Responsive
+// =============================================================================
+
+@media @mobile {
+  .header-actions {
+    nz-segmented {
+      width: 100%;
+      order: 2;
+
+      .ant-segmented-item {
+        flex: 1;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// Modal Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-modal {
+    max-width: calc(100vw - 32px);
+    margin: 16px;
+  }
+
+  .ant-modal-body {
+    padding: @spacing-base;
+  }
+}
+
+// =============================================================================
+// Form Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-form-item {
+    margin-bottom: @spacing-base;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: @spacing-xs;
+  }
+}
+
+// =============================================================================
+// Button Group Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-btn-group,
+  .ant-space {
+    flex-wrap: wrap;
+  }
+}
+
+// =============================================================================
+// Spin Container Height Fix
+// =============================================================================
+
+.view-card {
+  @media @mobile {
+    min-height: 300px;
+  }
+}
+
+// =============================================================================
+// Back Button Responsive
+// =============================================================================
+
+.back-button {
+  @media @mobile {
+    padding: @spacing-xs;
+  }
+}
+
+// =============================================================================
+// Subtitle Responsive - Hide on small screens
+// =============================================================================
+
+.subtitle {
+  @media @mobile {
+    display: none;
+  }
+}

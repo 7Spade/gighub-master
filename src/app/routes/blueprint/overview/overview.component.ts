@@ -85,24 +85,24 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
           }
 
           <!-- Statistics -->
-          <div nz-row [nzGutter]="16" class="stats-row">
-            <div nz-col [nzSpan]="6">
-              <nz-card [nzBordered]="false">
+          <div nz-row [nzGutter]="[16, 16]" class="stats-row">
+            <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+              <nz-card [nzBordered]="false" class="stat-card">
                 <nz-statistic nzTitle="啟用模組" [nzValue]="enabledModulesCount()"></nz-statistic>
               </nz-card>
             </div>
-            <div nz-col [nzSpan]="6">
-              <nz-card [nzBordered]="false">
+            <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+              <nz-card [nzBordered]="false" class="stat-card">
                 <nz-statistic nzTitle="成員數" [nzValue]="membersCount()"></nz-statistic>
               </nz-card>
             </div>
-            <div nz-col [nzSpan]="6">
-              <nz-card [nzBordered]="false">
+            <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+              <nz-card [nzBordered]="false" class="stat-card">
                 <nz-statistic nzTitle="建立時間" [nzValue]="createdDate()" [nzValueStyle]="{ 'font-size': '14px' }"></nz-statistic>
               </nz-card>
             </div>
-            <div nz-col [nzSpan]="6">
-              <nz-card [nzBordered]="false">
+            <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+              <nz-card [nzBordered]="false" class="stat-card">
                 <nz-statistic nzTitle="更新時間" [nzValue]="updatedDate()" [nzValueStyle]="{ 'font-size': '14px' }"></nz-statistic>
               </nz-card>
             </div>
@@ -120,7 +120,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 </button>
               </div>
               <nz-card [nzBordered]="false">
-                <nz-descriptions nzTitle="藍圖詳情" nzBordered [nzColumn]="2">
+                <nz-descriptions nzTitle="藍圖詳情" nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 }">
                   <nz-descriptions-item nzTitle="名稱">{{ blueprint()!.name }}</nz-descriptions-item>
                   <nz-descriptions-item nzTitle="識別碼">{{ blueprint()!.slug }}</nz-descriptions-item>
                   <nz-descriptions-item nzTitle="狀態">{{ getStatusLabel(blueprint()!.status) }}</nz-descriptions-item>
@@ -139,12 +139,12 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
               </nz-card>
 
               <!-- Quick Navigation Cards -->
-              <div nz-row [nzGutter]="16" class="quick-nav-row">
+              <div nz-row [nzGutter]="[16, 16]" class="quick-nav-row">
                 @if (isTasksModuleEnabled()) {
-                  <div nz-col [nzSpan]="8">
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                     <nz-card [nzBordered]="false" class="nav-card" (click)="goToTasks()" nzHoverable>
                       <div class="nav-card-content">
-                        <span nz-icon nzType="ordered-list" class="nav-icon" style="color: #1890ff;"></span>
+                        <span nz-icon nzType="ordered-list" class="nav-icon tasks"></span>
                         <div class="nav-text">
                           <h4>任務管理</h4>
                           <p>管理施工任務與進度追蹤</p>
@@ -153,10 +153,10 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </nz-card>
                   </div>
                 }
-                <div nz-col [nzSpan]="8">
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToMembers()" nzHoverable>
                     <div class="nav-card-content">
-                      <span nz-icon nzType="team" class="nav-icon" style="color: #52c41a;"></span>
+                      <span nz-icon nzType="team" class="nav-icon members"></span>
                       <div class="nav-text">
                         <h4>成員管理</h4>
                         <p>管理藍圖成員與權限</p>
@@ -164,10 +164,10 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
-                <div nz-col [nzSpan]="8">
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToFinancialOverview()" nzHoverable>
                     <div class="nav-card-content">
-                      <span nz-icon nzType="dollar" class="nav-icon" style="color: #faad14;"></span>
+                      <span nz-icon nzType="dollar" class="nav-icon financial"></span>
                       <div class="nav-text">
                         <h4>財務管理</h4>
                         <p>合約、費用與請款管理</p>
@@ -278,15 +278,15 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
               <nz-spin [nzSpinning]="financialLoading()">
                 <!-- Financial Statistics Cards -->
                 @if (financialSummary()) {
-                  <div nz-row [nzGutter]="16" class="financial-stats-row">
-                    <div nz-col [nzSpan]="6">
-                      <nz-card [nzBordered]="false" class="financial-card">
+                  <div nz-row [nzGutter]="[16, 16]" class="financial-stats-row">
+                    <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+                      <nz-card [nzBordered]="false" class="financial-card stat-card">
                         <nz-statistic nzTitle="總預算" [nzValue]="totalBudget()" [nzPrefix]="'$'" [nzValueStyle]="{ color: '#1890ff' }">
                         </nz-statistic>
                       </nz-card>
                     </div>
-                    <div nz-col [nzSpan]="6">
-                      <nz-card [nzBordered]="false" class="financial-card">
+                    <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+                      <nz-card [nzBordered]="false" class="financial-card stat-card">
                         <nz-statistic
                           nzTitle="已支出"
                           [nzValue]="financialSummary()!.total_expenses"
@@ -300,8 +300,8 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                         </div>
                       </nz-card>
                     </div>
-                    <div nz-col [nzSpan]="6">
-                      <nz-card [nzBordered]="false" class="financial-card">
+                    <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+                      <nz-card [nzBordered]="false" class="financial-card stat-card">
                         <nz-statistic
                           nzTitle="已付款"
                           [nzValue]="financialSummary()!.total_paid"
@@ -314,8 +314,8 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                         </div>
                       </nz-card>
                     </div>
-                    <div nz-col [nzSpan]="6">
-                      <nz-card [nzBordered]="false" class="financial-card">
+                    <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
+                      <nz-card [nzBordered]="false" class="financial-card stat-card">
                         <nz-statistic
                           nzTitle="剩餘預算"
                           [nzValue]="remainingBudget()"
@@ -351,7 +351,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 @if (financialSummary()) {
                   <!-- Financial Overview -->
                   <nz-card nzTitle="財務概覽" [nzBordered]="false" class="financial-overview-card">
-                    <nz-descriptions nzBordered [nzColumn]="3">
+                    <nz-descriptions nzBordered [nzColumn]="{ xxl: 3, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
                       <nz-descriptions-item nzTitle="待審核請款">{{ financialSummary()!.pending_payment_count }}</nz-descriptions-item>
                       <nz-descriptions-item nzTitle="總預算">{{
                         totalBudget() | currency: 'TWD' : 'symbol' : '1.0-0'
