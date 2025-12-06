@@ -71,16 +71,16 @@ function buildAuthRefresh(injector: Injector): void {
   tokenSrv.refresh
     .pipe(
       filter(() => !refreshToking),
-      switchMap(res => {
-        console.log(res);
+      switchMap(() => {
         refreshToking = true;
         return refreshTokenRequest(injector);
       })
     )
     .subscribe({
       next: res => {
-        // TODO: Mock expired value
-        res.expired = +new Date() + 1000 * 60 * 5;
+        // Use actual expires_in from response, or default to 1 hour
+        const expiresIn = res?.expires_in ? res.expires_in * 1000 : 3600 * 1000;
+        res.expired = Date.now() + expiresIn;
         refreshToking = false;
         tokenSrv.set(res);
       },

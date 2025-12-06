@@ -1,8 +1,8 @@
 # ⚠️ 已知問題清單 (按處理順序排列)
 
 > 最後更新: 2025-12-06  
-> 總計問題數量: 34 項 (已修復 17 項, 部分完成 4 項)  
-> 總預計修復工時: 497h (已節省 196h, 進行中 44h)  
+> 總計問題數量: 34 項 (已修復 21 項, 部分完成 4 項)  
+> 總預計修復工時: 497h (已節省 210h, 進行中 44h)  
 > 排列原則: 按優先級 P0 → P1 → P2 → P3 → 技術債順序處理
 
 ---
@@ -14,7 +14,7 @@
 | 1        | 🔴 P0 阻塞 | 0    | 0h     | 阻塞核心功能，必須立即修復 (已修復 5 項) |
 | 2        | 🟠 P1 關鍵 | 0    | 0h     | 影響核心功能，需儘快修復 (5 項已修復或部分完成) |
 | 3        | 🟡 P2 重要 | 1    | 32h    | 影響用戶體驗，需排程修復 (5 項已修復, 1 項部分完成)   |
-| 4        | 🟢 P3 輕微 | 7    | 25h    | 可延後修復 (已修復 4 項)   |
+| 4        | 🟢 P3 輕微 | 4    | 15h    | 可延後修復 (已修復 7 項)   |
 | 5        | 🔧 技術債  | 7    | 125h   | 需要重構 (已修復 3 項)     |
 
 ---
@@ -772,14 +772,16 @@ if (!error && data.session) {
 | 影響範圍 | 帳戶服務                                            |
 | 業務影響 | 帳戶功能可能不完整                                  |
 | 相關檔案 | `src/app/shared/services/account.service.ts`        |
-| 狀態     | 🟢 待處理                                           |
+| 狀態     | ✅ 已修復                                           |
+| 負責人   | Copilot                                             |
 | 預計工時 | 4h                                                  |
+| 完成日期 | 2025-12-06                                          |
 
-**問題程式碼**:
-```typescript
-// account.service.ts
-// TODO: 實現實際的資料載入邏輯
-```
+**修復內容**:
+- 實現實際的帳戶資料載入邏輯
+- 整合 SupabaseService 進行資料庫查詢
+- 移除 TODO 註解和 console.debug
+- 新增 clear() 方法清除帳戶狀態
 
 ---
 
@@ -995,14 +997,10 @@ if (!error && data.session) {
 | 影響範圍 | 帳戶服務                                            |
 | 業務影響 | 帳戶功能可能不完整                                  |
 | 相關檔案 | `src/app/shared/services/account.service.ts`        |
-| 狀態     | 🟢 待處理                                           |
+| 狀態     | ✅ 已修復 (與 ISSUE-023 一同修復)                   |
+| 負責人   | Copilot                                             |
 | 預計工時 | 2h                                                  |
-
-**程式碼證據**:
-```typescript
-// src/app/shared/services/account.service.ts
-// TODO: 實現實際的資料載入邏輯
-```
+| 完成日期 | 2025-12-06                                          |
 
 ---
 
@@ -1032,13 +1030,16 @@ if (!error && data.session) {
 | 影響範圍 | 認證流程                                    |
 | 業務影響 | 可能影響 Token 刷新的準確性                 |
 | 相關檔案 | `src/app/core/net/refresh-token.ts`         |
-| 狀態     | 🟢 待處理                                   |
+| 狀態     | ✅ 已修復                                   |
+| 負責人   | Copilot                                     |
 | 預計工時 | 2h                                          |
+| 完成日期 | 2025-12-06                                  |
 
-**程式碼證據**:
-```typescript
-// TODO: Mock expired value
-```
+**修復內容**:
+- 移除硬編碼的 5 分鐘過期時間
+- 改用 API 響應中的 expires_in 值計算過期時間
+- 預設回退到 1 小時過期
+- 移除多餘的 console.log
 
 ---
 
@@ -1049,14 +1050,18 @@ if (!error && data.session) {
 | 問題描述 | Team/User Todos 組件使用 Placeholder 邏輯而非實際資料           |
 | 影響範圍 | 待辦事項功能                                                    |
 | 業務影響 | 待辦事項功能不完整                                              |
-| 相關檔案 | `src/app/routes/account/todos/components/team-todos.component.ts:56` <br> `src/app/routes/account/todos/components/user-todos.component.ts:56` |
-| 狀態     | 🟢 待處理                                                       |
+| 相關檔案 | `src/app/routes/account/todos/components/team-todos.component.ts` <br> `src/app/routes/account/todos/components/user-todos.component.ts` |
+| 狀態     | ✅ 已修復                                                       |
+| 負責人   | Copilot                                                         |
 | 預計工時 | 4h                                                              |
+| 完成日期 | 2025-12-06                                                      |
 
-**程式碼證據**:
-```typescript
-// Placeholder - would fetch from service
-```
+**修復內容**:
+- 實現實際的待辦事項資料載入
+- 整合 SupabaseService 查詢 todos 表
+- 實現待辦事項完成狀態切換功能
+- 支援團隊成員待辦事項彙整
+- 移除 Placeholder 註解
 
 ---
 

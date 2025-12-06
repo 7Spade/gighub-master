@@ -8,13 +8,23 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, signal, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, signal, OnInit, inject, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+
+import { SupabaseService } from '../../../../core/supabase/supabase.service';
+
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+  due_date?: string | null;
+  priority?: string;
+}
 
 @Component({
   selector: 'app-user-todos-content',
@@ -28,7 +38,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
         <nz-list [nzDataSource]="todos()" [nzRenderItem]="item">
           <ng-template #item let-todo>
             <nz-list-item>
-              <label nz-checkbox [(ngModel)]="todo.completed">
+              <label nz-checkbox [ngModel]="todo.completed" (ngModelChange)="toggleComplete(todo, $event)">
                 {{ todo.title }}
               </label>
             </nz-list-item>
@@ -41,25 +51,80 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 })
 export class UserTodosContentComponent implements OnInit {
   private readonly msg = inject(NzMessageService);
+  private readonly supabase = inject(SupabaseService);
 
   readonly userId = input.required<string>();
   loading = signal(false);
-  todos = signal<Array<{ id: string; title: string; completed: boolean }>>([]);
+  todos = signal<Todo[]>([]);
+
+  constructor() {
+    effect(() => {
+      const id = this.userId();
+      if (id) {
+        this.loadTodos();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loadTodos();
   }
 
   private async loadTodos(): Promise<void> {
+    const accountId = this.userId();
+    if (!accountId) return;
+
     this.loading.set(true);
     try {
-      // Placeholder - would fetch from service
-      this.todos.set([]);
+      const { data, error } = await this.supabase.client
+        .from('todos')
+        .select('id, title, is_completed, due_date, priority')
+        .eq('account_id', accountId)
+        .is('deleted_at', null)
+        .order('due_date', { ascending: true, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      this.todos.set(
+        (data || []).map(item => ({
+          id: item.id,
+          title: item.title,
+          completed: item.is_completed ?? false,
+          due_date: item.due_date,
+          priority: item.priority
+        }))
+      );
     } catch (error) {
-      console.error('[UserTodosContentComponent] Failed to load todos:', error);
       this.msg.error('載入待辦事項失敗');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async toggleComplete(todo: Todo, completed: boolean): Promise<void> {
+    try {
+      const { error } = await this.supabase.client
+        .from('todos')
+        .update({
+          is_completed: completed,
+          completed_at: completed ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', todo.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      this.todos.update(items =>
+        items.map(t => (t.id === todo.id ? { ...t, completed } : t))
+      );
+    } catch (error) {
+      this.msg.error('更新待辦狀態失敗');
     }
   }
 }
