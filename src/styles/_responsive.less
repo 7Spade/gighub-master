@@ -657,3 +657,151 @@ nz-empty {
     display: none;
   }
 }
+
+// =============================================================================
+// Create Blueprint Modal Responsive
+// =============================================================================
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  @media @mobile {
+    padding: @spacing-base;
+  }
+}
+
+.modal-footer {
+  @media @mobile {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: @spacing-sm;
+
+    button {
+      width: 100%;
+      margin-left: 0 !important;
+    }
+  }
+}
+
+// =============================================================================
+// Tabs Responsive - Scrollable tabs on mobile
+// =============================================================================
+
+@media @mobile {
+  .ant-tabs-nav-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-tabs-nav-list {
+    min-width: max-content;
+  }
+
+  .ant-tabs-tab {
+    padding: @spacing-sm @spacing-base;
+  }
+}
+
+// =============================================================================
+// Card Actions Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-card-actions {
+    > li {
+      padding: @spacing-xs 0;
+    }
+  }
+}
+
+// =============================================================================
+// Date Range Picker Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-picker-panel-container {
+    .ant-picker-panels {
+      flex-direction: column;
+    }
+  }
+}
+
+// =============================================================================
+// Select Dropdown Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-select-dropdown {
+    max-height: 50vh;
+  }
+}
+
+// =============================================================================
+// Table Action Column Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-table-cell {
+    .ant-space {
+      gap: @spacing-xs !important;
+    }
+
+    .ant-btn-sm {
+      padding: 0 @spacing-xs;
+    }
+  }
+}
+
+// =============================================================================
+// Page Header Actions (for all pages)
+// =============================================================================
+
+@media @mobile {
+  [actions] {
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================================================
+// Contract/Expense Form in Drawer Responsive
+// =============================================================================
+
+.contract-form,
+.expense-form,
+.payment-form {
+  @media @mobile {
+    .ant-form-item {
+      margin-bottom: @spacing-base;
+    }
+
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+}
+
+// =============================================================================
+// Financial Summary Cards Text Responsive
+// =============================================================================
+
+@media @mobile {
+  .ant-statistic {
+    .ant-statistic-title {
+      font-size: @font-size-xs;
+      margin-bottom: @spacing-xs;
+    }
+
+    .ant-statistic-content {
+      font-size: @font-size-base;
+
+      .ant-statistic-content-prefix,
+      .ant-statistic-content-suffix {
+        font-size: @font-size-sm;
+      }
+    }
+  }
+}
