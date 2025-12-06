@@ -17,7 +17,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -133,13 +132,7 @@ interface PermissionCategory {
           <!-- Roles Tab -->
           <nz-tab nzTitle="角色列表">
             <nz-card [nzBordered]="false" [nzBodyStyle]="{ padding: 0 }">
-              <nz-table
-                #rolesTable
-                [nzData]="roles()"
-                [nzFrontPagination]="false"
-                [nzShowPagination]="false"
-                nzSize="middle"
-              >
+              <nz-table #rolesTable [nzData]="roles()" [nzFrontPagination]="false" [nzShowPagination]="false" nzSize="middle">
                 <thead>
                   <tr>
                     <th nzWidth="200px">角色名稱</th>
@@ -244,12 +237,7 @@ interface PermissionCategory {
     </div>
 
     <!-- Role Details Drawer -->
-    <nz-drawer
-      [nzVisible]="detailsDrawerVisible()"
-      [nzWidth]="500"
-      nzTitle="角色詳情"
-      (nzOnClose)="closeDetailsDrawer()"
-    >
+    <nz-drawer [nzVisible]="detailsDrawerVisible()" [nzWidth]="500" nzTitle="角色詳情" (nzOnClose)="closeDetailsDrawer()">
       @if (selectedRole()) {
         <ng-container *nzDrawerContent>
           <nz-descriptions nzBordered [nzColumn]="1">
@@ -261,7 +249,7 @@ interface PermissionCategory {
               </nz-tag>
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="成員數量">{{ selectedRole()?.memberCount }}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="建立時間">{{ selectedRole()?.createdAt | date:'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="建立時間">{{ selectedRole()?.createdAt | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
           </nz-descriptions>
 
           <nz-divider nzText="權限列表"></nz-divider>

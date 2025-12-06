@@ -285,6 +285,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToAcceptances()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="file-done" class="nav-icon acceptances"></span>
+                      <div class="nav-text">
+                        <h4>驗收管理</h4>
+                        <p>工程驗收流程和審批</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -1052,6 +1063,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'permissions']);
+    }
+  }
+
+  goToAcceptances(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'acceptances']);
     }
   }
 

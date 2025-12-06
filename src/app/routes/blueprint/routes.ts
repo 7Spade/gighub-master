@@ -88,8 +88,7 @@ export const routes: Routes = [
           },
           {
             path: 'notifications',
-            loadComponent: () =>
-              import('./notifications/notifications.component').then(m => m.BlueprintNotificationSettingsComponent),
+            loadComponent: () => import('./notifications/notifications.component').then(m => m.BlueprintNotificationSettingsComponent),
             data: { title: '通知設定' }
           },
           {
@@ -101,6 +100,11 @@ export const routes: Routes = [
             path: 'permissions',
             loadComponent: () => import('./permissions/permissions.component').then(m => m.BlueprintPermissionsComponent),
             data: { title: '權限管理' }
+          },
+          {
+            path: 'acceptances',
+            loadComponent: () => import('./acceptances/acceptances.component').then(m => m.BlueprintAcceptancesComponent),
+            data: { title: '驗收管理' }
           }
         ]
       }

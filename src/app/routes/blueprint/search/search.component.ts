@@ -17,7 +17,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -48,7 +47,7 @@ interface SearchResult {
   updatedAt: Date;
   createdBy?: string;
   score: number;
-  highlights: { field: string; value: string }[];
+  highlights: Array<{ field: string; value: string }>;
 }
 
 interface SearchFilter {
@@ -59,6 +58,7 @@ interface SearchFilter {
   createdBy: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SavedSearch {
   id: string;
   name: string;
@@ -108,20 +108,12 @@ interface SavedSearch {
       <nz-card [nzBordered]="false" style="margin-bottom: 16px;">
         <div class="search-input-row">
           <nz-input-group [nzPrefix]="searchIconTpl" nzSize="large" style="flex: 1;">
-            <input
-              nz-input
-              type="text"
-              placeholder="輸入關鍵字搜尋..."
-              [(ngModel)]="searchQuery"
-              (keyup.enter)="performSearch()"
-            />
+            <input nz-input type="text" placeholder="輸入關鍵字搜尋..." [(ngModel)]="searchQuery" (keyup.enter)="performSearch()" />
           </nz-input-group>
           <ng-template #searchIconTpl>
             <span nz-icon nzType="search"></span>
           </ng-template>
-          <button nz-button nzType="primary" nzSize="large" (click)="performSearch()" [nzLoading]="searching()">
-            搜尋
-          </button>
+          <button nz-button nzType="primary" nzSize="large" (click)="performSearch()" [nzLoading]="searching()"> 搜尋 </button>
           <button nz-button nzSize="large" (click)="toggleFilters()">
             <span nz-icon nzType="filter"></span>
             篩選
@@ -129,9 +121,7 @@ interface SavedSearch {
               <nz-tag [nzColor]="'blue'" style="margin-left: 8px;">{{ activeFilterCount() }}</nz-tag>
             }
           </button>
-          <button nz-button nzSize="large" (click)="clearSearch()">
-            清除
-          </button>
+          <button nz-button nzSize="large" (click)="clearSearch()"> 清除 </button>
         </div>
       </nz-card>
 
@@ -145,12 +135,7 @@ interface SavedSearch {
           <div nz-row [nzGutter]="16">
             <div nz-col [nzSpan]="6">
               <label class="filter-label">搜尋類型</label>
-              <nz-select
-                [(ngModel)]="filters.types"
-                nzMode="multiple"
-                nzPlaceHolder="選擇類型"
-                style="width: 100%;"
-              >
+              <nz-select [(ngModel)]="filters.types" nzMode="multiple" nzPlaceHolder="選擇類型" style="width: 100%;">
                 <nz-option nzValue="task" nzLabel="任務"></nz-option>
                 <nz-option nzValue="diary" nzLabel="日誌"></nz-option>
                 <nz-option nzValue="file" nzLabel="檔案"></nz-option>
@@ -161,12 +146,7 @@ interface SavedSearch {
             </div>
             <div nz-col [nzSpan]="6">
               <label class="filter-label">狀態</label>
-              <nz-select
-                [(ngModel)]="filters.status"
-                nzMode="multiple"
-                nzPlaceHolder="選擇狀態"
-                style="width: 100%;"
-              >
+              <nz-select [(ngModel)]="filters.status" nzMode="multiple" nzPlaceHolder="選擇狀態" style="width: 100%;">
                 <nz-option nzValue="pending" nzLabel="待處理"></nz-option>
                 <nz-option nzValue="in_progress" nzLabel="進行中"></nz-option>
                 <nz-option nzValue="completed" nzLabel="已完成"></nz-option>
@@ -175,12 +155,7 @@ interface SavedSearch {
             </div>
             <div nz-col [nzSpan]="6">
               <label class="filter-label">優先級</label>
-              <nz-select
-                [(ngModel)]="filters.priority"
-                nzMode="multiple"
-                nzPlaceHolder="選擇優先級"
-                style="width: 100%;"
-              >
+              <nz-select [(ngModel)]="filters.priority" nzMode="multiple" nzPlaceHolder="選擇優先級" style="width: 100%;">
                 <nz-option nzValue="low" nzLabel="低"></nz-option>
                 <nz-option nzValue="medium" nzLabel="中"></nz-option>
                 <nz-option nzValue="high" nzLabel="高"></nz-option>
@@ -189,10 +164,7 @@ interface SavedSearch {
             </div>
             <div nz-col [nzSpan]="6">
               <label class="filter-label">日期範圍</label>
-              <nz-range-picker
-                [(ngModel)]="filters.dateRange"
-                style="width: 100%;"
-              ></nz-range-picker>
+              <nz-range-picker [(ngModel)]="filters.dateRange" style="width: 100%;"></nz-range-picker>
             </div>
           </div>
         </nz-card>
@@ -272,9 +244,7 @@ interface SavedSearch {
                         {{ result.createdBy }}
                       </span>
                     }
-                    <span class="result-score">
-                      相關度: {{ (result.score * 100).toFixed(0) }}%
-                    </span>
+                    <span class="result-score"> 相關度: {{ (result.score * 100).toFixed(0) }}% </span>
                   </div>
                 </div>
               }

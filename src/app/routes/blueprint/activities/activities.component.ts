@@ -18,7 +18,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -161,11 +160,7 @@ import {
         </div>
         <div nz-col [nzSpan]="6">
           <label class="filter-label">日期範圍</label>
-          <nz-range-picker
-            [(ngModel)]="filters.dateRange"
-            (ngModelChange)="applyFilters()"
-            style="width: 100%;"
-          ></nz-range-picker>
+          <nz-range-picker [(ngModel)]="filters.dateRange" (ngModelChange)="applyFilters()" style="width: 100%;"></nz-range-picker>
         </div>
         <div nz-col [nzSpan]="6">
           <label class="filter-label">視圖模式</label>
@@ -271,9 +266,7 @@ import {
 
         @if (hasMore() && filteredLogs().length > 0) {
           <div class="load-more">
-            <button nz-button nzType="default" (click)="loadMore()" [nzLoading]="loading()">
-              載入更多
-            </button>
+            <button nz-button nzType="default" (click)="loadMore()" [nzLoading]="loading()"> 載入更多 </button>
           </div>
         }
       </nz-spin>

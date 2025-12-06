@@ -14,10 +14,9 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -113,13 +112,7 @@ interface QuietHours {
             <span class="text-muted">選擇要接收的通知類別和接收方式</span>
           </ng-template>
 
-          <nz-table
-            #categoryTable
-            [nzData]="categories()"
-            [nzFrontPagination]="false"
-            [nzShowPagination]="false"
-            nzSize="middle"
-          >
+          <nz-table #categoryTable [nzData]="categories()" [nzFrontPagination]="false" [nzShowPagination]="false" nzSize="middle">
             <thead>
               <tr>
                 <th nzWidth="200px">類別</th>
@@ -156,25 +149,13 @@ interface QuietHours {
                   </td>
                   <td>{{ category.description }}</td>
                   <td nzAlign="center">
-                    <nz-switch
-                      [(ngModel)]="category.channels.inApp"
-                      [nzDisabled]="!category.enabled"
-                      nzSize="small"
-                    ></nz-switch>
+                    <nz-switch [(ngModel)]="category.channels.inApp" [nzDisabled]="!category.enabled" nzSize="small"></nz-switch>
                   </td>
                   <td nzAlign="center">
-                    <nz-switch
-                      [(ngModel)]="category.channels.email"
-                      [nzDisabled]="!category.enabled"
-                      nzSize="small"
-                    ></nz-switch>
+                    <nz-switch [(ngModel)]="category.channels.email" [nzDisabled]="!category.enabled" nzSize="small"></nz-switch>
                   </td>
                   <td nzAlign="center">
-                    <nz-switch
-                      [(ngModel)]="category.channels.push"
-                      [nzDisabled]="!category.enabled"
-                      nzSize="small"
-                    ></nz-switch>
+                    <nz-switch [(ngModel)]="category.channels.push" [nzDisabled]="!category.enabled" nzSize="small"></nz-switch>
                   </td>
                   <td nzAlign="center">
                     <nz-switch [(ngModel)]="category.enabled"></nz-switch>
@@ -205,28 +186,15 @@ interface QuietHours {
               <div nz-row [nzGutter]="16">
                 <div nz-col [nzSpan]="8">
                   <label class="form-label">開始時間</label>
-                  <nz-time-picker
-                    [(ngModel)]="quietHours.startTime"
-                    nzFormat="HH:mm"
-                    style="width: 100%;"
-                  ></nz-time-picker>
+                  <nz-time-picker [(ngModel)]="quietHours.startTime" nzFormat="HH:mm" style="width: 100%;"></nz-time-picker>
                 </div>
                 <div nz-col [nzSpan]="8">
                   <label class="form-label">結束時間</label>
-                  <nz-time-picker
-                    [(ngModel)]="quietHours.endTime"
-                    nzFormat="HH:mm"
-                    style="width: 100%;"
-                  ></nz-time-picker>
+                  <nz-time-picker [(ngModel)]="quietHours.endTime" nzFormat="HH:mm" style="width: 100%;"></nz-time-picker>
                 </div>
                 <div nz-col [nzSpan]="8">
                   <label class="form-label">適用日期</label>
-                  <nz-select
-                    [(ngModel)]="quietHours.days"
-                    nzMode="multiple"
-                    nzPlaceHolder="選擇適用日期"
-                    style="width: 100%;"
-                  >
+                  <nz-select [(ngModel)]="quietHours.days" nzMode="multiple" nzPlaceHolder="選擇適用日期" style="width: 100%;">
                     <nz-option nzValue="monday" nzLabel="週一"></nz-option>
                     <nz-option nzValue="tuesday" nzLabel="週二"></nz-option>
                     <nz-option nzValue="wednesday" nzLabel="週三"></nz-option>
@@ -240,9 +208,7 @@ interface QuietHours {
 
               <div class="quiet-hours-summary">
                 <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-                <span>
-                  勿擾時段：{{ formatQuietHours() }}
-                </span>
+                <span> 勿擾時段：{{ formatQuietHours() }} </span>
               </div>
             }
           </div>
@@ -266,11 +232,7 @@ interface QuietHours {
             <div nz-row [nzGutter]="16">
               <div nz-col [nzSpan]="8">
                 <label class="form-label">發送時間</label>
-                <nz-time-picker
-                  [(ngModel)]="digestTime"
-                  nzFormat="HH:mm"
-                  style="width: 100%;"
-                ></nz-time-picker>
+                <nz-time-picker [(ngModel)]="digestTime" nzFormat="HH:mm" style="width: 100%;"></nz-time-picker>
               </div>
             </div>
           }
