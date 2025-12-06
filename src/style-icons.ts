@@ -1,6 +1,8 @@
 // Custom icon static resources
+// These are icons that may not be detected by the automatic icon plugin
 
 import {
+  // Core application icons
   BellOutline,
   BulbOutline,
   CarryOutOutline,
@@ -9,31 +11,36 @@ import {
   LinkOutline,
   ProfileOutline,
   ReloadOutline,
-  // 新增缺少的圖標
+  // List and chart icons
   UnorderedListOutline,
   LineChartOutline,
   BarChartOutline,
+  // Form and project icons
   FormOutline,
   CameraOutline,
   ProjectOutline,
-  UsergroupAddOutline
+  UsergroupAddOutline,
+  UsergroupDeleteOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
-  BellOutline, // 通知中心圖示 (notice-icon)
+  // Core application icons
+  BellOutline,
   BulbOutline,
-  CarryOutOutline, // 我的任務圖示 (header-task)
+  CarryOutOutline,
   ExceptionOutline,
   InfoOutline,
   LinkOutline,
   ProfileOutline,
-  ReloadOutline, // 刷新按鈕圖示 (header-task)
-  // 新增缺少的圖標註冊
-  UnorderedListOutline, // 待辦列表圖示 (unordered-list)
-  LineChartOutline, // 折線圖圖示 (line-chart)
-  BarChartOutline, // 柱狀圖圖示 (bar-chart)
-  FormOutline, // 表單圖示 (form)
-  CameraOutline, // 相機圖示 (camera)
-  ProjectOutline, // 專案圖示 (project)
-  UsergroupAddOutline // 用戶組添加圖示 (usergroup-add)
+  ReloadOutline,
+  // List and chart icons
+  UnorderedListOutline,
+  LineChartOutline,
+  BarChartOutline,
+  // Form and project icons
+  FormOutline,
+  CameraOutline,
+  ProjectOutline,
+  UsergroupAddOutline,
+  UsergroupDeleteOutline
 ];
