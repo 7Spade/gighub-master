@@ -42,7 +42,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { firstValueFrom } from 'rxjs';
 
 import {
@@ -86,7 +86,7 @@ import { QcService } from '../../../shared/services/qc/qc.service';
     NzDescriptionsModule,
     NzResultModule,
     NzModalModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzProgressModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -311,6 +311,7 @@ import { QcService } from '../../../shared/services/qc/qc.service';
         [nzTitle]="drawerTitle()"
         (nzOnClose)="closeDrawer()"
         [nzFooter]="drawerFooter"
+        [nzBodyStyle]="{ 'padding-bottom': '72px' }"
       >
         <ng-container *nzDrawerContent>
           <form nz-form [formGroup]="inspectionForm" nzLayout="vertical">
@@ -334,7 +335,7 @@ import { QcService } from '../../../shared/services/qc/qc.service';
             </nz-form-item>
 
             <div nz-row [nzGutter]="16">
-              <div nz-col [nzSpan]="12">
+              <div nz-col [nzXs]="24" [nzSm]="12">
                 <nz-form-item>
                   <nz-form-label nzRequired>檢查類型</nz-form-label>
                   <nz-form-control>
@@ -346,7 +347,7 @@ import { QcService } from '../../../shared/services/qc/qc.service';
                   </nz-form-control>
                 </nz-form-item>
               </div>
-              <div nz-col [nzSpan]="12">
+              <div nz-col [nzXs]="24" [nzSm]="12">
                 <nz-form-item>
                   <nz-form-label>預定日期</nz-form-label>
                   <nz-form-control>
@@ -589,6 +590,38 @@ import { QcService } from '../../../shared/services/qc/qc.service';
         display: flex;
         justify-content: flex-end;
         gap: 8px;
+        padding: 16px;
+        background: #fff;
+        border-top: 1px solid #f0f0f0;
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        margin: 0 -24px -24px;
+      }
+
+      /* Mobile-specific drawer footer styles */
+      @media (max-width: 576px) {
+        .drawer-footer {
+          padding: 12px 16px;
+          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        ::ng-deep .ant-drawer-body {
+          padding-bottom: 80px !important;
+        }
+
+        ::ng-deep .ant-drawer-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 0;
+          border-top: 1px solid #f0f0f0;
+          background: #fff;
+          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+        }
       }
 
       .section-margin {
@@ -788,8 +821,9 @@ export class BlueprintQcInspectionsComponent implements OnInit {
           this.msg.error('建立失敗');
         }
       }
-    } catch (err) {
+    } catch (error) {
       this.msg.error('操作失敗');
+      console.error('Save inspection error:', error);
     } finally {
       this.saving.set(false);
     }
