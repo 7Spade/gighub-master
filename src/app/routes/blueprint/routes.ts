@@ -115,6 +115,11 @@ export const routes: Routes = [
             path: 'gantt',
             loadComponent: () => import('./gantt/gantt.component').then(m => m.BlueprintGanttComponent),
             data: { title: '甘特圖' }
+          },
+          {
+            path: 'api-gateway',
+            loadComponent: () => import('./api-gateway/api-gateway.component').then(m => m.BlueprintApiGatewayComponent),
+            data: { title: 'API 閘道' }
           }
         ]
       }

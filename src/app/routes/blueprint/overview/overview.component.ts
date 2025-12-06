@@ -329,6 +329,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </nz-card>
                   </div>
                 }
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToApiGateway()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="api" class="nav-icon api-gateway"></span>
+                      <div class="nav-text">
+                        <h4>API 閘道</h4>
+                        <p>API 金鑰、Webhook 和速率限制</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -1281,6 +1292,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'gantt']);
+    }
+  }
+
+  goToApiGateway(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'api-gateway']);
     }
   }
 
