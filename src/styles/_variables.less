@@ -34,6 +34,31 @@
 @color-cyan: #13c2c2;
 @color-cyan-light: #e6fffb;
 
+// Azure Dragon Color System - 青龍配色系統
+// 基於中國傳統青色美學與現代色彩科學
+// 詳細文檔：docs/design/azure-dragon-color-concept.md
+@azure-dragon-1: #E6FFFF;   // 冰青 (Ice Cyan)
+@azure-dragon-2: #B3F5F5;   // 薄霧青 (Mist Cyan)
+@azure-dragon-3: #80EBEB;   // 晨露青 (Dew Cyan)
+@azure-dragon-4: #4DE0E0;   // 湖水青 (Lake Cyan)
+@azure-dragon-5: #26D6D6;   // 清泉青 (Spring Cyan)
+@azure-dragon-6: #13C2C2;   // 主青色 (Primary Cyan) - 標準色
+@azure-dragon-7: #0F9E9E;   // 深潭青 (Deep Pool Cyan)
+@azure-dragon-8: #0B7A7A;   // 墨青 (Ink Cyan)
+@azure-dragon-9: #085656;   // 夜青 (Night Cyan)
+@azure-dragon-10: #043232;  // 淵青 (Abyss Cyan)
+
+// Azure Dragon Semantic Colors - 青龍語義色
+@color-azure-primary: @azure-dragon-6;
+@color-azure-light: @azure-dragon-1;
+@color-azure-dark: @azure-dragon-8;
+
+// Azure Dragon Gradients - 青龍漸層
+@gradient-azure-dawn: linear-gradient(180deg, @azure-dragon-1 0%, @azure-dragon-3 35%, @azure-dragon-5 70%, @azure-dragon-6 100%);
+@gradient-azure-pool: radial-gradient(circle at center, @azure-dragon-8 0%, @azure-dragon-9 50%, @azure-dragon-10 100%);
+@gradient-azure-sky: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(179, 245, 245, 0.6) 50%, rgba(19, 194, 194, 0.3) 100%);
+@gradient-azure-scale: linear-gradient(135deg, @azure-dragon-6 0%, @azure-dragon-7 25%, @azure-dragon-6 50%, @azure-dragon-7 75%, @azure-dragon-6 100%);
+
 // Neutral Colors - 中性顏色
 @color-text-primary: #333;
 @color-text-secondary: #666;
