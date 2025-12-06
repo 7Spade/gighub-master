@@ -19,6 +19,7 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { Notification, NotificationQueryOptions, CreateNotificationRequest } from '../../types/notification';
 
 @Injectable({
@@ -27,6 +28,7 @@ import { Notification, NotificationQueryOptions, CreateNotificationRequest } fro
 export class NotificationRepository {
   // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Query Methods (查詢方法)
@@ -41,7 +43,7 @@ export class NotificationRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null; // Not found
-          console.error('[NotificationRepository] findById error:', error);
+          this.logger.error('[NotificationRepository] findById error:', error);
           return null;
         }
         return data as Notification;
@@ -77,7 +79,7 @@ export class NotificationRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[NotificationRepository] findByCurrentUser error:', error);
+          this.logger.error('[NotificationRepository] findByCurrentUser error:', error);
           return [];
         }
         return (data || []) as Notification[];
@@ -93,7 +95,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').select('id', { count: 'exact', head: true }).eq('is_read', false)).pipe(
       map(({ count, error }) => {
         if (error) {
-          console.error('[NotificationRepository] getUnreadCount error:', error);
+          this.logger.error('[NotificationRepository] getUnreadCount error:', error);
           return 0;
         }
         return count || 0;
@@ -113,7 +115,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').insert(request).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[NotificationRepository] create error:', error);
+          this.logger.error('[NotificationRepository] create error:', error);
           return null;
         }
         return data as Notification;
@@ -129,7 +131,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').update({ is_read: true }).eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[NotificationRepository] markAsRead error:', error);
+          this.logger.error('[NotificationRepository] markAsRead error:', error);
           return false;
         }
         return true;
@@ -145,7 +147,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').update({ is_read: true }).in('id', ids)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[NotificationRepository] markMultipleAsRead error:', error);
+          this.logger.error('[NotificationRepository] markMultipleAsRead error:', error);
           return false;
         }
         return true;
@@ -161,7 +163,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').update({ is_read: true }).eq('is_read', false)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[NotificationRepository] markAllAsRead error:', error);
+          this.logger.error('[NotificationRepository] markAllAsRead error:', error);
           return false;
         }
         return true;
@@ -177,7 +179,7 @@ export class NotificationRepository {
     return from(this.supabase.client.from('notifications').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[NotificationRepository] delete error:', error);
+          this.logger.error('[NotificationRepository] delete error:', error);
           return false;
         }
         return true;

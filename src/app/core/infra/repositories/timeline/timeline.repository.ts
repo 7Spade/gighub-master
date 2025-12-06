@@ -17,6 +17,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, of, Subject } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   Activity,
   ActivityWithActor,
@@ -30,6 +31,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class TimelineRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Realtime subscription subject
   private readonly activitySubject = new Subject<Activity>();
@@ -58,7 +60,7 @@ export class TimelineRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] logActivity error:', error);
+          this.logger.error('[TimelineRepository] logActivity error:', error);
           return null;
         }
         // RPC returns the activity ID, fetch the full activity record
@@ -96,7 +98,7 @@ export class TimelineRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] logActivityViaRPC error:', error);
+          this.logger.error('[TimelineRepository] logActivityViaRPC error:', error);
           return null;
         }
         return data as string;
@@ -164,7 +166,7 @@ export class TimelineRepository {
     return from(query).pipe(
       map(({ data, count, error }) => {
         if (error) {
-          console.error('[TimelineRepository] query error:', error);
+          this.logger.error('[TimelineRepository] query error:', error);
           return {
             data: [],
             total: 0,
@@ -196,7 +198,7 @@ export class TimelineRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[TimelineRepository] findById error:', error);
+          this.logger.error('[TimelineRepository] findById error:', error);
           return null;
         }
         return data as unknown as Activity | ActivityWithActor;
@@ -238,7 +240,7 @@ export class TimelineRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] findByBlueprint error:', error);
+          this.logger.error('[TimelineRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as unknown as Array<Activity | ActivityWithActor>;
@@ -268,7 +270,7 @@ export class TimelineRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] getEntityHistory error:', error);
+          this.logger.error('[TimelineRepository] getEntityHistory error:', error);
           return [];
         }
         return (data || []) as unknown as Array<Activity | ActivityWithActor>;
@@ -297,7 +299,7 @@ export class TimelineRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] getActorHistory error:', error);
+          this.logger.error('[TimelineRepository] getActorHistory error:', error);
           return [];
         }
         return (data || []) as Activity[];
@@ -368,7 +370,7 @@ export class TimelineRepository {
     return from(query.limit(5000)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TimelineRepository] getActivityStats error:', error);
+          this.logger.error('[TimelineRepository] getActivityStats error:', error);
           return {
             total: 0,
             byType: {} as Record<ActivityType, number>,

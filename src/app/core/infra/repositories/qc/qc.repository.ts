@@ -14,6 +14,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, switchMap } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   QcInspection,
   QcInspectionItem,
@@ -36,6 +37,7 @@ import {
 })
 export class QcRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // QC Inspection Query Methods
@@ -50,7 +52,7 @@ export class QcRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[QcRepository] findById error:', error);
+          this.logger.error('[QcRepository] findById error:', error);
           return null;
         }
         return data as QcInspection;
@@ -82,7 +84,7 @@ export class QcRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[QcRepository] findByIdWithDetails error:', error);
+          this.logger.error('[QcRepository] findByIdWithDetails error:', error);
           return null;
         }
         return data as QcInspectionWithDetails;
@@ -105,7 +107,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] findByBlueprint error:', error);
+          this.logger.error('[QcRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as QcInspection[];
@@ -128,7 +130,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] findByTask error:', error);
+          this.logger.error('[QcRepository] findByTask error:', error);
           return [];
         }
         return (data || []) as QcInspection[];
@@ -201,7 +203,7 @@ export class QcRepository {
     return from(query).pipe(
       map(({ data, error, count }) => {
         if (error) {
-          console.error('[QcRepository] query error:', error);
+          this.logger.error('[QcRepository] query error:', error);
           return { data: [], total: 0, hasMore: false };
         }
         const total = count || 0;
@@ -249,7 +251,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] create error:', error);
+          this.logger.error('[QcRepository] create error:', error);
           return null;
         }
         return data as QcInspection;
@@ -275,7 +277,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] update error:', error);
+          this.logger.error('[QcRepository] update error:', error);
           return null;
         }
         return data as QcInspection;
@@ -327,7 +329,7 @@ export class QcRepository {
         ).pipe(
           map(({ data, error }) => {
             if (error) {
-              console.error('[QcRepository] completeInspection error:', error);
+              this.logger.error('[QcRepository] completeInspection error:', error);
               return null;
             }
             return data as QcInspection;
@@ -355,7 +357,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] softDelete error:', error);
+          this.logger.error('[QcRepository] softDelete error:', error);
           return null;
         }
         return data as QcInspection;
@@ -381,7 +383,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] findItemsByInspection error:', error);
+          this.logger.error('[QcRepository] findItemsByInspection error:', error);
           return [];
         }
         return (data || []) as QcInspectionItem[];
@@ -413,7 +415,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] createItem error:', error);
+          this.logger.error('[QcRepository] createItem error:', error);
           return null;
         }
         return data as QcInspectionItem;
@@ -441,7 +443,7 @@ export class QcRepository {
     return from(this.supabase.client.from('qc_inspection_items').update(updateData).eq('id', id).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] updateItem error:', error);
+          this.logger.error('[QcRepository] updateItem error:', error);
           return null;
         }
         return data as QcInspectionItem;
@@ -457,7 +459,7 @@ export class QcRepository {
     return from(this.supabase.client.from('qc_inspection_items').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[QcRepository] deleteItem error:', error);
+          this.logger.error('[QcRepository] deleteItem error:', error);
           return false;
         }
         return true;
@@ -485,7 +487,7 @@ export class QcRepository {
     return from(this.supabase.client.from('qc_inspection_items').insert(insertData).select()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] createItemsBatch error:', error);
+          this.logger.error('[QcRepository] createItemsBatch error:', error);
           return [];
         }
         return (data || []) as QcInspectionItem[];
@@ -511,7 +513,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] findAttachmentsByInspection error:', error);
+          this.logger.error('[QcRepository] findAttachmentsByInspection error:', error);
           return [];
         }
         return (data || []) as QcInspectionAttachment[];
@@ -529,7 +531,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] findAttachmentsByItem error:', error);
+          this.logger.error('[QcRepository] findAttachmentsByItem error:', error);
           return [];
         }
         return (data || []) as QcInspectionAttachment[];
@@ -567,7 +569,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[QcRepository] createAttachment error:', error);
+          this.logger.error('[QcRepository] createAttachment error:', error);
           return null;
         }
         return data as QcInspectionAttachment;
@@ -583,7 +585,7 @@ export class QcRepository {
     return from(this.supabase.client.from('qc_inspection_attachments').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[QcRepository] deleteAttachment error:', error);
+          this.logger.error('[QcRepository] deleteAttachment error:', error);
           return false;
         }
         return true;
@@ -611,7 +613,7 @@ export class QcRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) {
-          console.error('[QcRepository] getStatsByBlueprint error:', error);
+          this.logger.error('[QcRepository] getStatsByBlueprint error:', error);
           return { total: 0, passed: 0, failed: 0, pending: 0, avgPassRate: 0 };
         }
 

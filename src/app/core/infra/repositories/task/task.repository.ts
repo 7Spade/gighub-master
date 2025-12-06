@@ -14,6 +14,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { Task, TaskQueryOptions, CreateTaskRequest, UpdateTaskRequest, TaskStatus, TaskPriority } from '../../types/task';
 
 @Injectable({
@@ -22,6 +23,7 @@ import { Task, TaskQueryOptions, CreateTaskRequest, UpdateTaskRequest, TaskStatu
 export class TaskRepository {
   // Angular 20: 使用 inject() 函數進行依賴注入
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Query Methods (查詢方法)
@@ -36,7 +38,7 @@ export class TaskRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null; // Not found
-          console.error('[TaskRepository] findById error:', error);
+          this.logger.error('[TaskRepository] findById error:', error);
           return null;
         }
         return data as Task;
@@ -59,7 +61,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findByBlueprint error:', error);
+          this.logger.error('[TaskRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -82,7 +84,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findChildren error:', error);
+          this.logger.error('[TaskRepository] findChildren error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -106,7 +108,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findRoots error:', error);
+          this.logger.error('[TaskRepository] findRoots error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -162,7 +164,7 @@ export class TaskRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findWithOptions error:', error);
+          this.logger.error('[TaskRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -186,7 +188,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findByStatus error:', error);
+          this.logger.error('[TaskRepository] findByStatus error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -209,7 +211,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] findByAssignee error:', error);
+          this.logger.error('[TaskRepository] findByAssignee error:', error);
           return [];
         }
         return (data || []) as Task[];
@@ -249,7 +251,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] create error:', error);
+          this.logger.error('[TaskRepository] create error:', error);
           return null;
         }
         return data as Task;
@@ -275,7 +277,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] update error:', error);
+          this.logger.error('[TaskRepository] update error:', error);
           return null;
         }
         return data as Task;
@@ -317,7 +319,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] softDelete error:', error);
+          this.logger.error('[TaskRepository] softDelete error:', error);
           return null;
         }
         return data as Task;
@@ -343,7 +345,7 @@ export class TaskRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[TaskRepository] restore error:', error);
+          this.logger.error('[TaskRepository] restore error:', error);
           return null;
         }
         return data as Task;
@@ -398,7 +400,7 @@ export class TaskRepository {
       map(results => {
         const hasError = results.some(r => r.error);
         if (hasError) {
-          console.error(
+          this.logger.error(
             '[TaskRepository] updateSortOrders error:',
             results.filter(r => r.error)
           );
@@ -419,7 +421,7 @@ export class TaskRepository {
     ).pipe(
       map(({ count, error }) => {
         if (error) {
-          console.error('[TaskRepository] countChildren error:', error);
+          this.logger.error('[TaskRepository] countChildren error:', error);
           return 0;
         }
         return count || 0;
@@ -437,7 +439,7 @@ export class TaskRepository {
     ).pipe(
       map(({ count, error }) => {
         if (error) {
-          console.error('[TaskRepository] countByBlueprint error:', error);
+          this.logger.error('[TaskRepository] countByBlueprint error:', error);
           return 0;
         }
         return count || 0;

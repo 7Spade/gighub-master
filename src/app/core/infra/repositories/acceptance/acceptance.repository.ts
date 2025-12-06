@@ -14,6 +14,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, switchMap } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   Acceptance,
   AcceptanceApproval,
@@ -35,6 +36,7 @@ import {
 })
 export class AcceptanceRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Acceptance Query Methods
@@ -49,7 +51,7 @@ export class AcceptanceRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[AcceptanceRepository] findById error:', error);
+          this.logger.error('[AcceptanceRepository] findById error:', error);
           return null;
         }
         return data as Acceptance;
@@ -83,7 +85,7 @@ export class AcceptanceRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[AcceptanceRepository] findByIdWithDetails error:', error);
+          this.logger.error('[AcceptanceRepository] findByIdWithDetails error:', error);
           return null;
         }
         return data as AcceptanceWithDetails;
@@ -106,7 +108,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] findByBlueprint error:', error);
+          this.logger.error('[AcceptanceRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as Acceptance[];
@@ -129,7 +131,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] findByTask error:', error);
+          this.logger.error('[AcceptanceRepository] findByTask error:', error);
           return [];
         }
         return (data || []) as Acceptance[];
@@ -152,7 +154,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] findByQcInspection error:', error);
+          this.logger.error('[AcceptanceRepository] findByQcInspection error:', error);
           return [];
         }
         return (data || []) as Acceptance[];
@@ -233,7 +235,7 @@ export class AcceptanceRepository {
     return from(query).pipe(
       map(({ data, error, count }) => {
         if (error) {
-          console.error('[AcceptanceRepository] query error:', error);
+          this.logger.error('[AcceptanceRepository] query error:', error);
           return { data: [], total: 0, hasMore: false };
         }
         const total = count || 0;
@@ -285,7 +287,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] create error:', error);
+          this.logger.error('[AcceptanceRepository] create error:', error);
           return null;
         }
         return data as Acceptance;
@@ -311,7 +313,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] update error:', error);
+          this.logger.error('[AcceptanceRepository] update error:', error);
           return null;
         }
         return data as Acceptance;
@@ -363,7 +365,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] makeDecision error:', error);
+          this.logger.error('[AcceptanceRepository] makeDecision error:', error);
           return null;
         }
         return data as Acceptance;
@@ -389,7 +391,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] softDelete error:', error);
+          this.logger.error('[AcceptanceRepository] softDelete error:', error);
           return null;
         }
         return data as Acceptance;
@@ -415,7 +417,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] findApprovalsByAcceptance error:', error);
+          this.logger.error('[AcceptanceRepository] findApprovalsByAcceptance error:', error);
           return [];
         }
         return (data || []) as AcceptanceApproval[];
@@ -458,7 +460,7 @@ export class AcceptanceRepository {
         ).pipe(
           map(({ data: approvalData, error }) => {
             if (error) {
-              console.error('[AcceptanceRepository] createApproval error:', error);
+              this.logger.error('[AcceptanceRepository] createApproval error:', error);
               return null;
             }
             return approvalData as AcceptanceApproval;
@@ -486,7 +488,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] findAttachmentsByAcceptance error:', error);
+          this.logger.error('[AcceptanceRepository] findAttachmentsByAcceptance error:', error);
           return [];
         }
         return (data || []) as AcceptanceAttachment[];
@@ -523,7 +525,7 @@ export class AcceptanceRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] createAttachment error:', error);
+          this.logger.error('[AcceptanceRepository] createAttachment error:', error);
           return null;
         }
         return data as AcceptanceAttachment;
@@ -539,7 +541,7 @@ export class AcceptanceRepository {
     return from(this.supabase.client.from('acceptance_attachments').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[AcceptanceRepository] deleteAttachment error:', error);
+          this.logger.error('[AcceptanceRepository] deleteAttachment error:', error);
           return false;
         }
         return true;
@@ -565,7 +567,7 @@ export class AcceptanceRepository {
     return from(this.supabase.client.from('acceptances').select('status').eq('blueprint_id', blueprintId).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error || !data) {
-          console.error('[AcceptanceRepository] getStatsByBlueprint error:', error);
+          this.logger.error('[AcceptanceRepository] getStatsByBlueprint error:', error);
           return { total: 0, passed: 0, failed: 0, pending: 0, conditionallyPassed: 0 };
         }
 

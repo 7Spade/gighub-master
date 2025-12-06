@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
 import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { LoggerService } from '../logger';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,7 @@ export class SupabaseService {
   private _currentUser = new BehaviorSubject<User | null>(null);
   private _session = new BehaviorSubject<Session | null>(null);
   private _isConfigured = false;
+  private logger = inject(LoggerService);
 
   constructor() {
     const supabaseConfig = environment['supabase'] as { url?: string; anonKey?: string } | undefined;
@@ -18,7 +21,7 @@ export class SupabaseService {
     const anonKey = supabaseConfig?.anonKey;
 
     if (!url || !anonKey) {
-      console.error(
+      this.logger.error(
         '[SupabaseService] Supabase configuration is missing. ' +
           'Please check src/environments/environment.ts or environment.prod.ts for proper configuration.'
       );

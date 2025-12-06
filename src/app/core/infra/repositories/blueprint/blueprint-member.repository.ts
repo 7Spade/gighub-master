@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { BlueprintMember, BlueprintMemberQueryOptions } from '../../types/blueprint';
 
 @Injectable({
@@ -20,6 +21,7 @@ import { BlueprintMember, BlueprintMemberQueryOptions } from '../../types/bluepr
 })
 export class BlueprintMemberRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * 根據 ID 查詢藍圖成員
@@ -29,7 +31,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] findById error:', error);
+          this.logger.error('[BlueprintMemberRepository] findById error:', error);
           return null;
         }
         return data as BlueprintMember;
@@ -45,7 +47,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').select('*').eq('blueprint_id', blueprintId).order('created_at')).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] findByBlueprint error:', error);
+          this.logger.error('[BlueprintMemberRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as BlueprintMember[];
@@ -61,7 +63,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').select('*').eq('account_id', accountId).order('created_at')).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] findByAccount error:', error);
+          this.logger.error('[BlueprintMemberRepository] findByAccount error:', error);
           return [];
         }
         return (data || []) as BlueprintMember[];
@@ -97,7 +99,7 @@ export class BlueprintMemberRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] findWithOptions error:', error);
+          this.logger.error('[BlueprintMemberRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as BlueprintMember[];
@@ -115,7 +117,7 @@ export class BlueprintMemberRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] findByBlueprintAndAccount error:', error);
+          this.logger.error('[BlueprintMemberRepository] findByBlueprintAndAccount error:', error);
           return null;
         }
         return data as BlueprintMember;
@@ -131,7 +133,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').insert(member).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] create error:', error);
+          this.logger.error('[BlueprintMemberRepository] create error:', error);
           return null;
         }
         return data as BlueprintMember;
@@ -154,7 +156,7 @@ export class BlueprintMemberRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] update error:', error);
+          this.logger.error('[BlueprintMemberRepository] update error:', error);
           return null;
         }
         return data as BlueprintMember;
@@ -170,7 +172,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] delete error:', error);
+          this.logger.error('[BlueprintMemberRepository] delete error:', error);
           return false;
         }
         return true;
@@ -186,7 +188,7 @@ export class BlueprintMemberRepository {
     return from(this.supabase.client.from('blueprint_members').delete().eq('blueprint_id', blueprintId).eq('account_id', accountId)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[BlueprintMemberRepository] deleteByBlueprintAndAccount error:', error);
+          this.logger.error('[BlueprintMemberRepository] deleteByBlueprintAndAccount error:', error);
           return false;
         }
         return true;

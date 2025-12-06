@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { OrganizationMember, OrganizationRole, OrganizationMemberQueryOptions } from '../../types/account';
 
 @Injectable({
@@ -20,6 +21,7 @@ import { OrganizationMember, OrganizationRole, OrganizationMemberQueryOptions } 
 })
 export class OrganizationMemberRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * 根據組織 ID 查詢成員
@@ -29,7 +31,7 @@ export class OrganizationMemberRepository {
     return from(this.supabase.client.from('organization_members').select('*').eq('organization_id', organizationId)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] findByOrganization error:', error);
+          this.logger.error('[OrganizationMemberRepository] findByOrganization error:', error);
           return [];
         }
         return (data || []) as OrganizationMember[];
@@ -45,7 +47,7 @@ export class OrganizationMemberRepository {
     return from(this.supabase.client.from('organization_members').select('*').eq('account_id', accountId)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] findByAccount error:', error);
+          this.logger.error('[OrganizationMemberRepository] findByAccount error:', error);
           return [];
         }
         return (data || []) as OrganizationMember[];
@@ -71,7 +73,7 @@ export class OrganizationMemberRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] findWithOptions error:', error);
+          this.logger.error('[OrganizationMemberRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as OrganizationMember[];
@@ -127,7 +129,7 @@ export class OrganizationMemberRepository {
     return from(this.supabase.client.from('organization_members').insert(member).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] create error:', error);
+          this.logger.error('[OrganizationMemberRepository] create error:', error);
           return null;
         }
         return data as OrganizationMember;
@@ -150,7 +152,7 @@ export class OrganizationMemberRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] updateRole error:', error);
+          this.logger.error('[OrganizationMemberRepository] updateRole error:', error);
           return null;
         }
         return data as OrganizationMember;
@@ -166,7 +168,7 @@ export class OrganizationMemberRepository {
     return from(this.supabase.client.from('organization_members').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] remove error:', error);
+          this.logger.error('[OrganizationMemberRepository] remove error:', error);
           return false;
         }
         return true;
@@ -184,7 +186,7 @@ export class OrganizationMemberRepository {
     ).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[OrganizationMemberRepository] removeByOrgAndAccount error:', error);
+          this.logger.error('[OrganizationMemberRepository] removeByOrgAndAccount error:', error);
           return false;
         }
         return true;

@@ -24,6 +24,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   FileEntity,
   FileShare,
@@ -40,6 +41,7 @@ import {
 })
 export class FileRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Query Methods (查詢方法)
@@ -54,7 +56,7 @@ export class FileRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[FileRepository] findById error:', error);
+          this.logger.error('[FileRepository] findById error:', error);
           return null;
         }
         return data as FileEntity;
@@ -78,7 +80,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] findByBlueprint error:', error);
+          this.logger.error('[FileRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as FileEntity[];
@@ -104,7 +106,7 @@ export class FileRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] findByFolder error:', error);
+          this.logger.error('[FileRepository] findByFolder error:', error);
           return [];
         }
         return (data || []) as FileEntity[];
@@ -179,7 +181,7 @@ export class FileRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] findWithOptions error:', error);
+          this.logger.error('[FileRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as FileEntity[];
@@ -244,7 +246,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] create error:', error);
+          this.logger.error('[FileRepository] create error:', error);
           return null;
         }
         return data as FileEntity;
@@ -278,7 +280,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] createFolder error:', error);
+          this.logger.error('[FileRepository] createFolder error:', error);
           return null;
         }
         return data as FileEntity;
@@ -304,7 +306,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] update error:', error);
+          this.logger.error('[FileRepository] update error:', error);
           return null;
         }
         return data as FileEntity;
@@ -347,7 +349,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] softDelete error:', error);
+          this.logger.error('[FileRepository] softDelete error:', error);
           return null;
         }
         return data as FileEntity;
@@ -374,7 +376,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] restore error:', error);
+          this.logger.error('[FileRepository] restore error:', error);
           return null;
         }
         return data as FileEntity;
@@ -390,7 +392,7 @@ export class FileRepository {
     return from(this.supabase.client.from('files').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FileRepository] permanentDelete error:', error);
+          this.logger.error('[FileRepository] permanentDelete error:', error);
           return false;
         }
         return true;
@@ -426,7 +428,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] createShare error:', error);
+          this.logger.error('[FileRepository] createShare error:', error);
           return null;
         }
         return data as FileShare;
@@ -442,7 +444,7 @@ export class FileRepository {
     return from(this.supabase.client.from('file_shares').select('*').eq('file_id', fileId).order('created_at', { ascending: false })).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] findSharesByFile error:', error);
+          this.logger.error('[FileRepository] findSharesByFile error:', error);
           return [];
         }
         return (data || []) as FileShare[];
@@ -459,7 +461,7 @@ export class FileRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[FileRepository] findShareByLink error:', error);
+          this.logger.error('[FileRepository] findShareByLink error:', error);
           return null;
         }
         return data as FileShare;
@@ -475,7 +477,7 @@ export class FileRepository {
     return from(this.supabase.client.from('file_shares').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[FileRepository] deleteShare error:', error);
+          this.logger.error('[FileRepository] deleteShare error:', error);
           return false;
         }
         return true;
@@ -502,7 +504,7 @@ export class FileRepository {
     ).pipe(
       map(({ count, error }) => {
         if (error) {
-          console.error('[FileRepository] countByBlueprint error:', error);
+          this.logger.error('[FileRepository] countByBlueprint error:', error);
           return 0;
         }
         return count || 0;
@@ -520,7 +522,7 @@ export class FileRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] getTotalSize error:', error);
+          this.logger.error('[FileRepository] getTotalSize error:', error);
           return 0;
         }
         return (data || []).reduce((sum, file) => sum + (file.file_size || 0), 0);
@@ -542,7 +544,7 @@ export class FileRepository {
     ).pipe(
       map(({ count, error }) => {
         if (error) {
-          console.error('[FileRepository] countInFolder error:', error);
+          this.logger.error('[FileRepository] countInFolder error:', error);
           return 0;
         }
         return count || 0;
@@ -600,7 +602,7 @@ export class FileRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[FileRepository] isNameDuplicate error:', error);
+          this.logger.error('[FileRepository] isNameDuplicate error:', error);
           return false;
         }
         return (data || []).length > 0;
