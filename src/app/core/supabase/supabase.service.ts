@@ -175,4 +175,38 @@ export class SupabaseService {
   get functions() {
     return this.supabase.functions;
   }
+
+  /**
+   * Get diagnostic information for debugging
+   */
+  async getDiagnostics(): Promise<{
+    isConfigured: boolean;
+    hasSession: boolean;
+    hasUser: boolean;
+    userId: string | null;
+    sessionExpiry: number | null;
+  }> {
+    const session = this._session.value;
+    const user = this._currentUser.value;
+    
+    this.logger.debug('[SupabaseService] Diagnostics', {
+      isConfigured: this._isConfigured,
+      hasSession: !!session,
+      hasUser: !!user,
+      userId: user?.id,
+      userEmail: user?.email,
+      sessionExpiry: session?.expires_at,
+      sessionExpiresIn: session?.expires_at 
+        ? Math.floor((new Date(session.expires_at * 1000).getTime() - Date.now()) / 1000) + 's'
+        : null
+    });
+
+    return {
+      isConfigured: this._isConfigured,
+      hasSession: !!session,
+      hasUser: !!user,
+      userId: user?.id ?? null,
+      sessionExpiry: session?.expires_at ?? null
+    };
+  }
 }

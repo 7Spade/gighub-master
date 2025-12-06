@@ -26,7 +26,8 @@ import {
   TaskStatus,
   TASK_STATUS_CONFIG,
   TASK_PRIORITY_CONFIG,
-  LoggerService
+  LoggerService,
+  SupabaseService
 } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -1066,32 +1067,74 @@ export class BlueprintOverviewComponent implements OnInit {
       return;
     }
 
+    // Check authentication state before proceeding
+    const supabaseService = inject(SupabaseService);
+    const diagnostics = await supabaseService.getDiagnostics();
+    
+    this.logger.info('[BlueprintOverviewComponent] Auth diagnostics', diagnostics);
+    
+    if (!diagnostics.hasSession || !diagnostics.hasUser) {
+      this.logger.error('[BlueprintOverviewComponent] No active session or user');
+      this.error.set('尚未登入或登入已過期，請重新登入');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 
+    // Set a timeout to detect hung queries
+    const loadingTimeout = setTimeout(() => {
+      this.logger.error('[BlueprintOverviewComponent] Loading timeout - query may be hung', {
+        blueprintId: id,
+        duration: '30s'
+      });
+      this.error.set('載入藍圖超時，請檢查網路連線或稍後再試');
+      this.loading.set(false);
+    }, 30000);
+
     try {
+      this.logger.info('[BlueprintOverviewComponent] Starting blueprint load', { blueprintId: id });
+      
       const blueprint = await this.blueprintFacade.findById(id);
+      
+      this.logger.info('[BlueprintOverviewComponent] Blueprint query completed', { 
+        blueprintId: id, 
+        found: !!blueprint,
+        data: blueprint 
+      });
+
       if (blueprint) {
         this.blueprint.set(blueprint);
+        
         // Load members
+        this.logger.debug('[BlueprintOverviewComponent] Loading members', { blueprintId: id });
         const members = await this.blueprintFacade.getBlueprintMembers(id);
         this.members.set(members);
+        this.logger.debug('[BlueprintOverviewComponent] Members loaded', { count: members.length });
 
         // Load financial data
         this.loadFinancialData(id);
 
         // Load tasks if tasks module is enabled
         if (blueprint.enabled_modules?.includes(ModuleType.TASKS)) {
+          this.logger.debug('[BlueprintOverviewComponent] Tasks module enabled, loading tasks');
           this.loadTasks(id);
         }
       } else {
-        this.error.set('找不到藍圖');
+        this.logger.warn('[BlueprintOverviewComponent] Blueprint not found or access denied', { blueprintId: id });
+        this.error.set('找不到藍圖或您沒有存取權限');
       }
     } catch (err) {
       this.logger.error('[BlueprintOverviewComponent] Failed to load blueprint:', err);
       this.error.set(err instanceof Error ? err.message : '載入藍圖失敗');
     } finally {
+      clearTimeout(loadingTimeout);
       this.loading.set(false);
+      this.logger.info('[BlueprintOverviewComponent] Blueprint load completed', { 
+        blueprintId: id,
+        hasBlueprint: !!this.blueprint(),
+        hasError: !!this.error()
+      });
     }
   }
 

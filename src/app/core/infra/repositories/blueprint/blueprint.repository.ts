@@ -28,12 +28,46 @@ export class BlueprintRepository {
    * Find blueprint by ID
    */
   findById(id: string): Observable<Blueprint | null> {
-    return from(this.supabase.client.from('blueprints').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
+    this.logger.debug('[BlueprintRepository] findById starting', { 
+      blueprintId: id,
+      timestamp: new Date().toISOString()
+    });
+
+    const query = this.supabase.client.from('blueprints').select('*').eq('id', id).is('deleted_at', null).single();
+    
+    this.logger.debug('[BlueprintRepository] Query constructed', {
+      blueprintId: id,
+      queryDetails: 'SELECT * FROM blueprints WHERE id = ? AND deleted_at IS NULL'
+    });
+
+    return from(query).pipe(
       map(({ data, error }) => {
+        this.logger.debug('[BlueprintRepository] Query executed', {
+          blueprintId: id,
+          hasData: !!data,
+          hasError: !!error,
+          errorDetails: error,
+          timestamp: new Date().toISOString()
+        });
+
         if (error) {
-          this.logger.error('[BlueprintRepository] findById error:', error);
+          this.logger.error('[BlueprintRepository] findById error:', {
+            blueprintId: id,
+            error: error,
+            errorCode: error.code,
+            errorMessage: error.message,
+            errorDetails: error.details,
+            errorHint: error.hint
+          });
           return null;
         }
+        
+        this.logger.info('[BlueprintRepository] Blueprint found', {
+          blueprintId: id,
+          blueprintName: data?.name,
+          ownerId: data?.owner_id
+        });
+        
         return data as Blueprint;
       })
     );
