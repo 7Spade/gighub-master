@@ -142,7 +142,7 @@ test.describe('Blueprint Functionality Test Suite', () => {
     
     // Look for create button
     console.log('Looking for create blueprint button...');
-    const createButton = page.locator('button:has-text("建立"), button:has-text("新增"), button:has-text("創建"), button:has-text("Create"), button[nz-button]:has(span:has-text("新"))').first();
+    const createButton = page.locator('button:has-text("建立藍圖")').first();
     
     await takeScreenshot(page, '06-before-create-click');
     
@@ -160,7 +160,7 @@ test.describe('Blueprint Functionality Test Suite', () => {
       
       // Submit the form
       console.log('Submitting blueprint creation form...');
-      const submitButton = page.locator('button:has-text("確定"), button:has-text("確認"), button:has-text("提交"), button:has-text("Submit"), button[type="submit"]').last();
+      const submitButton = page.locator('button:has-text("建立藍圖")').last();
       await submitButton.click();
       
       // Wait for creation to complete
@@ -220,12 +220,12 @@ test.describe('Blueprint Functionality Test Suite', () => {
     } else {
       console.log('⚠ No blueprints found, creating one first...');
       // Create a blueprint first
-      const createButton = page.locator('button:has-text("建立"), button:has-text("新增"), button:has-text("創建")').first();
+      const createButton = page.locator('button:has-text("建立藍圖")').first();
       await createButton.click();
       await page.waitForTimeout(2000);
       await page.fill('input[formControlName="name"]', BLUEPRINT_NAME);
       await page.fill('textarea[formControlName="description"]', BLUEPRINT_DESCRIPTION);
-      const submitButton = page.locator('button:has-text("確定"), button:has-text("確認")').last();
+      const submitButton = page.locator('button:has-text("建立藍圖")').last();
       await submitButton.click();
       await page.waitForTimeout(3000);
       await waitForNavigation(page);
