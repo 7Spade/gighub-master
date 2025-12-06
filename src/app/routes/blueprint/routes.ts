@@ -96,6 +96,11 @@ export const routes: Routes = [
             path: 'search',
             loadComponent: () => import('./search/search.component').then(m => m.BlueprintAdvancedSearchComponent),
             data: { title: '進階搜尋' }
+          },
+          {
+            path: 'permissions',
+            loadComponent: () => import('./permissions/permissions.component').then(m => m.BlueprintPermissionsComponent),
+            data: { title: '權限管理' }
           }
         ]
       }

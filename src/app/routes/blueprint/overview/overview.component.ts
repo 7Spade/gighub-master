@@ -274,6 +274,17 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToPermissions()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="safety-certificate" class="nav-icon permissions"></span>
+                      <div class="nav-text">
+                        <h4>權限管理</h4>
+                        <p>角色和權限設定</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -679,6 +690,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon.search {
         color: #eb2f96;
       }
+      .nav-icon.permissions {
+        color: #13c2c2;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -1031,6 +1045,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'search']);
+    }
+  }
+
+  goToPermissions(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'permissions']);
     }
   }
 
