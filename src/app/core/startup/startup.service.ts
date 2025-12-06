@@ -8,6 +8,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable, zip, catchError, map } from 'rxjs';
 
 import { I18NService } from '../i18n/i18n.service';
+import { LoggerService } from '../logger';
 import { SupabaseAuthService } from '../supabase/supabase-auth.service';
 
 /**
@@ -38,6 +39,7 @@ export class StartupService {
   private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   private supabaseAuth = inject(SupabaseAuthService);
   private menuManagementService = inject(MenuManagementService);
+  private logger = inject(LoggerService);
 
   load(): Observable<void> {
     const defaultLang = this.i18n.defaultLang;
@@ -46,7 +48,7 @@ export class StartupService {
     return zip(this.i18n.loadLangData(defaultLang), this.httpClient.get('./assets/tmp/app-data.json')).pipe(
       // 接收其他拦截器后产生的异常消息
       catchError(res => {
-        console.warn(`StartupService.load: Network request failed`, res);
+        this.logger.warn(`StartupService.load: Network request failed`, res);
         setTimeout(() => this.router.navigateByUrl(`/exception/500`));
         return [];
       }),
@@ -81,7 +83,7 @@ export class StartupService {
         // 根據 docs/analysis-menu-infinite-loop-detailed.md 分析：
         // 移除此處的 updateMenu 調用，避免與 LayoutBasicComponent 的 effect 形成重複更新
         this.menuManagementService.loadConfig().catch(error => {
-          console.error('[StartupService] Failed to load menu config:', error);
+          this.logger.error('[StartupService] Failed to load menu config:', error);
         });
 
         // 向後兼容：如果使用舊的 menu 配置

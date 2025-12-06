@@ -20,6 +20,7 @@ import { Session, User, AuthError } from '@supabase/supabase-js';
 import { Observable, from, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { LoggerService } from '../logger';
 import { SupabaseService } from './supabase.service';
 
 /**
@@ -71,6 +72,7 @@ export class SupabaseAuthService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly tokenService = inject(DA_SERVICE_TOKEN) as ITokenService;
   private readonly router = inject(Router);
+  private readonly logger = inject(LoggerService);
 
   private readonly authStateSubject = new BehaviorSubject<AuthState>(AuthState.SIGNED_OUT);
   private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -131,7 +133,7 @@ export class SupabaseAuthService {
    * Handle authentication state changes
    */
   private handleAuthStateChange(event: string, session: Session | null): void {
-    console.log('[SupabaseAuthService] Auth state changed:', event);
+    this.logger.debug('[SupabaseAuthService] Auth state changed:', event);
 
     if (session) {
       this.syncSessionToDelonAuth(session);

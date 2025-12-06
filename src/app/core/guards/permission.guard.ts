@@ -15,6 +15,7 @@ import { Router, ActivatedRouteSnapshot, CanActivateFn, CanMatchFn, Route, UrlSe
 import { PermissionService } from '@shared';
 
 import { Permission, BlueprintBusinessRole } from '../infra/types/permission';
+import { LoggerService } from '../logger';
 
 /**
  * 權限守衛配置介面
@@ -53,10 +54,11 @@ export function permissionGuard(config: PermissionGuardConfig): CanActivateFn {
   return (_route: ActivatedRouteSnapshot) => {
     const permissionService = inject(PermissionService);
     const router = inject(Router);
+    const logger = inject(LoggerService);
 
     // Check if permission context is loaded
     if (!permissionService.hasContext()) {
-      console.warn('[PermissionGuard] No permission context loaded');
+      logger.warn('[PermissionGuard] No permission context loaded');
       return handleUnauthorized(router, config.redirectTo);
     }
 
@@ -67,7 +69,7 @@ export function permissionGuard(config: PermissionGuardConfig): CanActivateFn {
         : permissionService.hasAnyPermission(config.permissions);
 
       if (!hasPermission) {
-        console.warn('[PermissionGuard] Missing required permissions:', config.permissions);
+        logger.warn('[PermissionGuard] Missing required permissions:', config.permissions);
         return handleUnauthorized(router, config.redirectTo);
       }
     }
@@ -77,7 +79,7 @@ export function permissionGuard(config: PermissionGuardConfig): CanActivateFn {
       const hasRole = permissionService.hasAnyRole(config.roles);
 
       if (!hasRole) {
-        console.warn('[PermissionGuard] Missing required roles:', config.roles);
+        logger.warn('[PermissionGuard] Missing required roles:', config.roles);
         return handleUnauthorized(router, config.redirectTo);
       }
     }
@@ -109,10 +111,11 @@ export function permissionMatchGuard(config: PermissionGuardConfig): CanMatchFn 
   return (_route: Route, _segments: UrlSegment[]) => {
     const permissionService = inject(PermissionService);
     const router = inject(Router);
+    const logger = inject(LoggerService);
 
     // Check if permission context is loaded
     if (!permissionService.hasContext()) {
-      console.warn('[PermissionMatchGuard] No permission context loaded');
+      logger.warn('[PermissionMatchGuard] No permission context loaded');
       return handleUnauthorized(router, config.redirectTo);
     }
 
