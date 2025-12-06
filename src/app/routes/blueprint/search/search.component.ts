@@ -13,7 +13,7 @@
  * @module routes/blueprint/search
  */
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -633,7 +633,8 @@ export class BlueprintAdvancedSearchComponent implements OnInit {
     if (days === 1) return '昨天';
     if (days < 7) return `${days} 天前`;
     if (days < 30) return `${Math.floor(days / 7)} 週前`;
-    return d.toLocaleDateString('zh-TW');
+    const datePipe = new DatePipe('zh-TW');
+    return datePipe.transform(d, 'yyyy/MM/dd') || '';
   }
 
   goBack(): void {

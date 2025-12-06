@@ -97,9 +97,8 @@ export class UserLoginComponent {
             });
           }
         },
-        error: err => {
+        error: () => {
           this.error = '發生未預期的錯誤，請稍後再試。';
-          console.error('Login error:', err);
           this.loading = false;
           this.cdr.detectChanges();
         }

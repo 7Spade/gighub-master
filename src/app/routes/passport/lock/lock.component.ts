@@ -32,8 +32,6 @@ export class UserLockComponent {
     this.f.controls.password.markAsDirty();
     this.f.controls.password.updateValueAndValidity();
     if (this.f.valid) {
-      console.log('Valid!');
-      console.log(this.f.value);
       this.tokenService.set({
         token: '123'
       });

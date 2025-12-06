@@ -400,7 +400,8 @@ export class ActivityTimelineComponent implements OnInit {
     } else if (diffDays < 7) {
       return `${diffDays} 天前`;
     } else {
-      return date.toLocaleDateString('zh-TW');
+      const datePipe = new DatePipe('zh-TW');
+      return datePipe.transform(date, 'yyyy/MM/dd') || '';
     }
   }
 }

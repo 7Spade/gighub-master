@@ -999,13 +999,15 @@ export class BlueprintOverviewComponent implements OnInit {
   readonly createdDate = computed(() => {
     const date = this.blueprint()?.created_at;
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('zh-TW');
+    const datePipe = new DatePipe('zh-TW');
+    return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 
   readonly updatedDate = computed(() => {
     const date = this.blueprint()?.updated_at;
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('zh-TW');
+    const datePipe = new DatePipe('zh-TW');
+    return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 
   // Financial computed values

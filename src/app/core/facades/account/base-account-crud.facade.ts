@@ -46,12 +46,9 @@ export abstract class BaseAccountCrudFacade<TModel, TCreateRequest, TUpdateReque
    */
   async create(request: TCreateRequest): Promise<TModel> {
     try {
-      console.log(`[${this.facadeName}] Creating ${this.entityTypeName}:`, request);
       const result = await this.executeCreate(request);
-      console.log(`[${this.facadeName}] ${this.entityTypeName} created:`, result);
       return result;
     } catch (error) {
-      console.error(`[${this.facadeName}] Failed to create ${this.entityTypeName}:`, error);
       throw this.formatError(error, `創建${this.entityTypeName}失敗`);
     }
   }
@@ -66,12 +63,9 @@ export abstract class BaseAccountCrudFacade<TModel, TCreateRequest, TUpdateReque
    */
   async update(id: string, request: TUpdateRequest): Promise<TModel> {
     try {
-      console.log(`[${this.facadeName}] Updating ${this.entityTypeName}:`, { id, request });
       const result = await this.executeUpdate(id, request);
-      console.log(`[${this.facadeName}] ${this.entityTypeName} updated:`, result);
       return result;
     } catch (error) {
-      console.error(`[${this.facadeName}] Failed to update ${this.entityTypeName}:`, error);
       throw this.formatError(error, `更新${this.entityTypeName}失敗`);
     }
   }
@@ -85,12 +79,9 @@ export abstract class BaseAccountCrudFacade<TModel, TCreateRequest, TUpdateReque
    */
   async delete(id: string): Promise<TModel> {
     try {
-      console.log(`[${this.facadeName}] Deleting ${this.entityTypeName}:`, id);
       const result = await this.executeDelete(id);
-      console.log(`[${this.facadeName}] ${this.entityTypeName} deleted:`, result);
       return result;
     } catch (error) {
-      console.error(`[${this.facadeName}] Failed to delete ${this.entityTypeName}:`, error);
       throw this.formatError(error, `刪除${this.entityTypeName}失敗`);
     }
   }

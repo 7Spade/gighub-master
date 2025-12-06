@@ -753,8 +753,9 @@ export class BlueprintGanttComponent implements OnInit {
   }
 
   getTaskTooltip(task: Task): string {
-    const start = task.start_date ? new Date(task.start_date).toLocaleDateString() : '未設定';
-    const due = task.due_date ? new Date(task.due_date).toLocaleDateString() : '未設定';
+    const datePipe = new DatePipe('zh-TW');
+    const start = task.start_date ? datePipe.transform(new Date(task.start_date), 'yyyy/MM/dd') : '未設定';
+    const due = task.due_date ? datePipe.transform(new Date(task.due_date), 'yyyy/MM/dd') : '未設定';
     return `${task.title}\n開始：${start}\n截止：${due}\n進度：${task.completion_rate || 0}%`;
   }
 

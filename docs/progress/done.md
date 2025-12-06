@@ -1,8 +1,8 @@
 # ✅ 已完成項目清單 (按實現順序排列)
 
 > 最後更新: 2025-12-06  
-> 總計完成項目: 490 項  
-> 總計 TypeScript 檔案: 287 個  
+> 總計完成項目: 495+ 項  
+> 總計 TypeScript 檔案: 289 個  
 > 總計 SQL 遷移檔案: 66 個  
 > 總計文檔檔案: 52 個  
 > 排列原則: 按架構層級 基礎層 → 容器層 → 業務層 → 基礎設施 順序
@@ -47,6 +47,8 @@
 
 | 項目 | 說明 | 相關問題 |
 | ---- | ---- | -------- |
+| 日期格式統一 | 統一使用 Angular DatePipe 替代 toLocaleDateString | ISSUE-017 |
+| console.log 清理 | 移除開發用 debug 語句 (base-account-crud.facade, lock.component, login.component) | TD-008 |
 | Account Service 實現 | 實現實際資料載入邏輯，整合 Supabase | ISSUE-023/024 |
 | Todos 組件實現 | 用戶/團隊待辦事項實際資料載入和狀態切換 | ISSUE-027 |
 | Refresh Token 修復 | 移除 Mock 過期時間，使用實際 API 響應值 | ISSUE-026 |
