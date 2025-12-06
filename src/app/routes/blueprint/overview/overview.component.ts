@@ -1069,7 +1069,8 @@ export class BlueprintOverviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Blueprint loading is handled by the effect watching blueprintId
+    // Initial load - effect will handle subsequent navigation
+    this.loadBlueprint();
   }
 
   async loadBlueprint(): Promise<void> {
