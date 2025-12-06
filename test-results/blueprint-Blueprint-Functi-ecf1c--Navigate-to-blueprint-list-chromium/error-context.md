@@ -1,0 +1,52 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - img "global" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - img [ref=e12]
+          - text: NG-ALAIN
+        - generic [ref=e13]: 武林中最有影响力的《葵花宝典》；欲练神功，挥刀自宫
+      - generic [ref=e14]:
+        - form [ref=e15]:
+          - generic [ref=e17]:
+            - img "close-circle" [ref=e19]:
+              - img [ref=e20]
+            - generic [ref=e23]: Failed to fetch
+          - generic [ref=e28]:
+            - img "user" [ref=e30]:
+              - img [ref=e31]
+            - textbox "Email" [ref=e33]: ac7x@pm.me
+          - generic [ref=e38]:
+            - img "lock" [ref=e40]:
+              - img [ref=e41]
+            - textbox "Password" [ref=e43]: "123123"
+          - generic [ref=e44]:
+            - generic [ref=e46] [cursor=pointer]:
+              - checkbox "Remember me" [checked] [ref=e48]
+              - generic [ref=e50]: Remember me
+            - link "Forgot your password?" [ref=e52] [cursor=pointer]:
+              - /url: "#/passport/register"
+          - button "Login" [active] [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: Login
+        - link "Sign up" [ref=e56] [cursor=pointer]:
+          - /url: "#/passport/register"
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59] [cursor=pointer]: 帮助
+          - generic [ref=e60] [cursor=pointer]: 隐私
+          - generic [ref=e61] [cursor=pointer]: 条款
+        - generic [ref=e62]:
+          - text: Copyright
+          - img "copyright" [ref=e63]:
+            - img [ref=e64]
+          - text: "2023"
+          - link "卡色" [ref=e66] [cursor=pointer]:
+            - /url: //github.com/cipchk
+          - text: 出品
+  - img [ref=e69] [cursor=pointer]
+```
