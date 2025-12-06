@@ -1,0 +1,78 @@
+
+Running 2 tests using 1 worker
+
+
+=== Step 1: Navigate to application ===
+BROWSER CONSOLE: [vite] connecting...
+BROWSER CONSOLE: [vite] connected.
+BROWSER CONSOLE: [2025-12-06T18:59:41.271Z] [DEBUG] [SupabaseAuthService] Auth state changed: INITIAL_SESSION
+BROWSER CONSOLE: Angular is running in development mode.
+BROWSER CONSOLE: Failed to load resource: net::ERR_NAME_NOT_RESOLVED
+Current URL: http://localhost:4200/#/passport/login
+Page Title: Login - NG-ALAIN
+
+=== Step 2: Analyze login form ===
+Found 3 input fields
+Input 1:
+  Type: email
+  Placeholder: Email
+  Name: null
+  ID: null
+  FormControlName: email
+Input 2:
+  Type: password
+  Placeholder: Password
+  Name: null
+  ID: null
+  FormControlName: password
+Input 3:
+  Type: checkbox
+  Placeholder: null
+  Name: null
+  ID: null
+  FormControlName: null
+
+Found 1 buttons
+Button 1: "Login" (type: submit)
+
+=== Step 3: Try to fill login form ===
+✓ Filled email using selector: input[type="email"]
+✓ Filled password using selector: input[type="password"]
+
+=== Step 4: Attempt login ===
+Found login button with selector: button[type="submit"]
+Button disabled: false
+BROWSER CONSOLE: Failed to load resource: net::ERR_NAME_NOT_RESOLVED
+BROWSER CONSOLE: TypeError: Failed to fetch
+    at http://localhost:4200/polyfills.js:2266:32
+    at proto.<computed> (http://localhost:4200/polyfills.js:893:16)
+    at http://localhost:4200/chunk-Z2CR3QLC.js:15811:27
+    at http://localhost:4200/chunk-Z2CR3QLC.js:15911:22
+    at Generator.next (<anonymous>)
+    at http://localhost:4200/chunk-5DDHASPA.js:81:61
+    at new ZoneAwarePromise (http://localhost:4200/polyfills.js:2194:23)
+    at __async (http://localhost:4200/chunk-5DDHASPA.js:65:10)
+    at _handleRequest3 (http://localhost:4200/chunk-Z2CR3QLC.js:15907:10)
+    at http://localhost:4200/chunk-Z2CR3QLC.js:15899:24
+✓ Clicked login button
+
+=== Step 5: Wait and check response ===
+URL after login: http://localhost:4200/#/passport/login
+Title after login: Login - NG-ALAIN
+Messages after login attempt: [ [32m'Failed to fetch'[39m ]
+
+⚠️ ISSUE: Still on login page after login attempt
+Possible reasons:
+1. Invalid credentials
+2. Form validation errors
+3. Login button was disabled
+4. JavaScript errors preventing form submission
+  ✓  1 [chromium] › tests/login-debug.spec.ts:11:7 › Login Debug › Debug login flow step by step (9.8s)
+
+=== Checking test account existence ===
+Final URL: http://localhost:4200/#/passport/login
+❌ Login failed - account may not exist or credentials are incorrect
+Error messages: [ [32m'Failed to fetch'[39m ]
+  ✓  2 [chromium] › tests/login-debug.spec.ts:193:7 › Login Debug › Check if test account exists (8.5s)
+
+  2 passed (19.4s)
