@@ -110,6 +110,11 @@ export const routes: Routes = [
             path: 'reports',
             loadComponent: () => import('./reports/reports.component').then(m => m.BlueprintReportsComponent),
             data: { title: '報表分析' }
+          },
+          {
+            path: 'gantt',
+            loadComponent: () => import('./gantt/gantt.component').then(m => m.BlueprintGanttComponent),
+            data: { title: '甘特圖' }
           }
         ]
       }

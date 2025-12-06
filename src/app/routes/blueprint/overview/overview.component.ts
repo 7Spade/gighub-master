@@ -23,10 +23,8 @@ import {
   Contract,
   FinancialFacade,
   ModuleType,
-  Task,
   TaskStatus,
   TASK_STATUS_CONFIG,
-  TaskPriority,
   TASK_PRIORITY_CONFIG
 } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
@@ -318,6 +316,19 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                @if (isTasksModuleEnabled()) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToGantt()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="project" class="nav-icon gantt"></span>
+                        <div class="nav-text">
+                          <h4>甘特圖</h4>
+                          <p>任務時間軸視覺化</p>
+                        </div>
+                      </div>
+                    </nz-card>
+                  </div>
+                }
               </div>
             </nz-tab>
 
@@ -850,6 +861,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .nav-icon.reports {
         color: #2f54eb;
       }
+      .nav-icon.gantt {
+        color: #722ed1;
+      }
       .nav-text h4 {
         margin: 0 0 4px 0;
         font-size: 16px;
@@ -1260,6 +1274,13 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'reports']);
+    }
+  }
+
+  goToGantt(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'gantt']);
     }
   }
 
