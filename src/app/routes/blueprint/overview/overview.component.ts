@@ -25,7 +25,8 @@ import {
   ModuleType,
   TaskStatus,
   TASK_STATUS_CONFIG,
-  TASK_PRIORITY_CONFIG
+  TASK_PRIORITY_CONFIG,
+  LoggerService
 } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -955,6 +956,7 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly financialFacade = inject(FinancialFacade);
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
+  private readonly logger = inject(LoggerService);
   readonly taskService = inject(TaskService);
 
   @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
@@ -1086,7 +1088,7 @@ export class BlueprintOverviewComponent implements OnInit {
         this.error.set('找不到藍圖');
       }
     } catch (err) {
-      console.error('[BlueprintOverviewComponent] Failed to load blueprint:', err);
+      this.logger.error('[BlueprintOverviewComponent] Failed to load blueprint:', err);
       this.error.set(err instanceof Error ? err.message : '載入藍圖失敗');
     } finally {
       this.loading.set(false);
@@ -1097,7 +1099,7 @@ export class BlueprintOverviewComponent implements OnInit {
     try {
       await this.taskService.loadTasksByBlueprint(blueprintId);
     } catch (err) {
-      console.error('[BlueprintOverviewComponent] Failed to load tasks:', err);
+      this.logger.error('[BlueprintOverviewComponent] Failed to load tasks:', err);
       // Don't set global error, just log it
     }
   }
