@@ -113,7 +113,7 @@ import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
                 <span>可見性與狀態</span>
               </div>
 
-              <div nz-row [nzGutter]="16">
+              <div nz-row [nzGutter]="[16, 16]">
                 <div nz-col [nzSpan]="12">
                   <nz-form-item>
                     <nz-form-label nzFor="isPublic">公開藍圖</nz-form-label>

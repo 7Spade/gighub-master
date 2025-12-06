@@ -37,7 +37,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
       </app-page-header>
 
       <!-- Statistics Cards -->
-      <div nz-row [nzGutter]="16" class="stats-section">
+      <div nz-row [nzGutter]="[16, 16]" class="stats-section">
         <div nz-col [nzXs]="12" [nzMd]="6">
           <nz-card [nzBordered]="false" class="stat-card">
             <nz-statistic nzTitle="總請款數" [nzValue]="totalRequests()"></nz-statistic>
@@ -72,7 +72,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
       <!-- Filter Section -->
       <nz-card [nzBordered]="false" class="filter-card">
-        <div nz-row [nzGutter]="16" class="filter-row">
+        <div nz-row [nzGutter]="[16, 16]" class="filter-row">
           <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
             <nz-input-group [nzPrefix]="prefixSearch">
               <input nz-input placeholder="搜尋請款編號或描述..." [(ngModel)]="searchText" (ngModelChange)="onSearch()" />
