@@ -93,12 +93,7 @@ import { FileService } from '../../../shared/services/file/file.service';
             <span nz-icon nzType="folder-add"></span>
             新增資料夾
           </button>
-          <nz-upload
-            [nzAction]="''"
-            [nzBeforeUpload]="beforeUpload"
-            [nzMultiple]="true"
-            [nzShowUploadList]="false"
-          >
+          <nz-upload [nzAction]="''" [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzShowUploadList]="false">
             <button nz-button nzType="primary">
               <span nz-icon nzType="upload"></span>
               上傳檔案
@@ -191,12 +186,7 @@ import { FileService } from '../../../shared/services/file/file.service';
                   <span nz-icon nzType="folder-add"></span>
                   新增資料夾
                 </button>
-                <nz-upload
-                  [nzAction]="''"
-                  [nzBeforeUpload]="beforeUpload"
-                  [nzMultiple]="true"
-                  [nzShowUploadList]="false"
-                >
+                <nz-upload [nzAction]="''" [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzShowUploadList]="false">
                   <button nz-button nzType="primary">
                     <span nz-icon nzType="upload"></span>
                     上傳檔案

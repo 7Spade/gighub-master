@@ -194,12 +194,7 @@ import { Subject, takeUntil } from 'rxjs';
               </nz-select>
 
               <nz-input-group [nzPrefix]="prefixIcon" style="width: 200px">
-                <input
-                  nz-input
-                  [(ngModel)]="searchKeyword"
-                  placeholder="搜尋問題..."
-                  (keyup.enter)="applyFilters()"
-                />
+                <input nz-input [(ngModel)]="searchKeyword" placeholder="搜尋問題..." (keyup.enter)="applyFilters()" />
               </nz-input-group>
               <ng-template #prefixIcon>
                 <span nz-icon nzType="search"></span>
@@ -258,7 +253,7 @@ import { Subject, takeUntil } from 'rxjs';
                     <td>
                       <nz-tag [nzColor]="getStatusColor(problem.status)">{{ getStatusLabel(problem.status) }}</nz-tag>
                     </td>
-                    <td>{{ problem.created_at | date:'yyyy-MM-dd' }}</td>
+                    <td>{{ problem.created_at | date: 'yyyy-MM-dd' }}</td>
                     <td>
                       <button nz-button nzType="link" nzSize="small" (click)="openEditDrawer(problem)">
                         <span nz-icon nzType="edit"></span>
@@ -353,12 +348,7 @@ import { Subject, takeUntil } from 'rxjs';
                 <nz-form-item>
                   <nz-form-label nzFor="dueDate">期限日期</nz-form-label>
                   <nz-form-control>
-                    <nz-date-picker
-                      formControlName="dueDate"
-                      id="dueDate"
-                      style="width: 100%"
-                      nzFormat="yyyy-MM-dd"
-                    ></nz-date-picker>
+                    <nz-date-picker formControlName="dueDate" id="dueDate" style="width: 100%" nzFormat="yyyy-MM-dd"></nz-date-picker>
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -408,12 +398,7 @@ import { Subject, takeUntil } from 'rxjs';
       </nz-drawer>
 
       <!-- Detail Drawer -->
-      <nz-drawer
-        [nzVisible]="detailDrawerVisible()"
-        nzTitle="問題詳情"
-        [nzWidth]="600"
-        (nzOnClose)="closeDetailDrawer()"
-      >
+      <nz-drawer [nzVisible]="detailDrawerVisible()" nzTitle="問題詳情" [nzWidth]="600" (nzOnClose)="closeDetailDrawer()">
         <ng-container *nzDrawerContent>
           @if (selectedProblem()) {
             <nz-descriptions nzBordered [nzColumn]="2">
@@ -444,7 +429,7 @@ import { Subject, takeUntil } from 'rxjs';
                 </nz-tag>
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="期限日期" [nzSpan]="1">
-                {{ selectedProblem()!.target_date | date:'yyyy-MM-dd' }}
+                {{ selectedProblem()!.target_date | date: 'yyyy-MM-dd' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="問題描述" [nzSpan]="2">
                 {{ selectedProblem()!.description || '-' }}
@@ -456,10 +441,10 @@ import { Subject, takeUntil } from 'rxjs';
                 {{ selectedProblem()!.notes || '-' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="建立時間" [nzSpan]="1">
-                {{ selectedProblem()!.created_at | date:'yyyy-MM-dd HH:mm' }}
+                {{ selectedProblem()!.created_at | date: 'yyyy-MM-dd HH:mm' }}
               </nz-descriptions-item>
               <nz-descriptions-item nzTitle="更新時間" [nzSpan]="1">
-                {{ selectedProblem()!.updated_at | date:'yyyy-MM-dd HH:mm' }}
+                {{ selectedProblem()!.updated_at | date: 'yyyy-MM-dd HH:mm' }}
               </nz-descriptions-item>
             </nz-descriptions>
 
@@ -498,72 +483,74 @@ import { Subject, takeUntil } from 'rxjs';
       </nz-drawer>
     </div>
   `,
-  styles: [`
-    .problems-container {
-      padding: 24px;
-    }
+  styles: [
+    `
+      .problems-container {
+        padding: 24px;
+      }
 
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
 
-    .header-left h2 {
-      margin: 0;
-    }
+      .header-left h2 {
+        margin: 0;
+      }
 
-    .stats-row {
-      margin-bottom: 24px;
-    }
+      .stats-row {
+        margin-bottom: 24px;
+      }
 
-    .stat-card {
-      text-align: center;
-    }
+      .stat-card {
+        text-align: center;
+      }
 
-    .filter-card {
-      margin-bottom: 16px;
-    }
+      .filter-card {
+        margin-bottom: 16px;
+      }
 
-    .filters {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+      .filters {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
 
-    .table-card {
-      margin-bottom: 24px;
-    }
+      .table-card {
+        margin-bottom: 24px;
+      }
 
-    .drawer-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 24px;
-    }
+      .drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 24px;
+      }
 
-    .status-actions {
-      margin-top: 16px;
-    }
+      .status-actions {
+        margin-top: 16px;
+      }
 
-    .status-actions h4 {
-      margin-bottom: 12px;
-    }
+      .status-actions h4 {
+        margin-bottom: 12px;
+      }
 
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-  `],
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BlueprintProblemsComponent implements OnInit, OnDestroy {
@@ -754,50 +741,56 @@ export class BlueprintProblemsComponent implements OnInit, OnDestroy {
     this.saving.set(true);
 
     if (this.editingProblem()) {
-      this.problemService.updateProblem(this.editingProblem()!.id, {
-        title: formValue.title,
-        problem_type: formValue.type,
-        priority: formValue.priority,
-        severity: formValue.severity,
-        description: formValue.description,
-        location: formValue.location,
-        target_date: formValue.dueDate?.toISOString().split('T')[0],
-        notes: formValue.suggestedAction
-      }).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.msg.success('問題已更新');
-          this.closeEditDrawer();
-          this.loadProblems();
-          this.saving.set(false);
-        },
-        error: () => {
-          this.msg.error('儲存失敗');
-          this.saving.set(false);
-        }
-      });
+      this.problemService
+        .updateProblem(this.editingProblem()!.id, {
+          title: formValue.title,
+          problem_type: formValue.type,
+          priority: formValue.priority,
+          severity: formValue.severity,
+          description: formValue.description,
+          location: formValue.location,
+          target_date: formValue.dueDate?.toISOString().split('T')[0],
+          notes: formValue.suggestedAction
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.msg.success('問題已更新');
+            this.closeEditDrawer();
+            this.loadProblems();
+            this.saving.set(false);
+          },
+          error: () => {
+            this.msg.error('儲存失敗');
+            this.saving.set(false);
+          }
+        });
     } else {
-      this.problemService.createProblem({
-        blueprint_id: this.blueprintId,
-        title: formValue.title,
-        problem_type: formValue.type,
-        priority: formValue.priority,
-        severity: formValue.severity,
-        description: formValue.description,
-        location: formValue.location,
-        target_date: formValue.dueDate?.toISOString().split('T')[0],
-        notes: formValue.suggestedAction
-      }).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.msg.success('問題已建立');
-          this.closeEditDrawer();
-          this.loadProblems();
-          this.saving.set(false);
-        },
-        error: () => {
-          this.msg.error('儲存失敗');
-          this.saving.set(false);
-        }
-      });
+      this.problemService
+        .createProblem({
+          blueprint_id: this.blueprintId,
+          title: formValue.title,
+          problem_type: formValue.type,
+          priority: formValue.priority,
+          severity: formValue.severity,
+          description: formValue.description,
+          location: formValue.location,
+          target_date: formValue.dueDate?.toISOString().split('T')[0],
+          notes: formValue.suggestedAction
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.msg.success('問題已建立');
+            this.closeEditDrawer();
+            this.loadProblems();
+            this.saving.set(false);
+          },
+          error: () => {
+            this.msg.error('儲存失敗');
+            this.saving.set(false);
+          }
+        });
     }
   }
 
@@ -805,19 +798,22 @@ export class BlueprintProblemsComponent implements OnInit, OnDestroy {
     const problem = this.selectedProblem();
     if (!problem) return;
 
-    this.problemService.changeStatus(problem.id, {
-      status: newStatus,
-      action_description: `狀態變更為 ${newStatus}`
-    }).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.msg.success('狀態已更新');
-        this.closeDetailDrawer();
-        this.loadProblems();
-      },
-      error: () => {
-        this.msg.error('狀態更新失敗');
-      }
-    });
+    this.problemService
+      .changeStatus(problem.id, {
+        status: newStatus,
+        action_description: `狀態變更為 ${newStatus}`
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.msg.success('狀態已更新');
+          this.closeDetailDrawer();
+          this.loadProblems();
+        },
+        error: () => {
+          this.msg.error('狀態更新失敗');
+        }
+      });
   }
 
   deleteProblem(problem: Problem): void {
@@ -827,15 +823,18 @@ export class BlueprintProblemsComponent implements OnInit, OnDestroy {
       nzOkText: '刪除',
       nzOkDanger: true,
       nzOnOk: () => {
-        this.problemService.deleteProblem(problem.id).pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-            this.msg.success('問題已刪除');
-            this.loadProblems();
-          },
-          error: () => {
-            this.msg.error('刪除失敗');
-          }
-        });
+        this.problemService
+          .deleteProblem(problem.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.msg.success('問題已刪除');
+              this.loadProblems();
+            },
+            error: () => {
+              this.msg.error('刪除失敗');
+            }
+          });
       }
     });
   }

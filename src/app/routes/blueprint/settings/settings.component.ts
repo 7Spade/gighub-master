@@ -117,11 +117,7 @@ interface TagItem {
                       <nz-form-item>
                         <nz-form-label nzFor="workStartTime">上班時間</nz-form-label>
                         <nz-form-control>
-                          <nz-time-picker
-                            formControlName="workStartTime"
-                            nzFormat="HH:mm"
-                            style="width: 100%"
-                          ></nz-time-picker>
+                          <nz-time-picker formControlName="workStartTime" nzFormat="HH:mm" style="width: 100%"></nz-time-picker>
                         </nz-form-control>
                       </nz-form-item>
                     </div>
@@ -129,11 +125,7 @@ interface TagItem {
                       <nz-form-item>
                         <nz-form-label nzFor="workEndTime">下班時間</nz-form-label>
                         <nz-form-control>
-                          <nz-time-picker
-                            formControlName="workEndTime"
-                            nzFormat="HH:mm"
-                            style="width: 100%"
-                          ></nz-time-picker>
+                          <nz-time-picker formControlName="workEndTime" nzFormat="HH:mm" style="width: 100%"></nz-time-picker>
                         </nz-form-control>
                       </nz-form-item>
                     </div>
@@ -198,12 +190,7 @@ interface TagItem {
                       <nz-form-item>
                         <nz-form-label nzFor="defaultDueDays">預設任務期限 (天)</nz-form-label>
                         <nz-form-control>
-                          <nz-input-number
-                            formControlName="defaultDueDays"
-                            [nzMin]="1"
-                            [nzMax]="365"
-                            style="width: 100%"
-                          ></nz-input-number>
+                          <nz-input-number formControlName="defaultDueDays" [nzMin]="1" [nzMax]="365" style="width: 100%"></nz-input-number>
                         </nz-form-control>
                       </nz-form-item>
                     </div>
@@ -226,10 +213,7 @@ interface TagItem {
                         <div class="module-name">{{ module.name }}</div>
                         <div class="module-description">{{ module.description }}</div>
                       </div>
-                      <nz-switch
-                        [ngModel]="module.enabled"
-                        (ngModelChange)="toggleModule(module.key, $event)"
-                      ></nz-switch>
+                      <nz-switch [ngModel]="module.enabled" (ngModelChange)="toggleModule(module.key, $event)"></nz-switch>
                     </div>
                   }
                 </div>
@@ -320,117 +304,119 @@ interface TagItem {
       </nz-spin>
     </div>
   `,
-  styles: [`
-    .settings-container {
-      padding: 24px;
-    }
+  styles: [
+    `
+      .settings-container {
+        padding: 24px;
+      }
 
-    .settings-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+      .settings-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
 
-    .header-left h2 {
-      margin: 0;
-    }
+      .header-left h2 {
+        margin: 0;
+      }
 
-    .mt-4 {
-      margin-top: 16px;
-    }
+      .mt-4 {
+        margin-top: 16px;
+      }
 
-    .description {
-      color: rgba(0, 0, 0, 0.45);
-      margin-bottom: 16px;
-    }
+      .description {
+        color: rgba(0, 0, 0, 0.45);
+        margin-bottom: 16px;
+      }
 
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
+      .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+      }
 
-    .module-card {
-      display: flex;
-      align-items: center;
-      padding: 16px;
-      border: 1px solid #f0f0f0;
-      border-radius: 8px;
-      transition: all 0.3s;
-    }
+      .module-card {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
 
-    .module-card:hover {
-      border-color: #1890ff;
-    }
+      .module-card:hover {
+        border-color: #1890ff;
+      }
 
-    .module-card.enabled {
-      background-color: #f6ffed;
-      border-color: #b7eb8f;
-    }
+      .module-card.enabled {
+        background-color: #f6ffed;
+        border-color: #b7eb8f;
+      }
 
-    .module-icon {
-      font-size: 24px;
-      color: #1890ff;
-      margin-right: 16px;
-    }
+      .module-icon {
+        font-size: 24px;
+        color: #1890ff;
+        margin-right: 16px;
+      }
 
-    .module-info {
-      flex: 1;
-    }
+      .module-info {
+        flex: 1;
+      }
 
-    .module-name {
-      font-weight: 500;
-      font-size: 14px;
-    }
+      .module-name {
+        font-weight: 500;
+        font-size: 14px;
+      }
 
-    .module-description {
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 12px;
-      margin-top: 4px;
-    }
+      .module-description {
+        color: rgba(0, 0, 0, 0.45);
+        font-size: 12px;
+        margin-top: 4px;
+      }
 
-    .tags-header {
-      margin-bottom: 16px;
-    }
+      .tags-header {
+        margin-bottom: 16px;
+      }
 
-    .tags-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+      .tags-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-    .tag-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      border: 1px solid #f0f0f0;
-      border-radius: 4px;
-    }
+      .tag-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+      }
 
-    .tag-actions {
-      display: flex;
-      gap: 4px;
-    }
+      .tag-actions {
+        display: flex;
+        gap: 4px;
+      }
 
-    .empty-tags {
-      text-align: center;
-      padding: 24px;
-      color: rgba(0, 0, 0, 0.45);
-    }
+      .empty-tags {
+        text-align: center;
+        padding: 24px;
+        color: rgba(0, 0, 0, 0.45);
+      }
 
-    :host ::ng-deep .ant-checkbox-wrapper {
-      margin-right: 16px;
-      margin-bottom: 8px;
-    }
-  `],
+      :host ::ng-deep .ant-checkbox-wrapper {
+        margin-right: 16px;
+        margin-bottom: 8px;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BlueprintSettingsComponent implements OnInit {
@@ -612,7 +598,7 @@ export class BlueprintSettingsComponent implements OnInit {
     const metadata = blueprint.metadata || {};
 
     // Load tags
-    const savedTags = metadata['tags'] as TagItem[] || [];
+    const savedTags = (metadata['tags'] as TagItem[]) || [];
     this.tags.set(savedTags);
 
     // Update initial form values
@@ -625,9 +611,7 @@ export class BlueprintSettingsComponent implements OnInit {
 
   toggleModule(moduleKey: ModuleType, enabled: boolean): void {
     const modules = this.moduleSettings();
-    const updated = modules.map(m =>
-      m.key === moduleKey ? { ...m, enabled } : m
-    );
+    const updated = modules.map(m => (m.key === moduleKey ? { ...m, enabled } : m));
     this.moduleSettings.set(updated);
   }
 

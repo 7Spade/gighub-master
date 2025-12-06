@@ -1,28 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { NzTabsModule, NzTabChangeEvent } from 'ng-zorro-antd/tabs';
-import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+
 import { SupabaseService } from '../../../core/supabase/supabase.service';
 
 interface CustomFieldDefinition {
@@ -77,7 +78,7 @@ interface EntityTypeOption {
     NzStatisticModule,
     NzTagModule,
     NzInputNumberModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzBadgeModule,
     NzTabsModule,
     NzCheckboxModule
@@ -94,7 +95,9 @@ interface EntityTypeOption {
         </nz-card>
         <nz-card nzSize="small">
           <nz-statistic nzTitle="必填欄位" [nzValue]="stats().required" [nzPrefix]="requiredIcon">
-            <ng-template #requiredIcon><span nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #f5222d"></span></ng-template>
+            <ng-template #requiredIcon
+              ><span nz-icon nzType="exclamation-circle" nzTheme="outline" style="color: #f5222d"></span
+            ></ng-template>
           </nz-statistic>
         </nz-card>
         <nz-card nzSize="small">
@@ -119,7 +122,7 @@ interface EntityTypeOption {
         </ng-template>
 
         <!-- Entity Type Tabs -->
-        <nz-tabset (nzSelectChange)="onTabChange($event)" [(nzSelectedIndex)]="selectedTabIndex">
+        <nz-tabset (nzSelectChange)="onTabChange()" [(nzSelectedIndex)]="selectedTabIndex">
           <nz-tab nzTitle="全部欄位">
             <ng-template nz-tab>
               <ng-container *ngTemplateOutlet="fieldTable; context: { fields: filteredFields() }"></ng-container>
@@ -193,8 +196,15 @@ interface EntityTypeOption {
                       編輯
                     </button>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <button nz-button nzType="link" nzSize="small" nzDanger
-                      nz-popconfirm nzPopconfirmTitle="確定要刪除此欄位嗎？" (nzOnConfirm)="deleteField(field)">
+                    <button
+                      nz-button
+                      nzType="link"
+                      nzSize="small"
+                      nzDanger
+                      nz-popconfirm
+                      nzPopconfirmTitle="確定要刪除此欄位嗎？"
+                      (nzOnConfirm)="deleteField(field)"
+                    >
                       <span nz-icon nzType="delete"></span>
                       刪除
                     </button>
@@ -313,17 +323,19 @@ interface EntityTypeOption {
       </nz-drawer>
     </nz-spin>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-    code {
-      font-family: monospace;
-      background: #f5f5f5;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+      code {
+        font-family: monospace;
+        background: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+    `
+  ]
 })
 export class BlueprintMetadataComponent implements OnInit {
   private readonly supabase = inject(SupabaseService);
@@ -469,7 +481,7 @@ export class BlueprintMetadataComponent implements OnInit {
     return this.entityTypes.find(t => t.value === type)?.label || type;
   }
 
-  onTabChange(_event: NzTabChangeEvent): void {
+  onTabChange(): void {
     // Tab changed, no action needed as we filter in template
   }
 
@@ -561,19 +573,17 @@ export class BlueprintMetadataComponent implements OnInit {
         this.msg.success('欄位更新成功');
       } else {
         // Create new field
-        const { error } = await this.supabase.client
-          .from('custom_field_definitions')
-          .insert({
-            blueprint_id: this.blueprintId(),
-            name: formValue.name,
-            display_name: formValue.display_name,
-            entity_type: formValue.entity_type,
-            field_type: formValue.field_type,
-            options,
-            is_required: formValue.is_required,
-            is_visible: formValue.is_visible,
-            sort_order: formValue.sort_order
-          });
+        const { error } = await this.supabase.client.from('custom_field_definitions').insert({
+          blueprint_id: this.blueprintId(),
+          name: formValue.name,
+          display_name: formValue.display_name,
+          entity_type: formValue.entity_type,
+          field_type: formValue.field_type,
+          options,
+          is_required: formValue.is_required,
+          is_visible: formValue.is_visible,
+          sort_order: formValue.sort_order
+        });
 
         if (error) throw error;
         this.msg.success('欄位新增成功');
@@ -591,10 +601,7 @@ export class BlueprintMetadataComponent implements OnInit {
 
   async deleteField(field: CustomFieldDefinition): Promise<void> {
     try {
-      const { error } = await this.supabase.client
-        .from('custom_field_definitions')
-        .delete()
-        .eq('id', field.id);
+      const { error } = await this.supabase.client.from('custom_field_definitions').delete().eq('id', field.id);
 
       if (error) throw error;
       this.msg.success('欄位刪除成功');
