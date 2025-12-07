@@ -15,8 +15,8 @@
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild, input, effect } from '@angular/core';
+import { Router } from '@angular/router';
 import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade, ModuleType } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -458,7 +458,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 </button>
               </div>
               <nz-card [nzBordered]="false">
-                <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
+                <app-activity-timeline [blueprintId]="id() || ''" [limit]="20" [showFilters]="true" />
               </nz-card>
             </nz-tab>
           </nz-tabset>
@@ -645,7 +645,6 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly blueprintFacade = inject(BlueprintFacade);
   private readonly financialFacade = inject(FinancialFacade);
@@ -653,6 +652,9 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly msg = inject(NzMessageService);
 
   @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
+
+  // Input from route param - using Angular 20 input signal pattern
+  id = input.required<string>();
 
   blueprint = signal<BlueprintBusinessModel | null>(null);
   members = signal<BlueprintMemberDetail[]>([]);
@@ -669,8 +671,6 @@ export class BlueprintOverviewComponent implements OnInit {
   financialSummary = signal<BlueprintFinancialSummary | null>(null);
   contracts = signal<Contract[]>([]);
   financialLoading = signal(false);
-
-  readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
 
   readonly enabledModulesCount = computed(() => {
     return this.blueprint()?.enabled_modules?.length || 0;
@@ -728,8 +728,17 @@ export class BlueprintOverviewComponent implements OnInit {
     this.loadBlueprint();
   }
 
+  constructor() {
+    // Auto-reload blueprint when ID changes (for navigation between different blueprints)
+    effect(() => {
+      const currentId = this.id();
+      console.log('[BlueprintOverviewComponent] Blueprint ID changed:', currentId);
+      this.loadBlueprint();
+    });
+  }
+
   async loadBlueprint(): Promise<void> {
-    const id = this.blueprintId();
+    const id = this.id();
     if (!id) {
       this.error.set('無效的藍圖 ID');
       return;
@@ -843,21 +852,21 @@ export class BlueprintOverviewComponent implements OnInit {
   }
 
   goToTasks(): void {
-    const id = this.blueprintId();
+    const id = this.id();
     if (id) {
       this.router.navigate(['/blueprint', id, 'tasks']);
     }
   }
 
   goToMembers(): void {
-    const id = this.blueprintId();
+    const id = this.id();
     if (id) {
       this.router.navigate(['/blueprint', id, 'members']);
     }
   }
 
   goToFinancialOverview(): void {
-    const id = this.blueprintId();
+    const id = this.id();
     if (id) {
       this.router.navigate(['/blueprint', id, 'financial', 'overview']);
     }
@@ -891,7 +900,7 @@ export class BlueprintOverviewComponent implements OnInit {
   }
 
   goToFinancialPage(page: string): void {
-    const id = this.blueprintId();
+    const id = this.id();
     if (id) {
       this.router.navigate(['/blueprint', id, 'financial', page]);
     }
