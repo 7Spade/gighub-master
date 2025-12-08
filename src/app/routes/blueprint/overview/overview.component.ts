@@ -121,7 +121,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
           <!-- Tabs for different sections -->
           <nz-tabs class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
             <!-- 概覽 Tab -->
-            <nz-tab-pane nzTitle="概覽">
+            <nz-tab nzTitle="概覽">
               <div class="tab-header">
                 <h3>藍圖概覽</h3>
                 <button nz-button nzType="primary" (click)="refreshBlueprint()">
@@ -342,11 +342,11 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                   </nz-card>
                 </div>
               </div>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 任務管理 Tab - only show if tasks module is enabled -->
             @if (isTasksModuleEnabled()) {
-              <nz-tab-pane nzTitle="任務管理">
+              <nz-tab nzTitle="任務管理">
                 <div class="tab-header">
                   <h3>任務管理</h3>
                   <button nz-button nzType="primary" (click)="goToTasks()">
@@ -465,11 +465,11 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </nz-card>
                   }
                 </nz-spin>
-              </nz-tab-pane>
+              </nz-tab>
             }
 
             <!-- 成員管理 Tab -->
-            <nz-tab-pane nzTitle="成員管理">
+            <nz-tab nzTitle="成員管理">
               <div class="tab-header">
                 <h3>成員管理</h3>
                 <button nz-button nzType="primary" (click)="goToMembers()">
@@ -530,10 +530,10 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                   }
                 </div>
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 財務 Tab -->
-            <nz-tab-pane nzTitle="財務">
+            <nz-tab nzTitle="財務">
               <div class="tab-header">
                 <h3>財務管理</h3>
                 <button nz-button nzType="primary" (click)="goToFinancialPage('overview')">
@@ -712,10 +712,10 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                   </nz-empty>
                 }
               </nz-spin>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 活動 Tab -->
-            <nz-tab-pane nzTitle="活動">
+            <nz-tab nzTitle="活動">
               <div class="tab-header">
                 <h3>活動記錄</h3>
                 <button nz-button nzType="primary" (click)="refreshActivity()">
@@ -726,7 +726,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
               <nz-card [nzBordered]="false">
                 <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
           </nz-tabs>
         } @else if (!loading()) {
           <nz-result nzStatus="404" nzTitle="找不到藍圖" nzSubTitle="您請求的藍圖不存在或已被刪除">

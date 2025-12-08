@@ -197,7 +197,7 @@ interface ApiStats {
       <nz-card [nzBordered]="false" class="main-card">
         <nz-tabs>
           <!-- API Keys Tab -->
-          <nz-tab-pane nzTitle="API 金鑰">
+          <nz-tab nzTitle="API 金鑰">
             <div class="tab-header">
               <div class="tab-title">
                 <h3>API 金鑰管理</h3>
@@ -290,10 +290,10 @@ interface ApiStats {
                 }
               </tbody>
             </nz-table>
-          </nz-tab-pane>
+          </nz-tab>
 
           <!-- Webhooks Tab -->
-          <nz-tab-pane nzTitle="Webhooks">
+          <nz-tab nzTitle="Webhooks">
             <div class="tab-header">
               <div class="tab-title">
                 <h3>Webhook 管理</h3>
@@ -384,10 +384,10 @@ interface ApiStats {
                 }
               </tbody>
             </nz-table>
-          </nz-tab-pane>
+          </nz-tab>
 
           <!-- Rate Limiting Tab -->
-          <nz-tab-pane nzTitle="速率限制">
+          <nz-tab nzTitle="速率限制">
             <div class="tab-header">
               <div class="tab-title">
                 <h3>速率限制設定</h3>
@@ -499,10 +499,10 @@ interface ApiStats {
                 </nz-card>
               }
             </div>
-          </nz-tab-pane>
+          </nz-tab>
 
           <!-- Quota Management Tab -->
-          <nz-tab-pane nzTitle="配額管理">
+          <nz-tab nzTitle="配額管理">
             <div class="tab-header">
               <div class="tab-title">
                 <h3>API 配額管理</h3>
@@ -548,7 +548,7 @@ interface ApiStats {
                 </nz-card>
               </div>
             </div>
-          </nz-tab-pane>
+          </nz-tab>
         </nz-tabs>
       </nz-card>
     </nz-spin>

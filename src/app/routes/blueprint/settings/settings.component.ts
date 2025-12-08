@@ -109,7 +109,7 @@ interface TagItem {
           <!-- Settings Tabs -->
           <nz-tabs nzType="card">
             <!-- 基本設定 Tab -->
-            <nz-tab-pane nzTitle="基本設定">
+            <nz-tab nzTitle="基本設定">
               <nz-card [nzBordered]="false" nzTitle="工作時間設定">
                 <form nz-form [formGroup]="basicForm" nzLayout="vertical">
                   <div nz-row [nzGutter]="16">
@@ -197,10 +197,10 @@ interface TagItem {
                   </div>
                 </form>
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 模組設定 Tab -->
-            <nz-tab-pane nzTitle="模組設定">
+            <nz-tab nzTitle="模組設定">
               <nz-card [nzBordered]="false" nzTitle="啟用模組">
                 <p class="description">選擇要在此藍圖中啟用的功能模組</p>
                 <div class="modules-grid">
@@ -218,10 +218,10 @@ interface TagItem {
                   }
                 </div>
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 通知設定 Tab -->
-            <nz-tab-pane nzTitle="通知設定">
+            <nz-tab nzTitle="通知設定">
               <nz-card [nzBordered]="false" nzTitle="通知偏好">
                 <form nz-form [formGroup]="notificationForm" nzLayout="vertical">
                   <nz-form-item>
@@ -267,10 +267,10 @@ interface TagItem {
                   </nz-form-item>
                 </form>
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
 
             <!-- 標籤管理 Tab -->
-            <nz-tab-pane nzTitle="標籤管理">
+            <nz-tab nzTitle="標籤管理">
               <nz-card [nzBordered]="false" nzTitle="自訂標籤">
                 <div class="tags-header">
                   <button nz-button nzType="primary" (click)="addTag()">
@@ -298,7 +298,7 @@ interface TagItem {
                   }
                 </div>
               </nz-card>
-            </nz-tab-pane>
+            </nz-tab>
           </nz-tabs>
         }
       </nz-spin>

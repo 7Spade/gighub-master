@@ -123,17 +123,17 @@ interface EntityTypeOption {
 
         <!-- Entity Type Tabs -->
         <nz-tabs (nzSelectChange)="onTabChange()" [(nzSelectedIndex)]="selectedTabIndex">
-          <nz-tab-pane nzTitle="全部欄位">
+          <nz-tab nzTitle="全部欄位">
             <ng-template nz-tab>
               <ng-container *ngTemplateOutlet="fieldTable; context: { fields: filteredFields() }"></ng-container>
             </ng-template>
-          </nz-tab-pane>
+          </nz-tab>
           @for (entityType of entityTypes; track entityType.value) {
             <nz-tab [nzTitle]="entityType.label">
               <ng-template nz-tab>
                 <ng-container *ngTemplateOutlet="fieldTable; context: { fields: getFieldsByEntityType(entityType.value) }"></ng-container>
               </ng-template>
-            </nz-tab-pane>
+            </nz-tab>
           }
         </nz-tabs>
       </nz-card>
