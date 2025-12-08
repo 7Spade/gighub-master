@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, ModuleType } from '@core';
+import { BlueprintFacade, ModuleType, MODULES_CONFIG, isModuleEnabledByDefault } from '@core';
 import { BlueprintBusinessModel, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -546,50 +546,14 @@ export class BlueprintSettingsComponent implements OnInit {
   }
 
   private initModuleSettings(blueprint: BlueprintBusinessModel): void {
-    const modules: ModuleSetting[] = [
-      {
-        key: ModuleType.TASKS,
-        name: '任務管理',
-        description: '管理專案任務、子任務和進度追蹤',
-        icon: 'check-square',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.TASKS) ?? true
-      },
-      {
-        key: ModuleType.DIARY,
-        name: '施工日誌',
-        description: '記錄每日施工進度和工作內容',
-        icon: 'book',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.DIARY) ?? true
-      },
-      {
-        key: ModuleType.CHECKLISTS,
-        name: '品質管控',
-        description: '品質檢查和驗收管理',
-        icon: 'safety-certificate',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.CHECKLISTS) ?? true
-      },
-      {
-        key: ModuleType.FILES,
-        name: '檔案管理',
-        description: '上傳和管理專案相關檔案',
-        icon: 'folder',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.FILES) ?? true
-      },
-      {
-        key: ModuleType.FINANCIAL,
-        name: '財務管理',
-        description: '預算、合約和付款管理',
-        icon: 'dollar',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.FINANCIAL) ?? false
-      },
-      {
-        key: ModuleType.ISSUES,
-        name: '問題追蹤',
-        description: '記錄和追蹤專案問題',
-        icon: 'warning',
-        enabled: blueprint.enabled_modules?.includes(ModuleType.ISSUES) ?? false
-      }
-    ];
+    // Use unified MODULES_CONFIG as single source of truth
+    const modules: ModuleSetting[] = MODULES_CONFIG.map(config => ({
+      key: config.value,
+      name: config.label,
+      description: config.description,
+      icon: config.icon,
+      enabled: blueprint.enabled_modules?.includes(config.value) ?? isModuleEnabledByDefault(config.value)
+    }));
     this.moduleSettings.set(modules);
   }
 

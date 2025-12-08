@@ -12,7 +12,7 @@
 
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES } from '@core';
+import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES, DEFAULT_ENABLED_MODULES } from '@core';
 import { CreateBlueprintRequest, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -154,7 +154,7 @@ export class CreateBlueprintComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     description: [''],
     coverUrl: [''],
-    enabledModules: [[ModuleType.TASKS]],
+    enabledModules: [DEFAULT_ENABLED_MODULES], // Use unified default configuration
     isPublic: [false]
   });
 
@@ -204,7 +204,7 @@ export class CreateBlueprintComponent implements OnInit {
         name: this.form.value.name?.trim(),
         description: this.form.value.description?.trim() || undefined,
         coverUrl: this.form.value.coverUrl?.trim() || undefined,
-        enabledModules: this.form.value.enabledModules || [ModuleType.TASKS],
+        enabledModules: this.form.value.enabledModules || DEFAULT_ENABLED_MODULES, // Use unified default
         isPublic: this.form.value.isPublic ?? false
       };
       const blueprint = await this.blueprintFacade.createBlueprint(request);

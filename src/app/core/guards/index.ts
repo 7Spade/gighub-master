@@ -8,3 +8,4 @@
  */
 
 export * from './permission.guard';
+export * from './module-enabled.guard';
