@@ -16,8 +16,19 @@
 
 ✅ **建立完整的治理體系** - 新增 `.github/governance/` 目錄，包含 4 個核心治理文件  
 ✅ **統一 AI 資源位置** - 明確 AI agents 和指令的組織方式  
-✅ **消除文件重複** - 識別並解決 10+ 處重複內容  
+✅ **消除文件重複** - 識別並移除 20 個重複檔案（5 個治理文件 + 15 個 agents）  
+✅ **清理完成** - 移除所有冗餘檔案，僅保留必要的重定向通知  
 ✅ **提供遷移支持** - 完整的重組指南和重定向文件  
+
+### 🧹 清理完成 (2025-12-08)
+
+**已移除的檔案**：
+- `.github/CONTRIBUTING.md`
+- `.github/SECURITY.md`
+- `.github/instructions/CONTRIBUTING.md`
+- `.github/instructions/CODE_OF_CONDUCT.md`
+- `docs/meta/CONTRIBUTING.md`
+- `.github/agents/*.agent.md` (15 個檔案)  
 
 ---
 

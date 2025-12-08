@@ -107,7 +107,7 @@ All original files backed up with complete directory structure preserved.
 - [Coding Standards](docs/meta/coding-standards.md)
 
 ### For Contributors
-- [Contributing Guide](docs/meta/CONTRIBUTING.md)
+- [Contributing Guide](../../.github/governance/CONTRIBUTING.md)
 - [Git Workflow](docs/meta/git-workflow.md)
 - [Code Review Guidelines](docs/meta/code-review-guidelines.md)
 
