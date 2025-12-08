@@ -1,14 +1,13 @@
-# Configuration for lock-threads - https://github.com/dessant/lock-threads
+# lock-threads 配置 - https://github.com/dessant/lock-threads
 
-# Number of days of inactivity before a closed issue or pull request is locked
+# 關閉的 Issue 或 Pull Request 在多少天無活動後會被鎖定
 daysUntilLock: 365
-# Comment to post before locking. Set to `false` to disable
+# 鎖定前發布的留言。設為 `false` 可停用
 lockComment: >
-  This thread has been automatically locked because it has not had recent
-  activity. Please open a new issue for related bugs and link to relevant
-  comments in this thread.
-# Issues or pull requests with these labels will not be locked
+  此討論串因長時間無活動已被自動鎖定。
+  若有相關問題，請開啟新的 Issue 並附上此討論串的相關連結。
+# 具有以下標籤的 Issue 或 Pull Request 不會被鎖定
 # exemptLabels:
 #   - no-locking
-# Limit to only `issues` or `pulls`
+# 僅限 `issues` 或 `pulls`
 only: issues
