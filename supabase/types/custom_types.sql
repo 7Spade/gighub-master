@@ -16,7 +16,10 @@
 -- 4. team_role         - 團隊角色 (leader, member)
 -- 5. blueprint_role    - 藍圖成員角色 (viewer, contributor, maintainer)
 -- 6. blueprint_team_access - 藍圖團隊存取 (read, write, admin)
--- 7. module_type       - 啟用模組 (tasks, diary, dashboard, bot_workflow, files, todos, checklists, issues)
+-- 7. module_type       - 啟用模組
+--    Core modules (內建模組，始終啟用): tasks, diary, checklists, issues, files, financial, audit_log
+--    Optional modules (選用模組): acceptance
+--    Deprecated (已棄用): dashboard, bot_workflow, todos
 -- 8. task_status       - 任務狀態 (pending, in_progress, in_review, completed, cancelled, blocked)
 -- 9. task_priority     - 任務優先級 (lowest, low, medium, high, highest)
 -- 10. issue_severity   - 問題嚴重度 (low, medium, high, critical)
