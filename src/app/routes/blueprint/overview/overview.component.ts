@@ -15,7 +15,7 @@
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, effect, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BlueprintFacade,
@@ -1071,19 +1071,22 @@ export class BlueprintOverviewComponent implements OnInit {
   ngOnInit(): void {
     this.loadBlueprint();
 
-    // Check if redirected due to disabled module
-    this.route.queryParams.subscribe(params => {
-      const disabledModule = params['moduleDisabled'];
-      if (disabledModule) {
-        const moduleName = this.getModuleLabel(disabledModule);
-        this.msg.warning(`「${moduleName}」模組未啟用，請在設定中啟用後使用`);
-        // Clear query params
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {},
-          replaceUrl: true
-        });
-      }
+    // Check if redirected due to disabled module using modern effect() pattern
+    effect(() => {
+      this.route.queryParams.subscribe(params => {
+        const disabledModule = params['moduleDisabled'];
+        if (disabledModule) {
+          const config = getModuleConfig(disabledModule as ModuleType);
+          const moduleName = config?.label || disabledModule;
+          this.msg.warning(`「${moduleName}」模組未啟用，請在設定中啟用後使用`);
+          // Clear query params
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {},
+            replaceUrl: true
+          });
+        }
+      });
     });
   }
 
