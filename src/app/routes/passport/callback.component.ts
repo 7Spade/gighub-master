@@ -21,7 +21,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
-import { SupabaseService } from '../../core/supabase/supabase.service';
+import { SupabaseService, LoggerService } from '../../core';
 
 @Component({
   selector: 'app-callback',
@@ -59,6 +59,7 @@ export class CallbackComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly msg = inject(NzMessageService);
+  private readonly logger = inject(LoggerService);
 
   @Input() type = '';
 
@@ -91,7 +92,7 @@ export class CallbackComponent implements OnInit {
         const { data, error: authError } = await this.supabaseService.client.auth.exchangeCodeForSession(code);
 
         if (authError) {
-          console.error('[CallbackComponent] Code exchange failed:', authError);
+          this.logger.error('Code exchange failed', authError);
           this.error.set(`認證失敗: ${authError.message}`);
           this.loading.set(false);
           return;
@@ -131,7 +132,7 @@ export class CallbackComponent implements OnInit {
         this.loading.set(false);
       }
     } catch (err) {
-      console.error('[CallbackComponent] Unexpected error:', err);
+      this.logger.error('Unexpected OAuth callback error', err);
       this.error.set(err instanceof Error ? err.message : '發生未知錯誤');
       this.loading.set(false);
     }

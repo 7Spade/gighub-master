@@ -19,6 +19,7 @@ import { Observable, from, map, of, forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   Diary,
   DiaryWithDetails,
@@ -39,6 +40,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class DiaryRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // CRUD Operations
@@ -66,7 +68,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diaries').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] create error:', error);
+          this.logger.error('[DiaryRepository] create error:', error);
           return null;
         }
         return data as Diary;
@@ -95,7 +97,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diaries').update(updates).eq('id', id).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] update error:', error);
+          this.logger.error('[DiaryRepository] update error:', error);
           return null;
         }
         return data as Diary;
@@ -111,7 +113,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diaries').update({ deleted_at: new Date().toISOString() }).eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[DiaryRepository] delete error:', error);
+          this.logger.error('[DiaryRepository] delete error:', error);
           return false;
         }
         return true;
@@ -136,7 +138,7 @@ export class DiaryRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[DiaryRepository] findById error:', error);
+          this.logger.error('[DiaryRepository] findById error:', error);
           return null;
         }
         return data as Diary;
@@ -167,7 +169,7 @@ export class DiaryRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[DiaryRepository] findByIdWithDetails error:', error);
+          this.logger.error('[DiaryRepository] findByIdWithDetails error:', error);
           return null;
         }
         return data as unknown as DiaryWithDetails;
@@ -192,7 +194,7 @@ export class DiaryRepository {
       map(({ data, error }) => {
         if (error) {
           if (error.code === 'PGRST116') return null;
-          console.error('[DiaryRepository] findByDate error:', error);
+          this.logger.error('[DiaryRepository] findByDate error:', error);
           return null;
         }
         return data as Diary;
@@ -266,7 +268,7 @@ export class DiaryRepository {
     return from(query).pipe(
       map(({ data, count, error }) => {
         if (error) {
-          console.error('[DiaryRepository] query error:', error);
+          this.logger.error('[DiaryRepository] query error:', error);
           return {
             data: [],
             total: 0,
@@ -309,7 +311,7 @@ export class DiaryRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] findByBlueprint error:', error);
+          this.logger.error('[DiaryRepository] findByBlueprint error:', error);
           return [];
         }
         return (data || []) as Diary[];
@@ -339,7 +341,7 @@ export class DiaryRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] submit error:', error);
+          this.logger.error('[DiaryRepository] submit error:', error);
           return null;
         }
         return data as Diary;
@@ -367,7 +369,7 @@ export class DiaryRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] approve error:', error);
+          this.logger.error('[DiaryRepository] approve error:', error);
           return null;
         }
         return data as Diary;
@@ -394,7 +396,7 @@ export class DiaryRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] reject error:', error);
+          this.logger.error('[DiaryRepository] reject error:', error);
           return null;
         }
         return data as Diary;
@@ -424,7 +426,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diary_attachments').insert(entry).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] addAttachment error:', error);
+          this.logger.error('[DiaryRepository] addAttachment error:', error);
           return null;
         }
         return data as DiaryAttachment;
@@ -442,7 +444,7 @@ export class DiaryRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] getAttachments error:', error);
+          this.logger.error('[DiaryRepository] getAttachments error:', error);
           return [];
         }
         return (data || []) as DiaryAttachment[];
@@ -458,7 +460,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diary_attachments').delete().eq('id', id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[DiaryRepository] deleteAttachment error:', error);
+          this.logger.error('[DiaryRepository] deleteAttachment error:', error);
           return false;
         }
         return true;
@@ -478,7 +480,7 @@ export class DiaryRepository {
     return from(this.supabase.client.from('diaries').select('*').eq('blueprint_id', blueprintId).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] getStats error:', error);
+          this.logger.error('[DiaryRepository] getStats error:', error);
           return this.emptyStats();
         }
 
@@ -507,7 +509,7 @@ export class DiaryRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[DiaryRepository] getMonthlySummary error:', error);
+          this.logger.error('[DiaryRepository] getMonthlySummary error:', error);
           return this.emptyMonthlySummary(month);
         }
 

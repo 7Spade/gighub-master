@@ -4,6 +4,7 @@
 import {
   // Core application icons
   BellOutline,
+  BugOutline,
   BulbOutline,
   CarryOutOutline,
   ExceptionOutline,
@@ -24,8 +25,13 @@ import {
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS = [
+<<<<<<< HEAD
+  BellOutline, // 通知中心圖示 (notice-icon)
+  BugOutline, // 問題追蹤圖示 (bug)
+=======
   // Core application icons
   BellOutline,
+>>>>>>> main
   BulbOutline,
   CarryOutOutline,
   ExceptionOutline,

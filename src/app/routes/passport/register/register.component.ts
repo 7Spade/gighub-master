@@ -10,7 +10,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { SupabaseAuthService } from '@core';
+import { SupabaseAuthService, LoggerService } from '@core';
 import { I18nPipe } from '@delon/theme';
 import { MatchControl } from '@delon/util/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -42,6 +42,7 @@ export class UserRegisterComponent {
   private readonly router = inject(Router);
   private readonly supabaseAuth = inject(SupabaseAuthService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly logger = inject(LoggerService);
 
   // Form with email and password only (no phone)
   form = inject(FormBuilder).nonNullable.group(
@@ -126,7 +127,7 @@ export class UserRegisterComponent {
         },
         error: err => {
           this.error = '無法連接認證服務，請檢查設定。';
-          console.error('Registration error:', err);
+          this.logger.error('Registration error', err);
           this.loading = false;
           this.cdr.detectChanges();
         }

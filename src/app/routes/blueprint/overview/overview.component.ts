@@ -17,8 +17,18 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, BlueprintFinancialSummary, Contract, FinancialFacade, ModuleType } from '@core';
-import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService } from '@shared';
+import {
+  BlueprintFacade,
+  BlueprintFinancialSummary,
+  Contract,
+  FinancialFacade,
+  ModuleType,
+  TaskStatus,
+  TASK_STATUS_CONFIG,
+  TASK_PRIORITY_CONFIG,
+  LoggerService
+} from '@core';
+import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -109,7 +119,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
           </div>
 
           <!-- Tabs for different sections -->
-          <nz-tabset class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
+          <nz-tabs class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
             <!-- 概覽 Tab -->
             <nz-tab nzTitle="概覽">
               <div class="tab-header">
@@ -175,6 +185,151 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToDiaries()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="calendar" class="nav-icon diaries"></span>
+                      <div class="nav-text">
+                        <h4>施工日誌</h4>
+                        <p>每日施工紀錄與審核</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToQcInspections()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="safety-certificate" class="nav-icon qc"></span>
+                      <div class="nav-text">
+                        <h4>品質管控</h4>
+                        <p>品管檢查與驗收</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFiles()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="folder-open" class="nav-icon files"></span>
+                      <div class="nav-text">
+                        <h4>檔案管理</h4>
+                        <p>文件上傳與管理</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToSettings()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="setting" class="nav-icon settings"></span>
+                      <div class="nav-text">
+                        <h4>藍圖設定</h4>
+                        <p>配置模組和偏好</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToProblems()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="warning" class="nav-icon problems"></span>
+                      <div class="nav-text">
+                        <h4>問題追蹤</h4>
+                        <p>問題登記與處理</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToActivities()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="history" class="nav-icon activities"></span>
+                      <div class="nav-text">
+                        <h4>活動歷史</h4>
+                        <p>操作記錄和變更歷史</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToNotifications()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="bell" class="nav-icon notifications"></span>
+                      <div class="nav-text">
+                        <h4>通知設定</h4>
+                        <p>通知偏好和勿擾設定</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToSearch()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="search" class="nav-icon search"></span>
+                      <div class="nav-text">
+                        <h4>進階搜尋</h4>
+                        <p>搜尋任務、日誌、檔案</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToPermissions()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="safety-certificate" class="nav-icon permissions"></span>
+                      <div class="nav-text">
+                        <h4>權限管理</h4>
+                        <p>角色和權限設定</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToAcceptances()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="file-done" class="nav-icon acceptances"></span>
+                      <div class="nav-text">
+                        <h4>驗收管理</h4>
+                        <p>工程驗收流程和審批</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToReports()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="bar-chart" class="nav-icon reports"></span>
+                      <div class="nav-text">
+                        <h4>報表分析</h4>
+                        <p>進度、品質與財務統計</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+                @if (isTasksModuleEnabled()) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToGantt()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="project" class="nav-icon gantt"></span>
+                        <div class="nav-text">
+                          <h4>甘特圖</h4>
+                          <p>任務時間軸視覺化</p>
+                        </div>
+                      </div>
+                    </nz-card>
+                  </div>
+                }
+                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToApiGateway()" nzHoverable>
+                    <div class="nav-card-content">
+                      <span nz-icon nzType="api" class="nav-icon api-gateway"></span>
+                      <div class="nav-text">
+                        <h4>API 閘道</h4>
+                        <p>API 金鑰、Webhook 和速率限制</p>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
               </div>
             </nz-tab>
 
@@ -188,17 +343,117 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     開啟完整視圖
                   </button>
                 </div>
-                <nz-card [nzBordered]="false">
-                  <nz-empty nzNotFoundContent="請點擊上方按鈕進入完整任務管理視圖">
-                    <ng-template #nzNotFoundFooter>
-                      <p class="text-muted">完整任務管理包含樹狀圖、表格、看板視圖</p>
-                      <button nz-button nzType="primary" (click)="goToTasks()">
-                        <span nz-icon nzType="ordered-list"></span>
-                        進入任務管理
-                      </button>
-                    </ng-template>
-                  </nz-empty>
-                </nz-card>
+                <nz-spin [nzSpinning]="taskService.loading()">
+                  @if (taskService.hasError()) {
+                    <nz-card [nzBordered]="false">
+                      <nz-result nzStatus="error" nzTitle="載入任務失敗" [nzSubTitle]="taskService.error() || '無法載入任務資料'">
+                        <div nz-result-extra>
+                          <button nz-button nzType="primary" (click)="loadTasks(blueprintId() || '')">
+                            <span nz-icon nzType="reload"></span>
+                            重試
+                          </button>
+                        </div>
+                      </nz-result>
+                    </nz-card>
+                  } @else if (taskService.tasks().length === 0 && !taskService.loading()) {
+                    <nz-card [nzBordered]="false">
+                      <nz-empty nzNotFoundContent="尚無任務">
+                        <ng-template #nzNotFoundFooter>
+                          <button nz-button nzType="primary" (click)="goToTasks()">
+                            <span nz-icon nzType="plus"></span>
+                            建立第一個任務
+                          </button>
+                        </ng-template>
+                      </nz-empty>
+                    </nz-card>
+                  } @else {
+                    <!-- Task Statistics -->
+                    <div nz-row [nzGutter]="[16, 16]" class="task-stats-row">
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic nzTitle="總任務數" [nzValue]="taskStatsByStatus().total"></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="進行中"
+                            [nzValue]="taskStatsByStatus().inProgress"
+                            [nzValueStyle]="{ color: '#1890ff' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="已完成"
+                            [nzValue]="taskStatsByStatus().completed"
+                            [nzValueStyle]="{ color: '#52c41a' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                      <div nz-col [nzXs]="12" [nzSm]="6">
+                        <nz-card [nzBordered]="false" class="stat-card">
+                          <nz-statistic
+                            nzTitle="待處理"
+                            [nzValue]="taskStatsByStatus().pending"
+                            [nzValueStyle]="{ color: '#faad14' }"
+                          ></nz-statistic>
+                        </nz-card>
+                      </div>
+                    </div>
+
+                    <!-- Task Preview Table -->
+                    <nz-card [nzBordered]="false" class="task-preview-card">
+                      <nz-table #taskTable [nzData]="previewTasks()" [nzShowPagination]="false" nzSize="small">
+                        <thead>
+                          <tr>
+                            <th nzWidth="45%">任務名稱</th>
+                            <th nzWidth="15%">狀態</th>
+                            <th nzWidth="15%">優先級</th>
+                            <th nzWidth="25%">進度</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (task of taskTable.data; track task.id) {
+                            <tr>
+                              <td>
+                                <span class="task-title">{{ task.title }}</span>
+                              </td>
+                              <td>
+                                <nz-tag [nzColor]="TASK_STATUS_CONFIG[task.status].color" nzBorderless>
+                                  {{ TASK_STATUS_CONFIG[task.status].label }}
+                                </nz-tag>
+                              </td>
+                              <td>
+                                <nz-tag [nzColor]="TASK_PRIORITY_CONFIG[task.priority].color" nzBorderless>
+                                  {{ TASK_PRIORITY_CONFIG[task.priority].label }}
+                                </nz-tag>
+                              </td>
+                              <td>
+                                <nz-progress
+                                  [nzPercent]="task.completion_rate"
+                                  [nzShowInfo]="true"
+                                  [nzStrokeWidth]="6"
+                                  nzSize="small"
+                                ></nz-progress>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </nz-table>
+                      @if (taskService.tasks().length > 10) {
+                        <div class="task-preview-footer">
+                          <p class="text-muted">顯示前 10 個任務，共 {{ taskService.tasks().length }} 個任務</p>
+                          <button nz-button nzType="link" (click)="goToTasks()">
+                            查看全部任務
+                            <span nz-icon nzType="arrow-right"></span>
+                          </button>
+                        </div>
+                      }
+                    </nz-card>
+                  }
+                </nz-spin>
               </nz-tab>
             }
 
@@ -461,7 +716,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
               </nz-card>
             </nz-tab>
-          </nz-tabset>
+          </nz-tabs>
         } @else if (!loading()) {
           <nz-result nzStatus="404" nzTitle="找不到藍圖" nzSubTitle="您請求的藍圖不存在或已被刪除">
             <div nz-result-extra>
@@ -551,6 +806,27 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       .contracts-card {
         margin-top: 16px;
       }
+      /* Task Preview Styles */
+      .task-stats-row {
+        margin-bottom: 16px;
+      }
+      .task-preview-card {
+        margin-top: 16px;
+      }
+      .task-title {
+        font-weight: 500;
+      }
+      .task-preview-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
+      }
+      .task-preview-footer p {
+        margin: 0;
+      }
       /* Quick Navigation Cards */
       .quick-nav-row {
         margin-top: 24px;
@@ -570,6 +846,24 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
       }
       .nav-icon {
         font-size: 32px;
+      }
+      .nav-icon.activities {
+        color: #722ed1;
+      }
+      .nav-icon.notifications {
+        color: #fa8c16;
+      }
+      .nav-icon.search {
+        color: #eb2f96;
+      }
+      .nav-icon.permissions {
+        color: #13c2c2;
+      }
+      .nav-icon.reports {
+        color: #2f54eb;
+      }
+      .nav-icon.gantt {
+        color: #722ed1;
       }
       .nav-text h4 {
         margin: 0 0 4px 0;
@@ -651,6 +945,8 @@ export class BlueprintOverviewComponent implements OnInit {
   private readonly financialFacade = inject(FinancialFacade);
   private readonly workspaceContext = inject(WorkspaceContextService);
   private readonly msg = inject(NzMessageService);
+  private readonly logger = inject(LoggerService);
+  readonly taskService = inject(TaskService);
 
   @ViewChild(ActivityTimelineComponent) activityTimeline?: ActivityTimelineComponent;
 
@@ -669,6 +965,11 @@ export class BlueprintOverviewComponent implements OnInit {
   financialSummary = signal<BlueprintFinancialSummary | null>(null);
   contracts = signal<Contract[]>([]);
   financialLoading = signal(false);
+
+  // Task configuration constants
+  readonly TaskStatus = TaskStatus;
+  readonly TASK_STATUS_CONFIG = TASK_STATUS_CONFIG;
+  readonly TASK_PRIORITY_CONFIG = TASK_PRIORITY_CONFIG;
 
   readonly blueprintId = computed(() => this.route.snapshot.paramMap.get('id'));
 
@@ -689,13 +990,15 @@ export class BlueprintOverviewComponent implements OnInit {
   readonly createdDate = computed(() => {
     const date = this.blueprint()?.created_at;
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('zh-TW');
+    const datePipe = new DatePipe('zh-CN');
+    return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 
   readonly updatedDate = computed(() => {
     const date = this.blueprint()?.updated_at;
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('zh-TW');
+    const datePipe = new DatePipe('zh-CN');
+    return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 
   // Financial computed values
@@ -724,6 +1027,23 @@ export class BlueprintOverviewComponent implements OnInit {
     return Math.round(((summary.total_paid ?? 0) / requested) * 100);
   });
 
+  /** Get preview tasks (limit to 10 for overview) */
+  readonly previewTasks = computed(() => {
+    return this.taskService.tasks().slice(0, 10);
+  });
+
+  /** Get task statistics for overview */
+  readonly taskStatsByStatus = computed(() => {
+    const tasks = this.taskService.tasks();
+    return {
+      total: tasks.length,
+      pending: tasks.filter(t => t.status === TaskStatus.PENDING).length,
+      inProgress: tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length,
+      completed: tasks.filter(t => t.status === TaskStatus.COMPLETED).length,
+      blocked: tasks.filter(t => t.status === TaskStatus.BLOCKED).length
+    };
+  });
+
   ngOnInit(): void {
     this.loadBlueprint();
   }
@@ -748,14 +1068,28 @@ export class BlueprintOverviewComponent implements OnInit {
 
         // Load financial data
         this.loadFinancialData(id);
+
+        // Load tasks if tasks module is enabled
+        if (blueprint.enabled_modules?.includes(ModuleType.TASKS)) {
+          this.loadTasks(id);
+        }
       } else {
         this.error.set('找不到藍圖');
       }
     } catch (err) {
-      console.error('[BlueprintOverviewComponent] Failed to load blueprint:', err);
+      this.logger.error('[BlueprintOverviewComponent] Failed to load blueprint:', err);
       this.error.set(err instanceof Error ? err.message : '載入藍圖失敗');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async loadTasks(blueprintId: string): Promise<void> {
+    try {
+      await this.taskService.loadTasksByBlueprint(blueprintId);
+    } catch (err) {
+      this.logger.error('[BlueprintOverviewComponent] Failed to load tasks:', err);
+      // Don't set global error, just log it
     }
   }
 
@@ -860,6 +1194,97 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'financial', 'overview']);
+    }
+  }
+
+  goToDiaries(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'diaries']);
+    }
+  }
+
+  goToQcInspections(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'qc-inspections']);
+    }
+  }
+
+  goToFiles(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'files']);
+    }
+  }
+
+  goToSettings(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'settings']);
+    }
+  }
+
+  goToProblems(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'problems']);
+    }
+  }
+
+  goToActivities(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'activities']);
+    }
+  }
+
+  goToNotifications(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'notifications']);
+    }
+  }
+
+  goToSearch(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'search']);
+    }
+  }
+
+  goToPermissions(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'permissions']);
+    }
+  }
+
+  goToAcceptances(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'acceptances']);
+    }
+  }
+
+  goToReports(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'reports']);
+    }
+  }
+
+  goToGantt(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'gantt']);
+    }
+  }
+
+  goToApiGateway(): void {
+    const id = this.blueprintId();
+    if (id) {
+      this.router.navigate(['/blueprint', id, 'api-gateway']);
     }
   }
 

@@ -4,11 +4,13 @@ import { IGNORE_BASE_URL } from '@delon/theme';
 import { environment } from '@env/environment';
 import { Observable, of, throwError, mergeMap } from 'rxjs';
 
+import { LoggerService } from '../logger';
 import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin } from './helper';
 import { tryRefreshToken } from './refresh-token';
 
 function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
   checkStatus(injector, ev);
+  const logger = injector.get(LoggerService);
   // 业务处理：一些通用操作
   switch (ev.status) {
     case 200:
@@ -48,7 +50,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
       break;
     default:
       if (ev instanceof HttpErrorResponse) {
-        console.warn('未可知错误，大部分是由于后端不支持跨域CORS或无效配置引起，请参考 https://ng-alain.com/docs/server 解决跨域问题', ev);
+        logger.warn('未可知错误，大部分是由于后端不支持跨域CORS或无效配置引起，请参考 https://ng-alain.com/docs/server 解决跨域问题', ev);
       }
       break;
   }

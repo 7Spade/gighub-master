@@ -1,149 +1,150 @@
-# 📚 GigHub 文件中心
+# 📚 GigHub 專案文件
 
-> 工地施工進度追蹤管理系統的完整技術文件
+> **GigHub - 工地施工進度追蹤管理系統** 完整技術文件
 
-[![Angular](https://img.shields.io/badge/Angular-20.3-dd0031?logo=angular)](https://angular.dev)
-[![Supabase](https://img.shields.io/badge/Supabase-2.x-3ecf8e?logo=supabase)](https://supabase.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript)](https://www.typescriptlang.org)
+歡迎來到 GigHub 專案文件！本文件庫依照 [DOCS_SPECIFICATION.md](../DOCS_SPECIFICATION.md) 規範組織，提供完整的專案資訊。
 
 ---
 
-## 📁 文件結構
+## 🗂️ 文件結構
 
-```
-docs/
-├── README.md                 ← 你現在的位置
-├── GLOSSARY.md               ← 術語表
-│
-├── getting-started/          ← 🚀 入門指南
-│   ├── README.md
-│   ├── prerequisites.md      ← 環境需求
-│   ├── installation.md       ← 安裝指南
-│   ├── quick-start.md        ← 快速開始
-│   └── project-structure.md  ← 專案結構說明
-│
-├── architecture/             ← 📐 系統架構
-│   ├── README.md
-│   ├── system-architecture.md ← 系統架構總覽
-│   ├── data-flow.md          ← 資料流設計
-│   ├── adr/                  ← 架構決策記錄
-│   └── diagrams/             ← 架構圖
-│
-├── prd/                      ← 📋 產品需求
-│   ├── README.md
-│   └── construction-site-management.md ← 工地管理 PRD
-│
-├── features/                 ← ✨ 功能文件
-│   ├── README.md
-│   ├── permission-system.md  ← 權限系統
-│   ├── foundation/           ← 基礎層功能
-│   ├── container/            ← 容器層功能
-│   └── business/             ← 業務層功能
-│
-├── supabase/                 ← 🗄️ Supabase 後端
-│   ├── README.md
-│   ├── schema/               ← Schema 設計
-│   ├── rls/                  ← RLS 政策
-│   ├── functions/            ← 資料庫函數
-│   └── migrations/           ← 遷移指南
-│
-├── api/                      ← 🔌 API 文件
-│   └── README.md
-│
-├── agent/                    ← 🤖 AI Agent 相關
-│   ├── README.md
-│   └── mindmap.md            ← 思維導圖
-│
-├── reference/                ← 📚 參考資料
-│   ├── README.md
-│   ├── coding-standards.md   ← 編碼標準
-│   ├── git-workflow.md       ← Git 工作流
-│   ├── testing-strategy.md   ← 測試策略
-│   └── deployment.md         ← 部署指南
-│
-├── contributing/             ← 🤝 貢獻指南
-│   ├── README.md
-│   ├── development-setup.md  ← 開發環境設定
-│   ├── code-review-guidelines.md ← 程式碼審查
-│   └── release-process.md    ← 發佈流程
-│
-└── changelog/                ← 📝 變更日誌
-    └── CHANGELOG.md
-```
+### 📖 [overview/](./overview/) - 專案總覽
+快速了解專案定位、願景與架構概述
+
+- [專案願景](./overview/01-project-vision.md)
+- [使用者場景](./overview/02-user-scenarios.md)
+- [系統架構概述](./overview/03-system-overview.md)
+- [術語表](./overview/04-glossary.md)
+- [專案結構](./overview/project-structure.md)
+
+### ⚙️ [setup/](./setup/) - 環境設定
+開發環境安裝與部署指南
+
+- [前置需求](./setup/01-prerequisites.md)
+- [開發環境設定](./setup/02-development-setup.md)
+- [安裝指南](./setup/03-installation.md)
+- [快速開始](./setup/04-quick-start.md)
+- [部署指南](./setup/05-deployment.md)
+
+### 📚 [guides/](./guides/) - 操作指南
+模組使用方式與最佳實踐
+
+- [Foundation Layer](./guides/foundation/) - 基礎層功能
+- [Container Layer](./guides/container/) - 容器層功能
+- [Business Layer](./guides/business/) - 業務層功能
+- [權限系統](./guides/permission-system.md)
+
+### 📘 [reference/](./reference/) - 技術參考
+API、資料庫、模型等正式規格文件
+
+- [API 文件](./reference/api/)
+- [資料庫](./reference/database/)
+  - [Schema](./reference/database/schema/)
+  - [RLS 政策](./reference/database/rls/)
+  - [Functions](./reference/database/functions.md)
+  - [Migrations](./reference/database/migrations.md)
+- [資料模型](./reference/models/)
+- [事件系統](./reference/events/)
+
+### 🎨 [design/](./design/) - 設計文件
+架構設計、流程圖、ADR 與草稿
+
+- [架構設計](./design/architecture/)
+- [業務流程](./design/flows/)
+- [圖表](./design/diagrams/)
+- [ADR (Architecture Decision Records)](./design/adr/)
+- [設計草稿](./design/drafts/)
+
+### 🚀 [development/](./development/) - 開發追蹤
+開發路線圖、進度與問題追蹤
+
+- [開發路線圖](./development/roadmap.md)
+- [技術問題](./development/issues/)
+- [參考文件](./development/keep-001-reference.md)
+
+### 📊 [progress/](./progress/) - 進度追蹤
+即時開發進度記錄（保持原樣）
+
+- [已完成項目](./progress/done.md)
+- [待辦事項](./progress/todo.md)
+- [問題追蹤](./progress/issues.md)
+
+### 🔧 [operations/](./operations/) - 維運文件
+監控、日誌、備份等維運指南（開發階段）
+
+### 💡 [examples/](./examples/) - 範例程式碼
+可執行的程式碼範例與 Demo
+
+### 📋 [meta/](./meta/) - 專案管理
+貢獻指南、版本策略、Git 工作流程
+
+- [貢獻指南](./meta/CONTRIBUTING.md)
+- [更新日誌](./meta/CHANGELOG.md)
+- [程式碼審查指南](./meta/code-review-guidelines.md)
+- [編碼規範](./meta/coding-standards.md)
+- [Git 工作流程](./meta/git-workflow.md)
+- [發布流程](./meta/release-process.md)
+- [測試策略](./meta/testing-strategy.md)
+- [Agent 使用指南](./meta/agent-guide.md)
 
 ---
 
-## 🚀 快速開始
+## 🚀 快速導航
 
 ### 新手入門
-1. [環境需求](./getting-started/prerequisites.md)
-2. [安裝指南](./getting-started/installation.md)
-3. [快速開始](./getting-started/quick-start.md)
+1. 📖 閱讀 [專案願景](./overview/01-project-vision.md)
+2. ⚙️ 設定 [開發環境](./setup/02-development-setup.md)
+3. 🏃 執行 [快速開始](./setup/04-quick-start.md)
+4. 📚 參考 [操作指南](./guides/)
 
-### 理解系統
-1. [系統架構總覽](./architecture/system-architecture.md)
-2. [產品需求文件](./prd/construction-site-management.md)
-3. [三層架構說明](./features/README.md)
+### 開發者
+- 📘 [API 文件](./reference/api/)
+- 🗃️ [資料庫 Schema](./reference/database/schema/)
+- 🎨 [架構設計](./design/architecture/)
+- 📋 [編碼規範](./meta/coding-standards.md)
 
-### 開始開發
-1. [專案結構](./getting-started/project-structure.md)
-2. [編碼標準](./reference/coding-standards.md)
-3. [Git 工作流](./reference/git-workflow.md)
+### 貢獻者
+- 📋 [貢獻指南](./meta/CONTRIBUTING.md)
+- 🔀 [Git 工作流程](./meta/git-workflow.md)
+- 📝 [程式碼審查指南](./meta/code-review-guidelines.md)
 
 ---
 
-## 🏗️ 三層架構
+## 📝 文件規範
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    基礎層 (Foundation Layer)                     │
-│   帳戶體系 │ 認證授權 │ 組織管理 │ 團隊管理 │ Bot 管理           │
-│   📖 docs/features/foundation/                                  │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    容器層 (Container Layer)                      │
-│   藍圖系統 │ 權限控制 │ 事件總線 │ 搜尋引擎                      │
-│   📖 docs/features/container/                                   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    業務層 (Business Layer)                       │
-│   任務模組 │ 日誌模組 │ 品質驗收 │ 問題追蹤 │ 檔案管理           │
-│   📖 docs/features/business/                                    │
-└─────────────────────────────────────────────────────────────────┘
-```
+本專案文件遵循 [DOCS_SPECIFICATION.md](../DOCS_SPECIFICATION.md) 規範，包含：
+
+- ✅ 清晰的目錄結構
+- ✅ 統一的命名規範
+- ✅ 明確的文件分類
+- ✅ 完整的維護指南
+
+### 文件更新原則
+
+1. **每次功能開發** - 更新相關 API、Schema、Guides
+2. **每次版本發佈** - 更新 CHANGELOG、檢查一致性
+3. **每季檢視** - 回顧 backlog、整理草稿
 
 ---
 
 ## 🔗 相關資源
 
-### 內部資源
-- [Copilot 資源](../.github/COPILOT_RESOURCES.md)
-- [專案 Copilot 配置](../.github/copilot/README.md)
-- [貢獻指南](../CONTRIBUTING.md)
-
-### 外部資源
-- [Angular 官方文檔](https://angular.dev)
-- [ng-alain 文檔](https://ng-alain.com)
-- [Supabase 文檔](https://supabase.com/docs)
-- [ng-zorro-antd 文檔](https://ng.ant.design)
+- [DOCS_SPECIFICATION.md](../DOCS_SPECIFICATION.md) - 文件架構規範
+- [專案根目錄 README](../README.md) - 專案主頁
+- [Supabase 文件](https://supabase.com/docs)
+- [Angular 文件](https://angular.dev)
+- [ng-alain 文件](https://ng-alain.com)
 
 ---
 
-## 📊 文件狀態
+## 📞 聯絡與支援
 
-| 區域 | 狀態 | 完整度 |
-|------|------|--------|
-| 入門指南 | 🟡 進行中 | 60% |
-| 系統架構 | 🟢 完成 | 90% |
-| 產品需求 | 🟢 完成 | 95% |
-| 功能文件 | 🟡 進行中 | 40% |
-| API 文件 | 🔴 待完善 | 20% |
-| 貢獻指南 | 🟡 進行中 | 50% |
+如有文件問題或建議，請：
+1. 提交 [GitHub Issue](https://github.com/7Spade/gighub-master/issues)
+2. 參考 [貢獻指南](./meta/CONTRIBUTING.md)
 
 ---
 
-**最後更新**: 2025-12-02
+**文檔版本**: 2.0.0  
+**最後更新**: 2025-12-06  
+**維護者**: GigHub Development Team

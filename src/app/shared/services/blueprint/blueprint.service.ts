@@ -10,7 +10,7 @@
  */
 
 import { Injectable, inject, signal } from '@angular/core';
-import { BlueprintRepository, BlueprintMemberRepository, Blueprint, BlueprintRole, ModuleType, SupabaseService } from '@core';
+import { BlueprintRepository, BlueprintMemberRepository, Blueprint, BlueprintRole, ModuleType, SupabaseService, LoggerService } from '@core';
 import { firstValueFrom } from 'rxjs';
 
 import { BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest } from '../../models/blueprint';
@@ -22,6 +22,7 @@ export class BlueprintService {
   private readonly blueprintRepo = inject(BlueprintRepository);
   private readonly blueprintMemberRepo = inject(BlueprintMemberRepository);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // State
   private blueprintsState = signal<BlueprintBusinessModel[]>([]);
@@ -101,7 +102,7 @@ export class BlueprintService {
     });
 
     if (error) {
-      console.error('[BlueprintService] Failed to create blueprint:', error);
+      this.logger.error('[BlueprintService] Failed to create blueprint:', error);
       throw error;
     }
 

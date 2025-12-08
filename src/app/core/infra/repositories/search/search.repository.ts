@@ -21,6 +21,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map, of, catchError, forkJoin } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import {
   SearchCategory,
   SearchResultItem,
@@ -40,6 +41,7 @@ import {
 })
 export class SearchRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // Full-Text Search Methods (全文搜尋方法)
@@ -83,7 +85,7 @@ export class SearchRepository {
         return this.processSearchResults(allItems, options, startTime);
       }),
       catchError(error => {
-        console.error('[SearchRepository] search error:', error);
+        this.logger.error('[SearchRepository] search error:', error);
         return of(this.createEmptyResponse(options.query, startTime));
       })
     );
@@ -133,7 +135,7 @@ export class SearchRepository {
     return from(queryBuilder.limit(options.pageSize || SEARCH_CONSTANTS.DEFAULT_PAGE_SIZE)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[SearchRepository] searchTasks error:', error);
+          this.logger.error('[SearchRepository] searchTasks error:', error);
           return [];
         }
         return (data || []).map((task: any) => this.mapTaskToSearchResult(task, query));
@@ -164,7 +166,7 @@ export class SearchRepository {
     return from(queryBuilder.limit(options.pageSize || SEARCH_CONSTANTS.DEFAULT_PAGE_SIZE)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[SearchRepository] searchBlueprints error:', error);
+          this.logger.error('[SearchRepository] searchBlueprints error:', error);
           return [];
         }
         return (data || []).map((blueprint: any) => this.mapBlueprintToSearchResult(blueprint, query));
@@ -195,7 +197,7 @@ export class SearchRepository {
     return from(queryBuilder.limit(options.pageSize || SEARCH_CONSTANTS.DEFAULT_PAGE_SIZE)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[SearchRepository] searchDiaries error:', error);
+          this.logger.error('[SearchRepository] searchDiaries error:', error);
           return [];
         }
         return (data || []).map((diary: any) => this.mapDiaryToSearchResult(diary, query));
@@ -220,7 +222,7 @@ export class SearchRepository {
     return from(queryBuilder.limit(options.pageSize || SEARCH_CONSTANTS.DEFAULT_PAGE_SIZE)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[SearchRepository] searchUsers error:', error);
+          this.logger.error('[SearchRepository] searchUsers error:', error);
           return [];
         }
         return (data || []).map((user: any) => this.mapUserToSearchResult(user, query));
@@ -252,7 +254,7 @@ export class SearchRepository {
     ).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[SearchRepository] saveSearchHistory error:', error);
+          this.logger.error('[SearchRepository] saveSearchHistory error:', error);
           return false;
         }
         return true;
@@ -279,7 +281,7 @@ export class SearchRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[SearchRepository] getSearchHistory error:', error);
+          this.logger.error('[SearchRepository] getSearchHistory error:', error);
           return [];
         }
         return (data || []) as SearchHistoryItem[];
@@ -299,7 +301,7 @@ export class SearchRepository {
     return from(this.supabase.client.from('search_history').delete().eq('user_id', currentUser.id)).pipe(
       map(({ error }) => {
         if (error) {
-          console.error('[SearchRepository] clearSearchHistory error:', error);
+          this.logger.error('[SearchRepository] clearSearchHistory error:', error);
           return false;
         }
         return true;

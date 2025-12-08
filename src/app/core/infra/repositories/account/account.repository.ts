@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { Account, AccountType, AccountStatus, AccountQueryOptions } from '../../types/account';
 
 @Injectable({
@@ -20,6 +21,7 @@ import { Account, AccountType, AccountStatus, AccountQueryOptions } from '../../
 })
 export class AccountRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * 根據 ID 查詢帳戶
@@ -29,7 +31,7 @@ export class AccountRepository {
     return from(this.supabase.client.from('accounts').select('*').eq('id', id).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] findById error:', error);
+          this.logger.error('[AccountRepository] findById error:', error);
           return null;
         }
         return data as Account;
@@ -47,7 +49,7 @@ export class AccountRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] findByAuthUserId error:', error);
+          this.logger.error('[AccountRepository] findByAuthUserId error:', error);
           return null;
         }
         return data as Account;
@@ -65,7 +67,7 @@ export class AccountRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] findByEmail error:', error);
+          this.logger.error('[AccountRepository] findByEmail error:', error);
           return null;
         }
         return data as Account;
@@ -93,7 +95,7 @@ export class AccountRepository {
     return from(query).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] findWithOptions error:', error);
+          this.logger.error('[AccountRepository] findWithOptions error:', error);
           return [];
         }
         return (data || []) as Account[];
@@ -113,7 +115,7 @@ export class AccountRepository {
     return from(this.supabase.client.from('accounts').select('*').in('id', ids)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] findByIds error:', error);
+          this.logger.error('[AccountRepository] findByIds error:', error);
           return [];
         }
         return (data || []) as Account[];
@@ -129,7 +131,7 @@ export class AccountRepository {
     return from(this.supabase.client.from('accounts').insert(account).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] create error:', error);
+          this.logger.error('[AccountRepository] create error:', error);
           return null;
         }
         return data as Account;
@@ -152,7 +154,7 @@ export class AccountRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] update error:', error);
+          this.logger.error('[AccountRepository] update error:', error);
           return null;
         }
         return data as Account;
@@ -190,7 +192,7 @@ export class AccountRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[AccountRepository] restore error:', error);
+          this.logger.error('[AccountRepository] restore error:', error);
           return null;
         }
         return data as Account;

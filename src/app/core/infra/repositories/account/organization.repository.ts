@@ -13,6 +13,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from, map } from 'rxjs';
 
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { LoggerService } from '../../../logger';
 import { Organization } from '../../types/account';
 
 @Injectable({
@@ -20,6 +21,7 @@ import { Organization } from '../../types/account';
 })
 export class OrganizationRepository {
   private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * 根據 ID 查詢組織
@@ -29,7 +31,7 @@ export class OrganizationRepository {
     return from(this.supabase.client.from('organizations').select('*').eq('id', id).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] findById error:', error);
+          this.logger.error('[OrganizationRepository] findById error:', error);
           return null;
         }
         return data as Organization;
@@ -45,7 +47,7 @@ export class OrganizationRepository {
     return from(this.supabase.client.from('organizations').select('*').eq('slug', slug).is('deleted_at', null).single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] findBySlug error:', error);
+          this.logger.error('[OrganizationRepository] findBySlug error:', error);
           return null;
         }
         return data as Organization;
@@ -65,7 +67,7 @@ export class OrganizationRepository {
     return from(this.supabase.client.from('organizations').select('*').in('id', ids).is('deleted_at', null)).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] findByIds error:', error);
+          this.logger.error('[OrganizationRepository] findByIds error:', error);
           return [];
         }
         return (data || []) as Organization[];
@@ -81,7 +83,7 @@ export class OrganizationRepository {
     return from(this.supabase.client.from('organizations').select('*').is('deleted_at', null).order('name')).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] findAll error:', error);
+          this.logger.error('[OrganizationRepository] findAll error:', error);
           return [];
         }
         return (data || []) as Organization[];
@@ -97,7 +99,7 @@ export class OrganizationRepository {
     return from(this.supabase.client.from('organizations').insert(organization).select().single()).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] create error:', error);
+          this.logger.error('[OrganizationRepository] create error:', error);
           return null;
         }
         return data as Organization;
@@ -120,7 +122,7 @@ export class OrganizationRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] update error:', error);
+          this.logger.error('[OrganizationRepository] update error:', error);
           return null;
         }
         return data as Organization;
@@ -146,7 +148,7 @@ export class OrganizationRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] softDelete error:', error);
+          this.logger.error('[OrganizationRepository] softDelete error:', error);
           return null;
         }
         return data as Organization;
@@ -172,7 +174,7 @@ export class OrganizationRepository {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          console.error('[OrganizationRepository] restore error:', error);
+          this.logger.error('[OrganizationRepository] restore error:', error);
           return null;
         }
         return data as Organization;
