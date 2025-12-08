@@ -5,6 +5,114 @@
 // - `variable` Import the official compact less style file
 @import '@delon/theme/theme-default.less';
 
-// ==========The following is the custom theme variable area==========
-// The theme paraments can be generated at https://ng-alain.github.io/ng-alain/
-// @primary-color: #f50;
+// =============================================================================
+// 青龍配色系統整合 (Azure Dragon Color System Integration)
+// =============================================================================
+// 參考文檔：
+// - docs/design/azure-dragon-color-system.md
+// - docs/design/drafts/azure-dragon-color-concept.md
+// - docs/design/azure-dragon-integration-guide-simplified.md
+// - https://ng.ant.design/docs/customize-theme/zh
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 主要品牌色 (Primary Brand Color)
+// -----------------------------------------------------------------------------
+// 使用青龍核心色：青·正 (Qing Mid) - 標準青，藍綠均衡
+@primary-color: #2CB7AE;
+
+// -----------------------------------------------------------------------------
+// 輔助色系 (Supporting Colors)
+// -----------------------------------------------------------------------------
+@success-color: #52c41a;  // 成功色 - 保持 ng-zorro 預設
+@warning-color: #faad14;  // 警告色 - 保持 ng-zorro 預設
+@error-color: #ff4d4f;    // 錯誤色 - 保持 ng-zorro 預設
+@info-color: @primary-color;  // 資訊色 - 使用青龍主色
+
+// -----------------------------------------------------------------------------
+// 青龍擴展色階 (Azure Dragon Extended Scale)
+// -----------------------------------------------------------------------------
+// 核心五色
+@qing-light: #66D1C4;   // 青·光 - 清亮，帶春意與水光感
+@qing-mid: #2CB7AE;     // 青·正 - 標準青，藍綠均衡 (Primary)
+@qing-deep: #0093AF;    // 青·深 - 偏藍，沉穩典型青色
+@qing-azure: #007A92;   // 蒼青 - 更深，帶蒼色與古典感
+@qing-dark: #065E68;    // 玄青 - 深青藍，接近自然礦青
+
+// 擴展色階 (10 級)
+@qing-100: #E6F7F5;  // 青霧 - 背景、懸浮提示背景
+@qing-200: #B3EBE6;  // 青露 - 選中狀態背景、標籤背景
+@qing-300: #80DFD7;  // 青泉 - 輔助元素、圖示填充
+@qing-400: #66D1C4;  // 青·光 - 次要按鈕、進度條
+@qing-500: #2CB7AE;  // 青·正 - 主色調、主要按鈕 (Primary)
+@qing-600: #0093AF;  // 青·深 - 懸浮狀態、活躍狀態
+@qing-700: #007A92;  // 蒼青 - 點擊狀態、強調元素
+@qing-800: #065E68;  // 玄青 - 深色文字、邊框
+@qing-900: #043E45;  // 墨青 - 最深色、頁首背景
+@qing-950: #022A30;  // 青淵 - 極深色、暗色模式背景
+
+// -----------------------------------------------------------------------------
+// 連結色 (Link Colors)
+// -----------------------------------------------------------------------------
+@link-color: @primary-color;
+@link-hover-color: @qing-deep;
+@link-active-color: @qing-azure;
+
+// -----------------------------------------------------------------------------
+// 邊框與背景 (Border & Background)
+// -----------------------------------------------------------------------------
+@border-color-base: #d9d9d9;  // 保持預設以確保通用性
+@border-color-split: #f0f0f0;
+@background-color-light: #fafafa;
+
+// 可選：使用青龍淺色作為特定場景的邊框和背景
+// @border-color-base: @qing-200;
+// @border-color-split: @qing-100;
+// @background-color-light: @qing-100;
+
+// -----------------------------------------------------------------------------
+// 文字色 (Text Colors)
+// -----------------------------------------------------------------------------
+@text-color: rgba(0, 0, 0, 0.85);
+@text-color-secondary: rgba(0, 0, 0, 0.45);
+@disabled-color: rgba(0, 0, 0, 0.25);
+@heading-color: rgba(0, 0, 0, 0.85);
+
+// 可選：標題使用深青色以強調青龍意象
+// @heading-color: @qing-dark;
+
+// -----------------------------------------------------------------------------
+// 圓角 (Border Radius)
+// -----------------------------------------------------------------------------
+@border-radius-base: 6px;
+
+// -----------------------------------------------------------------------------
+// 字體 (Typography)
+// -----------------------------------------------------------------------------
+@font-size-base: 14px;
+
+// =============================================================================
+// 青龍漸變定義 (Azure Dragon Gradients)
+// =============================================================================
+// 用於特殊場景的漸變效果
+
+// 完整五色水平漸變
+@qing-gradient-full: linear-gradient(90deg, #66D1C4 0%, #2CB7AE 25%, #0093AF 50%, #007A92 75%, #065E68 100%);
+
+// 淺色漸變（適合背景）
+@qing-gradient-light: linear-gradient(90deg, #E6F7F5 0%, #B3EBE6 50%, #80DFD7 100%);
+
+// 深色漸變（適合強調）
+@qing-gradient-dark: linear-gradient(90deg, #0093AF 0%, #007A92 50%, #065E68 100%);
+
+// 晨曦漸變 - 象徵專案啟動的希望與活力
+@qing-gradient-dawn: linear-gradient(180deg, #E6F7F5 0%, #80DFD7 35%, #2CB7AE 100%);
+
+// 深潭漸變 - 表達深度與專業性
+@qing-gradient-pool: radial-gradient(circle at center, #065E68 0%, #043E45 50%, #022A30 100%);
+
+// 天青漸變 - 清新明亮的天空感
+@qing-gradient-sky: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(179, 235, 230, 0.6) 50%, rgba(44, 183, 174, 0.3) 100%);
+
+// 龍鱗漸變 - 青龍鱗片般的層次感
+@qing-gradient-scale: linear-gradient(135deg, #2CB7AE 0%, #0093AF 25%, #2CB7AE 50%, #0093AF 75%, #2CB7AE 100%);
