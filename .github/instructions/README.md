@@ -1,5 +1,22 @@
 # GitHub Copilot Instructions
 
+> 專為 GitHub Copilot 和 AI 編碼助手設計的編碼標準與最佳實踐指令
+
+---
+
+## ⚠️ 重要通知
+
+**專案治理文件已遷移至**：[`../governance/`](../governance/)
+
+以下檔案已移至新位置：
+- ~~CONTRIBUTING.md~~ → [`../governance/CONTRIBUTING.md`](../governance/CONTRIBUTING.md)
+- ~~CODE_OF_CONDUCT.md~~ → [`../governance/CODE_OF_CONDUCT.md`](../governance/CODE_OF_CONDUCT.md)
+
+**以下檔案將在後續階段整合或遷移**：
+- `ARCHITECTURE.md`, `DEPLOYMENT.md`, `DEVELOPMENT.md` → 將整合至對應的 AI 指令或遷移至 `docs/`
+
+---
+
 This directory contains behavior instructions that guide GitHub Copilot's code generation and assistance for the GigHub project.
 
 ## 📋 Instruction Files
