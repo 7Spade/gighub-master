@@ -51,12 +51,12 @@ export enum BlueprintTeamAccess {
  * Corresponds to database module_type enum
  *
  * Following Occam's Razor principle:
- * - Core modules: tasks, diary, checklists, issues, files, financial
- * - Optional: acceptance
+ * - Core modules (built-in, always enabled): tasks, diary, checklists, issues, files, financial, audit_log
+ * - Optional modules (user-selectable): acceptance
  * - Deprecated: dashboard, bot_workflow, todos (kept for backward compatibility)
  */
 export enum ModuleType {
-  // ============ Core Modules (核心模組) ============
+  // ============ Core Modules (核心模組 - 內建模組，始終啟用) ============
   /** 任務管理 | Task management */
   TASKS = 'tasks',
   /** 施工日誌 | Construction diary */
@@ -69,8 +69,10 @@ export enum ModuleType {
   FILES = 'files',
   /** 財務管理 | Financial management */
   FINANCIAL = 'financial',
+  /** 操作紀錄 | Audit log - Operation records and activity history */
+  AUDIT_LOG = 'audit_log',
 
-  // ============ Optional Modules (選用模組) ============
+  // ============ Optional Modules (選用模組 - 用戶可自主選擇) ============
   /** 品質驗收 | Acceptance */
   ACCEPTANCE = 'acceptance',
 
@@ -98,6 +100,9 @@ export interface ModuleConfig {
 /**
  * Essential modules list for blueprint creation
  * 藍圖建立時的核心模組列表
+ * 
+ * Note: Core modules (isCore: true) are built-in and always enabled
+ * Optional modules (isCore: false) can be selected by users
  */
 export const ESSENTIAL_MODULES: ModuleConfig[] = [
   { value: ModuleType.TASKS, label: '任務管理', icon: 'ordered-list', description: '工作項目追蹤與進度管理', isCore: true },
@@ -106,6 +111,7 @@ export const ESSENTIAL_MODULES: ModuleConfig[] = [
   { value: ModuleType.ISSUES, label: '問題追蹤', icon: 'warning', description: '施工問題登記與追蹤', isCore: true },
   { value: ModuleType.FILES, label: '檔案管理', icon: 'folder', description: '專案文件與圖面管理', isCore: true },
   { value: ModuleType.FINANCIAL, label: '財務管理', icon: 'dollar', description: '合約、費用與請款管理', isCore: true },
+  { value: ModuleType.AUDIT_LOG, label: '操作紀錄', icon: 'history', description: '操作記錄與活動歷史追蹤', isCore: true },
   { value: ModuleType.ACCEPTANCE, label: '品質驗收', icon: 'audit', description: '工程驗收與簽核', isCore: false }
 ];
 
@@ -158,7 +164,7 @@ export interface ExtendedModuleConfig extends ModuleConfig {
  *
  * // Check if core module
  * const coreModules = getCoreModules();
- * console.log(coreModules.length); // 6
+ * console.log(coreModules.length); // 7
  * ```
  */
 export const MODULES_CONFIG: ExtendedModuleConfig[] = [
@@ -217,6 +223,15 @@ export const MODULES_CONFIG: ExtendedModuleConfig[] = [
     componentName: 'FinancialOverviewComponent'
   },
   {
+    value: ModuleType.AUDIT_LOG,
+    label: '操作紀錄',
+    icon: 'history',
+    description: '操作記錄與活動歷史追蹤',
+    isCore: true,
+    routePath: 'activities',
+    componentName: 'BlueprintActivitiesComponent'
+  },
+  {
     value: ModuleType.ACCEPTANCE,
     label: '品質驗收',
     icon: 'audit',
@@ -231,13 +246,15 @@ export const MODULES_CONFIG: ExtendedModuleConfig[] = [
  * Default enabled modules for new blueprints
  * 新藍圖的預設啟用模組
  *
- * Following Occam's Razor: enable only essential modules by default
+ * Following Occam's Razor: enable core modules plus essential optional modules by default
+ * Note: All core modules (isCore: true) are always enabled and cannot be disabled
  */
 export const DEFAULT_ENABLED_MODULES: ModuleType[] = [
   ModuleType.TASKS,
   ModuleType.DIARY,
   ModuleType.CHECKLISTS,
-  ModuleType.FILES
+  ModuleType.FILES,
+  ModuleType.AUDIT_LOG // Core module, always enabled
 ];
 
 /**

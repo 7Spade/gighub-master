@@ -109,8 +109,11 @@ export const routes: Routes = [
           {
             path: 'activities',
             loadComponent: () => import('./activities/activities.component').then(m => m.BlueprintActivitiesComponent),
-            data: { title: '活動歷史' }
-            // No guard needed - core tracking function
+            canActivate: [moduleEnabledGuard],
+            data: {
+              title: '活動歷史',
+              requiredModule: ModuleType.AUDIT_LOG
+            }
           },
           {
             path: 'notifications',
