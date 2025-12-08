@@ -1136,13 +1136,15 @@ volumes:
    - Identify root cause
    - Create architecture diagrams
 
-2. **Create Migration Script**
-   - Write SQL migration to enable FILES module
-   - Test on development database
-   - Prepare rollback plan
+2. ✅ **Create Migration Script** (Completed)
+   - ✅ Write SQL migration to enable FILES module
+   - ✅ Create verification queries for before/after testing
+   - ✅ Document rollback strategy
+   - **Migration File**: `supabase/migrations/20251208173000_enable_files_module_for_all_blueprints.sql`
+   - **Verification File**: `supabase/migrations/verify_files_module_migration.sql`
 
-3. **Deploy Phase 1 Fix**
-   - Run migration on production
+3. **Deploy Phase 1 Fix** (Ready for Execution)
+   - Run migration on production using Supabase CLI
    - Verify all blueprints have FILES enabled
    - Test file upload on sample blueprints
    - Monitor for errors
@@ -1188,6 +1190,129 @@ volumes:
    - Virus scanning integration
    - Rate limiting on uploads
    - Regular security audits
+
+## Implementation Details
+
+### Phase 1 Migration Script
+
+The migration has been implemented and is ready for deployment. Here are the details:
+
+**Migration File**: `supabase/migrations/20251208173000_enable_files_module_for_all_blueprints.sql`
+
+**Key Features:**
+1. **Idempotent Design**: Safe to run multiple times without creating duplicates
+2. **Targeted Update**: Only affects active blueprints (deleted_at IS NULL)
+3. **Safe Array Operation**: Uses `array_append` to prevent duplicate entries
+4. **Timestamp Tracking**: Updates `updated_at` to track when module was enabled
+5. **Documented Rollback**: Includes rollback strategy in comments
+
+**Migration SQL:**
+```sql
+UPDATE blueprints
+SET 
+  enabled_modules = array_append(enabled_modules, 'files'::module_type),
+  updated_at = NOW()
+WHERE 
+  deleted_at IS NULL
+  AND NOT ('files'::module_type = ANY(enabled_modules));
+```
+
+**Verification Queries**: `supabase/migrations/verify_files_module_migration.sql`
+
+The verification file includes 5 comprehensive queries to:
+1. Count blueprints by FILES module status (before/after)
+2. List all blueprints with detailed module status
+3. Show which blueprints will be affected
+4. Verify migration success (should return 0 blueprints without FILES)
+5. Display module distribution across all blueprints
+
+### Deployment Instructions
+
+**Step 1: Pre-Migration Verification**
+```bash
+# Connect to Supabase and run verification queries
+cd /path/to/gighub-master
+supabase db exec < supabase/migrations/verify_files_module_migration.sql
+```
+
+**Step 2: Apply Migration**
+```bash
+# Option 1: Using Supabase CLI (Recommended)
+supabase db push
+
+# Option 2: Direct migration application
+supabase migration up
+
+# Option 3: Manual execution (if CLI unavailable)
+# Connect to database and run:
+# supabase/migrations/20251208173000_enable_files_module_for_all_blueprints.sql
+```
+
+**Step 3: Post-Migration Verification**
+```bash
+# Run verification query 4 to confirm all blueprints have FILES
+# Expected result: 0 blueprints without FILES module
+```
+
+**Step 4: Test File Upload**
+1. Navigate to any blueprint: `/blueprint/:id/files`
+2. Verify no redirect to overview with error
+3. Test file upload functionality
+4. Confirm file appears in list after upload
+
+### Rollback Procedure
+
+If the migration needs to be reverted:
+
+```sql
+-- Remove 'files' module from all blueprints
+UPDATE blueprints
+SET 
+  enabled_modules = array_remove(enabled_modules, 'files'::module_type),
+  updated_at = NOW()
+WHERE 'files'::module_type = ANY(enabled_modules);
+```
+
+**Note**: This rollback should only be used in case of critical issues. It will restore the previous state but users will lose access to file uploads again.
+
+### Context7 Query Results
+
+Based on Context7 documentation queries for Supabase:
+
+1. **Migration Best Practices**: 
+   - Used timestamp-based naming convention: `YYYYMMDDHHMMSS_description.sql`
+   - Migrations are stored in `supabase/migrations/` directory
+   - Each migration is atomic and includes rollback strategy
+
+2. **Array Operations in PostgreSQL**:
+   - `array_append()`: Safely adds element to array
+   - `ANY()` operator: Checks if value exists in array
+   - Type casting with `::module_type`: Ensures type safety
+   - Array operations are indexed for performance
+
+3. **Supabase CLI Commands**:
+   - `supabase migration new`: Creates new migration file
+   - `supabase migration up`: Applies pending migrations
+   - `supabase db push`: Pushes local migrations to remote
+   - `supabase db reset`: Resets and reapplies all migrations (dev only)
+
+### Consistency Verification
+
+**Database Schema Consistency**: ✅
+- `module_type` enum includes 'files' value (defined in `20251205000003_03_types.sql`)
+- `blueprints.enabled_modules` is of type `module_type[]`
+- Default value is `ARRAY['tasks']::module_type[]`
+
+**TypeScript Type Consistency**: ✅
+- `ModuleType.FILES = 'files'` (in `src/app/core/infra/types/blueprint/index.ts`)
+- `DEFAULT_ENABLED_MODULES` includes `ModuleType.FILES`
+- Guard uses `ModuleType.FILES` for route protection
+
+**Naming Consistency**: ✅
+- Database: `'files'` (enum value)
+- TypeScript: `ModuleType.FILES = 'files'`
+- Route: `/blueprint/:id/files`
+- Configuration: `routePath: 'files'`
 
 ## Conclusion
 
