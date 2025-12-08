@@ -128,9 +128,9 @@ interface PermissionCategory {
       </nz-card>
 
       <nz-spin [nzSpinning]="loading()">
-        <nz-tabset nzType="card">
+        <nz-tabs nzType="card">
           <!-- Roles Tab -->
-          <nz-tab nzTitle="角色列表">
+          <nz-tab-pane nzTitle="角色列表">
             <nz-card [nzBordered]="false" [nzBodyStyle]="{ padding: 0 }">
               <nz-table #rolesTable [nzData]="roles()" [nzFrontPagination]="false" [nzShowPagination]="false" nzSize="middle">
                 <thead>
@@ -183,10 +183,10 @@ interface PermissionCategory {
                 </tbody>
               </nz-table>
             </nz-card>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- Permission Matrix Tab -->
-          <nz-tab nzTitle="權限矩陣">
+          <nz-tab-pane nzTitle="權限矩陣">
             <nz-card [nzBordered]="false" [nzBodyStyle]="{ padding: 0 }">
               <div class="permission-matrix">
                 <table class="matrix-table">
@@ -231,8 +231,8 @@ interface PermissionCategory {
                 </table>
               </div>
             </nz-card>
-          </nz-tab>
-        </nz-tabset>
+          </nz-tab-pane>
+        </nz-tabs>
       </nz-spin>
     </div>
 

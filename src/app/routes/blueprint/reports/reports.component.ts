@@ -181,9 +181,9 @@ interface ReportSummary {
         </div>
 
         <!-- Tabs for different report sections -->
-        <nz-tabset class="report-tabs">
+        <nz-tabs class="report-tabs">
           <!-- 任務進度 Tab -->
-          <nz-tab nzTitle="任務進度">
+          <nz-tab-pane nzTitle="任務進度">
             <div nz-row [nzGutter]="[16, 16]">
               <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12">
                 <nz-card nzTitle="任務狀態分布" [nzBordered]="false">
@@ -233,10 +233,10 @@ interface ReportSummary {
                 </nz-card>
               </div>
             </div>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- 施工日誌 Tab -->
-          <nz-tab nzTitle="施工日誌">
+          <nz-tab-pane nzTitle="施工日誌">
             <div nz-row [nzGutter]="[16, 16]">
               <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
                 <nz-card [nzBordered]="false" class="stat-card">
@@ -259,10 +259,10 @@ interface ReportSummary {
                 </nz-card>
               </div>
             </div>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- 品質管控 Tab -->
-          <nz-tab nzTitle="品質管控">
+          <nz-tab-pane nzTitle="品質管控">
             <div nz-row [nzGutter]="[16, 16]">
               <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
                 <nz-card [nzBordered]="false" class="stat-card">
@@ -295,10 +295,10 @@ interface ReportSummary {
                 </nz-card>
               </div>
             </div>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- 問題追蹤 Tab -->
-          <nz-tab nzTitle="問題追蹤">
+          <nz-tab-pane nzTitle="問題追蹤">
             <div nz-row [nzGutter]="[16, 16]">
               <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="6">
                 <nz-card [nzBordered]="false" class="stat-card">
@@ -336,10 +336,10 @@ interface ReportSummary {
                 <nz-progress [nzPercent]="problemResolutionRate()" nzSize="small" [nzFormat]="percentFormatter"></nz-progress>
               </div>
             </nz-card>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- 財務概況 Tab -->
-          <nz-tab nzTitle="財務概況">
+          <nz-tab-pane nzTitle="財務概況">
             <nz-spin [nzSpinning]="financialLoading()">
               @if (financialSummary()) {
                 <div nz-row [nzGutter]="[16, 16]">
@@ -399,10 +399,10 @@ interface ReportSummary {
                 <nz-empty nzNotFoundContent="尚無財務資料"></nz-empty>
               }
             </nz-spin>
-          </nz-tab>
+          </nz-tab-pane>
 
           <!-- 活動概況 Tab -->
-          <nz-tab nzTitle="活動概況">
+          <nz-tab-pane nzTitle="活動概況">
             <div nz-row [nzGutter]="[16, 16]">
               <div nz-col [nzXs]="12" [nzSm]="12" [nzMd]="8">
                 <nz-card [nzBordered]="false" class="stat-card">
@@ -430,8 +430,8 @@ interface ReportSummary {
                 </nz-card>
               </div>
             </div>
-          </nz-tab>
-        </nz-tabset>
+          </nz-tab-pane>
+        </nz-tabs>
       }
     </nz-spin>
   `,
