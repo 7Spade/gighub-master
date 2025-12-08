@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlueprintFacade, ModuleType, MODULES_CONFIG, isModuleEnabledByDefault } from '@core';
+import { BlueprintFacade, ModuleType, MODULES_CONFIG, isModuleEnabledByDefault, getCoreModules, getOptionalModules } from '@core';
 import { BlueprintBusinessModel, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -202,9 +202,32 @@ interface TagItem {
             <!-- 模組設定 Tab -->
             <nz-tab nzTitle="模組設定">
               <nz-card [nzBordered]="false" nzTitle="啟用模組">
-                <p class="description">選擇要在此藍圖中啟用的功能模組</p>
+                <p class="description">選擇要在此藍圖中啟用的功能模組。內建模組（核心功能）已預設啟用且無法停用。</p>
+                
+                <!-- Core Modules Section -->
+                <nz-divider nzText="內建模組（核心功能）" nzOrientation="left"></nz-divider>
                 <div class="modules-grid">
-                  @for (module of moduleSettings(); track module.key) {
+                  @for (module of coreModules(); track module.key) {
+                    <div class="module-card enabled core-module">
+                      <div class="module-icon">
+                        <span nz-icon [nzType]="module.icon" nzTheme="outline"></span>
+                      </div>
+                      <div class="module-info">
+                        <div class="module-name">
+                          {{ module.name }}
+                          <nz-tag nzColor="blue" class="core-tag">內建</nz-tag>
+                        </div>
+                        <div class="module-description">{{ module.description }}</div>
+                      </div>
+                      <nz-switch [ngModel]="true" [nzDisabled]="true" nz-tooltip nzTooltipTitle="內建模組無法停用"></nz-switch>
+                    </div>
+                  }
+                </div>
+
+                <!-- Optional Modules Section -->
+                <nz-divider nzText="選用模組（可自主選擇）" nzOrientation="left"></nz-divider>
+                <div class="modules-grid">
+                  @for (module of optionalModules(); track module.key) {
                     <div class="module-card" [class.enabled]="module.enabled">
                       <div class="module-icon">
                         <span nz-icon [nzType]="module.icon" nzTheme="outline"></span>
@@ -214,6 +237,11 @@ interface TagItem {
                         <div class="module-description">{{ module.description }}</div>
                       </div>
                       <nz-switch [ngModel]="module.enabled" (ngModelChange)="toggleModule(module.key, $event)"></nz-switch>
+                    </div>
+                  }
+                  @empty {
+                    <div class="empty-modules">
+                      <p>目前沒有可選用的模組</p>
                     </div>
                   }
                 </div>
@@ -360,6 +388,16 @@ interface TagItem {
         border-color: #b7eb8f;
       }
 
+      .module-card.core-module {
+        background-color: #e6f7ff;
+        border-color: #91d5ff;
+      }
+
+      .module-card.core-module.enabled {
+        background-color: #e6f7ff;
+        border-color: #1890ff;
+      }
+
       .module-icon {
         font-size: 24px;
         color: #1890ff;
@@ -379,6 +417,18 @@ interface TagItem {
         color: rgba(0, 0, 0, 0.45);
         font-size: 12px;
         margin-top: 4px;
+      }
+
+      .core-tag {
+        font-size: 10px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      .empty-modules {
+        text-align: center;
+        padding: 24px;
+        color: rgba(0, 0, 0, 0.45);
       }
 
       .tags-header {
@@ -435,6 +485,21 @@ export class BlueprintSettingsComponent implements OnInit {
   readonly moduleSettings = signal<ModuleSetting[]>([]);
   readonly tags = signal<TagItem[]>([]);
   private initialFormValues: Record<string, unknown> = {};
+
+  // Computed signals for module categorization
+  readonly coreModules = computed(() => {
+    return this.moduleSettings().filter(m => {
+      const config = MODULES_CONFIG.find(c => c.value === m.key);
+      return config?.isCore === true;
+    });
+  });
+
+  readonly optionalModules = computed(() => {
+    return this.moduleSettings().filter(m => {
+      const config = MODULES_CONFIG.find(c => c.value === m.key);
+      return config?.isCore === false;
+    });
+  });
 
   // Forms
   basicForm!: FormGroup;
@@ -586,10 +651,14 @@ export class BlueprintSettingsComponent implements OnInit {
     try {
       this.loading.set(true);
 
-      // Collect enabled modules
-      const enabledModulesArray = this.moduleSettings()
+      // Collect enabled modules - ensure all core modules are always included
+      const coreModuleTypes = getCoreModules().map(m => m.value);
+      const enabledOptionalModules = this.optionalModules()
         .filter(m => m.enabled)
         .map(m => m.key);
+      
+      // Merge core modules (always enabled) with optional modules
+      const enabledModulesArray = [...coreModuleTypes, ...enabledOptionalModules];
 
       // Update blueprint with new settings - only use valid properties
       await this.blueprintFacade.updateBlueprint(blueprint.id, {

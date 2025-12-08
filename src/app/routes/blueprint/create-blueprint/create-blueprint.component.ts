@@ -12,7 +12,7 @@
 
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES, DEFAULT_ENABLED_MODULES } from '@core';
+import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES, DEFAULT_ENABLED_MODULES, getCoreModules, getOptionalModules } from '@core';
 import { CreateBlueprintRequest, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -22,6 +22,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
@@ -63,19 +64,34 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
         <nz-form-item>
           <nz-form-label>啟用模組</nz-form-label>
           <nz-form-control [nzExtra]="moduleHint">
-            <nz-select formControlName="enabledModules" nzMode="multiple" nzPlaceHolder="選擇要啟用的模組" [nzDisabled]="loading()">
-              @for (module of moduleOptions; track module.value) {
-                <nz-option [nzValue]="module.value" [nzLabel]="module.label" nzCustomContent>
-                  <span nz-icon [nzType]="module.icon"></span>
-                  {{ module.label }}
-                  @if (module.isCore) {
-                    <span class="core-badge">核心</span>
-                  }
-                </nz-option>
-              }
-            </nz-select>
+            <!-- Core Modules (Built-in, always enabled) -->
+            <div class="module-section">
+              <div class="module-section-title">內建模組（核心功能，始終啟用）</div>
+              <div class="core-modules-list">
+                @for (module of coreModuleOptions; track module.value) {
+                  <div class="core-module-item">
+                    <span nz-icon [nzType]="module.icon"></span>
+                    {{ module.label }}
+                    <nz-tag nzColor="blue" nzSize="small">內建</nz-tag>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Optional Modules (User-selectable) -->
+            <div class="module-section">
+              <div class="module-section-title">選用模組（可自主選擇）</div>
+              <nz-select formControlName="enabledModules" nzMode="multiple" nzPlaceHolder="選擇要啟用的選用模組" [nzDisabled]="loading()">
+                @for (module of optionalModuleOptions; track module.value) {
+                  <nz-option [nzValue]="module.value" [nzLabel]="module.label" nzCustomContent>
+                    <span nz-icon [nzType]="module.icon"></span>
+                    {{ module.label }}
+                  </nz-option>
+                }
+              </nz-select>
+            </div>
             <ng-template #moduleHint>
-              <span class="hint-text">建議啟用核心模組以獲得完整的施工管理功能</span>
+              <span class="hint-text">內建模組提供核心施工管理功能，無法停用。選用模組可依需求啟用。</span>
             </ng-template>
           </nz-form-control>
         </nz-form-item>
@@ -128,6 +144,37 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
         font-size: 12px;
         color: #999;
       }
+      .module-section {
+        margin-bottom: 16px;
+      }
+      .module-section-title {
+        font-size: 12px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.65);
+        margin-bottom: 8px;
+      }
+      .core-modules-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+        background: #f0f5ff;
+        border: 1px solid #adc6ff;
+        border-radius: 4px;
+        margin-bottom: 12px;
+      }
+      .core-module-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        background: white;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .core-module-item [nz-icon] {
+        color: #1890ff;
+      }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -139,6 +186,7 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
     NzSelectModule,
     NzCheckboxModule,
     NzIconModule,
+    NzTagModule,
     NzTooltipModule
   ]
 })
@@ -154,12 +202,13 @@ export class CreateBlueprintComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     description: [''],
     coverUrl: [''],
-    enabledModules: [DEFAULT_ENABLED_MODULES], // Use unified default configuration
+    enabledModules: [[]], // Only optional modules, core modules will be added automatically
     isPublic: [false]
   });
 
-  // Use essential modules following Occam's Razor principle
-  moduleOptions = ESSENTIAL_MODULES;
+  // Separate core and optional modules
+  coreModuleOptions = getCoreModules();
+  optionalModuleOptions = getOptionalModules();
 
   private ownerId = signal<string | null>(null);
 
@@ -199,12 +248,17 @@ export class CreateBlueprintComponent implements OnInit {
 
     this.loading.set(true);
     try {
+      // Merge core modules (always enabled) with user-selected optional modules
+      const coreModuleTypes = this.coreModuleOptions.map(m => m.value);
+      const selectedOptionalModules = this.form.value.enabledModules || [];
+      const allEnabledModules = [...coreModuleTypes, ...selectedOptionalModules];
+
       const request: CreateBlueprintRequest = {
         ownerId,
         name: this.form.value.name?.trim(),
         description: this.form.value.description?.trim() || undefined,
         coverUrl: this.form.value.coverUrl?.trim() || undefined,
-        enabledModules: this.form.value.enabledModules || DEFAULT_ENABLED_MODULES, // Use unified default
+        enabledModules: allEnabledModules,
         isPublic: this.form.value.isPublic ?? false
       };
       const blueprint = await this.blueprintFacade.createBlueprint(request);
