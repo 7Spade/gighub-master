@@ -598,3 +598,105 @@ MIT License - 詳見 [LICENSE](./LICENSE) 檔案
 **文檔維護者**: GigHub Development Team  
 **最後更新日期**: 2025-12-08  
 **文檔版本**: 1.0.0
+
+---
+
+## 附錄：功能快速參考表
+
+### 藍圖功能模組
+
+| # | 功能模組 | 路由 | 類型 | 圖示 | 說明 |
+|---|---------|------|------|------|------|
+| 1 | 藍圖列表 | `/blueprint/list` | 核心 | 📋 | 查看所有可訪問的藍圖 |
+| 2 | 藍圖概覽 | `/blueprint/:id/overview` | 核心 | 📊 | 專案儀表板與總覽 |
+| 3 | 任務管理 | `/blueprint/:id/tasks` | 可選 | ✅ | 工作項目追蹤與進度管理 |
+| 4 | 施工日誌 | `/blueprint/:id/diaries` | 可選 | 📝 | 每日施工記錄與天氣 |
+| 5 | 品質管控 | `/blueprint/:id/qc-inspections` | 可選 | ✔️ | 品質檢查與巡檢清單 |
+| 6 | 問題追蹤 | `/blueprint/:id/problems` | 可選 | ⚠️ | 施工問題登記與追蹤 |
+| 7 | 檔案管理 | `/blueprint/:id/files` | 可選 | 📁 | 專案文件與圖面管理 |
+| 8 | 財務管理 | `/blueprint/:id/financial/*` | 可選 | 💰 | 合約、費用與請款管理 |
+| 9 | 品質驗收 | `/blueprint/:id/acceptances` | 可選 | 🏆 | 工程驗收與簽核 |
+| 10 | 成員管理 | `/blueprint/:id/members` | 核心 | 👥 | 專案成員邀請與管理 |
+| 11 | 權限管理 | `/blueprint/:id/permissions` | 核心 | 🔐 | 角色定義與權限設定 |
+| 12 | 通知設定 | `/blueprint/:id/notifications` | 核心 | 🔔 | 通知規則與偏好設定 |
+| 13 | 甘特圖 | `/blueprint/:id/gantt` | 可選 | 📈 | 專案時程視覺化 (需任務模組) |
+| 14 | 活動歷史 | `/blueprint/:id/activities` | 核心 | 📜 | 專案活動時間軸 |
+| 15 | 進階搜尋 | `/blueprint/:id/search` | 核心 | 🔍 | 全域內容搜尋 |
+| 16 | 報表分析 | `/blueprint/:id/reports` | 核心 | 📊 | 專案進度與統計報表 |
+| 17 | API 閘道 | `/blueprint/:id/api-gateway` | 核心 | 🔌 | API 金鑰與 Webhook 管理 |
+| 18 | 藍圖設定 | `/blueprint/:id/settings` | 核心 | ⚙️ | 修改專案基本資訊 |
+
+### 帳戶功能模組
+
+| # | 功能模組 | 路由 | 圖示 | 說明 |
+|---|---------|------|------|------|
+| 1 | 帳戶儀表板 | `/account/dashboard` | 🏠 | 個人工作總覽 |
+| 2 | 待辦事項 | `/account/todos` | ✓ | 個人待辦清單 |
+| 3 | 團隊管理 | `/account/teams` | 👨‍👩‍👧‍👦 | 建立組織團隊 |
+| 4 | 組織成員 | `/account/members` | 👤 | 組織成員管理 |
+| 5 | 帳戶設定 | `/account/settings` | ⚙️ | 個人資料與偏好設定 |
+
+### 認證功能模組
+
+| # | 功能模組 | 路由 | 圖示 | 說明 |
+|---|---------|------|------|------|
+| 1 | 登入 | `/passport/login` | 🔓 | 帳號密碼與第三方登入 |
+| 2 | 註冊 | `/passport/register` | 📝 | 使用者註冊 |
+| 3 | 註冊結果 | `/passport/register-result` | ✅ | 註冊成功提示 |
+| 4 | 鎖屏 | `/passport/lock` | 🔒 | 鎖屏與快速解鎖 |
+| 5 | OAuth 回調 | `/passport/callback/:type` | 🔄 | 第三方登入回調處理 |
+
+### 財務子模組
+
+| # | 功能模組 | 路由 | 圖示 | 說明 |
+|---|---------|------|------|------|
+| 1 | 財務概覽 | `/blueprint/:id/financial/overview` | 📊 | 財務儀表板與統計 |
+| 2 | 合約管理 | `/blueprint/:id/financial/contracts` | 📄 | 工程合約登記與管理 |
+| 3 | 費用管理 | `/blueprint/:id/financial/expenses` | 💸 | 費用項目記錄與核銷 |
+| 4 | 請款管理 | `/blueprint/:id/financial/payment-requests` | 📋 | 請款單建立與審核 |
+| 5 | 付款紀錄 | `/blueprint/:id/financial/payments` | 💳 | 付款記錄登記與統計 |
+
+---
+
+## 功能索引 (依字母排序)
+
+| 功能 (中文) | 功能 (English) | 路由 |
+|------------|---------------|------|
+| API 閘道 | API Gateway | `/blueprint/:id/api-gateway` |
+| 三方登入回調 | OAuth Callback | `/passport/callback/:type` |
+| 合約管理 | Contracts | `/blueprint/:id/financial/contracts` |
+| 成員管理 (藍圖) | Blueprint Members | `/blueprint/:id/members` |
+| 成員管理 (組織) | Organization Members | `/account/members` |
+| 待辦事項 | Todos | `/account/todos` |
+| 活動歷史 | Activities | `/blueprint/:id/activities` |
+| 品質管控 | QC Inspections | `/blueprint/:id/qc-inspections` |
+| 品質驗收 | Acceptance | `/blueprint/:id/acceptances` |
+| 帳戶儀表板 | Dashboard | `/account/dashboard` |
+| 帳戶設定 | Account Settings | `/account/settings` |
+| 甘特圖 | Gantt Chart | `/blueprint/:id/gantt` |
+| 施工日誌 | Diary | `/blueprint/:id/diaries` |
+| 登入 | Login | `/passport/login` |
+| 通知設定 | Notifications | `/blueprint/:id/notifications` |
+| 註冊 | Register | `/passport/register` |
+| 註冊結果 | Register Result | `/passport/register-result` |
+| 費用管理 | Expenses | `/blueprint/:id/financial/expenses` |
+| 進階搜尋 | Advanced Search | `/blueprint/:id/search` |
+| 問題追蹤 | Issues | `/blueprint/:id/problems` |
+| 報表分析 | Reports | `/blueprint/:id/reports` |
+| 檔案管理 | Files | `/blueprint/:id/files` |
+| 權限管理 | Permissions | `/blueprint/:id/permissions` |
+| 付款紀錄 | Payments | `/blueprint/:id/financial/payments` |
+| 請款管理 | Payment Requests | `/blueprint/:id/financial/payment-requests` |
+| 財務概覽 | Financial Overview | `/blueprint/:id/financial/overview` |
+| 財務管理 | Financial | `/blueprint/:id/financial` |
+| 團隊管理 | Teams | `/account/teams` |
+| 鎖屏 | Lock Screen | `/passport/lock` |
+| 藍圖列表 | Blueprint List | `/blueprint/list` |
+| 藍圖概覽 | Blueprint Overview | `/blueprint/:id/overview` |
+| 藍圖設定 | Blueprint Settings | `/blueprint/:id/settings` |
+| 任務管理 | Tasks | `/blueprint/:id/tasks` |
+
+---
+
+**總計功能數量**: 37 個獨立功能模組
+
