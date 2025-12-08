@@ -1,43 +1,43 @@
-## PR Checklist
-Please check if your PR fulfills the following requirements:
+## PR 檢查清單
+請確認您的 PR 符合以下要求：
 
-- [ ] The commit message follows our guidelines: https://github.com/ng-alain/ng-alain/blob/master/CONTRIBUTING.md#commit
-- [ ] Tests for the changes have been added (for bug fixes / features)
-- [ ] Docs have been added / updated (for bug fixes / features)
+- [ ] Commit 訊息遵循我們的規範：https://github.com/ng-alain/ng-alain/blob/master/CONTRIBUTING.md#commit
+- [ ] 已新增變更的測試（針對 bug 修復 / 新功能）
+- [ ] 已新增 / 更新文件（針對 bug 修復 / 新功能）
 
 
-## PR Type
-What kind of change does this PR introduce?
+## PR 類型
+此 PR 引入何種變更？
 
-<!-- Please check the one that applies to this PR using "x". -->
+<!-- 請使用 "x" 標記適用項目 -->
 ```
-[ ] Bugfix
-[ ] Feature
-[ ] Code style update (formatting, local variables)
-[ ] Refactoring (no functional changes, no api changes)
-[ ] Build related changes
-[ ] CI related changes
-[ ] Documentation content changes
-[ ] Application (the showcase website) / infrastructure changes
-[ ] Other... Please describe:
-```
-
-## What is the current behavior?
-<!-- Please describe the current behavior that you are modifying, or link to a relevant issue. -->
-
-Issue Number: N/A
-
-
-## What is the new behavior?
-
-
-## Does this PR introduce a breaking change?
-```
-[ ] Yes
-[ ] No
+[ ] Bug 修復
+[ ] 新功能
+[ ] 程式碼風格更新（格式化、區域變數）
+[ ] 重構（無功能變更、無 API 變更）
+[ ] 建置相關變更
+[ ] CI 相關變更
+[ ] 文件內容變更
+[ ] 應用程式（展示網站）/ 基礎架構變更
+[ ] 其他... 請說明：
 ```
 
-<!-- If this PR contains a breaking change, please describe the impact and migration path for existing applications below. -->
+## 當前行為是什麼？
+<!-- 請描述您正在修改的當前行為，或連結到相關 Issue -->
+
+Issue 編號: N/A
 
 
-## Other information
+## 新的行為是什麼？
+
+
+## 此 PR 是否引入破壞性變更？
+```
+[ ] 是
+[ ] 否
+```
+
+<!-- 如果此 PR 包含破壞性變更，請在下方說明對現有應用程式的影響及遷移路徑 -->
+
+
+## 其他資訊
