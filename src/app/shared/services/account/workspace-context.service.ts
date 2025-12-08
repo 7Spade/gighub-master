@@ -145,6 +145,7 @@ export class WorkspaceContextService {
   });
 
   private hasRestored = false;
+  private loadingAuthUserId: string | null = null; // Track currently loading user to prevent duplicate loads
 
   constructor() {
     // 監聽認證狀態並自動載入資料 (使用 supabaseUser 信號實現響應式)
@@ -156,7 +157,12 @@ export class WorkspaceContextService {
       console.log('[WorkspaceContextService] 🔐 Auth state check:', { hasUser: !!user, authUserId });
 
       if (authUserId) {
-        this.loadWorkspaceData(authUserId);
+        // Only load if not already loading for this user
+        if (this.loadingAuthUserId !== authUserId) {
+          this.loadWorkspaceData(authUserId);
+        } else {
+          console.log('[WorkspaceContextService] ⏭️ Already loading data for user:', authUserId);
+        }
       } else {
         this.reset();
       }
@@ -180,8 +186,14 @@ export class WorkspaceContextService {
   // === 資料載入 Data Loading ===
 
   async loadWorkspaceData(authUserId: string): Promise<void> {
-    if (this.loadingState()) return; // 防止重複載入
+    // Prevent duplicate loads for the same user
+    if (this.loadingState() || this.loadingAuthUserId === authUserId) {
+      console.log('[WorkspaceContextService] ⏭️ Load already in progress for user:', authUserId);
+      return;
+    }
 
+    // Mark this user as being loaded
+    this.loadingAuthUserId = authUserId;
     this.loadingState.set(true);
     this.errorState.set(null);
 
@@ -225,8 +237,15 @@ export class WorkspaceContextService {
       const message = error instanceof Error ? error.message : 'Failed to load workspace data';
       this.errorState.set(message);
       console.error('[WorkspaceContextService] Load failed:', error);
+      // Clear loading user on error to allow retry
+      this.loadingAuthUserId = null;
     } finally {
       this.loadingState.set(false);
+      // Only clear loadingAuthUserId after successful load to prevent re-entry
+      if (!this.errorState()) {
+        // Keep loadingAuthUserId set to prevent reloads for same user
+        // It will only be cleared on user change or reset
+      }
     }
   }
 
@@ -322,6 +341,7 @@ export class WorkspaceContextService {
     this.organizationsState.set([]);
     this.teamsState.set([]);
     this.errorState.set(null);
+    this.loadingAuthUserId = null; // Clear loading user on reset
     // Reset to USER context with null ID
     this.switchContext(ContextType.USER, null);
     this.hasRestored = false;
@@ -335,6 +355,7 @@ export class WorkspaceContextService {
     const authUserId = this.supabaseUser()?.id;
     if (authUserId) {
       this.hasRestored = false;
+      this.loadingAuthUserId = null; // Clear to allow reload
       await this.loadWorkspaceData(authUserId);
     }
   }

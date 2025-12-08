@@ -109,6 +109,148 @@ export const ESSENTIAL_MODULES: ModuleConfig[] = [
   { value: ModuleType.ACCEPTANCE, label: '品質驗收', icon: 'audit', description: '工程驗收與簽核', isCore: false }
 ];
 
+/**
+ * Extended module configuration with routing info
+ * 擴展模組配置，包含路由資訊
+ *
+ * Following Occam's Razor principle: single source of truth for all module metadata
+ */
+export interface ExtendedModuleConfig extends ModuleConfig {
+  /** Route path segment (e.g., 'tasks', 'qc-inspections') */
+  routePath: string;
+  /** Component name for documentation */
+  componentName: string;
+}
+
+/**
+ * Complete modules configuration with routing information
+ * 完整模組配置（包含路由資訊）
+ *
+ * Single source of truth for:
+ * - Module metadata (label, icon, description)
+ * - Route mapping
+ * - Component names
+ * - Default enabled state
+ */
+export const MODULES_CONFIG: ExtendedModuleConfig[] = [
+  {
+    value: ModuleType.TASKS,
+    label: '任務管理',
+    icon: 'ordered-list',
+    description: '工作項目追蹤與進度管理',
+    isCore: true,
+    routePath: 'tasks',
+    componentName: 'BlueprintTasksComponent'
+  },
+  {
+    value: ModuleType.DIARY,
+    label: '施工日誌',
+    icon: 'file-text',
+    description: '每日施工記錄與天氣',
+    isCore: true,
+    routePath: 'diaries',
+    componentName: 'BlueprintDiariesComponent'
+  },
+  {
+    value: ModuleType.CHECKLISTS,
+    label: '檢查清單',
+    icon: 'check-square',
+    description: '品質檢查與巡檢清單',
+    isCore: true,
+    routePath: 'qc-inspections',
+    componentName: 'BlueprintQcInspectionsComponent'
+  },
+  {
+    value: ModuleType.ISSUES,
+    label: '問題追蹤',
+    icon: 'warning',
+    description: '施工問題登記與追蹤',
+    isCore: true,
+    routePath: 'problems',
+    componentName: 'BlueprintProblemsComponent'
+  },
+  {
+    value: ModuleType.FILES,
+    label: '檔案管理',
+    icon: 'folder',
+    description: '專案文件與圖面管理',
+    isCore: true,
+    routePath: 'files',
+    componentName: 'BlueprintFilesComponent'
+  },
+  {
+    value: ModuleType.FINANCIAL,
+    label: '財務管理',
+    icon: 'dollar',
+    description: '合約、費用與請款管理',
+    isCore: true,
+    routePath: 'financial',
+    componentName: 'FinancialOverviewComponent'
+  },
+  {
+    value: ModuleType.ACCEPTANCE,
+    label: '品質驗收',
+    icon: 'audit',
+    description: '工程驗收與簽核',
+    isCore: false,
+    routePath: 'acceptances',
+    componentName: 'BlueprintAcceptancesComponent'
+  }
+];
+
+/**
+ * Default enabled modules for new blueprints
+ * 新藍圖的預設啟用模組
+ *
+ * Following Occam's Razor: enable only essential modules by default
+ */
+export const DEFAULT_ENABLED_MODULES: ModuleType[] = [
+  ModuleType.TASKS,
+  ModuleType.DIARY,
+  ModuleType.CHECKLISTS,
+  ModuleType.FILES
+];
+
+/**
+ * Get module config by module type
+ * 根據模組類型獲取配置
+ */
+export function getModuleConfig(moduleType: ModuleType): ExtendedModuleConfig | undefined {
+  return MODULES_CONFIG.find(m => m.value === moduleType);
+}
+
+/**
+ * Get module config by route path
+ * 根據路由路徑獲取配置
+ */
+export function getModuleConfigByRoute(routePath: string): ExtendedModuleConfig | undefined {
+  return MODULES_CONFIG.find(m => m.routePath === routePath);
+}
+
+/**
+ * Check if module should be enabled by default
+ * 檢查模組是否應該預設啟用
+ */
+export function isModuleEnabledByDefault(module: ModuleType): boolean {
+  return DEFAULT_ENABLED_MODULES.includes(module);
+}
+
+/**
+ * Get all core modules
+ * 獲取所有核心模組
+ */
+export function getCoreModules(): ExtendedModuleConfig[] {
+  return MODULES_CONFIG.filter(m => m.isCore);
+}
+
+/**
+ * Get all optional modules
+ * 獲取所有選用模組
+ */
+export function getOptionalModules(): ExtendedModuleConfig[] {
+  return MODULES_CONFIG.filter(m => !m.isCore);
+}
+
 // ============================================================================
 // Blueprint Entity Interfaces (藍圖實體介面)
 // ============================================================================
