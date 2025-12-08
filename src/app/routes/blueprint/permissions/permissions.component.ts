@@ -128,7 +128,7 @@ interface PermissionCategory {
       </nz-card>
 
       <nz-spin [nzSpinning]="loading()">
-        <nz-tabset nzType="card">
+        <nz-tabs nzType="card">
           <!-- Roles Tab -->
           <nz-tab nzTitle="角色列表">
             <nz-card [nzBordered]="false" [nzBodyStyle]="{ padding: 0 }">
@@ -232,7 +232,7 @@ interface PermissionCategory {
               </div>
             </nz-card>
           </nz-tab>
-        </nz-tabset>
+        </nz-tabs>
       </nz-spin>
     </div>
 

@@ -107,7 +107,7 @@ interface TagItem {
           </div>
 
           <!-- Settings Tabs -->
-          <nz-tabset nzType="card">
+          <nz-tabs nzType="card">
             <!-- 基本設定 Tab -->
             <nz-tab nzTitle="基本設定">
               <nz-card [nzBordered]="false" nzTitle="工作時間設定">
@@ -299,7 +299,7 @@ interface TagItem {
                 </div>
               </nz-card>
             </nz-tab>
-          </nz-tabset>
+          </nz-tabs>
         }
       </nz-spin>
     </div>

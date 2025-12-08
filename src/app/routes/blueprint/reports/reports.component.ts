@@ -181,7 +181,7 @@ interface ReportSummary {
         </div>
 
         <!-- Tabs for different report sections -->
-        <nz-tabset class="report-tabs">
+        <nz-tabs class="report-tabs">
           <!-- 任務進度 Tab -->
           <nz-tab nzTitle="任務進度">
             <div nz-row [nzGutter]="[16, 16]">
@@ -431,7 +431,7 @@ interface ReportSummary {
               </div>
             </div>
           </nz-tab>
-        </nz-tabset>
+        </nz-tabs>
       }
     </nz-spin>
   `,

@@ -195,7 +195,7 @@ interface ApiStats {
 
       <!-- Main Content Tabs -->
       <nz-card [nzBordered]="false" class="main-card">
-        <nz-tabset>
+        <nz-tabs>
           <!-- API Keys Tab -->
           <nz-tab nzTitle="API 金鑰">
             <div class="tab-header">
@@ -549,7 +549,7 @@ interface ApiStats {
               </div>
             </div>
           </nz-tab>
-        </nz-tabset>
+        </nz-tabs>
       </nz-card>
     </nz-spin>
 

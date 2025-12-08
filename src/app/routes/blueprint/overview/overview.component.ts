@@ -119,7 +119,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
           </div>
 
           <!-- Tabs for different sections -->
-          <nz-tabset class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
+          <nz-tabs class="content-tabs" [(nzSelectedIndex)]="selectedTabIndex">
             <!-- 概覽 Tab -->
             <nz-tab nzTitle="概覽">
               <div class="tab-header">
@@ -727,7 +727,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 <app-activity-timeline [blueprintId]="blueprintId() || ''" [limit]="20" [showFilters]="true" />
               </nz-card>
             </nz-tab>
-          </nz-tabset>
+          </nz-tabs>
         } @else if (!loading()) {
           <nz-result nzStatus="404" nzTitle="找不到藍圖" nzSubTitle="您請求的藍圖不存在或已被刪除">
             <div nz-result-extra>
@@ -1001,14 +1001,14 @@ export class BlueprintOverviewComponent implements OnInit {
   readonly createdDate = computed(() => {
     const date = this.blueprint()?.created_at;
     if (!date) return '-';
-    const datePipe = new DatePipe('zh-TW');
+    const datePipe = new DatePipe('zh-CN');
     return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 
   readonly updatedDate = computed(() => {
     const date = this.blueprint()?.updated_at;
     if (!date) return '-';
-    const datePipe = new DatePipe('zh-TW');
+    const datePipe = new DatePipe('zh-CN');
     return datePipe.transform(new Date(date), 'yyyy/MM/dd') || '-';
   });
 

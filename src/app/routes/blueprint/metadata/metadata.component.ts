@@ -122,7 +122,7 @@ interface EntityTypeOption {
         </ng-template>
 
         <!-- Entity Type Tabs -->
-        <nz-tabset (nzSelectChange)="onTabChange()" [(nzSelectedIndex)]="selectedTabIndex">
+        <nz-tabs (nzSelectChange)="onTabChange()" [(nzSelectedIndex)]="selectedTabIndex">
           <nz-tab nzTitle="全部欄位">
             <ng-template nz-tab>
               <ng-container *ngTemplateOutlet="fieldTable; context: { fields: filteredFields() }"></ng-container>
@@ -135,7 +135,7 @@ interface EntityTypeOption {
               </ng-template>
             </nz-tab>
           }
-        </nz-tabset>
+        </nz-tabs>
       </nz-card>
 
       <!-- Field Table Template -->
