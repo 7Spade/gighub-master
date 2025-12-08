@@ -241,17 +241,6 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                   </nz-card>
                 </div>
                 <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToMetadata()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="field-number" class="nav-icon metadata"></span>
-                      <div class="nav-text">
-                        <h4>自訂欄位</h4>
-                        <p>自訂資料欄位管理</p>
-                      </div>
-                    </div>
-                  </nz-card>
-                </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToActivities()" nzHoverable>
                     <div class="nav-card-content">
                       <span nz-icon nzType="history" class="nav-icon activities"></span>
@@ -1240,13 +1229,6 @@ export class BlueprintOverviewComponent implements OnInit {
     const id = this.blueprintId();
     if (id) {
       this.router.navigate(['/blueprint', id, 'problems']);
-    }
-  }
-
-  goToMetadata(): void {
-    const id = this.blueprintId();
-    if (id) {
-      this.router.navigate(['/blueprint', id, 'metadata']);
     }
   }
 
