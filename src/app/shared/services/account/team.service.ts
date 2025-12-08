@@ -12,6 +12,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TeamRepository, Team, TeamMember, TeamRole, SupabaseService } from '@core';
 import { firstValueFrom } from 'rxjs';
+import { LoggerService } from '@core/logger';
+import { AuditLogService } from '../audit-log';
 
 /**
  * Create team request
@@ -36,6 +38,8 @@ export interface UpdateTeamRequest {
 export class TeamService {
   private readonly teamRepo = inject(TeamRepository);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly auditLog = inject(AuditLogService);
 
   // State
   private teamsState = signal<Team[]>([]);
@@ -78,33 +82,86 @@ export class TeamService {
    * Uses RPC function create_team for proper handling
    */
   async createTeam(request: CreateTeamRequest): Promise<Team> {
-    const client = this.supabaseService.client;
+    try {
+      this.logger.info('Creating team', {
+        name: request.name,
+        organizationId: request.organizationId
+      });
 
-    // Use SECURITY DEFINER function to create team
-    const { data, error } = await (client as any).rpc('create_team', {
-      p_organization_id: request.organizationId,
-      p_name: request.name,
-      p_description: request.description || null
-    });
+      const client = this.supabaseService.client;
 
-    if (error) {
-      console.error('[TeamService] Failed to create team:', error);
+      // Use SECURITY DEFINER function to create team
+      const { data, error } = await (client as any).rpc('create_team', {
+        p_organization_id: request.organizationId,
+        p_name: request.name,
+        p_description: request.description || null
+      });
+
+      if (error) {
+        this.logger.error('Failed to create team via RPC', error);
+        throw error;
+      }
+
+      if (!data || !data[0]) {
+        throw new Error('Failed to create team');
+      }
+
+      const { out_team_id } = data[0];
+
+      // Fetch the created team
+      const team = await this.findById(out_team_id);
+      if (!team) {
+        throw new Error('Failed to fetch created team');
+      }
+
+      // Record audit log
+      this.auditLog.quickLog(
+        'team',
+        team.id,
+        'create',
+        {
+          entityName: team.name,
+          organizationId: request.organizationId,
+          newValue: team,
+          severity: 'info',
+          metadata: {
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management',
+            organization_id: request.organizationId
+          }
+        }
+      ).subscribe();
+
+      this.logger.info('Team created successfully', {
+        teamId: team.id,
+        name: team.name
+      });
+
+      return team;
+    } catch (error) {
+      this.logger.error('Failed to create team', error);
+
+      // Record failed attempt in audit log
+      this.auditLog.quickLog(
+        'team',
+        'N/A',
+        'create',
+        {
+          severity: 'error',
+          metadata: {
+            error_message: (error as Error).message,
+            failed: true,
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management',
+            organization_id: request.organizationId
+          }
+        }
+      ).subscribe();
+
       throw error;
     }
-
-    if (!data || !data[0]) {
-      throw new Error('Failed to create team');
-    }
-
-    const { out_team_id } = data[0];
-
-    // Fetch the created team
-    const team = await this.findById(out_team_id);
-    if (!team) {
-      throw new Error('Failed to fetch created team');
-    }
-
-    return team;
   }
 
   /**
@@ -112,11 +169,70 @@ export class TeamService {
    * Update team
    */
   async updateTeam(id: string, request: UpdateTeamRequest): Promise<Team> {
-    const team = await firstValueFrom(this.teamRepo.update(id, request as any));
-    if (!team) {
-      throw new Error('Failed to update team');
+    try {
+      this.logger.info('Updating team', {
+        teamId: id,
+        changes: Object.keys(request)
+      });
+
+      // Get old value for change tracking
+      const oldTeam = await this.findById(id);
+      if (!oldTeam) {
+        throw new Error('Team not found');
+      }
+
+      // Perform update
+      const newTeam = await firstValueFrom(this.teamRepo.update(id, request as any));
+      if (!newTeam) {
+        throw new Error('Failed to update team');
+      }
+
+      // Record changes in audit log (automatically tracks differences)
+      this.auditLog.logChanges(
+        'team',
+        id,
+        'update',
+        oldTeam,
+        newTeam,
+        {
+          entityName: newTeam.name,
+          metadata: {
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management',
+            changed_fields: Object.keys(request)
+          }
+        }
+      ).subscribe();
+
+      this.logger.info('Team updated successfully', {
+        teamId: id,
+        name: newTeam.name
+      });
+
+      return newTeam;
+    } catch (error) {
+      this.logger.error('Failed to update team', error);
+
+      // Record failed attempt in audit log
+      this.auditLog.quickLog(
+        'team',
+        id,
+        'update',
+        {
+          severity: 'error',
+          metadata: {
+            error_message: (error as Error).message,
+            failed: true,
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management'
+          }
+        }
+      ).subscribe();
+
+      throw error;
     }
-    return team;
   }
 
   /**
@@ -124,11 +240,67 @@ export class TeamService {
    * Soft delete team
    */
   async softDeleteTeam(id: string): Promise<Team> {
-    const team = await firstValueFrom(this.teamRepo.softDelete(id));
-    if (!team) {
-      throw new Error('Failed to delete team');
+    try {
+      this.logger.info('Deleting team', { teamId: id });
+
+      // Get team before deletion for audit log
+      const team = await this.findById(id);
+      if (!team) {
+        throw new Error('Team not found');
+      }
+
+      // Perform soft delete
+      const deletedTeam = await firstValueFrom(this.teamRepo.softDelete(id));
+      if (!deletedTeam) {
+        throw new Error('Failed to delete team');
+      }
+
+      // Record deletion in audit log (warning severity for sensitive operation)
+      this.auditLog.quickLog(
+        'team',
+        id,
+        'delete',
+        {
+          entityName: team.name,
+          oldValue: team,
+          severity: 'warning',
+          metadata: {
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management',
+            deletion_type: 'soft_delete'
+          }
+        }
+      ).subscribe();
+
+      this.logger.info('Team deleted successfully', {
+        teamId: id,
+        name: team.name
+      });
+
+      return deletedTeam;
+    } catch (error) {
+      this.logger.error('Failed to delete team', error);
+
+      // Record failed attempt in audit log
+      this.auditLog.quickLog(
+        'team',
+        id,
+        'delete',
+        {
+          severity: 'error',
+          metadata: {
+            error_message: (error as Error).message,
+            failed: true,
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management'
+          }
+        }
+      ).subscribe();
+
+      throw error;
     }
-    return team;
   }
 
   /**
@@ -144,13 +316,74 @@ export class TeamService {
    * Add team member
    */
   async addMember(teamId: string, accountId: string, role: TeamRole = TeamRole.MEMBER): Promise<TeamMember | null> {
-    return firstValueFrom(
-      this.teamRepo.addMember({
-        team_id: teamId,
-        account_id: accountId,
+    try {
+      this.logger.info('Adding team member', {
+        teamId,
+        accountId,
         role
-      })
-    );
+      });
+
+      const member = await firstValueFrom(
+        this.teamRepo.addMember({
+          team_id: teamId,
+          account_id: accountId,
+          role
+        })
+      );
+
+      if (member) {
+        // Record member addition in audit log
+        this.auditLog.quickLog(
+          'team_member',
+          member.id,
+          'create',
+          {
+            entityName: `Team member: ${accountId}`,
+            newValue: member,
+            severity: 'info',
+            metadata: {
+              source: 'ui',
+              module: 'account',
+              feature: 'team-management',
+              team_id: teamId,
+              account_id: accountId,
+              role
+            }
+          }
+        ).subscribe();
+
+        this.logger.info('Team member added successfully', {
+          teamId,
+          memberId: member.id,
+          accountId
+        });
+      }
+
+      return member;
+    } catch (error) {
+      this.logger.error('Failed to add team member', error);
+
+      // Record failed attempt in audit log
+      this.auditLog.quickLog(
+        'team_member',
+        'N/A',
+        'create',
+        {
+          severity: 'error',
+          metadata: {
+            error_message: (error as Error).message,
+            failed: true,
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management',
+            team_id: teamId,
+            account_id: accountId
+          }
+        }
+      ).subscribe();
+
+      throw error;
+    }
   }
 
   /**
@@ -158,6 +391,63 @@ export class TeamService {
    * Remove team member
    */
   async removeMember(memberId: string): Promise<boolean> {
-    return firstValueFrom(this.teamRepo.removeMember(memberId));
+    try {
+      this.logger.info('Removing team member', { memberId });
+
+      // Get member info before removal for audit log
+      const members = await firstValueFrom(this.teamRepo.findMembers(''));
+      const member = members.find(m => m.id === memberId);
+
+      const success = await firstValueFrom(this.teamRepo.removeMember(memberId));
+
+      if (success && member) {
+        // Record member removal in audit log
+        this.auditLog.quickLog(
+          'team_member',
+          memberId,
+          'delete',
+          {
+            entityName: `Team member: ${member.account_id}`,
+            oldValue: member,
+            severity: 'warning',
+            metadata: {
+              source: 'ui',
+              module: 'account',
+              feature: 'team-management',
+              team_id: member.team_id,
+              account_id: member.account_id
+            }
+          }
+        ).subscribe();
+
+        this.logger.info('Team member removed successfully', {
+          memberId,
+          accountId: member.account_id
+        });
+      }
+
+      return success;
+    } catch (error) {
+      this.logger.error('Failed to remove team member', error);
+
+      // Record failed attempt in audit log
+      this.auditLog.quickLog(
+        'team_member',
+        memberId,
+        'delete',
+        {
+          severity: 'error',
+          metadata: {
+            error_message: (error as Error).message,
+            failed: true,
+            source: 'ui',
+            module: 'account',
+            feature: 'team-management'
+          }
+        }
+      ).subscribe();
+
+      throw error;
+    }
   }
 }
