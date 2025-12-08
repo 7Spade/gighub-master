@@ -10,13 +10,27 @@
 
 // =============================================================================
 // Color Palette - 顏色調色板
+// Based on Azure Dragon (青龍) Color System
+// @see docs/design/drafts/azure-dragon-color-concept.md
 // =============================================================================
 
-// Primary Colors - 主要顏色
-@color-primary: #1890ff;
-@color-primary-light: #e6f7ff;
-@color-primary-hover: #40a9ff;
-@color-primary-active: #096dd9;
+// Azure Dragon Color Scale (10 Levels) - 青龍配色系統
+@azure-dragon-1: #E6FFFF;   // 冰青 (Ice Cyan)
+@azure-dragon-2: #B3F5F5;   // 薄霧青 (Mist Cyan)
+@azure-dragon-3: #80EBEB;   // 晨露青 (Dew Cyan)
+@azure-dragon-4: #4DE0E0;   // 湖水青 (Lake Cyan)
+@azure-dragon-5: #26D6D6;   // 清泉青 (Spring Cyan)
+@azure-dragon-6: #13C2C2;   // 主青色 (Primary Cyan) ⭐
+@azure-dragon-7: #0F9E9E;   // 深潭青 (Deep Pool Cyan)
+@azure-dragon-8: #0B7A7A;   // 墨青 (Ink Cyan)
+@azure-dragon-9: #085656;   // 夜青 (Night Cyan)
+@azure-dragon-10: #043232;  // 淵青 (Abyss Cyan)
+
+// Primary Colors - 主要顏色 (Using Azure Dragon)
+@color-primary: @azure-dragon-6;
+@color-primary-light: @azure-dragon-1;
+@color-primary-hover: @azure-dragon-5;
+@color-primary-active: @azure-dragon-7;
 
 // Semantic Colors - 語義顏色
 @color-success: #52c41a;
@@ -25,14 +39,14 @@
 @color-warning-light: #fff7e6;
 @color-error: #ff4d4f;
 @color-error-light: #fff2f0;
-@color-info: #1890ff;
-@color-info-light: #e6f7ff;
+@color-info: @azure-dragon-6;
+@color-info-light: @azure-dragon-1;
 
 // Secondary Colors - 次要顏色
 @color-purple: #722ed1;
 @color-purple-light: #f9f0ff;
-@color-cyan: #13c2c2;
-@color-cyan-light: #e6fffb;
+@color-cyan: @azure-dragon-6;
+@color-cyan-light: @azure-dragon-1;
 
 // Neutral Colors - 中性顏色
 @color-text-primary: #333;
@@ -184,3 +198,22 @@
 @gutter-mobile: 8px;
 @gutter-tablet: 12px;
 @gutter-desktop: 16px;
+
+// =============================================================================
+// Azure Dragon Gradients - 青龍漸層定義
+// =============================================================================
+
+// 晨曦漸層 (Dawn Gradient) - 象徵專案啟動的希望與活力
+@gradient-azure-dawn: linear-gradient(180deg, @azure-dragon-1 0%, @azure-dragon-3 35%, @azure-dragon-5 70%, @azure-dragon-6 100%);
+
+// 深潭漸層 (Deep Pool Gradient) - 表達深度與專業性
+@gradient-azure-pool: radial-gradient(circle at center, @azure-dragon-8 0%, @azure-dragon-9 50%, @azure-dragon-10 100%);
+
+// 天青漸層 (Sky Gradient) - 清新明亮的天空感
+@gradient-azure-sky: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(179, 245, 245, 0.6) 50%, rgba(19, 194, 194, 0.3) 100%);
+
+// 龍鱗漸層 (Dragon Scale Gradient) - 青龍鱗片般的層次感
+@gradient-azure-scale: linear-gradient(135deg, @azure-dragon-6 0%, @azure-dragon-7 25%, @azure-dragon-6 50%, @azure-dragon-7 75%, @azure-dragon-6 100%);
+
+// 完整漸層 (Full Gradient) - 從淺到深的完整色階
+@gradient-azure-full: linear-gradient(90deg, @azure-dragon-3, @azure-dragon-5, @azure-dragon-6, @azure-dragon-7, @azure-dragon-8);
