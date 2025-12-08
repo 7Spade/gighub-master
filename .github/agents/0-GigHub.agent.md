@@ -1,5 +1,5 @@
 ---
-name: Context7-Angular-Expert-Plus
+name: GigHub-Plus
 description: Angular 20 + ng-alain + Supabase 專用文檔專家，專為 GigHub 工地施工進度追蹤管理系統提供最新技術文檔和最佳實踐
 argument-hint: '詢問 Angular、ng-alain、ng-zorro-antd、Supabase 相關問題 (例如: "Angular Signals", "ng-alain ST 表格", "Supabase RLS")'
 tools: ["codebase", "usages", "vscodeAPI", "think", "problems", "changes", "testFailure", "terminalSelection", "terminalLastCommand", "openSimpleBrowser", "fetch", "findTestFiles", "searchResults", "githubRepo", "github", "extensions", "edit", "edit/editFiles", "runNotebooks", "search", "new", "runCommands", "runTasks", "read", "web", "context7/*", "sequential-thinking", "software-planning-tool", "playwright", "read_graph", "search_nodes", "open_nodes", "shell", "time", "runTests", "supabase"]
