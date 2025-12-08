@@ -8,6 +8,7 @@
  */
 
 import { Injectable, inject, signal, computed, OnDestroy } from '@angular/core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { SupabaseService, BaseEvent, EventCategory, EventFilterOptions } from '@core';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { Subject, Observable, filter, takeUntil } from 'rxjs';
@@ -127,14 +128,14 @@ export class EventBusService implements OnDestroy {
   // ============================================================
 
   constructor() {
-    console.log('[EventBusService] Initialized');
+    this.logger.debug('EventBusService', 'Initialized');
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.unsubscribeFromRealtime();
-    console.log('[EventBusService] Destroyed');
+    this.logger.debug('EventBusService', 'Destroyed');
   }
 
   // ============================================================
@@ -149,7 +150,7 @@ export class EventBusService implements OnDestroy {
   initialize(blueprintId?: string): void {
     this.currentBlueprintId = blueprintId || null;
     this.subscribeToRealtime();
-    console.log('[EventBusService] Initialized with blueprint:', blueprintId);
+    this.logger.debug('EventBusService', 'Initialized with blueprint', { blueprintId });
   }
 
   /**
@@ -163,7 +164,7 @@ export class EventBusService implements OnDestroy {
     this.currentBlueprintId = blueprintId;
     this.unsubscribeFromRealtime();
     this.subscribeToRealtime();
-    console.log('[EventBusService] Switched to blueprint:', blueprintId);
+    this.logger.debug('EventBusService', 'Switched to blueprint', { blueprintId });
   }
 
   // ============================================================
@@ -195,7 +196,7 @@ export class EventBusService implements OnDestroy {
       this.broadcastToRealtime(fullEvent);
     }
 
-    console.log('[EventBusService] Event published:', fullEvent.type, fullEvent);
+    this.logger.debug('EventBusService', 'Event published', { type: fullEvent.type, event: fullEvent });
 
     return fullEvent;
   }
@@ -427,14 +428,14 @@ export class EventBusService implements OnDestroy {
 
           if (status === 'SUBSCRIBED') {
             this.errorState.set(null);
-            console.log('[EventBusService] Realtime connected:', channelName);
+            this.logger.debug('EventBusService', 'Realtime connected', { channelName });
           } else if (status === 'CHANNEL_ERROR') {
             this.errorState.set('Realtime 連線錯誤');
-            console.error('[EventBusService] Realtime channel error');
+            this.logger.error('EventBusService', 'Realtime channel error', null, { channelName });
           }
         });
     } catch (err: unknown) {
-      console.error('[EventBusService] Failed to subscribe to realtime:', err);
+      this.logger.error('EventBusService', 'Failed to subscribe to realtime', err, { blueprintId, channelName });
       this.errorState.set('無法連接 Realtime');
     }
   }
@@ -455,7 +456,7 @@ export class EventBusService implements OnDestroy {
    */
   private broadcastToRealtime(event: BaseEvent): void {
     if (!this.realtimeChannel) {
-      console.warn('[EventBusService] Cannot broadcast - channel not connected');
+      this.logger.warn('EventBusService', 'Cannot broadcast - channel not connected', { channelName });
       return;
     }
 
@@ -466,7 +467,7 @@ export class EventBusService implements OnDestroy {
         payload: event
       })
       .catch((err: unknown) => {
-        console.error('[EventBusService] Broadcast error:', err);
+        this.logger.error('EventBusService', 'Broadcast error', err, { event, channelName });
       });
   }
 }

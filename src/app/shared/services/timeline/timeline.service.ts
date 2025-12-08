@@ -14,6 +14,7 @@
  */
 
 import { Injectable, inject, computed, signal, DestroyRef } from '@angular/core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SettingsService } from '@delon/theme';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -64,6 +65,7 @@ const initialState: TimelineState = {
 @Injectable({ providedIn: 'root' })
 export class TimelineService {
   private readonly repository = inject(TimelineRepository);
+  private readonly logger = inject(LoggerService);
   private readonly settings = inject(SettingsService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -124,7 +126,7 @@ export class TimelineService {
         }
       }),
       catchError(error => {
-        console.error('[TimelineService] logActivity error:', error);
+        this.logger.error('TimelineService', 'Failed to log activity', error, { request });
         return of(null);
       })
     );
@@ -208,7 +210,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          console.error('[TimelineService] loadActivities error:', error);
+          this.logger.error('TimelineService', 'Failed to load activities', error, { options });
           this.updateState({
             error: 'Failed to load activities',
             loading: false
@@ -240,7 +242,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          console.error('[TimelineService] loadByBlueprint error:', error);
+          this.logger.error('TimelineService', 'Failed to load activities by blueprint', error, { blueprintId, options });
           this.updateState({
             error: 'Failed to load blueprint activities',
             loading: false
@@ -271,7 +273,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          console.error('[TimelineService] loadMore error:', error);
+          this.logger.error('TimelineService', 'Failed to load more activities', error);
         }
       });
   }
