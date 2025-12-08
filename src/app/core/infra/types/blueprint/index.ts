@@ -102,7 +102,7 @@ export interface ModuleConfig {
 export const ESSENTIAL_MODULES: ModuleConfig[] = [
   { value: ModuleType.TASKS, label: '任務管理', icon: 'ordered-list', description: '工作項目追蹤與進度管理', isCore: true },
   { value: ModuleType.DIARY, label: '施工日誌', icon: 'file-text', description: '每日施工記錄與天氣', isCore: true },
-  { value: ModuleType.CHECKLISTS, label: '檢查清單', icon: 'check-square', description: '品質檢查與巡檢清單', isCore: true },
+  { value: ModuleType.CHECKLISTS, label: '品質管控', icon: 'check-square', description: '品質檢查與巡檢清單', isCore: true },
   { value: ModuleType.ISSUES, label: '問題追蹤', icon: 'warning', description: '施工問題登記與追蹤', isCore: true },
   { value: ModuleType.FILES, label: '檔案管理', icon: 'folder', description: '專案文件與圖面管理', isCore: true },
   { value: ModuleType.FINANCIAL, label: '財務管理', icon: 'dollar', description: '合約、費用與請款管理', isCore: true },
@@ -126,11 +126,40 @@ export interface ExtendedModuleConfig extends ModuleConfig {
  * Complete modules configuration with routing information
  * 完整模組配置（包含路由資訊）
  *
- * Single source of truth for:
- * - Module metadata (label, icon, description)
- * - Route mapping
- * - Component names
- * - Default enabled state
+ * Single source of truth for all module metadata including:
+ * - Module type identifiers (ModuleType enum values)
+ * - Display labels (Chinese localization)
+ * - Icons (ng-zorro-antd icon names)
+ * - Descriptions (feature explanations)
+ * - Core vs optional classification
+ * - Route path segments (URL paths)
+ * - Component names (for documentation)
+ *
+ * **Route Path Mapping Notes**:
+ * Some modules have route paths that differ from their type names due to historical reasons:
+ * - CHECKLISTS → 'qc-inspections' (originally designed for QC inspection workflows)
+ * - ISSUES → 'problems' (user-facing term for issue tracking)
+ * - DIARY → 'diaries' (plural form for consistency with other routes)
+ * - ACCEPTANCE → 'acceptances' (plural form for consistency)
+ *
+ * These differences are intentional and should not be changed to maintain
+ * backward compatibility with existing URLs and bookmarks.
+ *
+ * **Usage Examples**:
+ * ```typescript
+ * // Get module configuration
+ * const config = getModuleConfig(ModuleType.TASKS);
+ * console.log(config.label); // "任務管理"
+ * console.log(config.routePath); // "tasks"
+ *
+ * // Get configuration by route
+ * const config2 = getModuleConfigByRoute('qc-inspections');
+ * console.log(config2?.value); // ModuleType.CHECKLISTS
+ *
+ * // Check if core module
+ * const coreModules = getCoreModules();
+ * console.log(coreModules.length); // 6
+ * ```
  */
 export const MODULES_CONFIG: ExtendedModuleConfig[] = [
   {
@@ -153,7 +182,7 @@ export const MODULES_CONFIG: ExtendedModuleConfig[] = [
   },
   {
     value: ModuleType.CHECKLISTS,
-    label: '檢查清單',
+    label: '品質管控',
     icon: 'check-square',
     description: '品質檢查與巡檢清單',
     isCore: true,
