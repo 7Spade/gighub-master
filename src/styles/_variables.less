@@ -3,20 +3,24 @@
  * 設計系統變數
  * 
  * Unified color palette, spacing, and typography for GigHub
+ * 完整文檔請參考：docs/design/STYLE_GUIDE.md
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @author GigHub Team
  */
 
 // =============================================================================
 // Color Palette - 顏色調色板
 // =============================================================================
+// 注意：主色調在 src/styles/theme.less 中設定 (@primary-color)
+// 這裡僅定義擴展色階和語義化 token，供特殊場景使用
+// =============================================================================
 
 // Primary Colors - 主要顏色 (使用青龍主色)
-@color-primary: #13C2C2;  // Azure Dragon Primary - 青龍主色
-@color-primary-light: #E6FFFF;  // Azure Dragon Ice - 冰青
-@color-primary-hover: #26D6D6;  // Azure Dragon Spring - 清泉青
-@color-primary-active: #0B7A7A;  // Azure Dragon Ink - 墨青
+@color-primary: @qing-primary;  // 青·正 (青龍主色)
+@color-primary-light: @qing-100;  // 青霧 (最淺背景色)
+@color-primary-hover: @qing-600;  // 青·深 (懸浮狀態)
+@color-primary-active: @qing-700;  // 蒼青 (激活狀態)
 
 // Semantic Colors - 語義顏色
 @color-success: #52c41a;
@@ -25,8 +29,8 @@
 @color-warning-light: #fff7e6;
 @color-error: #ff4d4f;
 @color-error-light: #fff2f0;
-@color-info: #13C2C2;  // Azure Dragon Primary - 資訊色使用青龍主色
-@color-info-light: #E6FFFF;  // Azure Dragon Ice
+@color-info: @qing-primary;  // 青·正 - 資訊色使用青龍主色
+@color-info-light: @qing-100;  // 青霧
 
 // Secondary Colors - 次要顏色
 @color-purple: #722ed1;
@@ -34,30 +38,158 @@
 @color-cyan: #13c2c2;
 @color-cyan-light: #e6fffb;
 
-// Azure Dragon Color System - 青龍配色系統
-// 基於中國傳統青色美學與現代色彩科學
-// 詳細文檔：docs/design/azure-dragon-color-concept.md
-@azure-dragon-1: #E6FFFF;   // 冰青 (Ice Cyan)
-@azure-dragon-2: #B3F5F5;   // 薄霧青 (Mist Cyan)
-@azure-dragon-3: #80EBEB;   // 晨露青 (Dew Cyan)
-@azure-dragon-4: #4DE0E0;   // 湖水青 (Lake Cyan)
-@azure-dragon-5: #26D6D6;   // 清泉青 (Spring Cyan)
-@azure-dragon-6: #13C2C2;   // 主青色 (Primary Cyan) - 標準色
-@azure-dragon-7: #0F9E9E;   // 深潭青 (Deep Pool Cyan)
-@azure-dragon-8: #0B7A7A;   // 墨青 (Ink Cyan)
-@azure-dragon-9: #085656;   // 夜青 (Night Cyan)
-@azure-dragon-10: #043232;  // 淵青 (Abyss Cyan)
+// =============================================================================
+// Azure Dragon (青龍) Color System - 青龍意象配色系統
+// =============================================================================
+// 基於青龍意象的完整配色系統，融合東方美學與現代設計
+// 
+// 📖 完整文檔：docs/design/STYLE_GUIDE.md
+// 🎨 設計規範：docs/design/azure-dragon-color-system.md
+// 💡 概念說明：docs/design/drafts/azure-dragon-color-concept.md
+// ⚙️ 主題配置：src/styles/theme.less (@primary-color: #2CB7AE)
+// 
+// 使用方式：
+// 1. ng-zorro 元件自動使用 @primary-color (青·正 #2CB7AE)
+// 2. 元件 LESS 中直接使用 @qing-* 變數，無需 import
+// 3. 特殊場景可使用 10 級色階 (@qing-100 ~ @qing-950)
+// =============================================================================
 
-// Azure Dragon Semantic Colors - 青龍語義色
-@color-azure-primary: @azure-dragon-6;
-@color-azure-light: @azure-dragon-1;
-@color-azure-dark: @azure-dragon-8;
+// -----------------------------------------------------------------------------
+// Core Palette - 核心色板 (5 色)
+// -----------------------------------------------------------------------------
 
-// Azure Dragon Gradients - 青龍漸層
-@gradient-azure-dawn: linear-gradient(180deg, @azure-dragon-1 0%, @azure-dragon-3 35%, @azure-dragon-5 70%, @azure-dragon-6 100%);
-@gradient-azure-pool: radial-gradient(circle at center, @azure-dragon-8 0%, @azure-dragon-9 50%, @azure-dragon-10 100%);
-@gradient-azure-sky: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(179, 245, 245, 0.6) 50%, rgba(19, 194, 194, 0.3) 100%);
-@gradient-azure-scale: linear-gradient(135deg, @azure-dragon-6 0%, @azure-dragon-7 25%, @azure-dragon-6 50%, @azure-dragon-7 75%, @azure-dragon-6 100%);
+// 青·光 (Light Qing) - 清亮，帶春意與水光感
+@qing-light: #66D1C4;
+
+// 青·正 (Mid Qing) - 標準青，藍綠均衡 [Primary]
+@qing-mid: #2CB7AE;
+
+// 青·深 (Deep Qing) - 偏藍，沉穩典型青色
+@qing-deep: #0093AF;
+
+// 蒼青 (Azure Qing) - 更深，帶蒼色與古典感
+@qing-azure: #007A92;
+
+// 玄青 (Dark Teal) - 深青藍，接近自然礦青
+@qing-dark: #065E68;
+
+// -----------------------------------------------------------------------------
+// Extended Scale - 擴展色階 (10 級)
+// -----------------------------------------------------------------------------
+
+// 青霧 (Qing Mist) - 背景、懸浮提示背景
+@qing-100: #E6F7F5;
+
+// 青露 (Qing Dew) - 選中狀態背景、標籤背景
+@qing-200: #B3EBE6;
+
+// 青泉 (Qing Spring) - 輔助元素、圖示填充
+@qing-300: #80DFD7;
+
+// 青·光 (Qing Light) - 次要按鈕、進度條
+@qing-400: #66D1C4;
+
+// 青·正 (Qing Mid) - 主色調、主要按鈕 [Primary]
+@qing-500: #2CB7AE;
+
+// 青·深 (Qing Deep) - 懸浮狀態、活躍狀態
+@qing-600: #0093AF;
+
+// 蒼青 (Azure Qing) - 點擊狀態、強調元素
+@qing-700: #007A92;
+
+// 玄青 (Dark Teal) - 深色文字、邊框
+@qing-800: #065E68;
+
+// 墨青 (Ink Qing) - 最深色、頁首背景
+@qing-900: #043E45;
+
+// 青淵 (Qing Abyss) - 極深色、暗色模式背景
+@qing-950: #022A30;
+
+// -----------------------------------------------------------------------------
+// Semantic Tokens - 語義化 Token
+// -----------------------------------------------------------------------------
+
+// Primary Color Series - 主色系列
+@qing-primary: @qing-500;
+@qing-primary-hover: @qing-600;
+@qing-primary-active: @qing-700;
+@qing-primary-bg: @qing-100;
+@qing-primary-bg-hover: @qing-200;
+@qing-primary-border: @qing-300;
+@qing-primary-border-hover: @qing-400;
+
+// Text Color Series - 文字色系列
+@qing-text: @qing-500;
+@qing-text-hover: @qing-600;
+@qing-text-active: @qing-700;
+@qing-text-dark: @qing-800;
+
+// -----------------------------------------------------------------------------
+// Gradient Definitions - 漸變定義
+// -----------------------------------------------------------------------------
+
+// 完整五色水平漸變 (Full Gradient - Horizontal)
+@qing-gradient-full: linear-gradient(90deg, #66D1C4 0%, #2CB7AE 25%, #0093AF 50%, #007A92 75%, #065E68 100%);
+
+// 淺色漸變（適合背景）
+@qing-gradient-light: linear-gradient(90deg, #E6F7F5 0%, #B3EBE6 50%, #80DFD7 100%);
+
+// 深色漸變（適合強調）
+@qing-gradient-dark: linear-gradient(90deg, #0093AF 0%, #007A92 50%, #065E68 100%);
+
+// 垂直漸變
+@qing-gradient-vertical: linear-gradient(180deg, #66D1C4 0%, #2CB7AE 25%, #0093AF 50%, #007A92 75%, #065E68 100%);
+
+// 對角漸變
+@qing-gradient-diagonal: linear-gradient(135deg, #66D1C4 0%, #2CB7AE 25%, #0093AF 50%, #007A92 75%, #065E68 100%);
+
+// 徑向漸變
+@qing-gradient-radial: radial-gradient(circle at center, #66D1C4 0%, #2CB7AE 30%, #0093AF 60%, #007A92 80%, #065E68 100%);
+
+// 晨曦漸變 (Dawn Gradient) - 象徵專案啟動的希望與活力
+@qing-gradient-dawn: linear-gradient(180deg, #E6F7F5 0%, #80DFD7 35%, #26D6D6 70%, #2CB7AE 100%);
+
+// 深潭漸變 (Deep Pool Gradient) - 表達深度與專業性
+@qing-gradient-pool: radial-gradient(circle at center, #065E68 0%, #043E45 50%, #022A30 100%);
+
+// 天青漸變 (Sky Gradient) - 清新明亮的天空感
+@qing-gradient-sky: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(179, 235, 230, 0.6) 50%, rgba(44, 183, 174, 0.3) 100%);
+
+// 龍鱗漸變 (Dragon Scale Gradient) - 青龍鱗片般的層次感
+@qing-gradient-scale: linear-gradient(135deg, #2CB7AE 0%, #0093AF 25%, #2CB7AE 50%, #0093AF 75%, #2CB7AE 100%);
+
+// 靈氣漸變 (Aura Gradient) - 青龍靈氣的擴散效果
+@qing-gradient-aura: radial-gradient(ellipse at top left, #2CB7AE 0%, rgba(44, 183, 174, 0.6) 40%, rgba(44, 183, 174, 0.2) 70%, transparent 100%);
+
+// -----------------------------------------------------------------------------
+// Legacy Compatibility - 舊版相容性別名
+// -----------------------------------------------------------------------------
+// 保留舊的命名以確保向後相容性，逐步遷移到新的命名方式
+
+// 舊版 Azure Dragon 命名映射到新的 Qing 系統
+@azure-dragon-1: @qing-100;   // 冰青 → 青霧
+@azure-dragon-2: @qing-200;   // 薄霧青 → 青露
+@azure-dragon-3: @qing-300;   // 晨露青 → 青泉
+@azure-dragon-4: @qing-400;   // 湖水青 → 青·光
+@azure-dragon-5: @qing-500;   // 清泉青 → 青·正
+@azure-dragon-6: @qing-500;   // 主青色 → 青·正
+@azure-dragon-7: @qing-600;   // 深潭青 → 青·深
+@azure-dragon-8: @qing-800;   // 墨青 → 玄青
+@azure-dragon-9: @qing-900;   // 夜青 → 墨青
+@azure-dragon-10: @qing-950;  // 淵青 → 青淵
+
+// Azure Dragon Semantic Colors - 青龍語義色別名
+@color-azure-primary: @qing-primary;
+@color-azure-light: @qing-100;
+@color-azure-dark: @qing-800;
+
+// Azure Dragon Gradients - 青龍漸層別名
+@gradient-azure-dawn: @qing-gradient-dawn;
+@gradient-azure-pool: @qing-gradient-pool;
+@gradient-azure-sky: @qing-gradient-sky;
+@gradient-azure-scale: @qing-gradient-scale;
 
 // Neutral Colors - 中性顏色
 @color-text-primary: #333;
