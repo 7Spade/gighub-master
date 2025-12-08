@@ -13,6 +13,7 @@
 | 狀態枚舉 | 系統狀態定義 | [state-enums.md](./state-enums.md) |
 | 共用組件 | 共用組件清單 | [shared-components.md](./shared-components.md) |
 | 錯誤碼 | 錯誤碼對照表 | [error-codes.md](./error-codes.md) |
+| 採購會計縮寫 | 採購、請款、會計相關縮寫大全 | [procurement-accounting-abbreviations.md](./procurement-accounting-abbreviations.md) |
 
 ---
 
@@ -74,5 +75,5 @@
 
 ---
 
-**最後更新**: 2025-11-27  
+**最後更新**: 2025-12-06  
 **維護者**: 開發團隊

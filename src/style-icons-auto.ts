@@ -4,78 +4,155 @@
  */
 
 import {
+<<<<<<< HEAD
   AccountBookOutline,
+=======
+  // A
+  AccountBookOutline,
+  AlertOutline,
+>>>>>>> main
   AlipayCircleOutline,
+  ApartmentOutline,
   ApiOutline,
   AppstoreOutline,
   ArrowDownOutline,
   ArrowLeftOutline,
+<<<<<<< HEAD
   AuditOutline,
   BellOutline,
   BookOutline,
   BorderLeftOutline,
   BorderRightOutline,
+=======
+  ArrowUpOutline,
+  AuditOutline,
+  AudioOutline,
+  // B
+  BankOutline,
+  BlockOutline,
+  BookOutline,
+  BorderLeftOutline,
+  BorderRightOutline,
+  BugOutline,
+  BuildOutline,
+  // C
+>>>>>>> main
   CalendarOutline,
   CaretDownOutline,
   CheckCircleOutline,
   CheckOutline,
   CheckSquareOutline,
+<<<<<<< HEAD
+=======
+  ClearOutline,
+>>>>>>> main
   ClockCircleOutline,
   CloseCircleOutline,
   CloseOutline,
   CloudOutline,
+  ClusterOutline,
+  ContainerOutline,
   CopyrightOutline,
+  CrownOutline,
   CustomerServiceOutline,
+  // D
   DashboardOutline,
   DatabaseOutline,
   DeleteOutline,
   DingdingOutline,
+  DisconnectOutline,
   DislikeOutline,
   DollarOutline,
   DownloadOutline,
   DownOutline,
+<<<<<<< HEAD
   EditOutline,
   ExclamationCircleOutline,
   EyeOutline,
   FieldNumberOutline,
+=======
+  DragOutline,
+  // E
+  EditOutline,
+  EllipsisOutline,
+  EnvironmentOutline,
+  ExclamationCircleOutline,
+  ExportOutline,
+  EyeOutline,
+  // F
+>>>>>>> main
   FileDoneOutline,
   FileImageOutline,
   FileOutline,
   FileSearchOutline,
   FileTextOutline,
+<<<<<<< HEAD
   FilterOutline,
   FolderAddOutline,
+=======
+  FileZipOutline,
+  FlagOutline,
+>>>>>>> main
   FolderOpenOutline,
   FolderOutline,
   ForkOutline,
   FrownOutline,
   FullscreenExitOutline,
   FullscreenOutline,
+  FundOutline,
+  // G
   GithubOutline,
   GlobalOutline,
+  // H
   HddOutline,
   HistoryOutline,
+<<<<<<< HEAD
   HomeOutline,
   InboxOutline,
   InfoCircleOutline,
+=======
+  // I
+  IdcardOutline,
+  ImportOutline,
+  InboxOutline,
+  InfoCircleOutline,
+  // L
+>>>>>>> main
   LaptopOutline,
   LikeOutline,
+  LoadingOutline,
   LockOutline,
+  LoginOutline,
   LogoutOutline,
+  // M
   MailOutline,
   MenuFoldOutline,
   MenuUnfoldOutline,
   MergeOutline,
   MessageOutline,
   MinusCircleOutline,
+<<<<<<< HEAD
   MobileOutline,
   OrderedListOutline,
+=======
+  MinusOutline,
+  MoreOutline,
+  // N
+  NodeIndexOutline,
+  // O
+  OrderedListOutline,
+  // P
+  PaperClipOutline,
+  PartitionOutline,
+  PauseOutline,
+>>>>>>> main
   PayCircleOutline,
   PieChartOutline,
   PlayCircleOutline,
   PlusCircleOutline,
   PlusOutline,
   PrinterOutline,
+<<<<<<< HEAD
   QuestionCircleOutline,
   RightOutline,
   RocketOutline,
@@ -84,100 +161,215 @@ import {
   ScanOutline,
   SearchOutline,
   SendOutline,
+=======
+  // Q
+  QuestionCircleOutline,
+  // R
+  RadarChartOutline,
+  RedoOutline,
+  RightOutline,
+  RocketOutline,
+  // S
+  SafetyCertificateOutline,
+  SafetyOutline,
+  ScanOutline,
+  SearchOutline,
+>>>>>>> main
   SettingOutline,
   ShareAltOutline,
   ShoppingCartOutline,
   SolutionOutline,
   SoundOutline,
   StarOutline,
+<<<<<<< HEAD
   SyncOutline,
+=======
+  StockOutline,
+  StopOutline,
+  SunOutline,
+  SwapOutline,
+  SyncOutline,
+  // T
+  TableOutline,
+>>>>>>> main
   TaobaoCircleOutline,
   TaobaoOutline,
   TeamOutline,
+  ThunderboltOutline,
   ToolOutline,
   TransactionOutline,
   TrophyOutline,
+<<<<<<< HEAD
   UploadOutline,
   UsbOutline,
   UserAddOutline,
   UserOutline,
+=======
+  // U
+  UploadOutline,
+  UsbOutline,
+  UserAddOutline,
+  UserDeleteOutline,
+  UserOutline,
+  // V
+  VideoCameraOutline,
+  // W
+  WalletOutline,
+>>>>>>> main
   WarningOutline,
   WeiboCircleOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
+<<<<<<< HEAD
   AccountBookOutline,
+=======
+  // A
+  AccountBookOutline,
+  AlertOutline,
+>>>>>>> main
   AlipayCircleOutline,
+  ApartmentOutline,
   ApiOutline,
   AppstoreOutline,
   ArrowDownOutline,
   ArrowLeftOutline,
+<<<<<<< HEAD
   AuditOutline,
   BellOutline,
   BookOutline,
   BorderLeftOutline,
   BorderRightOutline,
+=======
+  ArrowUpOutline,
+  AuditOutline,
+  AudioOutline,
+  // B
+  BankOutline,
+  BlockOutline,
+  BookOutline,
+  BorderLeftOutline,
+  BorderRightOutline,
+  BugOutline,
+  BuildOutline,
+  // C
+>>>>>>> main
   CalendarOutline,
   CaretDownOutline,
   CheckCircleOutline,
   CheckOutline,
   CheckSquareOutline,
+<<<<<<< HEAD
+=======
+  ClearOutline,
+>>>>>>> main
   ClockCircleOutline,
   CloseCircleOutline,
   CloseOutline,
   CloudOutline,
+  ClusterOutline,
+  ContainerOutline,
   CopyrightOutline,
+  CrownOutline,
   CustomerServiceOutline,
+  // D
   DashboardOutline,
   DatabaseOutline,
   DeleteOutline,
   DingdingOutline,
+  DisconnectOutline,
   DislikeOutline,
   DollarOutline,
   DownloadOutline,
   DownOutline,
+<<<<<<< HEAD
   EditOutline,
   ExclamationCircleOutline,
   EyeOutline,
   FieldNumberOutline,
+=======
+  DragOutline,
+  // E
+  EditOutline,
+  EllipsisOutline,
+  EnvironmentOutline,
+  ExclamationCircleOutline,
+  ExportOutline,
+  EyeOutline,
+  // F
+>>>>>>> main
   FileDoneOutline,
   FileImageOutline,
   FileOutline,
   FileSearchOutline,
   FileTextOutline,
+<<<<<<< HEAD
   FilterOutline,
   FolderAddOutline,
+=======
+  FileZipOutline,
+  FlagOutline,
+>>>>>>> main
   FolderOpenOutline,
   FolderOutline,
   ForkOutline,
   FrownOutline,
   FullscreenExitOutline,
   FullscreenOutline,
+  FundOutline,
+  // G
   GithubOutline,
   GlobalOutline,
+  // H
   HddOutline,
   HistoryOutline,
+<<<<<<< HEAD
   HomeOutline,
   InboxOutline,
   InfoCircleOutline,
+=======
+  // I
+  IdcardOutline,
+  ImportOutline,
+  InboxOutline,
+  InfoCircleOutline,
+  // L
+>>>>>>> main
   LaptopOutline,
   LikeOutline,
+  LoadingOutline,
   LockOutline,
+  LoginOutline,
   LogoutOutline,
+  // M
   MailOutline,
   MenuFoldOutline,
   MenuUnfoldOutline,
   MergeOutline,
   MessageOutline,
   MinusCircleOutline,
+<<<<<<< HEAD
   MobileOutline,
   OrderedListOutline,
+=======
+  MinusOutline,
+  MoreOutline,
+  // N
+  NodeIndexOutline,
+  // O
+  OrderedListOutline,
+  // P
+  PaperClipOutline,
+  PartitionOutline,
+  PauseOutline,
+>>>>>>> main
   PayCircleOutline,
   PieChartOutline,
   PlayCircleOutline,
   PlusCircleOutline,
   PlusOutline,
   PrinterOutline,
+<<<<<<< HEAD
   QuestionCircleOutline,
   RightOutline,
   RocketOutline,
@@ -186,23 +378,61 @@ export const ICONS_AUTO = [
   ScanOutline,
   SearchOutline,
   SendOutline,
+=======
+  // Q
+  QuestionCircleOutline,
+  // R
+  RadarChartOutline,
+  RedoOutline,
+  RightOutline,
+  RocketOutline,
+  // S
+  SafetyCertificateOutline,
+  SafetyOutline,
+  ScanOutline,
+  SearchOutline,
+>>>>>>> main
   SettingOutline,
   ShareAltOutline,
   ShoppingCartOutline,
   SolutionOutline,
   SoundOutline,
   StarOutline,
+<<<<<<< HEAD
   SyncOutline,
+=======
+  StockOutline,
+  StopOutline,
+  SunOutline,
+  SwapOutline,
+  SyncOutline,
+  // T
+  TableOutline,
+>>>>>>> main
   TaobaoCircleOutline,
   TaobaoOutline,
   TeamOutline,
+  ThunderboltOutline,
   ToolOutline,
   TransactionOutline,
   TrophyOutline,
+<<<<<<< HEAD
   UploadOutline,
   UsbOutline,
   UserAddOutline,
   UserOutline,
+=======
+  // U
+  UploadOutline,
+  UsbOutline,
+  UserAddOutline,
+  UserDeleteOutline,
+  UserOutline,
+  // V
+  VideoCameraOutline,
+  // W
+  WalletOutline,
+>>>>>>> main
   WarningOutline,
   WeiboCircleOutline
 ];
