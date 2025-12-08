@@ -34,7 +34,7 @@
 
 ---
 
-## 🤖 Agents (`.github/agents/`)
+## 🤖 Agents (`.github/copilot/agents/`)
 
 專門化的 Copilot 代理，提供特定領域的協助能力。
 
