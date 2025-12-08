@@ -2,6 +2,7 @@
 
 import {
   BellOutline,
+  BugOutline,
   BulbOutline,
   CarryOutOutline,
   ExceptionOutline,
@@ -21,6 +22,7 @@ import {
 
 export const ICONS = [
   BellOutline, // 通知中心圖示 (notice-icon)
+  BugOutline, // 問題追蹤圖示 (bug)
   BulbOutline,
   CarryOutOutline, // 我的任務圖示 (header-task)
   ExceptionOutline,

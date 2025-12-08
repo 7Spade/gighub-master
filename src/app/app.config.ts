@@ -1,5 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
 import { default as ngLang } from '@angular/common/locales/zh';
+import ngZhTw from '@angular/common/locales/zh-Hant';
 import { ApplicationConfig, EnvironmentProviders, Provider } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
@@ -26,6 +28,9 @@ import { zh_CN as zorroLang } from 'ng-zorro-antd/i18n';
 import { ICONS } from '../style-icons';
 import { ICONS_AUTO } from '../style-icons-auto';
 import { routes } from './routes/routes';
+
+// Register zh-TW locale for DatePipe
+registerLocaleData(ngZhTw, 'zh-TW');
 
 const defaultLang: AlainProvideLang = {
   abbr: 'zh-CN',
