@@ -26,7 +26,8 @@ import {
   TaskStatus,
   TASK_STATUS_CONFIG,
   TASK_PRIORITY_CONFIG,
-  LoggerService
+  LoggerService,
+  getModuleConfig
 } from '@core';
 import { ActivityTimelineComponent, BlueprintBusinessModel, BlueprintMemberDetail, WorkspaceContextService, TaskService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -983,6 +984,15 @@ export class BlueprintOverviewComponent implements OnInit {
     return modules.includes(ModuleType.TASKS);
   });
 
+  /**
+   * Check if any module is enabled
+   * Generic helper for checking module status
+   */
+  readonly isModuleEnabled = computed(() => {
+    const enabledModules = this.blueprint()?.enabled_modules || [];
+    return (module: ModuleType) => enabledModules.includes(module);
+  });
+
   readonly membersCount = computed(() => {
     return this.members().length;
   });
@@ -1046,6 +1056,21 @@ export class BlueprintOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBlueprint();
+
+    // Check if redirected due to disabled module
+    this.route.queryParams.subscribe(params => {
+      const disabledModule = params['moduleDisabled'];
+      if (disabledModule) {
+        const moduleName = this.getModuleLabel(disabledModule);
+        this.msg.warning(`「${moduleName}」模組未啟用，請在設定中啟用後使用`);
+        // Clear query params
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true
+        });
+      }
+    });
   }
 
   async loadBlueprint(): Promise<void> {
@@ -1134,20 +1159,19 @@ export class BlueprintOverviewComponent implements OnInit {
   }
 
   getModuleLabel(module: string): string {
-    const labelMap: Record<string, string> = {
-      tasks: '任務管理',
-      diary: '施工日誌',
-      checklists: '檢查清單',
-      issues: '問題追蹤',
-      files: '檔案管理',
-      financial: '財務管理',
-      acceptance: '品質驗收',
-      // Deprecated but kept for backward compatibility
-      dashboard: '儀表板',
-      bot_workflow: '自動化流程',
-      todos: '待辦事項'
+    const config = getModuleConfig(module as ModuleType);
+    if (config) {
+      return config.label;
+    }
+
+    // Deprecated modules - for backward compatibility only
+    const deprecatedMap: Record<string, string> = {
+      dashboard: '儀表板 (已棄用)',
+      bot_workflow: '自動化流程 (已棄用)',
+      todos: '待辦事項 (已棄用)'
     };
-    return labelMap[module] || module;
+
+    return deprecatedMap[module] || module;
   }
 
   getContractStatusColor(status: string): string {
