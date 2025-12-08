@@ -35,6 +35,7 @@ import {
   ACCEPTANCE_DECISION_CONFIG,
   isAcceptanceCompleted
 } from '../../../core/infra/types/acceptance';
+import { LoggerService } from '../../../core/logger/logger.service';
 
 /**
  * 驗收狀態
@@ -66,6 +67,7 @@ export class AcceptanceService {
   private readonly repository = inject(AcceptanceRepository);
   private readonly settings = inject(SettingsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // State Management (Signals)
@@ -121,7 +123,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          console.error('[AcceptanceService] loadAcceptances error:', error);
+          this.logger.error('AcceptanceService', 'Failed to load acceptances', error, { options });
           this.updateState({
             error: 'Failed to load acceptances',
             loading: false
@@ -153,7 +155,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          console.error('[AcceptanceService] loadByBlueprint error:', error);
+          this.logger.error('AcceptanceService', 'Failed to load acceptances by blueprint', error, { blueprintId, options });
           this.updateState({
             error: 'Failed to load blueprint acceptances',
             loading: false
@@ -196,7 +198,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          console.error('[AcceptanceService] selectAcceptance error:', error);
+          this.logger.error('AcceptanceService', 'Failed to select acceptance', error, { acceptanceId });
           this.updateState({
             error: 'Failed to load acceptance details',
             loading: false
@@ -212,7 +214,7 @@ export class AcceptanceService {
   createAcceptance(request: CreateAcceptanceRequest): Observable<Acceptance | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[AcceptanceService] No user ID for createAcceptance');
+      this.logger.error('AcceptanceService', 'No user ID for createAcceptance', null, { request });
       return of(null);
     }
 
@@ -228,7 +230,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] createAcceptance error:', error);
+        this.logger.error('AcceptanceService', 'Failed to create acceptance', error, { request });
         return of(null);
       })
     );
@@ -252,7 +254,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] updateAcceptance error:', error);
+        this.logger.error('AcceptanceService', 'Failed to update acceptance', error, { id, request });
         return of(null);
       })
     );
@@ -270,7 +272,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] startAcceptance error:', error);
+        this.logger.error('AcceptanceService', 'Failed to start acceptance', error, { id });
         return of(null);
       })
     );
@@ -283,7 +285,7 @@ export class AcceptanceService {
   makeDecision(id: string, request: AcceptanceDecisionRequest): Observable<Acceptance | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[AcceptanceService] No user ID for makeDecision');
+      this.logger.error('AcceptanceService', 'No user ID for makeDecision', null, { request });
       return of(null);
     }
 
@@ -301,7 +303,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] makeDecision error:', error);
+        this.logger.error('AcceptanceService', 'Failed to make decision', error, { request });
         return of(null);
       })
     );
@@ -367,7 +369,7 @@ export class AcceptanceService {
         return true;
       }),
       catchError(error => {
-        console.error('[AcceptanceService] deleteAcceptance error:', error);
+        this.logger.error('AcceptanceService', 'Failed to delete acceptance', error, { id });
         return of(false);
       })
     );
@@ -401,7 +403,7 @@ export class AcceptanceService {
   ): Observable<AcceptanceAttachment | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[AcceptanceService] No user ID for uploadAttachment');
+      this.logger.error('AcceptanceService', 'No user ID for uploadAttachment', null, { acceptanceId });
       return of(null);
     }
 
@@ -420,7 +422,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] uploadAttachment error:', error);
+        this.logger.error('AcceptanceService', 'Failed to upload attachment', error, { acceptanceId });
         return of(null);
       })
     );
@@ -446,7 +448,7 @@ export class AcceptanceService {
         }
       }),
       catchError(error => {
-        console.error('[AcceptanceService] deleteAttachment error:', error);
+        this.logger.error('AcceptanceService', 'Failed to delete attachment', error, { attachmentId });
         return of(false);
       })
     );
