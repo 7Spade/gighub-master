@@ -109,7 +109,7 @@ yarn e2e
 
 - [單元測試指南](../../.github/copilot/tests/unit-test-guidelines.md)
 - [E2E 測試指南](../../.github/copilot/tests/e2e-guidelines.md)
-- [Playwright Agent](../../.github/agents/testing/playwright-tester.agent.md)
+- [Playwright Agent](../../.github/copilot/agents/playwright-tester.agent.md)
 
 ---
 
