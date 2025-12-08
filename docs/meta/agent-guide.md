@@ -153,7 +153,7 @@ graph TD
 ## 📚 相關文檔
 
 - [AGENTS.md](../../AGENTS.md) - Agent 規則總覽
-- [copilot-instructions.md](../../.github/agents/copilot-instructions.md) - GitHub Copilot 完整指引
+- [copilot-instructions.md](../../.github/copilot/copilot-instructions.md) - GitHub Copilot 完整指引
 - [技術規範](../specs/README.md) - 所有編碼標準
 
 ---

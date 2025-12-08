@@ -14,10 +14,16 @@
 .github/
 ├── README.md                     ← 你現在的位置
 ├── COPILOT_RESOURCES.md          ← Copilot 資源入口
-├── SECURITY.md                   ← 安全政策
 ├── CODEOWNERS                    ← 程式碼擁有者
 ├── FUNDING.yml                   ← 贊助設定
 ├── dependabot.yml                ← 依賴更新機器人
+│
+├── governance/                   ← 🏛️ 專案治理文件（新增）
+│   ├── README.md                 ← 治理概覽
+│   ├── GOVERNANCE.md             ← 治理結構與決策流程
+│   ├── CONTRIBUTING.md           ← 貢獻指南
+│   ├── CODE_OF_CONDUCT.md        ← 行為準則
+│   └── SECURITY.md               ← 安全政策
 │
 ├── ISSUE_TEMPLATE/               ← Issue 模板
 │   ├── config.yml
@@ -31,11 +37,18 @@
 │   ├── codeql.yml                ← 安全掃描
 │   └── release.yml               ← 自動發佈
 │
-├── agents/                       ← 🤖 核心 AI Agents (僅 3 個專案特化)
+├── instructions/                 ← 📚 AI 編碼指令
 │   ├── README.md
-│   ├── 0-GigHub.agent.md         ← GigHub 專案主要 Agent
-│   ├── 0-context7+.agent.md      ← Context7 文檔專家 (基礎)
-│   └── 0-context7++.agent.md     ← Context7 文檔專家 (進階)
+│   ├── angular.instructions.md   ← Angular 開發規範
+│   ├── typescript-5-es2022.instructions.md
+│   ├── security-and-owasp.instructions.md
+│   └── [其他 AI 指令]
+│
+├── agents/                       ← 🤖 核心 AI Agents (精選)
+│   ├── GigHub.agent.md           ← GigHub 專案主要 Agent
+│   ├── context7+.agent.md        ← Context7 文檔專家 (基礎)
+│   ├── context7++.agent.md       ← Context7 文檔專家 (進階)
+│   └── [其他核心 Agents]
 │
 └── copilot/                      ← 🎯 完整 Copilot 配置與資源
     ├── README.md
@@ -141,10 +154,16 @@ conventional-commit.prompt → Commit 格式
 
 ## 📖 快速連結
 
+### 專案治理
+- [治理結構](./governance/GOVERNANCE.md)
+- [貢獻指南](./governance/CONTRIBUTING.md)
+- [行為準則](./governance/CODE_OF_CONDUCT.md)
+- [安全政策](./governance/SECURITY.md)
+
+### AI 開發資源
 - [Copilot 資源總覽](./COPILOT_RESOURCES.md)
 - [專案 Copilot 配置](./copilot/README.md)
-- [安全政策](./SECURITY.md)
-- [貢獻指南](../CONTRIBUTING.md)
+- [AI 編碼指令](./instructions/README.md)
 
 ---
 
