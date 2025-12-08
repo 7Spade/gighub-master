@@ -175,50 +175,58 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFinancialOverview()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="dollar" class="nav-icon financial"></span>
-                      <div class="nav-text">
-                        <h4>財務管理</h4>
-                        <p>合約、費用與請款管理</p>
+                @if (isModuleEnabled()(ModuleType.FINANCIAL)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToFinancialOverview()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="dollar" class="nav-icon financial"></span>
+                        <div class="nav-text">
+                          <h4>財務管理</h4>
+                          <p>合約、費用與請款管理</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToDiaries()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="calendar" class="nav-icon diaries"></span>
-                      <div class="nav-text">
-                        <h4>施工日誌</h4>
-                        <p>每日施工紀錄與審核</p>
+                    </nz-card>
+                  </div>
+                }
+                @if (isModuleEnabled()(ModuleType.DIARY)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToDiaries()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="calendar" class="nav-icon diaries"></span>
+                        <div class="nav-text">
+                          <h4>施工日誌</h4>
+                          <p>每日施工紀錄與審核</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToQcInspections()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="safety-certificate" class="nav-icon qc"></span>
-                      <div class="nav-text">
-                        <h4>品質管控</h4>
-                        <p>品管檢查與驗收</p>
+                    </nz-card>
+                  </div>
+                }
+                @if (isModuleEnabled()(ModuleType.CHECKLISTS)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToQcInspections()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="safety-certificate" class="nav-icon qc"></span>
+                        <div class="nav-text">
+                          <h4>品質管控</h4>
+                          <p>品管檢查與驗收</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToFiles()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="folder-open" class="nav-icon files"></span>
-                      <div class="nav-text">
-                        <h4>檔案管理</h4>
-                        <p>文件上傳與管理</p>
+                    </nz-card>
+                  </div>
+                }
+                @if (isModuleEnabled()(ModuleType.FILES)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToFiles()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="folder-open" class="nav-icon files"></span>
+                        <div class="nav-text">
+                          <h4>檔案管理</h4>
+                          <p>文件上傳與管理</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
+                    </nz-card>
+                  </div>
+                }
                 <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToSettings()" nzHoverable>
                     <div class="nav-card-content">
@@ -230,17 +238,19 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToProblems()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="warning" class="nav-icon problems"></span>
-                      <div class="nav-text">
-                        <h4>問題追蹤</h4>
-                        <p>問題登記與處理</p>
+                @if (isModuleEnabled()(ModuleType.ISSUES)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToProblems()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="warning" class="nav-icon problems"></span>
+                        <div class="nav-text">
+                          <h4>問題追蹤</h4>
+                          <p>問題登記與處理</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
+                    </nz-card>
+                  </div>
+                }
                 <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToActivities()" nzHoverable>
                     <div class="nav-card-content">
@@ -285,17 +295,19 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                     </div>
                   </nz-card>
                 </div>
-                <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
-                  <nz-card [nzBordered]="false" class="nav-card" (click)="goToAcceptances()" nzHoverable>
-                    <div class="nav-card-content">
-                      <span nz-icon nzType="file-done" class="nav-icon acceptances"></span>
-                      <div class="nav-text">
-                        <h4>驗收管理</h4>
-                        <p>工程驗收流程和審批</p>
+                @if (isModuleEnabled()(ModuleType.ACCEPTANCE)) {
+                  <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+                    <nz-card [nzBordered]="false" class="nav-card" (click)="goToAcceptances()" nzHoverable>
+                      <div class="nav-card-content">
+                        <span nz-icon nzType="file-done" class="nav-icon acceptances"></span>
+                        <div class="nav-text">
+                          <h4>驗收管理</h4>
+                          <p>工程驗收流程和審批</p>
+                        </div>
                       </div>
-                    </div>
-                  </nz-card>
-                </div>
+                    </nz-card>
+                  </div>
+                }
                 <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
                   <nz-card [nzBordered]="false" class="nav-card" (click)="goToReports()" nzHoverable>
                     <div class="nav-card-content">
@@ -522,8 +534,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
               </nz-card>
             </nz-tab>
 
-            <!-- 財務 Tab -->
-            <nz-tab nzTitle="財務">
+            <!-- 財務 Tab - only show if financial module is enabled -->
+            @if (isModuleEnabled()(ModuleType.FINANCIAL)) {
+              <nz-tab nzTitle="財務">
               <div class="tab-header">
                 <h3>財務管理</h3>
                 <button nz-button nzType="primary" (click)="goToFinancialPage('overview')">
@@ -703,6 +716,7 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
                 }
               </nz-spin>
             </nz-tab>
+            }
 
             <!-- 活動 Tab -->
             <nz-tab nzTitle="活動">
