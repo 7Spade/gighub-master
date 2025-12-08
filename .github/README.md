@@ -31,37 +31,13 @@
 │   ├── codeql.yml                ← 安全掃描
 │   └── release.yml               ← 自動發佈
 │
-├── agents/                       ← 🤖 AI Agents (按領域分類)
-│   ├── planning/                 ← 規劃類
-│   ├── architecture/             ← 架構類
-│   ├── development/              ← 開發類
-│   ├── database/                 ← 資料庫類
-│   ├── testing/                  ← 測試類
-│   ├── quality/                  ← 品質類
-│   └── specialized/              ← 專案特化
+├── agents/                       ← 🤖 核心 AI Agents (僅 3 個專案特化)
+│   ├── README.md
+│   ├── 0-GigHub.agent.md         ← GigHub 專案主要 Agent
+│   ├── 0-context7+.agent.md      ← Context7 文檔專家 (基礎)
+│   └── 0-context7++.agent.md     ← Context7 文檔專家 (進階)
 │
-├── prompts/                      ← �� Prompt 模板 (按領域分類)
-│   ├── planning/                 ← 規劃類
-│   ├── code-generation/          ← 生成類
-│   ├── code-quality/             ← 品質類
-│   ├── database/                 ← 資料庫類
-│   ├── testing/                  ← 測試類
-│   ├── github/                   ← GitHub 整合
-│   └── documentation/            ← 文件類
-│
-├── instructions/                 ← 📚 編碼標準 (按領域分類)
-│   ├── frontend/                 ← 前端標準
-│   ├── backend/                  ← 後端標準
-│   ├── quality/                  ← 品質標準
-│   ├── security/                 ← 安全標準
-│   ├── performance/              ← 效能標準
-│   └── devops/                   ← DevOps 標準
-│
-├── collections/                  ← 📦 主題集合
-│   ├── database-data-management.md
-│   └── frontend-web-dev.md
-│
-└── copilot/                      ← 🎯 專案核心 Copilot 配置
+└── copilot/                      ← 🎯 完整 Copilot 配置與資源
     ├── README.md
     ├── copilot-instructions.md
     ├── styleguide.md
@@ -69,8 +45,32 @@
     ├── domain-glossary.md
     ├── constraints.md
     ├── memory.jsonl
-    ├── agents/                   ← 專案專用 Agents
-    ├── prompts/                  ← 專案專用 Prompts
+    ├── mcp-servers.yml           ← MCP 伺服器配置
+    ├── security-rules.yml        ← 安全規則
+    │
+    ├── agents/                   ← 🤖 所有 AI Agents
+    │   ├── config.yml            ← Agent 配置
+    │   ├── auto-triggers.yml     ← 自動觸發規則
+    │   ├── [架構類 Agents]
+    │   ├── [規劃類 Agents]
+    │   ├── [開發類 Agents]
+    │   ├── [資料庫類 Agents]
+    │   ├── [測試類 Agents]
+    │   └── [品質類 Agents]
+    │
+    ├── prompts/                  ← 📝 所有 Prompt 模板
+    │   ├── [規劃類 Prompts]
+    │   ├── [程式碼生成 Prompts]
+    │   ├── [品質檢查 Prompts]
+    │   ├── [資料庫 Prompts]
+    │   ├── [測試 Prompts]
+    │   └── [文件 Prompts]
+    │
+    ├── collections/              ← 📦 主題集合
+    │   ├── database-data-management.md
+    │   └── frontend-web-dev.md
+    │
+    ├── instructions/             ← 📚 編碼標準
     ├── blueprints/               ← 標準化模板
     ├── workflows/                ← 開發工作流程
     ├── tests/                    ← 測試指引

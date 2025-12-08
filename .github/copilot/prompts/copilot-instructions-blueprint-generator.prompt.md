@@ -1,107 +1,294 @@
 ---
-name: copilot-instructions-blueprint-generator
-description: |
-  引導 AI 生成適配本專案（GigHub / ng-alain / Supabase）的 `copilot` 指令藍圖 (blueprint)。
-  這個 prompt 用於產生 `.github/copilot/blueprints/*.blueprint.md` 檔案範本，包含必要的 metadata、applyTo 規則、範例與驗收條件。
-agent: prompt-builder
-argument-hint: "請產生或更新一份 blueprint，並回傳完整的 Markdown 範本與一個實例。"
+description: 'Technology-agnostic blueprint generator for creating comprehensive copilot-instructions.md files that guide GitHub Copilot to produce code consistent with project standards, architecture patterns, and exact technology versions by analyzing existing codebase patterns and avoiding assumptions.'
+agent: 'agent'
 ---
 
-目的
--
-引導 Copilot 或類似模型在本專案情境下，產生高品質、可重用且與現有 `copilot` 指令整合的 blueprint 檔案。
+# Copilot Instructions Blueprint Generator
 
-使用情境
--
-- 當你要新增或更新 `.github/copilot/blueprints/*.blueprint.md` 時，使用此 prompt 生成內容。
-- 生成後的 blueprint 檔會被放在 `.github/copilot/blueprints/`，並遵守專案既有的格式與指引。
+## Configuration Variables
+${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|TypeScript|React|Angular|Python|Multiple|Other"} <!-- Primary technology -->
+${ARCHITECTURE_STYLE="Layered|Microservices|Monolithic|Domain-Driven|Event-Driven|Serverless|Mixed"} <!-- Architectural approach -->
+${CODE_QUALITY_FOCUS="Maintainability|Performance|Security|Accessibility|Testability|All"} <!-- Quality priorities -->
+${DOCUMENTATION_LEVEL="Minimal|Standard|Comprehensive"} <!-- Documentation requirements -->
+${TESTING_REQUIREMENTS="Unit|Integration|E2E|TDD|BDD|All"} <!-- Testing approach -->
+${VERSIONING="Semantic|CalVer|Custom"} <!-- Versioning approach -->
 
-約束條件
--
-- 請參考並遵守專案全域指引：`.github/copilot-instructions.md`，以及 `.github/instructions/` 下的相關 instructions（例如 Angular、Accessibility、Security 等）。
-- 所有文字以繁體中文 (zh-TW) 撰寫，技術術語保留英文。
-- 不要在 blueprint 中包含任何敏感資訊（例如 API keys、私密設定）。
-- blueprint 必須可被自動驗證：包含 `applyTo`、`description`、`quality`、`examples` 等欄位。
+## Generated Prompt
 
-輸出規範（必填欄位）
--
-- `id`: 唯一識別碼（短小、以英文或 kebab-case）
-- `title`: 中文標題
-- `applyTo`: 檔案匹配或副檔名（可使用 glob，例如 `**/*.ts` 或 `**/*.md`）
-- `description`: 一段描述，說明這個 blueprint 的用途與適用情境
-- `intent`: 1-2 行說明 AI 生成時要達成的核心目的（機器可直接使用）
-- `template`: 真正要寫入的範本內容（含範例片段）
-- `examples`: 1~3 個可執行或可複製的使用範例（輸入 → 預期輸出）
-- `quality`: 驗收標準（至少 3 條），明確、可測試
+"Generate a comprehensive copilot-instructions.md file that will guide GitHub Copilot to produce code consistent with our project's standards, architecture, and technology versions. The instructions must be strictly based on actual code patterns in our codebase and avoid making any assumptions. Follow this approach:
 
-產出格式範例
--
-以下為 blueprint 檔案的範例結構（請輸出為 Markdown）：
+### 1. Core Instruction Structure
 
+```markdown
+# GitHub Copilot Instructions
+
+## Priority Guidelines
+
+When generating code for this repository:
+
+1. **Version Compatibility**: Always detect and respect the exact versions of languages, frameworks, and libraries used in this project
+2. **Context Files**: Prioritize patterns and standards defined in the .github/copilot directory
+3. **Codebase Patterns**: When context files don't provide specific guidance, scan the codebase for established patterns
+4. **Architectural Consistency**: Maintain our ${ARCHITECTURE_STYLE} architectural style and established boundaries
+5. **Code Quality**: Prioritize ${CODE_QUALITY_FOCUS == "All" ? "maintainability, performance, security, accessibility, and testability" : CODE_QUALITY_FOCUS} in all generated code
+
+## Technology Version Detection
+
+Before generating code, scan the codebase to identify:
+
+1. **Language Versions**: Detect the exact versions of programming languages in use
+   - Examine project files, configuration files, and package managers
+   - Look for language-specific version indicators (e.g., <LangVersion> in .NET projects)
+   - Never use language features beyond the detected version
+
+2. **Framework Versions**: Identify the exact versions of all frameworks
+   - Check package.json, .csproj, pom.xml, requirements.txt, etc.
+   - Respect version constraints when generating code
+   - Never suggest features not available in the detected framework versions
+
+3. **Library Versions**: Note the exact versions of key libraries and dependencies
+   - Generate code compatible with these specific versions
+   - Never use APIs or features not available in the detected versions
+
+## Context Files
+
+Prioritize the following files in .github/copilot directory (if they exist):
+
+- **architecture.md**: System architecture guidelines
+- **tech-stack.md**: Technology versions and framework details
+- **coding-standards.md**: Code style and formatting standards
+- **folder-structure.md**: Project organization guidelines
+- **exemplars.md**: Exemplary code patterns to follow
+
+## Codebase Scanning Instructions
+
+When context files don't provide specific guidance:
+
+1. Identify similar files to the one being modified or created
+2. Analyze patterns for:
+   - Naming conventions
+   - Code organization
+   - Error handling
+   - Logging approaches
+   - Documentation style
+   - Testing patterns
+   
+3. Follow the most consistent patterns found in the codebase
+4. When conflicting patterns exist, prioritize patterns in newer files or files with higher test coverage
+5. Never introduce patterns not found in the existing codebase
+
+## Code Quality Standards
+
+${CODE_QUALITY_FOCUS.includes("Maintainability") || CODE_QUALITY_FOCUS == "All" ? `### Maintainability
+- Write self-documenting code with clear naming
+- Follow the naming and organization conventions evident in the codebase
+- Follow established patterns for consistency
+- Keep functions focused on single responsibilities
+- Limit function complexity and length to match existing patterns` : ""}
+
+${CODE_QUALITY_FOCUS.includes("Performance") || CODE_QUALITY_FOCUS == "All" ? `### Performance
+- Follow existing patterns for memory and resource management
+- Match existing patterns for handling computationally expensive operations
+- Follow established patterns for asynchronous operations
+- Apply caching consistently with existing patterns
+- Optimize according to patterns evident in the codebase` : ""}
+
+${CODE_QUALITY_FOCUS.includes("Security") || CODE_QUALITY_FOCUS == "All" ? `### Security
+- Follow existing patterns for input validation
+- Apply the same sanitization techniques used in the codebase
+- Use parameterized queries matching existing patterns
+- Follow established authentication and authorization patterns
+- Handle sensitive data according to existing patterns` : ""}
+
+${CODE_QUALITY_FOCUS.includes("Accessibility") || CODE_QUALITY_FOCUS == "All" ? `### Accessibility
+- Follow existing accessibility patterns in the codebase
+- Match ARIA attribute usage with existing components
+- Maintain keyboard navigation support consistent with existing code
+- Follow established patterns for color and contrast
+- Apply text alternative patterns consistent with the codebase` : ""}
+
+${CODE_QUALITY_FOCUS.includes("Testability") || CODE_QUALITY_FOCUS == "All" ? `### Testability
+- Follow established patterns for testable code
+- Match dependency injection approaches used in the codebase
+- Apply the same patterns for managing dependencies
+- Follow established mocking and test double patterns
+- Match the testing style used in existing tests` : ""}
+
+## Documentation Requirements
+
+${DOCUMENTATION_LEVEL == "Minimal" ? 
+`- Match the level and style of comments found in existing code
+- Document according to patterns observed in the codebase
+- Follow existing patterns for documenting non-obvious behavior
+- Use the same format for parameter descriptions as existing code` : ""}
+
+${DOCUMENTATION_LEVEL == "Standard" ? 
+`- Follow the exact documentation format found in the codebase
+- Match the XML/JSDoc style and completeness of existing comments
+- Document parameters, returns, and exceptions in the same style
+- Follow existing patterns for usage examples
+- Match class-level documentation style and content` : ""}
+
+${DOCUMENTATION_LEVEL == "Comprehensive" ? 
+`- Follow the most detailed documentation patterns found in the codebase
+- Match the style and completeness of the best-documented code
+- Document exactly as the most thoroughly documented files do
+- Follow existing patterns for linking documentation
+- Match the level of detail in explanations of design decisions` : ""}
+
+## Testing Approach
+
+${TESTING_REQUIREMENTS.includes("Unit") || TESTING_REQUIREMENTS == "All" ? 
+`### Unit Testing
+- Match the exact structure and style of existing unit tests
+- Follow the same naming conventions for test classes and methods
+- Use the same assertion patterns found in existing tests
+- Apply the same mocking approach used in the codebase
+- Follow existing patterns for test isolation` : ""}
+
+${TESTING_REQUIREMENTS.includes("Integration") || TESTING_REQUIREMENTS == "All" ? 
+`### Integration Testing
+- Follow the same integration test patterns found in the codebase
+- Match existing patterns for test data setup and teardown
+- Use the same approach for testing component interactions
+- Follow existing patterns for verifying system behavior` : ""}
+
+${TESTING_REQUIREMENTS.includes("E2E") || TESTING_REQUIREMENTS == "All" ? 
+`### End-to-End Testing
+- Match the existing E2E test structure and patterns
+- Follow established patterns for UI testing
+- Apply the same approach for verifying user journeys` : ""}
+
+${TESTING_REQUIREMENTS.includes("TDD") || TESTING_REQUIREMENTS == "All" ? 
+`### Test-Driven Development
+- Follow TDD patterns evident in the codebase
+- Match the progression of test cases seen in existing code
+- Apply the same refactoring patterns after tests pass` : ""}
+
+${TESTING_REQUIREMENTS.includes("BDD") || TESTING_REQUIREMENTS == "All" ? 
+`### Behavior-Driven Development
+- Match the existing Given-When-Then structure in tests
+- Follow the same patterns for behavior descriptions
+- Apply the same level of business focus in test cases` : ""}
+
+## Technology-Specific Guidelines
+
+${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### .NET Guidelines
+- Detect and strictly adhere to the specific .NET version in use
+- Use only C# language features compatible with the detected version
+- Follow LINQ usage patterns exactly as they appear in the codebase
+- Match async/await usage patterns from existing code
+- Apply the same dependency injection approach used in the codebase
+- Use the same collection types and patterns found in existing code` : ""}
+
+${PROJECT_TYPE == "Java" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### Java Guidelines
+- Detect and adhere to the specific Java version in use
+- Follow the exact same design patterns found in the codebase
+- Match exception handling patterns from existing code
+- Use the same collection types and approaches found in the codebase
+- Apply the dependency injection patterns evident in existing code` : ""}
+
+${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "TypeScript" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### JavaScript/TypeScript Guidelines
+- Detect and adhere to the specific ECMAScript/TypeScript version in use
+- Follow the same module import/export patterns found in the codebase
+- Match TypeScript type definitions with existing patterns
+- Use the same async patterns (promises, async/await) as existing code
+- Follow error handling patterns from similar files` : ""}
+
+${PROJECT_TYPE == "React" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### React Guidelines
+- Detect and adhere to the specific React version in use
+- Match component structure patterns from existing components
+- Follow the same hooks and lifecycle patterns found in the codebase
+- Apply the same state management approach used in existing components
+- Match prop typing and validation patterns from existing code` : ""}
+
+${PROJECT_TYPE == "Angular" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### Angular Guidelines
+- Detect and adhere to the specific Angular version in use
+- Follow the same component and module patterns found in the codebase
+- Match decorator usage exactly as seen in existing code
+- Apply the same RxJS patterns found in the codebase
+- Follow existing patterns for component communication` : ""}
+
+${PROJECT_TYPE == "Python" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### Python Guidelines
+- Detect and adhere to the specific Python version in use
+- Follow the same import organization found in existing modules
+- Match type hinting approaches if used in the codebase
+- Apply the same error handling patterns found in existing code
+- Follow the same module organization patterns` : ""}
+
+## Version Control Guidelines
+
+${VERSIONING == "Semantic" ? 
+`- Follow Semantic Versioning patterns as applied in the codebase
+- Match existing patterns for documenting breaking changes
+- Follow the same approach for deprecation notices` : ""}
+
+${VERSIONING == "CalVer" ? 
+`- Follow Calendar Versioning patterns as applied in the codebase
+- Match existing patterns for documenting changes
+- Follow the same approach for highlighting significant changes` : ""}
+
+${VERSIONING == "Custom" ? 
+`- Match the exact versioning pattern observed in the codebase
+- Follow the same changelog format used in existing documentation
+- Apply the same tagging conventions used in the project` : ""}
+
+## General Best Practices
+
+- Follow naming conventions exactly as they appear in existing code
+- Match code organization patterns from similar files
+- Apply error handling consistent with existing patterns
+- Follow the same approach to testing as seen in the codebase
+- Match logging patterns from existing code
+- Use the same approach to configuration as seen in the codebase
+
+## Project-Specific Guidance
+
+- Scan the codebase thoroughly before generating any code
+- Respect existing architectural boundaries without exception
+- Match the style and patterns of surrounding code
+- When in doubt, prioritize consistency with existing code over external best practices
 ```
----
-id: angular-accessibility-guidelines
-title: Angular 元件無障礙指南 (Blueprint)
-applyTo: 'src/app/**/!(*.spec).ts'
-description: 提供 Angular 元件與 template 的 WCAG/keyboard 幫助檢查樣板與註記建議
-intent: 自動生成符合本專案可用的無障礙檢查與修正建議
-quality:
-  - 說明至少包含 keyboard, aria, heading, contrast 四項檢查
-  - 範例程式片段可直接套用且通過基本 lint（不改動專案編譯設定）
-  - 提供至少一個測試步驟（手動或自動）以驗證修正有效性
-examples:
-  - input: 'component template with <div onclick=...>'
-    output: '替換為 <button> 或 增加 role + tabindex + keydown handler，並補 aria-label'
-template: |
-  # 指令說明
-  - 說明與操作步驟...
-```
 
-最佳實踐指引（生成器應遵守）
--
-- 以最小變更原則為優先：建議修改點應該是可套用且風險低的修正。
-- 優先使用專案現有元件與樣式（ng-zorro / @delon）而非新增第三方依賴。
-- 包含可執行的驗收條件（例如：在 `examples` 中給出輸入與預期輸出）。
-- 提醒使用者做「人工驗證」，並建議使用工具（Accessibility Insights、axe、lint 規則等）。
+### 2. Codebase Analysis Instructions
 
-生成工作流程建議（AI 使用此 prompt 的步驟）
--
-1. 讀取專案根目錄下的 `.github/copilot-instructions.md` 及 `.github/instructions/`，抓取相關約束（accessibility/security/angular 等）。
-2. 依據目標 `applyTo` 決定 blueprint 的範圍與粒度。
-3. 產出 blueprint Markdown（含 YAML-like header 與 `template`、`examples`、`quality`）。
-4. 在 output 中加入一段「如何驗證」的步驟供人員或 CI 使用。
+To create the copilot-instructions.md file, first analyze the codebase to:
 
-檢查清單（AI 自查）
--
-- 是否包含 `id`, `title`, `applyTo`, `description`, `intent`, `quality`, `examples`, `template`？
-- `applyTo` 是否過於寬泛（避免 `**/*` 除非必要）？
-- 範例是否能直接執行或具可驗證性？
-- 是否遵守專案語言（繁體中文）與術語規則？
-- 是否避免帶入敏感資訊？
+1. **Identify Exact Technology Versions**:
+   - ${PROJECT_TYPE == "Auto-detect" ? "Detect all programming languages, frameworks, and libraries by scanning file extensions and configuration files" : `Focus on ${PROJECT_TYPE} technologies`}
+   - Extract precise version information from project files, package.json, .csproj, etc.
+   - Document version constraints and compatibility requirements
 
-安全與合規備註
--
-- 若 blueprint 涉及安全、認證或 token 處理，請僅提供安全設計建議與範例，不要輸出任何實際憑證或密鑰。
+2. **Understand Architecture**:
+   - Analyze folder structure and module organization
+   - Identify clear layer boundaries and component relationships
+   - Document communication patterns between components
 
-使用範例（對話指令）
--
-1) 新增 blueprint：
+3. **Document Code Patterns**:
+   - Catalog naming conventions for different code elements
+   - Note documentation styles and completeness
+   - Document error handling patterns
+   - Map testing approaches and coverage
 
-```
-請根據專案產生一份 `supabase-repository-guidelines` 的 blueprint，applyTo 指向 `src/app/**/repository/*.ts`，內容要包含：Repository 模式建議、RLS 呼叫注意事項、單元測試範例、quality 驗收標準。
-```
+4. **Note Quality Standards**:
+   - Identify performance optimization techniques actually used
+   - Document security practices implemented in the code
+   - Note accessibility features present (if applicable)
+   - Document code quality patterns evident in the codebase
 
-2) 更新 blueprint：
+### 3. Implementation Notes
 
-```
-請把現有 `angular-accessibility-guidelines` blueprint 補充一個 `examples` 範例：一個含有 <img> 無 alt 的 template，並產生修正後的 template 與驗收步驟。
-```
+The final copilot-instructions.md should:
+- Be placed in the .github/copilot directory
+- Reference only patterns and standards that exist in the codebase
+- Include explicit version compatibility requirements
+- Avoid prescribing any practices not evident in the code
+- Provide concrete examples from the codebase
+- Be comprehensive yet concise enough for Copilot to effectively use
 
-備註
--
-- 生成出的 blueprint 請存放在 `.github/copilot/blueprints/`，檔名以 `id.blueprint.md` 命名。
-- 若要覆寫已存在的 blueprint，請先在 output 中提醒會覆蓋，並說明差異摘要供 reviewer 審核。
+Important: Only include guidance based on patterns actually observed in the codebase. Explicitly instruct Copilot to prioritize consistency with existing code over external best practices or newer language features.
+"
 
----
+## Expected Output
 
-請依上面規範輸出 blueprint Markdown 的內容範本（不要直接新增到 repo），並同時給出 1 個實際範例（符合本專案環境）。
+A comprehensive copilot-instructions.md file that will guide GitHub Copilot to produce code that is perfectly compatible with your existing technology versions and follows your established patterns and architecture.

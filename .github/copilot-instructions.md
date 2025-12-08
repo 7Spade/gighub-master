@@ -72,7 +72,7 @@ def should_use_context7_mcp(agent_confident: bool) -> bool:
     """
     判斷 Agent 是否需要使用 Context7 MCP 查詢
     
-    參考: .github/agents/0-ng-ArchAI-v1.agent.md (320-327)
+    參考: .github/copilot/agents/0-ng-ArchAI-v1.agent.md (320-327)
     """
     if agent_confident:
         # Agent 有絕對把握 → 不查
@@ -123,8 +123,8 @@ def should_use_context7_mcp(agent_confident: bool) -> bool:
 
 本專案使用 Context7 MCP 伺服器進行文檔查詢。配置詳見：
 
-- **配置檔案**：`.github/agents/mcp-servers.yml`
-- **Agent 定義**：`.github/agents/context7.agent.md`
+- **配置檔案**：`.github/copilot/mcp-servers.yml`
+- **Agent 定義**：`.github/copilot/agents/context7.agent.md`
 
 ### 配置參考
 
@@ -316,9 +316,9 @@ mcp_context7_get-library-docs({
 
 ## 🔗 相關文件
 
-- **Agent 定義**：`.github/agents/0-ng-ArchAI-v1.agent.md`
-- **Context7 Agent**：`.github/agents/context7.agent.md`
-- **MCP 配置**：`.github/agents/mcp-servers.yml`
+- **Agent 定義**：`.github/copilot/agents/0-ng-ArchAI-v1.agent.md`
+- **Context7 Agent**：`.github/copilot/agents/context7.agent.md`
+- **MCP 配置**：`.github/copilot/mcp-servers.yml`
 - **開發規範**：`.github/copilot/copilot-instructions.md`
 
 ---

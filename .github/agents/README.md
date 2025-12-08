@@ -1,6 +1,6 @@
-# 🤖 AI Agents 使用指南
+# 🤖 核心 AI Agents
 
-> 專門化的 Copilot 代理，提供特定領域的協助能力
+> GigHub 專案的核心專用 Agents
 
 ---
 
@@ -8,107 +8,94 @@
 
 ```
 agents/
-├── README.md                 ← 你現在的位置
-├── _index.md                 ← Agent 索引
-│
-├── planning/                 ← 📋 規劃類 Agents
-│   ├── plan.agent.md         ← 策略規劃助手
-│   ├── planner.agent.md      ← 實作規劃生成
-│   ├── implementation-plan.agent.md ← 實作計畫執行
-│   ├── task-planner.agent.md ← 任務規劃
-│   └── task-researcher.agent.md ← 任務研究
-│
-├── architecture/             ← 🏗️ 架構類 Agents
-│   ├── arch.agent.md         ← 架構設計指引
-│   ├── adr-generator.agent.md ← ADR 生成器
-│   ├── api-architect.agent.md ← API 架構設計
-│   └── meta-agentic-project-scaffold.agent.md ← 專案腳手架
-│
-├── development/              ← 💻 開發類 Agents
-│   ├── software-engineer-agent-v1.agent.md ← 全端工程師
-│   ├── principal-software-engineer.agent.md ← 資深工程師
-│   ├── debug.agent.md        ← 系統化除錯
-│   ├── janitor.agent.md      ← 程式碼清理
-│   └── code-tour.agent.md    ← 程式碼導覽
-│
-├── database/                 ← 🗄️ 資料庫類 Agents
-│   └── postgresql-dba.agent.md ← PostgreSQL 管理
-│
-├── testing/                  ← 🧪 測試類 Agents
-│   └── playwright-tester.agent.md ← E2E 測試
-│
-├── quality/                  ← 🔍 品質類 Agents
-│   ├── critical-thinking.agent.md ← 批判性思考
-│   ├── mentor.agent.md       ← 開發指導
-│   └── tech-debt-remediation-plan.agent.md ← 技術債處理
-│
-├── documentation/            ← 📖 文件類 Agents
-│   └── specification.agent.md ← 規格書撰寫
-│
-└── specialized/              ← ⚙️ 專案特化 Agents
-    ├── 0-context7+.agent.md  ← Context7 整合
-    ├── 0-ng-ArchAI-v1.agent.md ← Angular 架構 AI
-    └── 0-ng-governance-v1.md ← Angular 治理
+├── README.md                     ← 你現在的位置
+├── 0-GigHub.agent.md             ← GigHub 專案主要 Agent (GigHub-Plus)
+├── 0-context7+.agent.md          ← Context7 Angular 專家 (基礎版)
+└── 0-context7++.agent.md         ← Context7 Angular 專家 (進階版)
 ```
 
 ---
 
-## 🚀 如何使用 Agent
+## 🎯 核心 Agents 說明
 
-### VS Code / Copilot Chat
+### 1. GigHub-Plus (0-GigHub.agent.md)
+**用途**: GigHub 專案的主要 AI 助手
+- 整合 Context7 MCP 進行文檔查詢
+- 支援 Angular 20 + ng-alain + Supabase 技術棧
+- 提供專案特定的架構指引和最佳實踐
 
-在 Copilot Chat 中使用 `@` 符號呼叫 Agent：
+**使用場景**:
+- Angular 開發問題
+- ng-alain 元件使用
+- Supabase 整合
+- 專案架構諮詢
+
+### 2. Context7-Angular-Expert (0-context7+.agent.md)
+**用途**: Angular 生態系統文檔專家 (基礎版)
+- 智能評估是否需要查詢文檔
+- 支援版本範圍：20.0.x ~ 最新版本
+- 提供 API 和最佳實踐指引
+
+**使用場景**:
+- 不確定 API 用法時
+- 需要版本特定文檔
+- 學習新框架特性
+
+### 3. Context7-Angular-Expert-Plus (0-context7++.agent.md)
+**用途**: Angular 生態系統文檔專家 (進階版)
+- 包含 Supabase MCP 整合
+- 強制文檔查證流程
+- 提供更詳細的專案整合指引
+
+**使用場景**:
+- 複雜的技術整合問題
+- Supabase 與 Angular 整合
+- 生產級程式碼實作
+
+---
+
+## 🚀 如何使用
+
+### 在 VS Code / Copilot Chat 中
 
 ```
-@plan 分析這個需求並制定開發計畫
-@arch 這個功能應該放在哪個架構層級？
-@postgresql-dba 設計這個功能的資料表結構
-@debug 這段程式碼為什麼會報錯？
+@GigHub-Plus 如何實作 Angular Signals？
+@Context7-Angular-Expert 查詢 ng-zorro 表格元件的最新 API
+@Context7-Angular-Expert-Plus Supabase RLS 如何與 Angular 整合？
 ```
 
-### GitHub Copilot Coding Agent
-
-在 Issue 或 PR 中 @ 提及相關 Agent 檔案：
+### 在 GitHub Issue 或 PR 中
 
 ```markdown
-請參考 `.github/agents/planning/task-planner.agent.md` 來拆分這個功能的開發任務。
+請使用 @GigHub-Plus 分析此功能的技術實作方案
 ```
 
 ---
 
-## 🔗 MCP 整合
+## 📦 其他 Agents 位置
 
-這些 Agents 與以下 MCP 服務整合：
+所有通用和特定領域的 Agents 已遷移至 `.github/copilot/agents/`，包含：
 
-| Agent 類別 | MCP 服務 | 用途 |
-|-----------|----------|------|
-| `planning/` | `software-planning-tool`, `sequential-thinking` | 規劃與分析 |
-| `architecture/` | `sequential-thinking`, `memory` | 架構決策 |
-| `database/` | `supabase` | 資料庫操作 |
-| `development/` | `filesystem`, `git` | 程式碼開發 |
-| `testing/` | `playwright` | E2E 測試 |
-| `specialized/` | `context7`, `redis` | 專案特定 |
+- 🏗️ 架構設計 Agents
+- 📋 規劃與任務 Agents
+- 💻 開發輔助 Agents
+- 🗄️ 資料庫專家 Agents
+- 🧪 測試自動化 Agents
+- 🔍 程式碼品質 Agents
 
----
-
-## 📚 推薦組合
-
-### 新功能開發
-1. `@plan.agent` → 需求分析
-2. `@arch.agent` → 架構決策
-3. `@task-planner.agent` → 任務拆分
-4. `@software-engineer-agent` → 實作
-
-### 資料庫開發
-1. `@postgresql-dba.agent` → Schema 設計
-2. `@api-architect.agent` → API 設計
-3. `@software-engineer-agent` → 實作
-
-### 程式碼品質
-1. `@critical-thinking.agent` → 方案評估
-2. `@mentor.agent` → 最佳實踐
-3. `@janitor.agent` → 程式碼清理
+詳細說明請參考 [.github/copilot/agents/README.md](../copilot/agents/README.md)
 
 ---
 
-**最後更新**: 2025-12-02
+## 🔧 配置檔案
+
+核心配置檔案已遷移至 `.github/copilot/`：
+
+- `mcp-servers.yml` - MCP 伺服器配置
+- `security-rules.yml` - 安全規則
+- `agents/config.yml` - Agent 配置
+- `agents/auto-triggers.yml` - 自動觸發規則
+
+---
+
+**最後更新**: 2025-12-08
