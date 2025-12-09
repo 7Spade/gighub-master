@@ -182,10 +182,7 @@ export class FileService {
       const files = await firstValueFrom(this.fileRepository.findByFolder(blueprintId, this.currentFolderId()));
       this.files.set(files);
     } catch (err) {
-      this.logger.error('FileService', 'Failed to load files', err, {
-        blueprintId,
-        folderId: this.currentFolderId()
-      });
+      this.logger.error('FileService - Failed to load files', err);
       this.error.set('載入檔案失敗');
     } finally {
       this.loading.set(false);
@@ -200,7 +197,7 @@ export class FileService {
     try {
       return await firstValueFrom(this.fileRepository.findWithOptions(options));
     } catch (err) {
-      this.logger.error('FileService', 'Failed to load files with options', err, { options });
+      this.logger.error('FileService - Failed to load files with options', err);
       return [];
     }
   }
@@ -281,7 +278,7 @@ export class FileService {
         byStatus
       });
     } catch (err) {
-      this.logger.error('FileService', 'Failed to load stats', err, { blueprintId });
+      this.logger.error('FileService - Failed to load stats', err);
     }
   }
 
@@ -399,12 +396,7 @@ export class FileService {
         publicUrl
       };
     } catch (err) {
-      this.logger.error('FileService', 'Failed to upload file', err, {
-        fileName: file.name,
-        fileSize: file.size,
-        blueprintId,
-        folderId
-      });
+      this.logger.error('FileService - Failed to upload file', err);
       const errorMessage = err instanceof Error ? err.message : '上傳失敗';
 
       this.updateUploadProgress(uid, {
@@ -475,19 +467,13 @@ export class FileService {
         .createSignedUrl(file.storage_path, expiresIn);
 
       if (error) {
-        this.logger.error('FileService', 'Failed to create signed URL', error, {
-          fileId: file.id,
-          storagePath: file.storage_path
-        });
+        this.logger.error('FileService - Failed to create signed URL', error);
         return null;
       }
 
       return data.signedUrl;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to get download URL', err, {
-        fileId: file.id,
-        storagePath: file.storage_path
-      });
+      this.logger.error('FileService - Failed to get download URL', err);
       return null;
     }
   }
@@ -543,11 +529,7 @@ export class FileService {
 
       return folder;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to create folder', err, {
-        blueprintId,
-        folderName: name,
-        parentFolderId: this.currentFolderId()
-      });
+      this.logger.error('FileService - Failed to create folder', err);
       return null;
     }
   }
@@ -569,7 +551,7 @@ export class FileService {
       }
       return false;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to rename file', err, { id, newName });
+      this.logger.error('FileService - Failed to rename file', err);
       return false;
     }
   }
@@ -587,7 +569,7 @@ export class FileService {
       }
       return false;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to move file', err, { id, newParentFolderId });
+      this.logger.error('FileService - Failed to move file', err);
       return false;
     }
   }
@@ -610,7 +592,7 @@ export class FileService {
       }
       return false;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to delete file', err, { id });
+      this.logger.error('FileService - Failed to delete file', err);
       return false;
     }
   }
@@ -646,7 +628,7 @@ export class FileService {
       }
       return false;
     } catch (err) {
-      this.logger.error('FileService', 'Failed to restore file', err, { id });
+      this.logger.error('FileService - Failed to restore file', err);
       return false;
     }
   }
@@ -731,10 +713,7 @@ export class FileService {
     try {
       return await firstValueFrom(this.fileRepository.createShare(request, accountId));
     } catch (err) {
-      this.logger.error('FileService', 'Failed to create share', err, {
-        fileId: request.file_id,
-        accountId
-      });
+      this.logger.error('FileService - Failed to create share', err);
       return null;
     }
   }
@@ -747,7 +726,7 @@ export class FileService {
     try {
       return await firstValueFrom(this.fileRepository.findSharesByFile(fileId));
     } catch (err) {
-      this.logger.error('FileService', 'Failed to get shares', err, { fileId });
+      this.logger.error('FileService - Failed to get shares', err);
       return [];
     }
   }
@@ -760,7 +739,7 @@ export class FileService {
     try {
       return await firstValueFrom(this.fileRepository.deleteShare(id));
     } catch (err) {
-      this.logger.error('FileService', 'Failed to delete share', err, { id });
+      this.logger.error('FileService - Failed to delete share', err);
       return false;
     }
   }

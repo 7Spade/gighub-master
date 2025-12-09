@@ -126,7 +126,7 @@ export class TimelineService {
         }
       }),
       catchError(error => {
-        this.logger.error('TimelineService', 'Failed to log activity', error, { request });
+        this.logger.error('TimelineService - Failed to log activity', error);
         return of(null);
       })
     );
@@ -210,7 +210,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          this.logger.error('TimelineService', 'Failed to load activities', error, { options });
+          this.logger.error('TimelineService - Failed to load activities', error);
           this.updateState({
             error: 'Failed to load activities',
             loading: false
@@ -242,7 +242,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          this.logger.error('TimelineService', 'Failed to load activities by blueprint', error, { blueprintId, options });
+          this.logger.error(`TimelineService - Failed to load activities for blueprint ${blueprintId}`, error);
           this.updateState({
             error: 'Failed to load blueprint activities',
             loading: false
@@ -273,7 +273,7 @@ export class TimelineService {
           });
         },
         error: error => {
-          this.logger.error('TimelineService', 'Failed to load more activities', error);
+          this.logger.error('TimelineService - Failed to load more activities', error);
         }
       });
   }

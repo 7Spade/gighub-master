@@ -171,7 +171,7 @@ export class DiaryService {
         this.updateState({ saving: false });
       }),
       catchError(error => {
-        this.logger.error('DiaryService', 'Failed to create diary', error, { request });
+        this.logger.error('DiaryService - Failed to create diary', error);
         this.updateState({ saving: false, error: 'Failed to create diary' });
         return of(null);
       })
@@ -231,7 +231,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        this.logger.error('DiaryService', 'Failed to update diary', error, { id, request });
+        this.logger.error('DiaryService - Failed to update diary', error);
         this.updateState({ saving: false, error: 'Failed to update diary' });
         return of(null);
       })
@@ -257,7 +257,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        this.logger.error('DiaryService', 'Failed to delete diary', error, { id });
+        this.logger.error('DiaryService - Failed to delete diary', error);
         return of(false);
       })
     );
