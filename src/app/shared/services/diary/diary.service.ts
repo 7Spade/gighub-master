@@ -14,6 +14,7 @@
  */
 
 import { Injectable, inject, computed, signal, DestroyRef } from '@angular/core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SettingsService } from '@delon/theme';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO } from 'date-fns';
@@ -93,6 +94,7 @@ const initialState: DiaryState = {
 @Injectable({ providedIn: 'root' })
 export class DiaryService {
   private readonly repository = inject(DiaryRepository);
+  private readonly logger = inject(LoggerService);
   private readonly timelineService = inject(TimelineService);
   private readonly auditLogService = inject(AuditLogService);
   private readonly settings = inject(SettingsService);
@@ -169,7 +171,7 @@ export class DiaryService {
         this.updateState({ saving: false });
       }),
       catchError(error => {
-        console.error('[DiaryService] create error:', error);
+        this.logger.error('DiaryService', 'Failed to create diary', error, { request });
         this.updateState({ saving: false, error: 'Failed to create diary' });
         return of(null);
       })
@@ -229,7 +231,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] update error:', error);
+        this.logger.error('DiaryService', 'Failed to update diary', error, { id, request });
         this.updateState({ saving: false, error: 'Failed to update diary' });
         return of(null);
       })
@@ -255,7 +257,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] delete error:', error);
+        this.logger.error('DiaryService', 'Failed to delete diary', error, { id });
         return of(false);
       })
     );
@@ -289,7 +291,7 @@ export class DiaryService {
           });
         },
         error: error => {
-          console.error('[DiaryService] loadDiaries error:', error);
+          this.logger.error('DiaryService', 'Failed to load diaries', error, { options });
           this.updateState({
             error: 'Failed to load diaries',
             loading: false
@@ -321,7 +323,7 @@ export class DiaryService {
           });
         },
         error: error => {
-          console.error('[DiaryService] loadByBlueprint error:', error);
+          this.logger.error('DiaryService', 'Failed to load diaries by blueprint', error, { blueprintId, options });
           this.updateState({
             error: 'Failed to load diaries',
             loading: false
@@ -348,7 +350,7 @@ export class DiaryService {
           });
         },
         error: error => {
-          console.error('[DiaryService] loadById error:', error);
+          this.logger.error('DiaryService', 'Failed to load diary by ID', error, { id });
           this.updateState({
             error: 'Failed to load diary',
             loading: false
@@ -383,7 +385,7 @@ export class DiaryService {
           });
         },
         error: error => {
-          console.error('[DiaryService] loadByDate error:', error);
+          this.logger.error('DiaryService', 'Failed to load diary by date', error, { date });
           this.updateState({
             error: 'Failed to load diary',
             loading: false
@@ -459,7 +461,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] submit error:', error);
+        this.logger.error('DiaryService', 'Failed to submit diary', error, { id });
         this.updateState({ saving: false, error: 'Failed to submit diary' });
         return of(null);
       })
@@ -506,7 +508,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] approve error:', error);
+        this.logger.error('DiaryService', 'Failed to approve diary', error, { id });
         this.updateState({ saving: false, error: 'Failed to approve diary' });
         return of(null);
       })
@@ -554,7 +556,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] reject error:', error);
+        this.logger.error('DiaryService', 'Failed to reject diary', error, { id, reason });
         this.updateState({ saving: false, error: 'Failed to reject diary' });
         return of(null);
       })
@@ -594,7 +596,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] addAttachment error:', error);
+        this.logger.error('DiaryService', 'Failed to add attachment', error, { diaryId, file });
         return of(null);
       })
     );
@@ -628,7 +630,7 @@ export class DiaryService {
         }
       }),
       catchError(error => {
-        console.error('[DiaryService] deleteAttachment error:', error);
+        this.logger.error('DiaryService', 'Failed to delete attachment', error, { attachmentId });
         return of(false);
       })
     );
@@ -651,7 +653,7 @@ export class DiaryService {
           this.updateState({ stats });
         },
         error: error => {
-          console.error('[DiaryService] loadStats error:', error);
+          this.logger.error('DiaryService', 'Failed to load stats', error, { blueprintId, startDate, endDate });
         }
       });
   }
@@ -697,7 +699,7 @@ export class DiaryService {
           });
         },
         error: error => {
-          console.error('[DiaryService] loadCalendar error:', error);
+          this.logger.error('DiaryService', 'Failed to load calendar', error, { blueprintId, year, month });
           this.updateState({
             loading: false,
             error: 'Failed to load calendar'

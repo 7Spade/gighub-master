@@ -15,6 +15,7 @@ import { SupabaseService, BlueprintMemberRepository, BlueprintRole } from '@core
 import { firstValueFrom } from 'rxjs';
 
 import { Permission, BlueprintBusinessRole, PermissionContext, getCombinedPermissions } from '../../../core/infra/types/permission';
+import { LoggerService } from '../../../core/logger/logger.service';
 
 /**
  * 藍圖角色到業務角色的映射
@@ -36,6 +37,7 @@ const BLUEPRINT_ROLE_TO_BUSINESS_ROLES: Record<BlueprintRole, BlueprintBusinessR
 export class PermissionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly blueprintMemberRepo = inject(BlueprintMemberRepository);
+  private readonly logger = inject(LoggerService);
 
   // State signals
   private readonly contextState = signal<PermissionContext | null>(null);
@@ -112,7 +114,7 @@ export class PermissionService {
       this.contextState.set(context);
       return context;
     } catch (error) {
-      console.error('[PermissionService] Failed to load context:', error);
+      this.logger.error('PermissionService', 'Failed to load context', error, { blueprintId, accountId });
       this.errorState.set('Failed to load permission context');
       this.contextState.set(null);
       return null;

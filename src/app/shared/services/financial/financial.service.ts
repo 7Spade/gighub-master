@@ -10,6 +10,7 @@
  */
 
 import { Injectable, inject, signal, computed } from '@angular/core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import {
   BlueprintFinancialSummary,
   Contract,
@@ -100,7 +101,7 @@ export class FinancialService {
       return summary;
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入財務摘要失敗';
-      console.error('[FinancialService] loadBlueprintFinancialSummary error:', err);
+      this.logger.error('FinancialService', 'Failed to load blueprint financial summary', err, { blueprintId });
       this.error.set(message);
       return null;
     } finally {
@@ -116,7 +117,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.getBlueprintFinancialSummary(blueprintId));
     } catch (err) {
-      console.error('[FinancialService] getBlueprintFinancialSummary error:', err);
+      this.logger.error('FinancialService', 'Failed to get blueprint financial summary', err, { blueprintId });
       return null;
     }
   }
@@ -139,7 +140,7 @@ export class FinancialService {
       return contracts;
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入合約列表失敗';
-      console.error('[FinancialService] loadContractsForBlueprint error:', err);
+      this.logger.error('FinancialService', 'Failed to load contracts for blueprint', err, { blueprintId, options });
       this.error.set(message);
       return [];
     } finally {
@@ -155,7 +156,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.findContractById(id));
     } catch (err) {
-      console.error('[FinancialService] findContractById error:', err);
+      this.logger.error('FinancialService', 'Failed to find contract by ID', err, { id });
       return null;
     }
   }
@@ -168,7 +169,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.findContractsWithOptions(options));
     } catch (err) {
-      console.error('[FinancialService] findContractsWithOptions error:', err);
+      this.logger.error('FinancialService', 'Failed to find contracts with options', err, { options });
       return [];
     }
   }
@@ -181,7 +182,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.getContractSummary(contractId));
     } catch (err) {
-      console.error('[FinancialService] getContractSummary error:', err);
+      this.logger.error('FinancialService', 'Failed to get contract summary', err, { blueprintId, contractId });
       return null;
     }
   }
@@ -204,7 +205,7 @@ export class FinancialService {
       return expenses;
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入費用列表失敗';
-      console.error('[FinancialService] loadExpensesForBlueprint error:', err);
+      this.logger.error('FinancialService', 'Failed to load expenses for blueprint', err, { blueprintId, options });
       this.error.set(message);
       return [];
     } finally {
@@ -220,7 +221,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.findExpensesWithOptions(options));
     } catch (err) {
-      console.error('[FinancialService] findExpensesWithOptions error:', err);
+      this.logger.error('FinancialService', 'Failed to find expenses with options', err, { options });
       return [];
     }
   }
@@ -243,7 +244,7 @@ export class FinancialService {
       return requests;
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入請款列表失敗';
-      console.error('[FinancialService] loadPaymentRequestsForBlueprint error:', err);
+      this.logger.error('FinancialService', 'Failed to load payment requests for blueprint', err, { blueprintId, options });
       this.error.set(message);
       return [];
     } finally {
@@ -259,7 +260,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.findPaymentRequestsWithOptions(options));
     } catch (err) {
-      console.error('[FinancialService] findPaymentRequestsWithOptions error:', err);
+      this.logger.error('FinancialService', 'Failed to find payment requests with options', err, { options });
       return [];
     }
   }
@@ -282,7 +283,7 @@ export class FinancialService {
       return payments;
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入付款列表失敗';
-      console.error('[FinancialService] loadPaymentsForBlueprint error:', err);
+      this.logger.error('FinancialService', 'Failed to load payments for blueprint', err, { blueprintId, options });
       this.error.set(message);
       return [];
     } finally {
@@ -298,7 +299,7 @@ export class FinancialService {
     try {
       return await firstValueFrom(this.financialRepository.findPaymentsWithOptions(options));
     } catch (err) {
-      console.error('[FinancialService] findPaymentsWithOptions error:', err);
+      this.logger.error('FinancialService', 'Failed to find payments with options', err, { options });
       return [];
     }
   }
@@ -325,7 +326,7 @@ export class FinancialService {
       ]);
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入財務資料失敗';
-      console.error('[FinancialService] loadAllFinancialData error:', err);
+      this.logger.error('FinancialService', 'Failed to load all financial data', err, { blueprintId });
       this.error.set(message);
     } finally {
       this.loading.set(false);
@@ -373,7 +374,7 @@ export class FinancialService {
       return contract;
     } catch (err) {
       const message = err instanceof Error ? err.message : '建立合約失敗';
-      console.error('[FinancialService] createContract error:', err);
+      this.logger.error('FinancialService', 'Failed to create contract', err, { request });
       this.error.set(message);
       throw err;
     } finally {
@@ -397,7 +398,7 @@ export class FinancialService {
       return contract;
     } catch (err) {
       const message = err instanceof Error ? err.message : '更新合約失敗';
-      console.error('[FinancialService] updateContract error:', err);
+      this.logger.error('FinancialService', 'Failed to update contract', err, { id, request });
       this.error.set(message);
       throw err;
     } finally {
@@ -419,7 +420,7 @@ export class FinancialService {
       return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : '刪除合約失敗';
-      console.error('[FinancialService] deleteContract error:', err);
+      this.logger.error('FinancialService', 'Failed to delete contract', err, { id });
       this.error.set(message);
       throw err;
     } finally {
@@ -455,7 +456,7 @@ export class FinancialService {
       return expense;
     } catch (err) {
       const message = err instanceof Error ? err.message : '建立費用失敗';
-      console.error('[FinancialService] createExpense error:', err);
+      this.logger.error('FinancialService', 'Failed to create expense', err, { request });
       this.error.set(message);
       throw err;
     } finally {
@@ -479,7 +480,7 @@ export class FinancialService {
       return expense;
     } catch (err) {
       const message = err instanceof Error ? err.message : '更新費用失敗';
-      console.error('[FinancialService] updateExpense error:', err);
+      this.logger.error('FinancialService', 'Failed to update expense', err, { id, request });
       this.error.set(message);
       throw err;
     } finally {
@@ -501,7 +502,7 @@ export class FinancialService {
       return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : '刪除費用失敗';
-      console.error('[FinancialService] deleteExpense error:', err);
+      this.logger.error('FinancialService', 'Failed to delete expense', err, { id });
       this.error.set(message);
       throw err;
     } finally {
@@ -537,7 +538,7 @@ export class FinancialService {
       return request;
     } catch (err) {
       const message = err instanceof Error ? err.message : '建立請款失敗';
-      console.error('[FinancialService] createPaymentRequest error:', err);
+      this.logger.error('FinancialService', 'Failed to create payment request', err, { request });
       this.error.set(message);
       throw err;
     } finally {
@@ -561,7 +562,7 @@ export class FinancialService {
       return request;
     } catch (err) {
       const message = err instanceof Error ? err.message : '更新請款失敗';
-      console.error('[FinancialService] updatePaymentRequest error:', err);
+      this.logger.error('FinancialService', 'Failed to update payment request', err, { id, request });
       this.error.set(message);
       throw err;
     } finally {
@@ -617,7 +618,7 @@ export class FinancialService {
       return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : '刪除請款失敗';
-      console.error('[FinancialService] deletePaymentRequest error:', err);
+      this.logger.error('FinancialService', 'Failed to delete payment request', err, { id });
       this.error.set(message);
       throw err;
     } finally {
@@ -659,7 +660,7 @@ export class FinancialService {
       return payment;
     } catch (err) {
       const message = err instanceof Error ? err.message : '建立付款失敗';
-      console.error('[FinancialService] createPayment error:', err);
+      this.logger.error('FinancialService', 'Failed to create payment', err, { request });
       this.error.set(message);
       throw err;
     } finally {
@@ -683,7 +684,7 @@ export class FinancialService {
       return payment;
     } catch (err) {
       const message = err instanceof Error ? err.message : '更新付款失敗';
-      console.error('[FinancialService] updatePayment error:', err);
+      this.logger.error('FinancialService', 'Failed to update payment', err, { id, request });
       this.error.set(message);
       throw err;
     } finally {
@@ -705,7 +706,7 @@ export class FinancialService {
       return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : '刪除付款失敗';
-      console.error('[FinancialService] deletePayment error:', err);
+      this.logger.error('FinancialService', 'Failed to delete payment', err, { id });
       this.error.set(message);
       throw err;
     } finally {

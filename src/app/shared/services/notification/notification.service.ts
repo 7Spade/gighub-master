@@ -19,6 +19,7 @@
  */
 
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import {
   NotificationRepository,
   Notification,
@@ -142,7 +143,7 @@ export class NotificationService {
     } catch (err) {
       const message = err instanceof Error ? err.message : '載入通知失敗';
       this.errorState.set(message);
-      console.error('[NotificationService] loadNotifications error:', err);
+      this.logger.error('NotificationService', 'Failed to load notifications', err, { accountId, options });
       throw err;
     } finally {
       this.loadingState.set(false);
@@ -275,7 +276,7 @@ export class NotificationService {
     });
     this.eventSubscriptions.push(memberJoinedSub);
 
-    console.log('[NotificationService] Subscribed to event bus');
+    this.logger.debug('NotificationService', 'Subscribed to event bus');
   }
 
   /**
@@ -294,7 +295,7 @@ export class NotificationService {
 
     // 這裡可以建立一個臨時的本地通知
     // 實際的通知會通過 Supabase Realtime 推送
-    console.log('[NotificationService] Task assigned event:', {
+    this.logger.debug('NotificationService', 'Task assigned event', {
       taskName,
       assignee: newAssignee.name
     });
@@ -306,7 +307,7 @@ export class NotificationService {
   private handleTaskCompletedEvent(event: BaseEvent<TaskCompletedPayload>): void {
     const { taskName, completedBy } = event.payload;
 
-    console.log('[NotificationService] Task completed event:', {
+    this.logger.debug('NotificationService', 'Task completed event', {
       taskName,
       completedBy: completedBy.name
     });
@@ -318,7 +319,7 @@ export class NotificationService {
   private handleMemberJoinedEvent(event: BaseEvent<MemberJoinedPayload>): void {
     const { userName, blueprintName } = event.payload;
 
-    console.log('[NotificationService] Member joined event:', {
+    this.logger.debug('NotificationService', 'Member joined event', {
       userName,
       blueprintName
     });

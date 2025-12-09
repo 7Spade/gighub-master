@@ -48,6 +48,7 @@ import {
   isOverdue,
   calculateResolutionTime
 } from '../../../core/infra/types/problem';
+import { LoggerService } from '../../../core/logger/logger.service';
 
 /**
  * 問題狀態
@@ -81,6 +82,7 @@ export class ProblemService {
   private readonly repository = inject(ProblemRepository);
   private readonly settings = inject(SettingsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // State Management (Signals)
@@ -148,7 +150,7 @@ export class ProblemService {
           });
         },
         error: error => {
-          console.error('[ProblemService] loadProblems error:', error);
+          this.logger.error('ProblemService', 'Failed to load problems', error, { options });
           this.updateState({
             error: 'Failed to load problems',
             loading: false
@@ -180,7 +182,7 @@ export class ProblemService {
           });
         },
         error: error => {
-          console.error('[ProblemService] loadByBlueprint error:', error);
+          this.logger.error('ProblemService', 'Failed to load problems by blueprint', error, { blueprintId, options });
           this.updateState({
             error: 'Failed to load blueprint problems',
             loading: false
@@ -252,7 +254,7 @@ export class ProblemService {
           });
         },
         error: error => {
-          console.error('[ProblemService] selectProblem error:', error);
+          this.logger.error('ProblemService', 'Failed to select problem', error, { problemId });
           this.updateState({
             error: 'Failed to load problem details',
             loading: false
@@ -268,7 +270,7 @@ export class ProblemService {
   createProblem(request: CreateProblemRequest): Observable<Problem | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[ProblemService] No user ID for createProblem');
+      this.logger.error('ProblemService', 'No user ID for createProblem', null, { request });
       return of(null);
     }
 
@@ -284,7 +286,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] createProblem error:', error);
+        this.logger.error('ProblemService', 'Failed to create problem', error, { request });
         return of(null);
       })
     );
@@ -307,7 +309,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] updateProblem error:', error);
+        this.logger.error('ProblemService', 'Failed to update problem', error, { id, request });
         return of(null);
       })
     );
@@ -320,7 +322,7 @@ export class ProblemService {
   changeStatus(id: string, request: ProblemStatusChangeRequest): Observable<Problem | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[ProblemService] No user ID for changeStatus');
+      this.logger.error('ProblemService', 'No user ID for changeStatus', null, { request });
       return of(null);
     }
 
@@ -345,7 +347,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] changeStatus error:', error);
+        this.logger.error('ProblemService', 'Failed to change problem status', error, { request });
         return of(null);
       })
     );
@@ -464,7 +466,7 @@ export class ProblemService {
         return true;
       }),
       catchError(error => {
-        console.error('[ProblemService] deleteProblem error:', error);
+        this.logger.error('ProblemService', 'Failed to delete problem', error, { id });
         return of(false);
       })
     );
@@ -489,7 +491,7 @@ export class ProblemService {
   addComment(problemId: string, content: string, parentId?: string): Observable<ProblemComment | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[ProblemService] No user ID for addComment');
+      this.logger.error('ProblemService', 'No user ID for addComment', null, { problemId, content });
       return of(null);
     }
 
@@ -511,7 +513,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] addComment error:', error);
+        this.logger.error('ProblemService', 'Failed to add comment', error, { problemId, content });
         return of(null);
       })
     );
@@ -537,7 +539,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] updateComment error:', error);
+        this.logger.error('ProblemService', 'Failed to update comment', error, { commentId, content });
         return of(null);
       })
     );
@@ -563,7 +565,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] deleteComment error:', error);
+        this.logger.error('ProblemService', 'Failed to delete comment', error, { commentId });
         return of(false);
       })
     );
@@ -585,7 +587,7 @@ export class ProblemService {
   ): Observable<ProblemAttachment | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      console.error('[ProblemService] No user ID for uploadAttachment');
+      this.logger.error('ProblemService', 'No user ID for uploadAttachment', null, { problemId });
       return of(null);
     }
 
@@ -604,7 +606,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] uploadAttachment error:', error);
+        this.logger.error('ProblemService', 'Failed to upload attachment', error, { problemId });
         return of(null);
       })
     );
@@ -630,7 +632,7 @@ export class ProblemService {
         }
       }),
       catchError(error => {
-        console.error('[ProblemService] deleteAttachment error:', error);
+        this.logger.error('ProblemService', 'Failed to delete attachment', error, { attachmentId });
         return of(false);
       })
     );
@@ -653,7 +655,7 @@ export class ProblemService {
           this.updateState({ stats });
         },
         error: error => {
-          console.error('[ProblemService] loadStats error:', error);
+          this.logger.error('ProblemService', 'Failed to load stats', error, { blueprintId });
         }
       });
   }

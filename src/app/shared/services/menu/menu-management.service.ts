@@ -15,6 +15,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { ContextType } from '@core';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { Menu, MenuService } from '@delon/theme';
 import { firstValueFrom } from 'rxjs';
 
@@ -76,7 +77,7 @@ export class MenuManagementService {
       const data = await firstValueFrom(this.http.get<AppData>('./assets/tmp/app-data.json'));
       this.configState.set(data.menus || {});
     } catch (error) {
-      console.error('[MenuManagementService] Load failed:', error);
+      this.logger.error('MenuManagementService', 'Failed to load menu', error, { contextType, blueprintId });
       this.configState.set({});
     } finally {
       this.loadingState.set(false);
@@ -99,7 +100,7 @@ export class MenuManagementService {
 
     // 檢查是否與上次相同，避免重複更新
     if (this.lastMenuContext?.type === contextType && this.lastMenuContext?.paramsHash === paramsHash) {
-      console.log('[MenuManagementService] Menu unchanged, skipping update:', { contextType });
+      this.logger.info('MenuManagementService', 'Menu unchanged, skipping update', { contextType });
       return;
     }
 
@@ -110,7 +111,7 @@ export class MenuManagementService {
 
     // 記錄本次更新的上下文
     this.lastMenuContext = { type: contextType, paramsHash };
-    console.log('[MenuManagementService] Menu updated:', { contextType, hasParams: !!params });
+    this.logger.info('MenuManagementService', 'Menu updated', { contextType, hasParams: !!params });
   }
 
   /**

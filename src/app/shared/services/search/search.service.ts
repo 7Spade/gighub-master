@@ -40,6 +40,7 @@ import {
   SearchResponse
 } from '@core';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, tap, catchError, of, filter } from 'rxjs';
+import { LoggerService } from '../../../core/logger/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class SearchService {
   private readonly searchRepository = inject(SearchRepository);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // ============================================================================
   // State Signals (狀態信號)
@@ -588,7 +590,7 @@ export class SearchService {
    * 處理搜尋錯誤
    */
   private handleSearchError(error: unknown): void {
-    console.error('[SearchService] Search error:', error);
+    this.logger.error('SearchService', 'Search error', error, { options: searchOptions });
     const errorMessage = error instanceof Error ? error.message : '搜尋時發生錯誤';
     this.errorState.set(errorMessage);
     this.isSearchingState.set(false);
