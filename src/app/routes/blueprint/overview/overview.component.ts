@@ -954,6 +954,9 @@ import { BlueprintEditDrawerComponent } from './blueprint-edit-drawer.component'
   ]
 })
 export class BlueprintOverviewComponent implements OnInit {
+  // Expose enum for template access
+  readonly ModuleType = ModuleType;
+  
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly blueprintFacade = inject(BlueprintFacade);

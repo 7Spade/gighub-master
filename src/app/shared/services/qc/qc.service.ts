@@ -128,7 +128,7 @@ export class QcService {
           });
         },
         error: error => {
-          this.logger.error('QcService', 'Failed to load inspections', error, { options });
+          this.logger.error('QcService - Failed to load inspections', error);
           this.updateState({
             error: 'Failed to load inspections',
             loading: false
@@ -160,7 +160,7 @@ export class QcService {
           });
         },
         error: error => {
-          this.logger.error('QcService', 'Failed to load inspections by blueprint', error, { blueprintId, options });
+          this.logger.error('QcService - Failed to load inspections by blueprint', error);
           this.updateState({
             error: 'Failed to load blueprint inspections',
             loading: false
@@ -195,7 +195,7 @@ export class QcService {
           });
         },
         error: error => {
-          this.logger.error('QcService', 'Failed to select inspection', error, { inspectionId });
+          this.logger.error('QcService - Failed to select inspection', error);
           this.updateState({
             error: 'Failed to load inspection details',
             loading: false
@@ -211,7 +211,7 @@ export class QcService {
   createInspection(request: CreateQcInspectionRequest): Observable<QcInspection | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      this.logger.error('QcService', 'No user ID for createInspection', null, { request });
+      this.logger.error('QcService - No user ID for createInspection');
       return of(null);
     }
 
@@ -228,7 +228,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to create inspection', error, { request });
+        this.logger.error('QcService - Failed to create inspection', error);
         return of(null);
       })
     );
@@ -267,7 +267,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to create inspection with items', error, { request, items });
+        this.logger.error('QcService - Failed to create inspection with items', error);
         return of(null);
       })
     );
@@ -292,7 +292,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to update inspection', error, { id, request });
+        this.logger.error('QcService - Failed to update inspection', error);
         return of(null);
       })
     );
@@ -332,7 +332,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to complete inspection', error, { id, result });
+        this.logger.error('QcService - Failed to complete inspection', error);
         return of(null);
       })
     );
@@ -356,7 +356,7 @@ export class QcService {
       }),
       map(() => true),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to delete inspection', error, { id });
+        this.logger.error('QcService - Failed to delete inspection', error);
         return of(false);
       })
     );
@@ -394,7 +394,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to create item', error, { request });
+        this.logger.error('QcService - Failed to create item', error);
         return of(null);
       })
     );
@@ -424,7 +424,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to update item', error, { id, request });
+        this.logger.error('QcService - Failed to update item', error);
         return of(null);
       })
     );
@@ -475,7 +475,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to delete item', error, { id });
+        this.logger.error('QcService - Failed to delete item', error);
         return of(false);
       })
     );
@@ -498,7 +498,7 @@ export class QcService {
   ): Observable<QcInspectionAttachment | null> {
     const userId = this.settings.user?.['id'];
     if (!userId) {
-      this.logger.error('QcService', 'No user ID for uploadAttachment', null, { inspectionId });
+      this.logger.error('QcService - No user ID for uploadAttachment');
       return of(null);
     }
 
@@ -517,7 +517,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to upload attachment', error, { inspectionId, file });
+        this.logger.error('QcService - Failed to upload attachment', error);
         return of(null);
       })
     );
@@ -543,7 +543,7 @@ export class QcService {
         }
       }),
       catchError(error => {
-        this.logger.error('QcService', 'Failed to delete attachment', error, { attachmentId });
+        this.logger.error(`QcService - Failed to delete attachment ${id}`, error);
         return of(false);
       })
     );

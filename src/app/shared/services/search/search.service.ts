@@ -590,7 +590,7 @@ export class SearchService {
    * 處理搜尋錯誤
    */
   private handleSearchError(error: unknown): void {
-    this.logger.error('SearchService', 'Search error', error, { options: searchOptions });
+    this.logger.error('SearchService - Search error', error);
     const errorMessage = error instanceof Error ? error.message : '搜尋時發生錯誤';
     this.errorState.set(errorMessage);
     this.isSearchingState.set(false);

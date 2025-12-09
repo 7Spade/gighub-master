@@ -114,7 +114,7 @@ export class PermissionService {
       this.contextState.set(context);
       return context;
     } catch (error) {
-      this.logger.error('PermissionService', 'Failed to load context', error, { blueprintId, accountId });
+      this.logger.error('PermissionService - Failed to load context', error);
       this.errorState.set('Failed to load permission context');
       this.contextState.set(null);
       return null;

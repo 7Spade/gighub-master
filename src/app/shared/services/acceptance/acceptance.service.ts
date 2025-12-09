@@ -123,7 +123,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          this.logger.error('AcceptanceService', 'Failed to load acceptances', error, { options });
+          this.logger.error('AcceptanceService - Failed to load acceptances', error);
           this.updateState({
             error: 'Failed to load acceptances',
             loading: false
@@ -155,7 +155,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          this.logger.error('AcceptanceService', 'Failed to load acceptances by blueprint', error, { blueprintId, options });
+          this.logger.error('AcceptanceService - Failed to load acceptances by blueprint', error);
           this.updateState({
             error: 'Failed to load blueprint acceptances',
             loading: false
@@ -198,7 +198,7 @@ export class AcceptanceService {
           });
         },
         error: error => {
-          this.logger.error('AcceptanceService', 'Failed to select acceptance', error, { acceptanceId });
+          this.logger.error('AcceptanceService - Failed to select acceptance', error);
           this.updateState({
             error: 'Failed to load acceptance details',
             loading: false

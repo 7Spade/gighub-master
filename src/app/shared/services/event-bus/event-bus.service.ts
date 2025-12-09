@@ -49,6 +49,7 @@ import { Subject, Observable, filter, takeUntil } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class EventBusService implements OnDestroy {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /** 本地事件流 */
   private readonly eventSubject = new Subject<BaseEvent>();
@@ -431,11 +432,11 @@ export class EventBusService implements OnDestroy {
             this.logger.debug('EventBusService', 'Realtime connected', { channelName });
           } else if (status === 'CHANNEL_ERROR') {
             this.errorState.set('Realtime 連線錯誤');
-            this.logger.error('EventBusService', 'Realtime channel error', null, { channelName });
+            this.logger.error('EventBusService - Realtime channel error');
           }
         });
     } catch (err: unknown) {
-      this.logger.error('EventBusService', 'Failed to subscribe to realtime', err, { blueprintId, channelName });
+      this.logger.error('EventBusService - Failed to subscribe to realtime', err);
       this.errorState.set('無法連接 Realtime');
     }
   }
@@ -467,7 +468,7 @@ export class EventBusService implements OnDestroy {
         payload: event
       })
       .catch((err: unknown) => {
-        this.logger.error('EventBusService', 'Broadcast error', err, { event, channelName });
+        this.logger.error('EventBusService - Broadcast error', err);
       });
   }
 }

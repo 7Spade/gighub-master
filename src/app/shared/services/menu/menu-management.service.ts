@@ -55,6 +55,7 @@ interface AppData {
 export class MenuManagementService {
   private readonly http = inject(HttpClient);
   private readonly menuService = inject(MenuService);
+  private readonly logger = inject(LoggerService);
 
   private readonly configState = signal<MenuConfig | null>(null);
   private readonly loadingState = signal<boolean>(false);
@@ -77,7 +78,7 @@ export class MenuManagementService {
       const data = await firstValueFrom(this.http.get<AppData>('./assets/tmp/app-data.json'));
       this.configState.set(data.menus || {});
     } catch (error) {
-      this.logger.error('MenuManagementService', 'Failed to load menu', error, { contextType, blueprintId });
+      this.logger.error('MenuManagementService - Failed to load menu', error);
       this.configState.set({});
     } finally {
       this.loadingState.set(false);
@@ -100,7 +101,7 @@ export class MenuManagementService {
 
     // 檢查是否與上次相同，避免重複更新
     if (this.lastMenuContext?.type === contextType && this.lastMenuContext?.paramsHash === paramsHash) {
-      this.logger.info('MenuManagementService', 'Menu unchanged, skipping update', { contextType });
+      this.logger.info('MenuManagementService - Menu unchanged, skipping update');
       return;
     }
 
@@ -111,7 +112,7 @@ export class MenuManagementService {
 
     // 記錄本次更新的上下文
     this.lastMenuContext = { type: contextType, paramsHash };
-    this.logger.info('MenuManagementService', 'Menu updated', { contextType, hasParams: !!params });
+    this.logger.info('MenuManagementService - Menu updated');
   }
 
   /**
