@@ -20,5 +20,6 @@ export * from './permission/index';
 export * from './problem/index';
 export * from './qc/index';
 export * from './search/index';
+export * from './startup/index';
 export * from './task/index';
 export * from './timeline/index';

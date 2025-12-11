@@ -19,13 +19,14 @@
  * }
  * ```
  *
- * @module core/guards
+ * @module shared/guards
  */
 
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
-import { BlueprintFacade } from '@shared';
-import { ModuleType } from '../infra/types/blueprint';
+import { ModuleType } from '@core';
+
+import { BlueprintFacade } from '../facades/blueprint/blueprint.facade';
 
 /**
  * Guard function that checks if a module is enabled

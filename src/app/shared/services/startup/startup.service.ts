@@ -3,13 +3,11 @@ import { EnvironmentProviders, Injectable, Provider, inject, provideAppInitializ
 import { Router } from '@angular/router';
 import { ACLService } from '@delon/acl';
 import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
-import { MenuManagementService } from '@shared';
+import { I18NService, LoggerService, SupabaseAuthService } from '@core';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable, zip, catchError, map } from 'rxjs';
 
-import { I18NService } from '../i18n/i18n.service';
-import { LoggerService } from '../logger';
-import { SupabaseAuthService } from '../supabase/supabase-auth.service';
+import { MenuManagementService } from '../menu/menu-management.service';
 
 /**
  * Used for application startup

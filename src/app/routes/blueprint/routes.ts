@@ -10,7 +10,8 @@
  */
 
 import { Routes } from '@angular/router';
-import { moduleEnabledGuard, ModuleType } from '@core';
+import { ModuleType } from '@core';
+import { moduleEnabledGuard } from '@shared';
 
 export const routes: Routes = [
   {

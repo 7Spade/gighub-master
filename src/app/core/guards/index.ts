@@ -7,4 +7,5 @@
  * @module core/guards
  */
 
-export * from './module-enabled.guard';
+// All guards have been moved to shared/guards
+// Core guards should not depend on business logic (shared layer)
