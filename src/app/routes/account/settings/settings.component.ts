@@ -13,8 +13,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ContextType, OrganizationFacade } from '@core';
-import { WorkspaceContextService, UpdateOrganizationRequest, AccountService } from '@shared';
+import { ContextType } from '@core';
+import { OrganizationFacade, WorkspaceContextService, UpdateOrganizationRequest, AccountService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';

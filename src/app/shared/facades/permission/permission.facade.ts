@@ -1,19 +1,19 @@
 /**
  * Permission Facade
  *
- * 權限業務域門面（Core 層）
- * Permission business domain facade (Core layer)
+ * 權限業務域門面（Shared 層）
+ * Permission business domain facade (Shared layer)
  *
  * Provides unified interface for permission operations.
  * Integrates with PermissionService for context management.
  *
- * @module core/facades/permission
+ * @module shared/facades/permission
  */
 
 import { Injectable, inject, computed } from '@angular/core';
-import { PermissionService } from '@shared';
+import { PermissionService } from '../services';
 
-import { Permission, BlueprintBusinessRole, PermissionContext } from '../../infra/types/permission';
+import { Permission, BlueprintBusinessRole, PermissionContext } from '../../../core/infra/types/permission';
 
 @Injectable({
   providedIn: 'root'

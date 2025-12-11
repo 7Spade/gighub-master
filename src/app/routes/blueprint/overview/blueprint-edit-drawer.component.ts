@@ -19,8 +19,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BlueprintFacade, ModuleType, ESSENTIAL_MODULES, AccountStatus } from '@core';
-import { BlueprintBusinessModel, UpdateBlueprintRequest } from '@shared';
+import { ModuleType, ESSENTIAL_MODULES, AccountStatus } from '@core';
+import { BlueprintFacade, BlueprintBusinessModel, UpdateBlueprintRequest } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';

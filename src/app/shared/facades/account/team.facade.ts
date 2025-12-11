@@ -1,19 +1,19 @@
 /**
  * Team Facade
  *
- * 團隊業務域門面（Core 層）
- * Team business domain facade (Core layer)
+ * 團隊業務域門面（Shared 層）
+ * Team business domain facade (Shared layer)
  *
  * Provides unified interface for team operations.
  *
- * @module core/facades/account
+ * @module shared/facades/account
  */
 
 import { Injectable, inject } from '@angular/core';
-import { TeamService, CreateTeamRequest, UpdateTeamRequest } from '@shared';
+import { TeamService, CreateTeamRequest, UpdateTeamRequest } from '../services';
 
 import { BaseAccountCrudFacade } from './base-account-crud.facade';
-import { Team } from '../../infra/types/account';
+import { Team } from '../../../core/infra/types/account';
 
 @Injectable({
   providedIn: 'root'

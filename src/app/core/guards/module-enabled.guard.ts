@@ -24,7 +24,7 @@
 
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
-import { BlueprintFacade } from '../facades/blueprint/blueprint.facade';
+import { BlueprintFacade } from '@shared';
 import { ModuleType } from '../infra/types/blueprint';
 
 /**

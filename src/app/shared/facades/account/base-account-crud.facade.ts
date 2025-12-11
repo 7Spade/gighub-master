@@ -6,12 +6,12 @@
  *
  * Provides common CRUD operations coordination for account-related entities.
  *
- * @module core/facades/account
+ * @module shared/facades/account
  */
 
 import { inject } from '@angular/core';
 
-import { SupabaseAuthService } from '../../supabase/supabase-auth.service';
+import { SupabaseAuthService } from '../../../core/supabase/supabase-auth.service';
 
 /**
  * 基礎 CRUD 門面

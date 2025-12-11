@@ -12,8 +12,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, effect, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { BlueprintFacade, ContextType } from '@core';
-import { BlueprintBusinessModel, WorkspaceContextService } from '@shared';
+import { ContextType } from '@core';
+import { BlueprintFacade, BlueprintBusinessModel, WorkspaceContextService } from '@shared';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';

@@ -1,7 +1,7 @@
 /**
  * Facades Module
  *
- * @module core/facades
+ * @module shared/facades
  */
 
 export * from './account/index';

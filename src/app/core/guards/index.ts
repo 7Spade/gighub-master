@@ -7,5 +7,4 @@
  * @module core/guards
  */
 
-export * from './permission.guard';
 export * from './module-enabled.guard';

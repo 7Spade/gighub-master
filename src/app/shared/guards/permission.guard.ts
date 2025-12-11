@@ -7,15 +7,14 @@
  * Protects routes based on required permissions.
  * Uses functional guard pattern for Angular 20+.
  *
- * @module core/guards
+ * @module shared/guards
  */
 
 import { inject } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivateFn, CanMatchFn, Route, UrlSegment } from '@angular/router';
-import { PermissionService } from '@shared';
+import { Permission, BlueprintBusinessRole, LoggerService } from '@core';
 
-import { Permission, BlueprintBusinessRole } from '../infra/types/permission';
-import { LoggerService } from '../logger';
+import { PermissionService } from '../services';
 
 /**
  * 權限守衛配置介面

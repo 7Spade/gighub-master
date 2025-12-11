@@ -1,6 +1,12 @@
 // Base Components
 export * from './base/base-context-aware.component';
 
+// Facades
+export * from './facades/index';
+
+// Guards
+export * from './guards/index';
+
 // Shared UI Components
 export * from './components/index';
 

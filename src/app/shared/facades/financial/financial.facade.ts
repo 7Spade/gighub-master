@@ -1,16 +1,16 @@
 /**
  * Financial Facade
  *
- * 財務業務域門面（Core 層）
- * Financial business domain facade (Core layer)
+ * 財務業務域門面（Shared 層）
+ * Financial business domain facade (Shared layer)
  *
  * Provides unified interface for financial operations.
  *
- * @module core/facades/financial
+ * @module shared/facades/financial
  */
 
 import { Injectable, inject } from '@angular/core';
-import { FinancialService } from '@shared';
+import { FinancialService } from '../services';
 
 import {
   BlueprintFinancialSummary,
@@ -23,7 +23,7 @@ import {
   PaymentQueryOptions,
   PaymentRequest,
   PaymentRequestQueryOptions
-} from '../../infra/types/financial';
+} from '../../../core/infra/types/financial';
 
 @Injectable({
   providedIn: 'root'

@@ -12,8 +12,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal, input, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BlueprintFacade, BlueprintRole } from '@core';
-import { AccountService, SHARED_IMPORTS } from '@shared';
+import { BlueprintRole } from '@core';
+import { BlueprintFacade, AccountService, SHARED_IMPORTS } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 /** Extended member type with account details */

@@ -12,8 +12,7 @@
 
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { OrganizationFacade } from '@core';
-import { CreateOrganizationRequest } from '@shared';
+import { OrganizationFacade, CreateOrganizationRequest } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';

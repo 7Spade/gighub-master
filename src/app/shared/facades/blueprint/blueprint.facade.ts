@@ -1,18 +1,18 @@
 /**
  * Blueprint Facade
  *
- * 藍圖業務域門面（Core 層）
- * Blueprint business domain facade (Core layer)
+ * 藍圖業務域門面（Shared 層）
+ * Blueprint business domain facade (Shared layer)
  *
  * Provides unified interface for blueprint operations.
  *
- * @module core/facades/blueprint
+ * @module shared/facades/blueprint
  */
 
 import { Injectable, inject } from '@angular/core';
-import { BlueprintService, BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest } from '@shared';
+import { BlueprintService, BlueprintBusinessModel, CreateBlueprintRequest, UpdateBlueprintRequest } from '../services';
 
-import { BlueprintRole } from '../../infra/types/blueprint';
+import { BlueprintRole } from '../../../core/infra/types/blueprint';
 import { BaseAccountCrudFacade } from '../account/base-account-crud.facade';
 
 @Injectable({

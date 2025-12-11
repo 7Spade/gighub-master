@@ -12,8 +12,8 @@
 
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { BlueprintFacade, ModuleType, ContextType, ESSENTIAL_MODULES, DEFAULT_ENABLED_MODULES } from '@core';
-import { CreateBlueprintRequest, WorkspaceContextService } from '@shared';
+import { ModuleType, ContextType, ESSENTIAL_MODULES, DEFAULT_ENABLED_MODULES } from '@core';
+import { BlueprintFacade, CreateBlueprintRequest, WorkspaceContextService } from '@shared';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';

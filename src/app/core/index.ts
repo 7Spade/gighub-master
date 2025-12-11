@@ -1,9 +1,6 @@
 // Infrastructure (types, repositories)
 export * from './infra/index';
 
-// Facades
-export * from './facades/index';
-
 // Guards
 export * from './guards/index';
 
